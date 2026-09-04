@@ -1,0 +1,417 @@
+{
+  "academicReading": [
+    {
+      "rawScoreMin": 39,
+      "rawScoreMax": 40,
+      "bandScore": 9.0
+    },
+    {
+      "rawScoreMin": 37,
+      "rawScoreMax": 38,
+      "bandScore": 8.5
+    },
+    {
+      "rawScoreMin": 35,
+      "rawScoreMax": 36,
+      "bandScore": 8.0
+    },
+    {
+      "rawScoreMin": 33,
+      "rawScoreMax": 34,
+      "bandScore": 7.5
+    },
+    {
+      "rawScoreMin": 30,
+      "rawScoreMax": 32,
+      "bandScore": 7.0
+    },
+    {
+      "rawScoreMin": 27,
+      "rawScoreMax": 29,
+      "bandScore": 6.5
+    },
+    {
+      "rawScoreMin": 23,
+      "rawScoreMax": 26,
+      "bandScore": 6.0
+    },
+    {
+      "rawScoreMin": 19,
+      "rawScoreMax": 22,
+      "bandScore": 5.5
+    },
+    {
+      "rawScoreMin": 15,
+      "rawScoreMax": 18,
+      "bandScore": 5.0
+    },
+    {
+      "rawScoreMin": 13,
+      "rawScoreMax": 14,
+      "bandScore": 4.5
+    },
+    {
+      "rawScoreMin": 10,
+      "rawScoreMax": 12,
+      "bandScore": 4.0
+    },
+    {
+      "rawScoreMin": 8,
+      "rawScoreMax": 9,
+      "bandScore": 3.5
+    },
+    {
+      "rawScoreMin": 6,
+      "rawScoreMax": 7,
+      "bandScore": 3.0
+    },
+    {
+      "rawScoreMin": 4,
+      "rawScoreMax": 5,
+      "bandScore": 2.5
+    },
+    {
+      "rawScoreMin": 2,
+      "rawScoreMax": 3,
+      "bandScore": 2.0
+    },
+    {
+      "rawScoreMin": 1,
+      "rawScoreMax": 1,
+      "bandScore": 1.0
+    },
+    {
+      "rawScoreMin": 0,
+      "rawScoreMax": 0,
+      "bandScore": 0.0
+    }
+  ],
+  "generalTrainingReading": [
+    {
+      "rawScoreMin": 40,
+      "rawScoreMax": 40,
+      "bandScore": 9.0
+    },
+    {
+      "rawScoreMin": 39,
+      "rawScoreMax": 39,
+      "bandScore": 8.5
+    },
+    {
+      "rawScoreMin": 37,
+      "rawScoreMax": 38,
+      "bandScore": 8.0
+    },
+    {
+      "rawScoreMin": 36,
+      "rawScoreMax": 36,
+      "bandScore": 7.5
+    },
+    {
+      "rawScoreMin": 34,
+      "rawScoreMax": 35,
+      "bandScore": 7.0
+    },
+    {
+      "rawScoreMin": 32,
+      "rawScoreMax": 33,
+      "bandScore": 6.5
+    },
+    {
+      "rawScoreMin": 30,
+      "rawScoreMax": 31,
+      "bandScore": 6.0
+    },
+    {
+      "rawScoreMin": 27,
+      "rawScoreMax": 29,
+      "bandScore": 5.5
+    },
+    {
+      "rawScoreMin": 23,
+      "rawScoreMax": 26,
+      "bandScore": 5.0
+    },
+    {
+      "rawScoreMin": 19,
+      "rawScoreMax": 22,
+      "bandScore": 4.5
+    },
+    {
+      "rawScoreMin": 15,
+      "rawScoreMax": 18,
+      "bandScore": 4.0
+    },
+    {
+      "rawScoreMin": 12,
+      "rawScoreMax": 14,
+      "bandScore": 3.5
+    },
+    {
+      "rawScoreMin": 9,
+      "rawScoreMax": 11,
+      "bandScore": 3.0
+    },
+    {
+      "rawScoreMin": 6,
+      "rawScoreMax": 8,
+      "bandScore": 2.5
+    },
+    {
+      "rawScoreMin": 3,
+      "rawScoreMax": 5,
+      "bandScore": 2.0
+    },
+    {
+      "rawScoreMin": 1,
+      "rawScoreMax": 2,
+      "bandScore": 1.0
+    },
+    {
+      "rawScoreMin": 0,
+      "rawScoreMax": 0,
+      "bandScore": 0.0
+    }
+  ],
+  "listening": [
+    {
+      "rawScoreMin": 39,
+      "rawScoreMax": 40,
+      "bandScore": 9.0
+    },
+    {
+      "rawScoreMin": 37,
+      "rawScoreMax": 38,
+      "bandScore": 8.5
+    },
+    {
+      "rawScoreMin": 35,
+      "rawScoreMax": 36,
+      "bandScore": 8.0
+    },
+    {
+      "rawScoreMin": 32,
+      "rawScoreMax": 34,
+      "bandScore": 7.5
+    },
+    {
+      "rawScoreMin": 30,
+      "rawScoreMax": 31,
+      "bandScore": 7.0
+    },
+    {
+      "rawScoreMin": 26,
+      "rawScoreMax": 29,
+      "bandScore": 6.5
+    },
+    {
+      "rawScoreMin": 23,
+      "rawScoreMax": 25,
+      "bandScore": 6.0
+    },
+    {
+      "rawScoreMin": 18,
+      "rawScoreMax": 22,
+      "bandScore": 5.5
+    },
+    {
+      "rawScoreMin": 16,
+      "rawScoreMax": 17,
+      "bandScore": 5.0
+    },
+    {
+      "rawScoreMin": 13,
+      "rawScoreMax": 15,
+      "bandScore": 4.5
+    },
+    {
+      "rawScoreMin": 10,
+      "rawScoreMax": 12,
+      "bandScore": 4.0
+    },
+    {
+      "rawScoreMin": 8,
+      "rawScoreMax": 9,
+      "bandScore": 3.5
+    },
+    {
+      "rawScoreMin": 6,
+      "rawScoreMax": 7,
+      "bandScore": 3.0
+    },
+    {
+      "rawScoreMin": 4,
+      "rawScoreMax": 5,
+      "bandScore": 2.5
+    },
+    {
+      "rawScoreMin": 2,
+      "rawScoreMax": 3,
+      "bandScore": 2.0
+    },
+    {
+      "rawScoreMin": 1,
+      "rawScoreMax": 1,
+      "bandScore": 1.0
+    },
+    {
+      "rawScoreMin": 0,
+      "rawScoreMax": 0,
+      "bandScore": 0.0
+    }
+  ],
+  "cefrMapping": [
+    {
+      "bandScoreMin": 8.5,
+      "bandScoreMax": 9.0,
+      "cefrLevel": "C2",
+      "description": "Mastery / Proficient User"
+    },
+    {
+      "bandScoreMin": 7.0,
+      "bandScoreMax": 8.0,
+      "cefrLevel": "C1",
+      "description": "Effective Operational Proficiency / Advanced User"
+    },
+    {
+      "bandScoreMin": 5.5,
+      "bandScoreMax": 6.5,
+      "cefrLevel": "B2",
+      "description": "Vantage / Independent User"
+    },
+    {
+      "bandScoreMin": 4.0,
+      "bandScoreMax": 5.0,
+      "cefrLevel": "B1",
+      "description": "Threshold / Intermediate User"
+    },
+    {
+      "bandScoreMin": 0.0,
+      "bandScoreMax": 3.5,
+      "cefrLevel": "A1-A2",
+      "description": "Basic User"
+    }
+  ],
+  "clbMapping": {
+    "reading": [
+      {
+        "clb": 10,
+        "minScore": 8.0
+      },
+      {
+        "clb": 9,
+        "minScore": 7.0
+      },
+      {
+        "clb": 8,
+        "minScore": 6.5
+      },
+      {
+        "clb": 7,
+        "minScore": 6.0
+      },
+      {
+        "clb": 6,
+        "minScore": 5.0
+      },
+      {
+        "clb": 5,
+        "minScore": 4.0
+      },
+      {
+        "clb": 4,
+        "minScore": 3.5
+      }
+    ],
+    "writing": [
+      {
+        "clb": 10,
+        "minScore": 7.5
+      },
+      {
+        "clb": 9,
+        "minScore": 7.0
+      },
+      {
+        "clb": 8,
+        "minScore": 6.5
+      },
+      {
+        "clb": 7,
+        "minScore": 6.0
+      },
+      {
+        "clb": 6,
+        "minScore": 5.5
+      },
+      {
+        "clb": 5,
+        "minScore": 5.0
+      },
+      {
+        "clb": 4,
+        "minScore": 4.0
+      }
+    ],
+    "listening": [
+      {
+        "clb": 10,
+        "minScore": 8.5
+      },
+      {
+        "clb": 9,
+        "minScore": 8.0
+      },
+      {
+        "clb": 8,
+        "minScore": 7.5
+      },
+      {
+        "clb": 7,
+        "minScore": 6.0
+      },
+      {
+        "clb": 6,
+        "minScore": 5.5
+      },
+      {
+        "clb": 5,
+        "minScore": 5.0
+      },
+      {
+        "clb": 4,
+        "minScore": 4.5
+      }
+    ],
+    "speaking": [
+      {
+        "clb": 10,
+        "minScore": 7.5
+      },
+      {
+        "clb": 9,
+        "minScore": 7.0
+      },
+      {
+        "clb": 8,
+        "minScore": 6.5
+      },
+      {
+        "clb": 7,
+        "minScore": 6.0
+      },
+      {
+        "clb": 6,
+        "minScore": 5.5
+      },
+      {
+        "clb": 5,
+        "minScore": 5.0
+      },
+      {
+        "clb": 4,
+        "minScore": 4.0
+      }
+    ]
+  }
+}

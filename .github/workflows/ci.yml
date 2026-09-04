@@ -1,0 +1,44 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, 'arena/**', 'feature/**', 'fix/**']
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    name: Build & Test (100% Coverage)
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Check Formatting with Prettier
+        run: npm run format:check
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Type Check with TypeScript
+        run: npx tsc --noEmit
+
+      - name: Run Tests with 100% Coverage Threshold
+        run: npm run test:coverage
+
+      - name: Build Production Bundle
+        run: npm run build

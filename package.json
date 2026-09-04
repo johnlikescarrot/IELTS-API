@@ -1,0 +1,57 @@
+{
+  "name": "ielts-api",
+  "version": "1.0.0",
+  "description": "Comprehensive, fast, unauthenticated IELTS API in TypeScript providing 4,300+ vocabulary terms, band score calculators, writing essay analysis, speaking topics, practice mock tests, and institutional score requirements.",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "rimraf dist && tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "dev": "ts-node src/server.ts",
+    "lint": "eslint src tests",
+    "lint:fix": "eslint src tests --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\" \"tests/**/*.ts\"",
+    "test": "jest --runInBand",
+    "test:coverage": "jest --coverage --runInBand"
+  },
+  "keywords": [
+    "ielts",
+    "api",
+    "typescript",
+    "english",
+    "vocabulary",
+    "ielts-calculator",
+    "ielts-writing",
+    "ielts-speaking",
+    "ielts-practice"
+  ],
+  "author": "johnlikescarrot",
+  "license": "MIT",
+  "dependencies": {
+    "compression": "^1.8.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.4.1",
+    "@types/supertest": "^7.2.1",
+    "@types/swagger-ui-express": "^4.1.8",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.69.0",
+    "eslint": "^10.9.1",
+    "jest": "^30.5.1",
+    "prettier": "^3.9.6",
+    "rimraf": "^6.1.3",
+    "supertest": "^7.2.2",
+    "ts-jest": "^29.4.12",
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.3"
+  }
+}

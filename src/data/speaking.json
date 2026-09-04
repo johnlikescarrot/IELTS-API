@@ -1,0 +1,220 @@
+{
+  "bandDescriptors": {
+    "9": {
+      "fluencyAndCoherence": "Speaks fluently with only rare repetition or self-correction; any hesitation is content-related rather than to find words or grammar. Speaks coherently with fully appropriate cohesive features. Develops topics fully and appropriately.",
+      "lexicalResource": "Uses vocabulary with full flexibility and precision in all topics. Uses idiomatic language naturally and accurately.",
+      "grammaticalRangeAndAccuracy": "Uses a full range of structures naturally and appropriately. Produces consistently accurate structures apart from rare non-systematic errata.",
+      "pronunciation": "Uses a full range of pronunciation features with precision and subtlety. Sustains flexible use of features throughout. Is effortless to understand."
+    },
+    "8": {
+      "fluencyAndCoherence": "Speaks fluently with only occasional repetition or self-correction; hesitation is usually content-related and only rarely to search for language. Develops topics coherently and appropriately.",
+      "lexicalResource": "Uses a wide and flexible vocabulary resource readily and flexibly to convey precise meaning. Uses less common and idiomatic vocabulary skilfully, with occasional inaccuracies.",
+      "grammaticalRangeAndAccuracy": "Uses a wide range of structures flexibly. Produces a majority of error-free sentences with only very occasional inaccuracies or basic non-systematic errors.",
+      "pronunciation": "Uses a wide range of pronunciation features. Sustains flexible use of features, with only occasional lapses. Is easy to understand throughout; L1 accent has minimal effect on intelligibility."
+    },
+    "7": {
+      "fluencyAndCoherence": "Speaks at length without noticeable effort or loss of coherence. May demonstrate language-related hesitation at times, or some repetition and/or self-correction. Uses a range of connectives and discourse markers with some flexibility.",
+      "lexicalResource": "Uses vocabulary resource flexibly to discuss a variety of topics. Uses some less common and idiomatic vocabulary and shows some awareness of style and collocation, with some inappropriate choices.",
+      "grammaticalRangeAndAccuracy": "Uses a range of complex structures with some flexibility. Frequently produces error-free sentences, though some grammatical mistakes persist.",
+      "pronunciation": "Shows all positive features of Band 6 and some, but not all, of Band 8. Generally clear and easy to follow."
+    },
+    "6": {
+      "fluencyAndCoherence": "Is willing to speak at length, though may lose coherence at times due to occasional repetition, self-correction or hesitation. Uses a range of connectives and discourse markers but not always appropriately.",
+      "lexicalResource": "Has a wide enough vocabulary to discuss topics at length and make meaning clear in spite of inaccuracies. Generally succeeds in paraphrasing.",
+      "grammaticalRangeAndAccuracy": "Uses a mix of simple and complex structures, but with limited flexibility. May make frequent mistakes with complex structures, though these rarely cause comprehension problems.",
+      "pronunciation": "Uses a range of pronunciation features with mixed control. Shows some effective use of features but this is not sustained. Can generally be understood throughout."
+    },
+    "5": {
+      "fluencyAndCoherence": "Usually maintains flow of speech but uses repetition, self-correction and/or slow speech to keep going. Over-uses certain connectives and discourse markers. Produces simple speech fluently, but more complex communication causes fluency problems.",
+      "lexicalResource": "Manages to talk about familiar and unfamiliar topics but uses vocabulary with limited flexibility. Attempts paraphrase with mixed success.",
+      "grammaticalRangeAndAccuracy": "Produces basic sentence forms with reasonable accuracy. Uses a limited range of more complex structures, but these usually contain errors and may cause some comprehension problems.",
+      "pronunciation": "Shows all positive features of Band 4 and some, but not all, of Band 6."
+    }
+  },
+  "part1Topics": [
+    {
+      "id": "p1-001",
+      "topic": "Work and Study",
+      "questions": [
+        "Do you work or are you a student?",
+        "What is your major or what kind of work do you do?",
+        "Why did you choose that particular field?",
+        "What do you enjoy most about your study or profession?",
+        "Do you plan to continue in this line of work in the future?"
+      ],
+      "modelTips": "State your occupation clearly, use precise industry/academic terms, and explain your personal motivations using causal discourse connectors."
+    },
+    {
+      "id": "p1-002",
+      "topic": "Hometown and Living Environment",
+      "questions": [
+        "Where is your hometown located?",
+        "What is the most interesting aspect of your hometown?",
+        "Has your hometown changed much since you were a child?",
+        "Would you prefer to live in a bustling metropolis or a peaceful countryside?",
+        "What improvements would you suggest for your hometown?"
+      ],
+      "modelTips": "Incorporate vivid descriptive adjectives (picturesque, bustling, tranquil) and contrast past vs present using perfect tenses."
+    },
+    {
+      "id": "p1-003",
+      "topic": "Technology and Social Media",
+      "questions": [
+        "How often do you use social media platforms?",
+        "What kind of apps do you find indispensable on your mobile phone?",
+        "Do you think artificial intelligence will replace everyday human tasks?",
+        "Did you use computers often when you were a child?",
+        "How do you ensure you maintain a healthy digital balance?"
+      ],
+      "modelTips": "Balance personal anecdotes with broader observations, utilizing high-level tech vocabulary (seamless integration, algorithmic feeds, screen fatigue)."
+    },
+    {
+      "id": "p1-004",
+      "topic": "Reading and Literature",
+      "questions": [
+        "Do you prefer reading physical books or e-books?",
+        "What genre of books do you read most frequently?",
+        "Did your parents encourage you to read when you were growing up?",
+        "Do you think traditional libraries will disappear in the digital era?",
+        "How has your reading habit evolved over time?"
+      ],
+      "modelTips": "Discuss nuance and personal preferences using conditionals and comparative structures (e.g. while nothing beats the tactile feel of print, digital editions offer unmatched portability)."
+    }
+  ],
+  "part2CueCards": [
+    {
+      "id": "p2-001",
+      "topic": "Describe a challenging problem you successfully resolved",
+      "category": "Experience & Problem-Solving",
+      "bulletPoints": [
+        "What the problem was and when it occurred",
+        "Why it was particularly difficult or urgent",
+        "What specific steps and actions you took to resolve it",
+        "And explain how you felt after successfully solving it"
+      ],
+      "preparationGuide": "Structure your 2-minute response chronologically: 1. Set the background context, 2. Outline the obstacle, 3. Detail your action plan, 4. Reflect on the outcome.",
+      "usefulVocabulary": [
+        "insurmountable obstacle",
+        "tactical approach",
+        "streamlined the workflow",
+        "pivotal turning point",
+        "immense sense of gratification",
+        "poise under pressure"
+      ],
+      "part3FollowUps": [
+        "Why do some people handle high-pressure crises better than others?",
+        "Should schools teach conflict resolution and structured problem-solving from an early age?",
+        "How has technology changed the nature of workplace problem-solving?"
+      ]
+    },
+    {
+      "id": "p2-002",
+      "topic": "Describe an environmental law or initiative you think is effective",
+      "category": "Environment & Governance",
+      "bulletPoints": [
+        "What the law or initiative is",
+        "Where and when it was implemented",
+        "How it works in practice to curb environmental degradation",
+        "And explain why you consider this initiative to be particularly impactful"
+      ],
+      "preparationGuide": "Focus on the cause-and-effect relationship between legislative policy and societal behavioral change.",
+      "usefulVocabulary": [
+        "curb carbon footprint",
+        "deterrent mechanism",
+        "renewable transition",
+        "civic engagement",
+        "sustainable footprint",
+        "tangible ecological benefits"
+      ],
+      "part3FollowUps": [
+        "Do you believe individual actions or government regulations are more impactful in protecting biodiversity?",
+        "How can international bodies encourage developing nations to adopt green energy?",
+        "What role does economic incentive play in driving environmental conservation?"
+      ]
+    },
+    {
+      "id": "p2-003",
+      "topic": "Describe a person who has had a significant positive influence on your life",
+      "category": "People & Relationships",
+      "bulletPoints": [
+        "Who this person is and your relationship to them",
+        "What qualities and attributes distinguish them",
+        "What pivotal advice or assistance they provided to you",
+        "And explain why their guidance has had such a lasting impression on your life"
+      ],
+      "preparationGuide": "Highlight personality traits with vivid vocabulary, back up claims with an illustrative story, and conclude with the long-term impact on your values.",
+      "usefulVocabulary": [
+        "paragon of resilience",
+        "unwavering mentorship",
+        "instilled a growth mindset",
+        "compassionate yet pragmatic",
+        "indelible mark",
+        "beacon of inspiration"
+      ],
+      "part3FollowUps": [
+        "What qualities make someone an effective mentor or leader?",
+        "Do role models in popular media exert a healthier influence today than in the past?",
+        "How does intergenerational mentorship benefit modern corporate cultures?"
+      ]
+    }
+  ],
+  "speakingFormulas": [
+    {
+      "id": "formula-01",
+      "formulaName": "The Concession & Counter-Argument Strategy",
+      "structure": "While it is undeniably true that [Concession A], one cannot overlook the fact that [Counter-Point B], which ultimately leads to [Conclusion].",
+      "example": "While it is undeniably true that remote work affords greater flexibility, one cannot overlook the fact that lack of face-to-face interaction can erode team synergy.",
+      "bandTarget": 8.0,
+      "criterionTarget": "Fluency & Coherence / Grammatical Range"
+    },
+    {
+      "id": "formula-02",
+      "formulaName": "The Nuanced Frequency & Preference Formula",
+      "structure": "More often than not, I tend to gravitate towards [Option A]; however, whenever circumstances dictate, I readily opt for [Option B].",
+      "example": "More often than not, I tend to gravitate towards classical literature; however, whenever time is constrained, I readily opt for concise audiobooks.",
+      "bandTarget": 8.5,
+      "criterionTarget": "Lexical Resource & Fluency"
+    },
+    {
+      "id": "formula-03",
+      "formulaName": "The Hypothetical Past & Present Reflection",
+      "structure": "Had I not been exposed to [Event/Person], my perspective on [Subject] would undoubtedly be fundamentally different today.",
+      "example": "Had I not taken part in an international exchange programme, my perspective on global collaboration would undoubtedly be fundamentally different today.",
+      "bandTarget": 9.0,
+      "criterionTarget": "Grammatical Range and Accuracy (Inverted Third Conditional)"
+    }
+  ],
+  "authenticTranscripts": [
+    {
+      "act": "Prologue",
+      "title": "Embarrassment & Social Perception",
+      "speakers": [
+        "Elna Baker",
+        "Jane Marie"
+      ],
+      "theme": "Psychological Resilience & Self-Consciousness",
+      "keyCollocations": [
+        "take the lesson to heart",
+        "center of the universe",
+        "inner critic",
+        "scrappy and opinionated"
+      ],
+      "excerpt": "To be embarrassed would be to assume that anyone in this room or anyone who witnessed this actually spends more than 5 seconds thinking about me. And they do not... This worldview, that others were not judging her, helped her not judge herself."
+    },
+    {
+      "act": "Act Two",
+      "title": "Judgment Day & Linguistic Awareness",
+      "speakers": [
+        "Elna Baker"
+      ],
+      "theme": "Communication, Pronunciation & Vulnerability",
+      "keyCollocations": [
+        "mispronouncing the word",
+        "break out into a rash",
+        "incongruous",
+        "reveal sides of ourselves"
+      ],
+      "excerpt": "I learned from a coworker that all my life I have been mispronouncing the word incongruous. Embarrassment is on me all the time, and I want to get it off... The best stories say so much about us, reveal sides of ourselves maybe we would rather not see."
+    }
+  ]
+}

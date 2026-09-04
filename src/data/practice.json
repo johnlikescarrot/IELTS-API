@@ -1,0 +1,148 @@
+{
+  "readingTests": [
+    {
+      "id": "read-test-001",
+      "title": "The Impact of Artificial Intelligence on Contemporary Education",
+      "module": "Academic",
+      "passage": "In the twenty-first century, artificial intelligence (AI) has swiftly transitioned from an experimental niche into an integral component of pedagogy. Automated evaluation systems, adaptive learning algorithms, and intelligent tutoring platforms are transforming how knowledge is disseminated and acquired. By analyzing student interaction data in real time, adaptive platforms can calibrate pedagogical pacing to individual cognitive needs, thereby mitigating the one-size-fits-all constraint inherent in traditional classrooms.\n\nHowever, educational theorists caution against uncritical technophilia. While algorithmic tools can process standardized assessment items with remarkable speed, they cannot replicate the empathetic and motivational resonance provided by human educators. Furthermore, excessive reliance on automated feedback risks diminishing critical metacognitive skills among learners. Consequently, contemporary experts advocate for a symbiotic paradigm where technological tools augment rather than replace human instruction.",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "True/False/Not Given",
+          "question": "Adaptive learning algorithms adjust learning speeds based on live student data.",
+          "options": ["TRUE", "FALSE", "NOT GIVEN"],
+          "correctAnswer": "TRUE",
+          "explanation": "The passage explicitly states: By analyzing student interaction data in real time, adaptive platforms can calibrate pedagogical pacing to individual cognitive needs."
+        },
+        {
+          "id": "q2",
+          "type": "Multiple Choice",
+          "question": "What is the primary concern raised by educational theorists regarding AI in classrooms?",
+          "options": [
+            "A) AI systems are prohibitively expensive for most public institutions.",
+            "B) AI cannot duplicate human empathy and may harm metacognitive development.",
+            "C) AI platforms generate inaccurate grades on standardized exams.",
+            "D) Students universally reject automated tutoring systems."
+          ],
+          "correctAnswer": "B",
+          "explanation": "The passage notes that AI cannot replicate empathetic resonance and excessive reliance risks diminishing critical metacognitive skills."
+        },
+        {
+          "id": "q3",
+          "type": "Multiple Choice",
+          "question": "According to the passage, the recommended approach to AI integration is:",
+          "options": [
+            "A) A complete replacement of classroom teachers by intelligent software.",
+            "B) A total ban on algorithmic tools in foundational education.",
+            "C) A symbiotic partnership where technology augments human educators.",
+            "D) Confining AI solely to administrative scheduling tasks."
+          ],
+          "correctAnswer": "C",
+          "explanation": "The final sentence highlights: contemporary experts advocate for a symbiotic paradigm where technological tools augment rather than replace human instruction."
+        }
+      ]
+    },
+    {
+      "id": "read-test-002",
+      "title": "Urban Rewilding and Biodiversity in Modern Megacities",
+      "module": "Academic",
+      "passage": "Urban rewilding is an ecological restoration strategy aimed at reintroducing natural flora and fauna into metropolitan environments. Unlike conventional manicured parks, rewilded spaces prioritize ecological autonomy, allowing native species to colonize green corridors, vertical gardens, and permeable wetlands without intensive human maintenance. In cities such as Singapore and London, rewilding initiatives have proven instrumental in lowering urban heat island effects, managing stormwater runoff, and enhancing mental well-being among urban inhabitants.\n\nNevertheless, municipal authorities encounter logistical challenges when executing rewilding projects. Community concerns regarding wildlife encounters, allergens from wild grasses, and potential structural interference from invasive root systems necessitate meticulous ecological modeling and public education campaigns. When balanced effectively, rewilding presents a robust blueprint for climate resilience.",
+      "questions": [
+        {
+          "id": "q1",
+          "type": "True/False/Not Given",
+          "question": "Rewilded urban spaces require more frequent human landscaping than traditional manicured parks.",
+          "options": ["TRUE", "FALSE", "NOT GIVEN"],
+          "correctAnswer": "FALSE",
+          "explanation": "The passage specifies that rewilded spaces prioritize ecological autonomy without intensive human maintenance."
+        },
+        {
+          "id": "q2",
+          "type": "Multiple Choice",
+          "question": "Which of the following is NOT mentioned as a benefit of urban rewilding?",
+          "options": [
+            "A) Reduction of urban heat island effects",
+            "B) Increased public revenue through timber production",
+            "C) Stormwater runoff management",
+            "D) Enhanced psychological well-being for citizens"
+          ],
+          "correctAnswer": "B",
+          "explanation": "Timber production is never mentioned in the text."
+        }
+      ]
+    },
+    {
+      "id": "read-test-003",
+      "title": "Renewable Energy Transition in Global Infrastructure",
+      "module": "Academic",
+      "passage": "The transition to clean renewable energy systems is imperative to stabilize global climate systems. Solar photovoltaic and offshore wind energy now represent the lowest-cost generation technologies across major economies. Advanced lithium-ion battery storage and green hydrogen fuel cells provide scalable grid stabilization. Regulatory policies and feed-in tariffs encourage private sector investments in distributed microgrids.",
+      "questions": [
+        {
+          "id": "rq1",
+          "type": "True/False/Not Given",
+          "question": "Solar and offshore wind represent low-cost generation technologies.",
+          "correctAnswer": "TRUE",
+          "explanation": "Passage states they represent the lowest-cost generation technologies."
+        },
+        {
+          "id": "rq2",
+          "type": "True/False/Not Given",
+          "question": "Batteries and hydrogen fuel cells provide grid stabilization.",
+          "correctAnswer": "TRUE",
+          "explanation": "Passage states they provide scalable grid stabilization."
+        },
+        {
+          "id": "rq3",
+          "type": "True/False/Not Given",
+          "question": "Feed-in tariffs encourage private sector microgrid investment.",
+          "correctAnswer": "TRUE",
+          "explanation": "Passage states tariffs encourage private investments."
+        },
+        {
+          "id": "rq4",
+          "type": "True/False/Not Given",
+          "question": "Fossil fuels are expanding rapidly in global economies.",
+          "correctAnswer": "FALSE",
+          "explanation": "The text discusses clean energy replacing traditional infrastructure."
+        },
+        {
+          "id": "rq5",
+          "type": "True/False/Not Given",
+          "question": "Nuclear power is the sole energy source discussed in the text.",
+          "correctAnswer": "FALSE",
+          "explanation": "Solar, wind, battery, and hydrogen are discussed."
+        }
+      ]
+    }
+  ],
+  "listeningTests": [
+    {
+      "id": "listen-test-001",
+      "section": 1,
+      "context": "A student calling a university accommodation office to inquire about tenancy requirements and deposit conditions.",
+      "transcript": "Officer: Good morning, Student Accommodation Office. How can I assist you today?\nStudent: Hello! I am looking into on-campus housing options for the upcoming autumn semester. Could you tell me what documents are required?\nOfficer: Certainly. You will need your official letter of acceptance, a photocopy of your valid passport, and proof of financial support. Also, a security deposit of four hundred and fifty pounds is required upon booking.\nStudent: Is that deposit refundable at the end of the tenancy period?\nOfficer: Yes, provided there is no structural damage to the room and all utility bills are settled.",
+      "questions": [
+        {
+          "id": "lq1",
+          "type": "Fill in the blank",
+          "question": "The security deposit required upon booking is £___.",
+          "correctAnswer": "450",
+          "explanation": "The officer states: a security deposit of four hundred and fifty pounds is required upon booking."
+        },
+        {
+          "id": "lq2",
+          "type": "Multiple Choice",
+          "question": "The deposit is refundable under what condition?",
+          "options": [
+            "A) The student renews the contract for another academic year.",
+            "B) No structural damage is caused and all utility bills are paid.",
+            "C) The student achieves a minimum band score of 7.0.",
+            "D) The keys are returned within 24 hours of arrival."
+          ],
+          "correctAnswer": "B",
+          "explanation": "The officer clarifies: provided there is no structural damage to the room and all utility bills are settled."
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,218 @@
+{
+  "bandDescriptors": {
+    "task1": {
+      "9": {
+        "taskAchievement": "Fully satisfies all requirements of the task. Clearly presents a fully developed response.",
+        "coherenceAndCohesion": "Uses cohesion in such a way that it attracts no attention. Skilfully manages paragraphing.",
+        "lexicalResource": "Uses a wide range of vocabulary with very natural and sophisticated control of lexical features; rare minor errors occur only as slips.",
+        "grammaticalRangeAndAccuracy": "Uses a wide range of structures with full flexibility and accuracy; rare minor errors occur only as slips."
+      },
+      "8": {
+        "taskAchievement": "Covers all requirements of the task appropriately, relevantly and sufficiently. Presents a clear overview of main trends, differences or stages.",
+        "coherenceAndCohesion": "Sequences information and ideas logically. Manages all aspects of cohesion well. Uses paragraphing sufficiently and appropriately.",
+        "lexicalResource": "Uses a wide range of vocabulary fluently and flexibly to convey precise meanings. Skilfully uses uncommon lexical items with occasional inaccuracies in word choice and collocation.",
+        "grammaticalRangeAndAccuracy": "Uses a wide range of structures. The majority of sentences are error-free. Makes only occasional errors or non-systematic inaccuracies."
+      },
+      "7": {
+        "taskAchievement": "Covers the requirements of the task. Presents a clear overview of main trends, differences or stages. Clearly presents and highlights key features/bullet points but could be more fully extended.",
+        "coherenceAndCohesion": "Logically organises information and ideas; there is clear progression throughout. Uses a range of cohesive devices appropriately although there may be some under-/over-use.",
+        "lexicalResource": "Uses a sufficient range of vocabulary to allow some flexibility and precision. Uses less common lexical items with some awareness of style and collocation.",
+        "grammaticalRangeAndAccuracy": "Uses a variety of complex structures. Produces frequent error-free sentences. Has good control of grammar and punctuation but may make a few errors."
+      },
+      "6": {
+        "taskAchievement": "Addresses the requirements of the task. Presents an overview with information appropriately selected. Key features are adequately highlighted but details may be irrelevant, inappropriate or inaccurate.",
+        "coherenceAndCohesion": "Arranges information and ideas coherently and there is a clear overall progression. Uses cohesive devices effectively, but cohesion within and/or between sentences may be faulty or mechanical.",
+        "lexicalResource": "Uses an adequate range of vocabulary for the task. Attempts to use less common vocabulary but with some inaccuracy. Makes some errors in spelling and/or word formation, but they do not impede communication.",
+        "grammaticalRangeAndAccuracy": "Uses a mix of simple and complex sentence forms. Makes some errors in grammar and punctuation but they rarely reduce communication."
+      },
+      "5": {
+        "taskAchievement": "Generally addresses the task; the format may be inappropriate in places. Recounts detail mechanically with no clear overview. Key features may not be selected.",
+        "coherenceAndCohesion": "Presents information with some organisation but there may be a lack of overall progression. Makes inadequate, inaccurate or over-use of cohesive devices.",
+        "lexicalResource": "Uses a limited range of vocabulary, but this is minimally adequate for the task. May make noticeable errors in spelling and/or word formation that cause difficulty for the reader.",
+        "grammaticalRangeAndAccuracy": "Uses only a limited range of structures. Attempts complex sentences but these tend to be less accurate than simple sentences."
+      }
+    },
+    "task2": {
+      "9": {
+        "taskResponse": "Fully addresses all parts of the task. Presents a fully developed position in answer to the question with relevant, fully extended and well supported ideas.",
+        "coherenceAndCohesion": "Uses cohesion in such a way that it attracts no attention. Skilfully manages paragraphing.",
+        "lexicalResource": "Uses a wide range of vocabulary with very natural and sophisticated control of lexical features; rare minor errors occur only as slips.",
+        "grammaticalRangeAndAccuracy": "Uses a wide range of structures with full flexibility and accuracy; rare minor errors occur only as slips."
+      },
+      "8": {
+        "taskResponse": "Sufficiently addresses all parts of the task. Presents a well-developed response to the question with relevant, extended and supported ideas.",
+        "coherenceAndCohesion": "Sequences information and ideas logically. Manages all aspects of cohesion well. Uses paragraphing sufficiently and appropriately.",
+        "lexicalResource": "Uses a wide range of vocabulary fluently and flexibly to convey precise meanings. Skilfully uses uncommon lexical items with occasional inaccuracies.",
+        "grammaticalRangeAndAccuracy": "Uses a wide range of structures. The majority of sentences are error-free. Makes only occasional errors or non-systematic inaccuracies."
+      },
+      "7": {
+        "taskResponse": "Addresses all parts of the task. Presents a clear position throughout the response. Presents, extends and supports main ideas, but there may be a tendency to over-generalise.",
+        "coherenceAndCohesion": "Logically organises information and ideas; there is clear progression throughout. Uses a range of cohesive devices appropriately although there may be some under-/over-use.",
+        "lexicalResource": "Uses a sufficient range of vocabulary to allow some flexibility and precision. Uses less common lexical items with some awareness of style and collocation.",
+        "grammaticalRangeAndAccuracy": "Uses a variety of complex structures. Produces frequent error-free sentences. Has good control of grammar and punctuation but may make a few errors."
+      },
+      "6": {
+        "taskResponse": "Addresses all parts of the task although some parts may be more fully covered than others. Presents a relevant position although the conclusions may become unclear or repetitive.",
+        "coherenceAndCohesion": "Arranges information and ideas coherently and there is a clear overall progression. Uses cohesive devices effectively, but cohesion within and/or between sentences may be faulty or mechanical.",
+        "lexicalResource": "Uses an adequate range of vocabulary for the task. Attempts to use less common vocabulary but with some inaccuracy. Makes some errors in spelling and/or word formation.",
+        "grammaticalRangeAndAccuracy": "Uses a mix of simple and complex sentence forms. Makes some errors in grammar and punctuation but they rarely reduce communication."
+      },
+      "5": {
+        "taskResponse": "Addresses the task only partially; the format may be inappropriate in places. Expresses a position but the development is not always clear. Presents some main ideas but these are limited and not sufficiently developed.",
+        "coherenceAndCohesion": "Presents information with some organisation but there may be a lack of overall progression. Makes inadequate, inaccurate or over-use of cohesive devices.",
+        "lexicalResource": "Uses a limited range of vocabulary, but this is minimally adequate for the task. May make noticeable errors in spelling and/or word formation.",
+        "grammaticalRangeAndAccuracy": "Uses only a limited range of structures. Attempts complex sentences but these tend to be less accurate than simple sentences."
+      }
+    }
+  },
+  "promptsAndSamples": [
+    {
+      "id": "task2-001",
+      "taskType": "task2",
+      "title": "Advertising Effectiveness vs Saturation",
+      "category": "Media & Marketing",
+      "questionType": "Discuss both views and give your opinion",
+      "prompt": "Some people say that advertising is extremely successful at persuading us to buy things. Other people think that advertising is so common that we no longer pay attention to it. Discuss both these views and give your own opinion. Give reasons for your answer and include any relevant examples from your own knowledge or experience. Write at least 250 words.",
+      "sampleEssay": "Advertisement has always been a crucial part in the world of marketing. Throughout the decade, we have seen a significant increase in the amount of advertisements, whether it is on the media via television or widespread through social network platforms. The goal of advertisements is to get consumers to buy a targeted product, and while this method has been proven considerably successful generally, some people view it as too prevalent to catch the consumers attention any more.\n\nAdvertisements can act as a strong persuasion device to seemingly hypnotize people into buying goods and services. This is so because of the tactics placed in the messages, such as showing people having a good time together when using a particular product, using bandwagon, showing only the upsides of usage, and applying compare and contrast strategies to show the effects of using the product and make it stand out. Even if people do not know it, these messages are repeated several times and soon it may brainwash people to finally go out and get the product. For instance, if a person is watching television and sees a certain advertisement of a snack many times, the repeated sight of the scrumptious food may result in that person feeling hungry and succumbing to the advertisement at last.\n\nNevertheless, there is another point of view in which the widespread of advertisements makes it a normal thing. After watching a dozen of advertisements people will see it as a mere every day routine and cease to pay attention to the message of the advertisement. Some people may even choose to turn off a television channel, for instance, only just to avoid seeing and hearing repetitive advertisements. After a certain frequency, they start to get bored and stop paying attention to ads. Hence, in the end, the main goal of advertisements is not complete since the people whom the messages are sent out to do not receive that message. A real life example can be seen from advertisements in a particular social media platform, YouTube. In the YouTube marketing mechanism advertisements are placed before and in between videos, hoping that the viewers would also be forced to watch the advertisements, too. However, this is not usually the case, since many people would just click \"Skip Ad\" and continue on.\n\nIn conclusion, advertisements can be successful in persuading people to purchase goods and services, or they can be unsuccessful in many ways. They are very commonly seen nowadays, but not all of them fulfill their purpose. Thus, advertisements must be designed and presented in the correct way to result in the highest effectiveness.",
+      "bandScore": 7.5,
+      "wordCount": 395,
+      "examinerFeedback": {
+        "taskResponse": "This candidate has addressed all parts of the prompt and presents a clear position throughout the response. Main ideas are presented, extended and supported.",
+        "coherenceAndCohesion": "Ideas and information are presented logically and there is a clear progression throughout the answer. There is a range of cohesive devices (For instance, Nevertheless, Hence, A real life example, However, In conclusion, Thus), including reference and substitution (this method, this is so, these messages).",
+        "lexicalResource": "The range of vocabulary is wide enough to show some precise meanings and also shows less common items (prevalent, hypnotize, tactics, brainwash, succumbing) and collocations (significant increase, catch the consumers attention, having a good time together, compare and contrast strategies).",
+        "grammaticalRangeAndAccuracy": "There is a variety of complex structures and the writer shows good control over grammar and punctuation."
+      }
+    },
+    {
+      "id": "task2-002",
+      "taskType": "task2",
+      "title": "Artificial Intelligence and Employment",
+      "category": "Technology & Society",
+      "questionType": "Advantages and Disadvantages",
+      "prompt": "In recent years, artificial intelligence and automation technologies have developed rapidly and are replacing human labor in various sectors. Do the advantages of this development outweigh the disadvantages? Write at least 250 words.",
+      "sampleEssay": "The swift rise of artificial intelligence and automated systems is reshaping the modern labor landscape. While some critics argue that automation exacerbates unemployment and widens socio-economic disparities, I firmly believe that the long-term benefits in terms of productivity, safety, and innovation significantly outweigh the immediate drawbacks.\n\nOn the one hand, technological displacement undeniably creates short-term friction in the workforce. Routine manual tasks and administrative roles are increasingly delegated to intelligent algorithms, which can lead to redundancy among low-skilled laborers who may struggle to transition into technical industries. Furthermore, the rapid pace of digital transformation can leave educational systems lagging behind, resulting in structural unemployment. Consequently, governments must invest substantially in retraining programs to mitigate these societal shocks.\n\nOn the other hand, the advantages of artificial intelligence are transformative. Firstly, AI dramatically enhances operational efficiency and eradicates human error in high-precision domains, such as surgical medicine, aeronautics, and manufacturing. By delegating hazardous and repetitive duties to automated systems, human workers are shielded from workplace hazards. Secondly, historical precedents illustrate that technological revolutions inevitably generate entirely new industries and professions that were previously unimaginable, such as data engineering, cyber security, and machine learning oversight. Ultimately, this shifts human employment toward creative problem-solving and interpersonal roles.\n\nIn conclusion, although the automation wave introduces legitimate challenges regarding job transition and skill retraining, its capacity to elevate overall human living standards and drive economic innovation ensures that its advantages are far more substantial than its negative impacts.",
+      "bandScore": 8.5,
+      "wordCount": 272,
+      "examinerFeedback": {
+        "taskResponse": "Comprehensive answer with a fully developed argument, clearly stated stance, and rigorous supporting rationale throughout.",
+        "coherenceAndCohesion": "Exemplary paragraphing, natural and varied cohesive links (On the one hand, Furthermore, Consequently, On the other hand, Firstly, Secondly, In conclusion).",
+        "lexicalResource": "Sophisticated academic register with accurate collocations (technological displacement, socio-economic disparities, structural unemployment, operational efficiency, historical precedents).",
+        "grammaticalRangeAndAccuracy": "Wide flexibility of complex syntax, subordinate clauses, passive voice, and flawless punctuation."
+      }
+    },
+    {
+      "id": "task1-001",
+      "taskType": "task1",
+      "title": "Renewable Energy Production by Source (2010-2025)",
+      "category": "Environment & Energy",
+      "questionType": "Line Graph Overview",
+      "prompt": "The graph below shows the amount of electricity generated from four renewable energy sources (Solar, Wind, Hydroelectric, and Biomass) in a European nation between 2010 and 2025. Summarise the information by selecting and reporting the main features, and make comparisons where relevant. Write at least 150 words.",
+      "sampleEssay": "The line graph illustrates the quantity of electricity produced by four distinct renewable energy sources—Solar, Wind, Hydroelectric, and Biomass—in a particular European country over a fifteen-year timeframe spanning from 2010 to 2025, measured in terawatt-hours (TWh).\n\nOverall, it is evident that total renewable energy output experienced an upward trajectory across the entire period. While hydroelectric power remained the dominant energy producer throughout most of the period, solar energy exhibited the most exponential growth, nearly matching hydro by the end of the projection.\n\nIn 2010, hydroelectric generation was by far the highest contributor at approximately 80 TWh, followed distantly by wind at 35 TWh, biomass at 20 TWh, and solar at a negligible 5 TWh. Hydroelectric power fluctuated marginally over the following years before plateauing around 90 TWh by 2025.\n\nIn stark contrast, solar power underwent a dramatic surge, especially after 2018, climbing steeply to reach 85 TWh in 2025. Wind energy also registered steady progress, rising to 60 TWh by the terminal year. Conversely, biomass witnessed modest, linear gains, concluding at just under 30 TWh in 2025.",
+      "bandScore": 8.5,
+      "wordCount": 182,
+      "examinerFeedback": {
+        "taskAchievement": "Presents a clear, well-developed overview identifying key trends and accurate data comparisons without unnecessary listing.",
+        "coherenceAndCohesion": "Information is logically grouped into an overview paragraph and two detailed comparison paragraphs with seamless linking phrases.",
+        "lexicalResource": "Rich graphical description vocabulary (upward trajectory, dominant energy producer, exponential growth, plateauing, stark contrast, surge, linear gains).",
+        "grammaticalRangeAndAccuracy": "Varied complex structures and participle clauses with complete grammatical precision."
+      }
+    }
+  ],
+  "cohesiveDevices": {
+    "addition": [
+      "Furthermore",
+      "Moreover",
+      "In addition",
+      "Additionally",
+      "Besides",
+      "Not only... but also",
+      "Coupled with",
+      "Equally important"
+    ],
+    "contrast": [
+      "However",
+      "Nevertheless",
+      "On the contrary",
+      "In stark contrast",
+      "Conversely",
+      "Whereas",
+      "While",
+      "Despite this",
+      "On the other hand"
+    ],
+    "causeAndEffect": [
+      "Consequently",
+      "Therefore",
+      "As a result",
+      "Thus",
+      "Hence",
+      "For this reason",
+      "Accordingly",
+      "Due to this",
+      "It follows that"
+    ],
+    "exemplification": [
+      "For instance",
+      "For example",
+      "To illustrate",
+      "A prime example of this is",
+      "Specifically",
+      "Namely",
+      "As evidenced by"
+    ],
+    "clarification": [
+      "In other words",
+      "That is to say",
+      "To put it another way",
+      "More precisely",
+      "Essentially"
+    ],
+    "conclusion": [
+      "In conclusion",
+      "To summarize",
+      "Overall",
+      "Ultimately",
+      "Taking everything into account",
+      "To recap",
+      "All things considered"
+    ]
+  },
+  "vocabularyTiers": {
+    "band6": [
+      "good",
+      "bad",
+      "big",
+      "important",
+      "help",
+      "show",
+      "make",
+      "get",
+      "think",
+      "people"
+    ],
+    "band7": [
+      "beneficial",
+      "detrimental",
+      "substantial",
+      "crucial",
+      "facilitate",
+      "demonstrate",
+      "generate",
+      "acquire",
+      "maintain",
+      "individuals"
+    ],
+    "band8Plus": [
+      "advantageous",
+      "deleterious",
+      "monumental",
+      "paramount",
+      "catalyze",
+      "exemplify",
+      "engender",
+      "attain",
+      "posit",
+      "populace"
+    ]
+  }
+}

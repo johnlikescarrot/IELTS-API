@@ -1,0 +1,907 @@
+[
+  {
+    "id": 1,
+    "name": "Seneca College",
+    "chineseName": "圣力嘉学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Toronto",
+    "address": "1750 Finch Ave E, Toronto, ON M2J 2X5",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Computer Programming",
+      "International Business",
+      "Animation",
+      "Practical Nursing"
+    ],
+    "website": "https://www.senecapolytechnic.ca"
+  },
+  {
+    "id": 2,
+    "name": "Centennial College",
+    "chineseName": "百年理工学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Toronto",
+    "address": "941 Progress Ave, Toronto, ON M1K 5E9",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Software Engineering",
+      "Aviation Technician",
+      "Hospitality",
+      "Culinary Arts"
+    ],
+    "website": "https://www.centennialcollege.ca"
+  },
+  {
+    "id": 3,
+    "name": "George Brown College",
+    "chineseName": "乔治布朗学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Toronto",
+    "address": "160 Kendal Ave, Toronto, ON M5R 1M3",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Chef Training",
+      "Construction Management",
+      "Graphic Design",
+      "Dental Hygiene"
+    ],
+    "website": "https://www.georgebrown.ca"
+  },
+  {
+    "id": 4,
+    "name": "Humber College",
+    "chineseName": "汉博学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Toronto",
+    "address": "205 Humber College Blvd, Toronto, ON M9W 5L7",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Business Administration",
+      "Media Communications",
+      "Film and Television",
+      "Design"
+    ],
+    "website": "https://humber.ca"
+  },
+  {
+    "id": 5,
+    "name": "Conestoga College",
+    "chineseName": "康尼斯托加学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Kitchener",
+    "address": "299 Doon Valley Dr, Kitchener, ON N2G 4M4",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Computer Applications Development",
+      "Mechanical Engineering",
+      "Health Care Administration"
+    ],
+    "website": "https://www.conestogac.on.ca"
+  },
+  {
+    "id": 6,
+    "name": "Algonquin College",
+    "chineseName": "亚岗昆学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Ottawa",
+    "address": "1385 Woodroffe Ave, Nepean, ON K2G 1V8",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Interactive Media Design",
+      "Cyber Security Analysis",
+      "Mobile Application Design"
+    ],
+    "website": "https://www.algonquincollege.com"
+  },
+  {
+    "id": 7,
+    "name": "Fanshawe College",
+    "chineseName": "范莎学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "London",
+    "address": "1001 Fanshawe College Blvd, London, ON N5Y 5R6",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Aviation Technology",
+      "Broadcasting - Television",
+      "Music Industry Arts"
+    ],
+    "website": "https://www.fanshawec.ca"
+  },
+  {
+    "id": 8,
+    "name": "Cambrian College",
+    "chineseName": "凯布莱恩学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Sudbury",
+    "address": "1400 Barry Downe Rd, Sudbury, ON P3A 3V8",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Mining Engineering Technology",
+      "Heavy Equipment Technician",
+      "Power Engineering Technology"
+    ],
+    "website": "https://cambriancollege.ca"
+  },
+  {
+    "id": 9,
+    "name": "Lambton College",
+    "chineseName": "莱姆顿学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Sarnia",
+    "address": "1457 London Rd, Sarnia, ON N7S 6K4",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Cloud Computing for Big Data",
+      "Chemical Production Engineering Technology",
+      "Quality Engineering"
+    ],
+    "website": "https://www.lambtoncollege.ca"
+  },
+  {
+    "id": 10,
+    "name": "Georgian College",
+    "chineseName": "乔治亚学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Barrie",
+    "address": "1 Georgian Dr, Barrie, ON L4M 3X9",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Automotive Business",
+      "Marine Technology",
+      "Hospitality Management"
+    ],
+    "website": "https://www.georgiancollege.ca"
+  },
+  {
+    "id": 11,
+    "name": "Mohawk College",
+    "chineseName": "莫哈克学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Hamilton",
+    "address": "135 Fennell Ave W, Hamilton, ON L9C 1E9",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Computer Science",
+      "Medical Radiation Sciences",
+      "Supply Chain Management"
+    ],
+    "website": "https://www.mohawkcollege.ca"
+  },
+  {
+    "id": 12,
+    "name": "Confederation College",
+    "chineseName": "联邦学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Thunder Bay",
+    "address": "1450 Nakina Drive, Thunder Bay, ON P7C 4W1",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Aviation - Flight Management",
+      "Forestry",
+      "Paramedic"
+    ],
+    "website": "https://www.confederationcollege.ca"
+  },
+  {
+    "id": 13,
+    "name": "Niagara College",
+    "chineseName": "尼亚加拉学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Welland",
+    "address": "100 Niagara College Boulevard, Welland, ON L3C 7L3",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Winery and Viticulture",
+      "Brewmaster & Brewery Management",
+      "Culinary Innovation"
+    ],
+    "website": "https://www.niagaracollege.ca"
+  },
+  {
+    "id": 14,
+    "name": "Northern College",
+    "chineseName": "北方学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Timmins",
+    "address": "640 Latchford Street, Haileybury ON P0J 1K0",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Veterinary Sciences",
+      "Mining Engineering",
+      "Welding Engineering"
+    ],
+    "website": "https://www.northernc.on.ca"
+  },
+  {
+    "id": 15,
+    "name": "St. Clair College",
+    "chineseName": "圣克莱尔学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Windsor",
+    "address": "2000 Talbot Road West, Windsor, ON N9A 6S4",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Data Analytics for Business",
+      "Robotics and Automation",
+      "Biomedical Engineering"
+    ],
+    "website": "https://www.stclaircollege.ca"
+  },
+  {
+    "id": 16,
+    "name": "Sheridan College",
+    "chineseName": "谢尔丹学院",
+    "type": "Public College",
+    "province": "Ontario",
+    "provinceCode": "ON",
+    "city": "Oakville",
+    "address": "1430 Trafalgar Rd, Oakville, ON L6H 2L1",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Animation",
+      "Game Design",
+      "Illustration",
+      "Interaction Design"
+    ],
+    "website": "https://www.sheridancollege.ca"
+  },
+  {
+    "id": 17,
+    "name": "Southern Alberta Institute of Technology (SAIT)",
+    "chineseName": "南阿尔伯塔理工学院",
+    "type": "Public Polytechnic",
+    "province": "Alberta",
+    "provinceCode": "AB",
+    "city": "Calgary",
+    "address": "1301 16 Ave NW, Calgary, AB T2M 0L4",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 6.0
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Petroleum Engineering Technology",
+      "Information Technology",
+      "Hospitality Management"
+    ],
+    "website": "https://www.sait.ca"
+  },
+  {
+    "id": 18,
+    "name": "Bow Valley College",
+    "chineseName": "博瓦立学院",
+    "type": "Public College",
+    "province": "Alberta",
+    "provinceCode": "AB",
+    "city": "Calgary",
+    "address": "345 6 Ave SE, Calgary, AB T2G 4V1",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Health Care Aide",
+      "Business Administration",
+      "Software Development"
+    ],
+    "website": "https://bowvalleycollege.ca"
+  },
+  {
+    "id": 19,
+    "name": "Red River College Polytechnic",
+    "chineseName": "红河学院",
+    "type": "Public Polytechnic",
+    "province": "Manitoba",
+    "provinceCode": "MB",
+    "city": "Winnipeg",
+    "address": "2055 Notre Dame Ave, Winnipeg, MB R3H 0J9",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Applied Commerce & Management",
+      "Creative Arts",
+      "Engineering Technology"
+    ],
+    "website": "https://www.rrc.ca"
+  },
+  {
+    "id": 20,
+    "name": "Manitoba Institute of Trades and Technology (MITT)",
+    "chineseName": "曼尼托巴理工学院",
+    "type": "Public Polytechnic",
+    "province": "Manitoba",
+    "provinceCode": "MB",
+    "city": "Winnipeg",
+    "address": "130 Henlow Bay, Winnipeg, MB R3Y 1G4",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Network Security",
+      "Software Developer",
+      "Cyber Defense"
+    ],
+    "website": "https://mitt.ca"
+  },
+  {
+    "id": 21,
+    "name": "Assiniboine Community College",
+    "chineseName": "阿西尼伯因社区学院",
+    "type": "Public College",
+    "province": "Manitoba",
+    "provinceCode": "MB",
+    "city": "Brandon",
+    "address": "1430 Victoria Ave E, Brandon, MB R7A 2A9",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Agribusiness",
+      "Culinary Arts",
+      "Civil Engineering Technology"
+    ],
+    "website": "https://assiniboine.net"
+  },
+  {
+    "id": 22,
+    "name": "Saskatchewan Polytechnic",
+    "chineseName": "萨省理工学院",
+    "type": "Public Polytechnic",
+    "province": "Saskatchewan",
+    "provinceCode": "SK",
+    "city": "Regina",
+    "address": "4500 Wascana Pkwy, Regina, SK S4P 3A3",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.5,
+        "minSubscore": 5.0
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Business Information Systems",
+      "Bioscience Technology",
+      "Interactive Design"
+    ],
+    "website": "https://saskpolytech.ca"
+  },
+  {
+    "id": 23,
+    "name": "Langara College",
+    "chineseName": "兰加拉学院",
+    "type": "Public College",
+    "province": "British Columbia",
+    "provinceCode": "BC",
+    "city": "Vancouver",
+    "address": "100 W 49th Ave, Vancouver, BC V5Y 2Z6",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "University Transfer",
+      "Data Analytics",
+      "Web and Mobile App Development"
+    ],
+    "website": "https://langara.ca"
+  },
+  {
+    "id": 24,
+    "name": "British Columbia Institute of Technology (BCIT)",
+    "chineseName": "卑诗理工学院",
+    "type": "Public Polytechnic",
+    "province": "British Columbia",
+    "provinceCode": "BC",
+    "city": "Burnaby",
+    "address": "3700 Willingdon Ave, Burnaby, BC V5G 3H2",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 7.0,
+        "minSubscore": 6.5
+      }
+    },
+    "popularPrograms": [
+      "Computer Systems Technology (CST)",
+      "Architectural and Building Technology",
+      "Civil Engineering"
+    ],
+    "website": "https://www.bcit.ca"
+  },
+  {
+    "id": 25,
+    "name": "Vancouver Community College (VCC)",
+    "chineseName": "温哥华社区学院",
+    "type": "Public College",
+    "province": "British Columbia",
+    "provinceCode": "BC",
+    "city": "Vancouver",
+    "address": "1155 East Broadway, Vancouver, BC V5T 4V5",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Culinary Arts",
+      "Hospitality Management",
+      "Automotive Service Technology"
+    ],
+    "website": "https://www.vcc.ca"
+  },
+  {
+    "id": 26,
+    "name": "Douglas College",
+    "chineseName": "道格拉斯学院",
+    "type": "Public College",
+    "province": "British Columbia",
+    "provinceCode": "BC",
+    "city": "New Westminster",
+    "address": "700 Royal Ave, New Westminster, BC V3M 5Z5",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Computing Science",
+      "Business Administration",
+      "Criminology"
+    ],
+    "website": "https://www.douglascollege.ca"
+  },
+  {
+    "id": 27,
+    "name": "Camosun College",
+    "chineseName": "卡莫森学院",
+    "type": "Public College",
+    "province": "British Columbia",
+    "provinceCode": "BC",
+    "city": "Victoria",
+    "address": "3100 Foul Bay Rd, Victoria, BC V8P 5J2",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Information and Computer Systems",
+      "Engineering Graphics & Design",
+      "Sport Management"
+    ],
+    "website": "https://camosun.ca"
+  },
+  {
+    "id": 28,
+    "name": "Coquitlam College",
+    "chineseName": "高贵林学院",
+    "type": "Private College",
+    "province": "British Columbia",
+    "provinceCode": "BC",
+    "city": "Coquitlam",
+    "address": "516 Brookmere Ave, Coquitlam, BC V3J 1W9",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "University Transfer Program",
+      "Senior Secondary Program",
+      "Associate of Arts Degree"
+    ],
+    "website": "https://www.coquitlamcollege.com"
+  },
+  {
+    "id": 29,
+    "name": "Columbia College",
+    "chineseName": "哥伦比亚学院",
+    "type": "Private College",
+    "province": "British Columbia",
+    "provinceCode": "BC",
+    "city": "Vancouver",
+    "address": "438 Terminal Ave, Vancouver, BC V6A 0C1",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Associate Degrees",
+      "University Transfer",
+      "High School Completion"
+    ],
+    "website": "https://www.columbiacollege.ca"
+  },
+  {
+    "id": 30,
+    "name": "Alexander College",
+    "chineseName": "亚历山大学院",
+    "type": "Private College",
+    "province": "British Columbia",
+    "provinceCode": "BC",
+    "city": "Burnaby",
+    "address": "4603 Kingsway #101, Burnaby, BC V5H 4M4",
+    "ieltsRequirements": {
+      "diploma": {
+        "overall": 6.0,
+        "minSubscore": 5.5
+      },
+      "postGraduate": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      },
+      "degree": {
+        "overall": 6.5,
+        "minSubscore": 6.0
+      }
+    },
+    "popularPrograms": [
+      "Associate of Science",
+      "Associate of Arts",
+      "University Transfer"
+    ],
+    "website": "https://alexandercollege.ca"
+  }
+]
