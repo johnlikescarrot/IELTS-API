@@ -18,19 +18,28 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install project dependencies
+        run: npm ci
+
+      - name: Lint (ESLint, project config)
+        run: npm run lint
+
+      - name: Format check (Prettier, project config)
+        run: npm run format:check
+
+      # Super-Linter runs only the validators set to `true` below. Unset
+      # VALIDATE_* default to false, so everything else (including the
+      # container ESLint that would need the project's node_modules) is left to
+      # the project-specific `npm run lint` / `npm run format:check` steps.
       - name: Super-Linter
         uses: super-linter/super-linter@v6
         env:
-          DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: main
           VALIDATE_ALL_CODEBASE: true
-          VALIDATE_TYPESCRIPT_ES: true
-          VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_JSON: true
-          VALIDATE_YAML: true
           VALIDATE_MARKDOWN: true
+          VALIDATE_YAML: true
+          VALIDATE_JSON: true
           VALIDATE_GITLEAKS: true
-          VALIDATE_TYPESCRIPT_STANDARD: false
-          VALIDATE_DOCKERFILE: false
           VALIDATE_EDITORCONFIG: true
           LINTER_RULES_PATH: .
