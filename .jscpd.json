@@ -1,5 +1,6 @@
 {
   "minTokens": 120,
+  "formats": ["typescript", "javascript", "json", "yaml"],
   "ignore": [
     "**/node_modules/**",
     "**/dist/**",
