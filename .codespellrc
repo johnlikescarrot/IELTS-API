@@ -1,0 +1,4 @@
+[codespell]
+# Intentional spelling errors used as IELTS "common mistake" teaching examples.
+ignore-words-list = informations,equipments,childrens
+skip = */package-lock.json,*.log,.git,./node_modules/*,./dist/*,./coverage/*

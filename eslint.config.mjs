@@ -1,13 +1,15 @@
+// ESLint flat config. Imports only packages that are direct dependencies
+// (also bundled with Super-Linter, which reuses this file in CI).
 import js from '@eslint/js';
+import typescriptEslint from '@typescript-eslint/eslint-plugin';
 import { defineConfig } from 'eslint/config';
-import tseslint from 'typescript-eslint';
 
 export default defineConfig([
   {
     ignores: ['dist/**', 'coverage/**', 'node_modules/**'],
   },
   js.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
+  ...typescriptEslint.configs['flat/strict-type-checked'],
   {
     languageOptions: {
       parserOptions: {

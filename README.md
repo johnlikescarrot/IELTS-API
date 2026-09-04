@@ -86,7 +86,7 @@ open infrastructure alive. GitHub's **“Cite this repository”** button (drive
 
 APA: _IELTS-API contributors. (2026). IELTS-API: A free, no-auth, open IELTS
 practice API in TypeScript (Version 1.0.0) [Computer software].
-https://github.com/johnlikescarrot/IELTS-API_
+<https://github.com/johnlikescarrot/IELTS-API>_
 
 ## License
 

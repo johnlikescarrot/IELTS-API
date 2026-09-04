@@ -1,7 +1,10 @@
+---
 name: Super-Linter
 
 # Runs the full Super-Linter suite on every push and pull request so that
 # all languages and file types stay clean, not just TypeScript/ESLint.
+# LINTER_RULES_PATH=/ lets Super-Linter honour repo-root custom configs
+# (.codespellrc); every other linter uses Super-Linter v8 defaults.
 on:
   push:
     branches: ['**']
@@ -18,13 +21,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
-          filter: blob:none
 
       - name: Run Super-Linter
         uses: super-linter/super-linter@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
+          LINTER_RULES_PATH: /
