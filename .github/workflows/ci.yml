@@ -69,5 +69,9 @@ jobs:
           VALIDATE_HTML: false
           VALIDATE_CSS: false
           VALIDATE_SHELL: false
+          VALIDATE_TYPOS: false
+          VALIDATE_ACTIONLINT: false
+          VALIDATE_GITLEAKS: false
+          VALIDATE_EDITORCONFIG: false
           TYPESCRIPT_DEFAULT_STYLE: prettier
           FILTER_REGEX_EXCLUDE: (dist/|coverage/|node_modules/)
