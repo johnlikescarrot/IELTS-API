@@ -1,0 +1,6 @@
+---
+# markdownlint configuration (auto-discovered by markdownlint-cli and
+# markdownlint-cli2). Line-length is relaxed because README tables and code
+# samples are clearer on a single line.
+default: true
+MD013: false
