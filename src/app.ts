@@ -2,6 +2,7 @@ import cors from 'cors';
 import express, { type Express, type Request, type Response } from 'express';
 import helmet from 'helmet';
 import { collocations, grammarRules, idioms, phrasalVerbs } from './data/language.js';
+import { resources } from './data/resources.js';
 import {
   listeningPractice,
   listeningQuestionTypes,
@@ -111,6 +112,7 @@ export function createApp(): Express {
         '/api/v1/idioms',
         '/api/v1/phrasal-verbs',
         '/api/v1/study-plans',
+        '/api/v1/resources',
         '/api/v1/calculators/overall',
       ],
     });
@@ -153,6 +155,7 @@ export function createApp(): Express {
         idioms: idioms.length,
         phrasalVerbs: phrasalVerbs.length,
         studyPlans: studyPlans.length,
+        resources: resources.length,
       },
     });
   });
@@ -327,6 +330,13 @@ export function createApp(): Express {
 
   app.get('/api/v1/phrasal-verbs', (req: Request, res: Response) => {
     sendList(req, res, phrasalVerbs, (c) => [c.phrase, c.meaning, c.example]);
+  });
+
+  // ---- Resources (external links, no vendored files) ----
+  app.get('/api/v1/resources', (req: Request, res: Response) => {
+    const category = normalizeText(req.query.category);
+    const items = resources.filter((r) => category === '' || r.category === category);
+    sendList(req, res, items, (r) => [r.title, r.description, r.url, r.category]);
   });
 
   // ---- Study plans ----

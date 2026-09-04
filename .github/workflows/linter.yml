@@ -24,7 +24,7 @@ jobs:
           filter: blob:none
 
       - name: Run Super-Linter
-        uses: github/super-linter@v7
+        uses: github/super-linter@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false

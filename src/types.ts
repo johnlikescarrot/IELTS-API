@@ -97,6 +97,15 @@ export interface StudyPlan {
   schedule: { week: number; focus: string; tasks: string[] }[];
 }
 
+export interface ResourceLink {
+  id: string;
+  title: string;
+  category: 'community-collection' | 'official' | 'open-data' | 'practice';
+  format: 'web' | 'api' | 'mixed';
+  url: string;
+  description: string;
+}
+
 export interface Paginated<T> {
   total: number;
   limit: number;

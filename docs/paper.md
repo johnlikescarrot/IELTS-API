@@ -12,7 +12,8 @@ open dataset covering the full IELTS preparation cycle: CEFR-graded vocabulary
 (64 items across 10 topics), Writing Task 1/2 prompts with band-scored sample
 answers, Speaking Parts 1–3 topics, Reading/Listening question-type taxonomies
 with practice sets, grammar rules, academic collocations, idioms, phrasal
-verbs, week-by-week study plans, and deterministic band-score calculators that
+verbs, week-by-week study plans, curated links to upstream free collections,
+and deterministic band-score calculators that
 implement the official overall-band rounding rule.
 
 ## Statement of need

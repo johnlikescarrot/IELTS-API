@@ -44,6 +44,7 @@ Machine-readable contract: [`GET /openapi.json`](../src/openapi.ts) (OpenAPI 3.0
 | GET    | `/api/v1/collocations`             | Collocations; filter `formality`                                                  |
 | GET    | `/api/v1/idioms`                   | Idioms                                                                            |
 | GET    | `/api/v1/phrasal-verbs`            | Phrasal verbs                                                                     |
+| GET    | `/api/v1/resources`                | Curated links to free external IELTS collections; filter `category`               |
 | GET    | `/api/v1/study-plans`              | Study plans                                                                       |
 | GET    | `/api/v1/study-plans/:id`          | One plan                                                                          |
 | GET    | `/api/v1/calculators/overall`      | Overall band from `listening`, `reading`, `writing`, `speaking` (0–9, 0.5 steps)  |

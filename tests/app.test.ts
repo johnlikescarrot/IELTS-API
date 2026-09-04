@@ -298,6 +298,27 @@ describe('language', () => {
   });
 });
 
+describe('resources', () => {
+  it('lists curated external links', async () => {
+    const res = await request(app).get('/api/v1/resources');
+    expect(res.status).toBe(200);
+    expect(res.body.total).toBeGreaterThan(3);
+    expect(res.body.items[0].url).toMatch(/^https:\/\//);
+  });
+
+  it('filters by category and supports search', async () => {
+    const official = await request(app)
+      .get('/api/v1/resources')
+      .query({ category: 'official' });
+    expect(official.body.total).toBeGreaterThan(0);
+    for (const r of official.body.items) expect(r.category).toBe('official');
+    const search = await request(app)
+      .get('/api/v1/resources')
+      .query({ search: 'community' });
+    expect(search.body.total).toBe(1);
+  });
+});
+
 describe('study plans', () => {
   it('lists plans and serves one by id', async () => {
     const all = await request(app).get('/api/v1/study-plans');

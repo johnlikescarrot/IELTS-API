@@ -141,6 +141,10 @@ export const openApiSpec = {
     '/api/v1/collocations': collection('collocations', 'Academic collocations'),
     '/api/v1/idioms': collection('idioms', 'Idioms for speaking'),
     '/api/v1/phrasal-verbs': collection('phrasal-verbs', 'Phrasal verbs with examples'),
+    '/api/v1/resources': collection(
+      'resources',
+      'Curated links to free external IELTS collections',
+    ),
     '/api/v1/study-plans': {
       get: { summary: 'Study plans', responses: { '200': { description: 'Plans' } } },
     },
