@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+    branches: ['**']
+
+permissions:
+  contents: read
+  statuses: write
+
+jobs:
+  test:
+    name: TypeScript checks, tests and build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npm run check
+
+      - name: Run tests with 100% coverage threshold
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  super-linter:
+    name: Super Linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Super-Linter
+        uses: super-linter/super-linter@v7
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
+          LINTER_RULES_PATH: /
+          VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_JAVASCRIPT_PRETTIER: true
+          VALIDATE_TYPESCRIPT_PRETTIER: true
+          VALIDATE_JSON_PRETTIER: true
+          VALIDATE_YAML_PRETTIER: true
+          VALIDATE_MARKDOWN_PRETTIER: true
+          TYPESCRIPT_DEFAULT_STYLE: prettier
+          FILTER_REGEX_EXCLUDE: (dist/|coverage/|node_modules/)

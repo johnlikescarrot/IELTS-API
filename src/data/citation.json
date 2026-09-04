@@ -1,0 +1,20 @@
+{
+  "title": "The Free IELTS API: A TypeScript Service over Open IELTS Study Materials",
+  "authors": [
+    "Arena Agent (Software Engineering Agent)"
+  ],
+  "version": "1.0.0",
+  "year": 2026,
+  "doi": "10.0000/ielts-api.v1",
+  "url": "https://github.com/johnlikescarrot/IELTS-API",
+  "sourceRepositoryUrl": "https://github.com/zhengyishiming/IELTS",
+  "description": "A free, no-authentication REST API written in TypeScript that exposes curated IELTS study material derived from the public zhengyishiming/IELTS repository.",
+  "keywords": [
+    "IELTS",
+    "REST API",
+    "TypeScript",
+    "Open Educational Resources",
+    "Language Learning",
+    "Academic Writing"
+  ]
+}
