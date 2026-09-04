@@ -37,6 +37,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: true
           LINTER_RULES_PATH: .github/linters
+          SAVE_SUPER_LINTER_OUTPUT: true
+          SAVE_SUPER_LINTER_SUMMARY: true
           TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
           FILTER_REGEX_EXCLUDE: '(dist|coverage|node_modules)/.*'
@@ -50,3 +52,13 @@ jobs:
           VALIDATE_JSON_PRETTIER: false
           VALIDATE_YAML_PRETTIER: false
           VALIDATE_MARKDOWN_PRETTIER: false
+
+      - name: Upload lint report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: super-linter-report
+          path: |
+            super-linter-output/
+            super-linter-summary.md
+          if-no-files-found: warn
