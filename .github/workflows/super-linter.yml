@@ -45,4 +45,4 @@ jobs:
           VALIDATE_SHELL_SHFMT: false
           VALIDATE_BASH: false
           VALIDATE_DOCKERFILE: false
-          FILTER_REGEX_EXCLUDE: '(dist/|node_modules/|coverage/)'
+          FILTER_REGEX_EXCLUDE: '(dist/|node_modules/|coverage/|package-lock\.json)'
