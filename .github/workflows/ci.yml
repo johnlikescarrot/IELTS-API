@@ -46,17 +46,27 @@ jobs:
           fetch-depth: 0
 
       - name: Super-Linter
-        uses: super-linter/super-linter@v7
+        uses: super-linter/super-linter@v8
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: true
           LINTER_RULES_PATH: /
-          VALIDATE_JAVASCRIPT_STANDARD: false
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
+          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_JAVASCRIPT_PRETTIER: true
           VALIDATE_TYPESCRIPT_PRETTIER: true
           VALIDATE_JSON_PRETTIER: true
+          VALIDATE_JSON: false
           VALIDATE_YAML_PRETTIER: true
+          VALIDATE_YAML: false
           VALIDATE_MARKDOWN_PRETTIER: true
+          VALIDATE_MARKDOWN: false
+          VALIDATE_JSCPD: false
+          VALIDATE_HTML: false
+          VALIDATE_CSS: false
+          VALIDATE_SHELL: false
           TYPESCRIPT_DEFAULT_STYLE: prettier
           FILTER_REGEX_EXCLUDE: (dist/|coverage/|node_modules/)
