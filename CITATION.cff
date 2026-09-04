@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use this API in your work, please cite it using this metadata."
+title: "IELTS API: A Free, No-Authentication TypeScript API for IELTS Study Content"
+type: software
+version: 1.0.0
+license: MIT
+date-released: 2026-09-04
+authors:
+  - family-names: "Likes Carrot"
+    given-names: "John"
+    orcid: ""
+repository: "https://github.com/johnlikescarrot/IELTS-API"
+repository-code: "https://github.com/johnlikescarrot/IELTS-API"
+keywords:
+  - ielts
+  - api
+  - typescript
+  - vocabulary
+  - reading
+  - writing
+  - speaking
+  - english-language-testing
+references:
+  - type: software
+    title: "zhengyishiming/IELTS"
+    repository: "https://github.com/zhengyishiming/IELTS"
+    notes: "A public collection of IELTS study materials that inspired the content structure of this API."
