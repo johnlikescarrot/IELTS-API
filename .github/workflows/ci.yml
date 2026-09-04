@@ -56,14 +56,9 @@ jobs:
         run: |
           LOG="${GITHUB_WORKSPACE}/super-linter.log"
           if [ -f "$LOG" ]; then
-            grep -n -E 'ERROR|error found|Errors found|Standard output|Result' "$LOG" | head -c 3000 > /tmp/sl-errors.txt
-            COUNT=0
-            while IFS= read -r line; do
-              if [ "$COUNT" -ge 8 ]; then break; fi
-              TRUNCATED=$(printf '%s' "$line" | head -c 400)
-              echo "::error::${TRUNCATED//\%/}"
-              COUNT=$((COUNT + 1))
-            done < /tmp/sl-errors.txt
+            echo "::error::log size $(stat -c%s "$LOG") bytes, $(wc -l < "$LOG") lines"
+            TAIL_TEXT=$(tail -c 3000 "$LOG" | tr '\n' '|' | tr '%' '_' | head -c 3400)
+            echo "::error::${TAIL_TEXT}"
           else
             echo '::error::super-linter.log not found in workspace'
             ls -la "${GITHUB_WORKSPACE}" || true
