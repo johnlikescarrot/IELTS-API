@@ -74,7 +74,9 @@ jobs:
             exit 1
           fi
           jq --version > /tmp/jqv.txt 2>&1 && post "checkpoint-3: $(cat /tmp/jqv.txt)" || post "checkpoint-3: JQ MISSING $(cat /tmp/jqv.txt | head -c 200)"
-          jq -Rs '{body: ("### super-linter log (diagnostics)\n```\n" + . + "\n```")}' "$LOG" > /tmp/body.json && post "checkpoint-4: body built $(stat -c%s /tmp/body.json) bytes" || post "checkpoint-4: JQ FAILED"
+          iconv -c -f UTF-8 -t UTF-8 "$LOG" > /tmp/log-clean.txt
+          post "checkpoint-3b: cleaned log $(stat -c%s /tmp/log-clean.txt) bytes"
+          jq -Rs '{body: ("### super-linter log (diagnostics)\n```\n" + . + "\n```")}' /tmp/log-clean.txt > /tmp/body.json && post "checkpoint-4: body built $(stat -c%s /tmp/body.json) bytes" || post "checkpoint-4: JQ FAILED"
           CODE=$(curl -sS -o /tmp/resp.json -w "%{http_code}" -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
