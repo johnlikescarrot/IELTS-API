@@ -31,18 +31,11 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
-          VALIDATE_JAVASCRIPT_ES: true
+          VALIDATE_BASH: false
+          VALIDATE_DOCKERFILE: false
           VALIDATE_JAVASCRIPT_PRETTIER: false
-          VALIDATE_TYPESCRIPT_ES: true
-          VALIDATE_TYPESCRIPT_STANDARD: false
-          VALIDATE_TYPESCRIPT_PRETTIER: true
-          VALIDATE_JSON: true
-          VALIDATE_YAML: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_GITHUB_ACTIONS: true
           VALIDATE_JSCPD: false
           VALIDATE_NATURAL_LANGUAGE: false
           VALIDATE_SHELL_SHFMT: false
-          VALIDATE_BASH: false
-          VALIDATE_DOCKERFILE: false
+          VALIDATE_TYPESCRIPT_STANDARD: false
           FILTER_REGEX_EXCLUDE: '(dist/|node_modules/|coverage/|package-lock\.json)'
