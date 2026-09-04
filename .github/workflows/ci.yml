@@ -74,9 +74,8 @@ jobs:
             exit 1
           fi
           jq --version > /tmp/jqv.txt 2>&1 && post "checkpoint-3: $(cat /tmp/jqv.txt)" || post "checkpoint-3: JQ MISSING $(cat /tmp/jqv.txt | head -c 200)"
-          iconv -c -f UTF-8 -t UTF-8 "$LOG" > /tmp/log-clean.txt
-          post "checkpoint-3b: cleaned log $(stat -c%s /tmp/log-clean.txt) bytes"
-          jq -Rs '{body: ("### super-linter log (diagnostics)\n```\n" + . + "\n```")}' /tmp/log-clean.txt > /tmp/body.json && post "checkpoint-4: body built $(stat -c%s /tmp/body.json) bytes" || post "checkpoint-4: JQ FAILED"
+          python3 -c "import json; data = open('$LOG', 'rb').read().decode('utf-8', 'replace'); print(json.dumps({'body': '### super-linter log (diagnostics)\n\n\`\`\`\n' + data + '\n\`\`\`'}))" > /tmp/body.json 2>/tmp/py.err || post "checkpoint-3c: PY FAILED $(head -c 200 /tmp/py.err | tr -d '\n')"
+          post "checkpoint-4: body built $(stat -c%s /tmp/body.json 2>/dev/null || echo 0) bytes"
           CODE=$(curl -sS -o /tmp/resp.json -w "%{http_code}" -X POST \
             -H "Authorization: Bearer $GH_TOKEN" \
             -H "Accept: application/vnd.github+json" \
