@@ -1,0 +1,64 @@
+{
+  "name": "ielts-api",
+  "version": "1.0.0",
+  "description": "A free, no-authentication REST API for IELTS exam data: band-score descriptors, raw-score conversion, writing & speaking criteria, vocabulary, and study resources.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnlikescarrot/IELTS-API.git"
+  },
+  "keywords": [
+    "ielts",
+    "api",
+    "band-score",
+    "exam",
+    "language-testing",
+    "rest",
+    "typescript"
+  ],
+  "license": "MIT",
+  "author": "johnlikescarrot",
+  "scripts": {
+    "clean": "rimraf dist coverage",
+    "build": "tsup",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepublishOnly": "npm run build && npm run lint && npm run test:coverage"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "fastify": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "@vitest/coverage-v8": "^3.0.0",
+    "eslint": "^9.18.0",
+    "eslint-config-prettier": "^10.0.1",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "^3.0.0",
+    "prettier": "^3.4.2",
+    "typescript-eslint": "^8.20.0",
+    "@eslint/js": "^9.18.0",
+    "tsup": "^8.3.5"
+  }
+}
