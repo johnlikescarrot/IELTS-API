@@ -1,0 +1,9 @@
+# Markdown lint rules used by super-linter and by editors.
+# Line length is not enforced: tables and long URLs are intentional.
+MD013: false
+# The first heading in each document is the document title.
+MD041: false
+# Fenced code blocks do not need a language when they contain data.
+MD040: false
+MD033: false
+MD024: false
