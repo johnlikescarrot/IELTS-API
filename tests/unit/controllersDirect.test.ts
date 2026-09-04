@@ -170,7 +170,7 @@ describe('Direct Controller Coverage & Error Catch Blocks', () => {
       speakingCtrl.getPart1Topics(req, throwingRes, next);
       speakingCtrl.getPart2CueCards(req, throwingRes, next);
       speakingCtrl.getSpeakingFormulas(req, throwingRes, next);
-      speakingCtrl.getAuthenticTranscripts(req, throwingRes, next);
+      speakingCtrl.getPracticeTranscripts(req, throwingRes, next);
       speakingCtrl.getRandomCueCard(req, throwingRes, next);
 
       expect(next).toHaveBeenCalledTimes(6);

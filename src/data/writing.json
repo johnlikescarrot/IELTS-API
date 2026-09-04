@@ -2,66 +2,66 @@
   "bandDescriptors": {
     "task1": {
       "9": {
-        "taskAchievement": "Fully satisfies all requirements of the task. Clearly presents a fully developed response.",
-        "coherenceAndCohesion": "Uses cohesion in such a way that it attracts no attention. Skilfully manages paragraphing.",
-        "lexicalResource": "Uses a wide range of vocabulary with very natural and sophisticated control of lexical features; rare minor errors occur only as slips.",
-        "grammaticalRangeAndAccuracy": "Uses a wide range of structures with full flexibility and accuracy; rare minor errors occur only as slips."
+        "taskAchievement": "Fully answers the task with a precise overview and well-selected, fully developed details.",
+        "coherenceAndCohesion": "Organises information effortlessly with precise progression and unobtrusive cohesion.",
+        "lexicalResource": "Uses a broad, precise vocabulary naturally and accurately.",
+        "grammaticalRangeAndAccuracy": "Uses a wide range of structures accurately and flexibly."
       },
       "8": {
-        "taskAchievement": "Covers all requirements of the task appropriately, relevantly and sufficiently. Presents a clear overview of main trends, differences or stages.",
-        "coherenceAndCohesion": "Sequences information and ideas logically. Manages all aspects of cohesion well. Uses paragraphing sufficiently and appropriately.",
-        "lexicalResource": "Uses a wide range of vocabulary fluently and flexibly to convey precise meanings. Skilfully uses uncommon lexical items with occasional inaccuracies in word choice and collocation.",
-        "grammaticalRangeAndAccuracy": "Uses a wide range of structures. The majority of sentences are error-free. Makes only occasional errors or non-systematic inaccuracies."
+        "taskAchievement": "Covers every requirement with a clear overview and relevant, well-supported comparisons.",
+        "coherenceAndCohesion": "Sequences information logically and manages paragraphing and cohesion well.",
+        "lexicalResource": "Uses a wide range of vocabulary fluently, with only occasional imprecision.",
+        "grammaticalRangeAndAccuracy": "Uses varied complex structures; most sentences are error-free."
       },
       "7": {
-        "taskAchievement": "Covers the requirements of the task. Presents a clear overview of main trends, differences or stages. Clearly presents and highlights key features/bullet points but could be more fully extended.",
-        "coherenceAndCohesion": "Logically organises information and ideas; there is clear progression throughout. Uses a range of cohesive devices appropriately although there may be some under-/over-use.",
-        "lexicalResource": "Uses a sufficient range of vocabulary to allow some flexibility and precision. Uses less common lexical items with some awareness of style and collocation.",
-        "grammaticalRangeAndAccuracy": "Uses a variety of complex structures. Produces frequent error-free sentences. Has good control of grammar and punctuation but may make a few errors."
+        "taskAchievement": "Covers the task and gives a clear overview, though some details could be extended.",
+        "coherenceAndCohesion": "Shows clear progression and generally appropriate use of cohesive devices.",
+        "lexicalResource": "Uses sufficient flexible vocabulary, including some less common items.",
+        "grammaticalRangeAndAccuracy": "Uses a variety of complex structures with generally good control."
       },
       "6": {
-        "taskAchievement": "Addresses the requirements of the task. Presents an overview with information appropriately selected. Key features are adequately highlighted but details may be irrelevant, inappropriate or inaccurate.",
-        "coherenceAndCohesion": "Arranges information and ideas coherently and there is a clear overall progression. Uses cohesive devices effectively, but cohesion within and/or between sentences may be faulty or mechanical.",
-        "lexicalResource": "Uses an adequate range of vocabulary for the task. Attempts to use less common vocabulary but with some inaccuracy. Makes some errors in spelling and/or word formation, but they do not impede communication.",
-        "grammaticalRangeAndAccuracy": "Uses a mix of simple and complex sentence forms. Makes some errors in grammar and punctuation but they rarely reduce communication."
+        "taskAchievement": "Addresses the task and gives an adequate overview, although selection or accuracy may vary.",
+        "coherenceAndCohesion": "Presents a coherent overall progression, with some mechanical or faulty cohesion.",
+        "lexicalResource": "Uses enough vocabulary for the task and attempts less common words with some errors.",
+        "grammaticalRangeAndAccuracy": "Mixes simple and complex forms; errors rarely block communication."
       },
       "5": {
-        "taskAchievement": "Generally addresses the task; the format may be inappropriate in places. Recounts detail mechanically with no clear overview. Key features may not be selected.",
-        "coherenceAndCohesion": "Presents information with some organisation but there may be a lack of overall progression. Makes inadequate, inaccurate or over-use of cohesive devices.",
-        "lexicalResource": "Uses a limited range of vocabulary, but this is minimally adequate for the task. May make noticeable errors in spelling and/or word formation that cause difficulty for the reader.",
-        "grammaticalRangeAndAccuracy": "Uses only a limited range of structures. Attempts complex sentences but these tend to be less accurate than simple sentences."
+        "taskAchievement": "Addresses the task only partly and may omit or mechanically report important features.",
+        "coherenceAndCohesion": "Shows some organisation, but progression and linking are inconsistent.",
+        "lexicalResource": "Uses a limited but minimally adequate range, with noticeable errors.",
+        "grammaticalRangeAndAccuracy": "Relies on limited structures; attempted complex sentences are often inaccurate."
       }
     },
     "task2": {
       "9": {
-        "taskResponse": "Fully addresses all parts of the task. Presents a fully developed position in answer to the question with relevant, fully extended and well supported ideas.",
-        "coherenceAndCohesion": "Uses cohesion in such a way that it attracts no attention. Skilfully manages paragraphing.",
-        "lexicalResource": "Uses a wide range of vocabulary with very natural and sophisticated control of lexical features; rare minor errors occur only as slips.",
-        "grammaticalRangeAndAccuracy": "Uses a wide range of structures with full flexibility and accuracy; rare minor errors occur only as slips."
+        "taskResponse": "Answers every part fully with a developed, relevant, and well-supported position.",
+        "coherenceAndCohesion": "Controls paragraphing and cohesion so smoothly that the organisation is unobtrusive.",
+        "lexicalResource": "Uses sophisticated vocabulary with natural precision and flexibility.",
+        "grammaticalRangeAndAccuracy": "Uses a wide range of structures accurately and flexibly."
       },
       "8": {
-        "taskResponse": "Sufficiently addresses all parts of the task. Presents a well-developed response to the question with relevant, extended and supported ideas.",
-        "coherenceAndCohesion": "Sequences information and ideas logically. Manages all aspects of cohesion well. Uses paragraphing sufficiently and appropriately.",
-        "lexicalResource": "Uses a wide range of vocabulary fluently and flexibly to convey precise meanings. Skilfully uses uncommon lexical items with occasional inaccuracies.",
-        "grammaticalRangeAndAccuracy": "Uses a wide range of structures. The majority of sentences are error-free. Makes only occasional errors or non-systematic inaccuracies."
+        "taskResponse": "Addresses all parts with a well-developed position and relevant extended ideas.",
+        "coherenceAndCohesion": "Sequences ideas logically and handles cohesion and paragraphing effectively.",
+        "lexicalResource": "Uses a wide, flexible vocabulary to express precise meaning, with occasional slips.",
+        "grammaticalRangeAndAccuracy": "Uses varied structures; most sentences are accurate."
       },
       "7": {
-        "taskResponse": "Addresses all parts of the task. Presents a clear position throughout the response. Presents, extends and supports main ideas, but there may be a tendency to over-generalise.",
-        "coherenceAndCohesion": "Logically organises information and ideas; there is clear progression throughout. Uses a range of cohesive devices appropriately although there may be some under-/over-use.",
-        "lexicalResource": "Uses a sufficient range of vocabulary to allow some flexibility and precision. Uses less common lexical items with some awareness of style and collocation.",
-        "grammaticalRangeAndAccuracy": "Uses a variety of complex structures. Produces frequent error-free sentences. Has good control of grammar and punctuation but may make a few errors."
+        "taskResponse": "Addresses all parts and presents a clear position with generally developed support.",
+        "coherenceAndCohesion": "Organises ideas clearly with a good range of generally appropriate links.",
+        "lexicalResource": "Uses sufficient flexible vocabulary and some less common expressions.",
+        "grammaticalRangeAndAccuracy": "Uses a range of complex structures with good but not complete control."
       },
       "6": {
-        "taskResponse": "Addresses all parts of the task although some parts may be more fully covered than others. Presents a relevant position although the conclusions may become unclear or repetitive.",
-        "coherenceAndCohesion": "Arranges information and ideas coherently and there is a clear overall progression. Uses cohesive devices effectively, but cohesion within and/or between sentences may be faulty or mechanical.",
-        "lexicalResource": "Uses an adequate range of vocabulary for the task. Attempts to use less common vocabulary but with some inaccuracy. Makes some errors in spelling and/or word formation.",
-        "grammaticalRangeAndAccuracy": "Uses a mix of simple and complex sentence forms. Makes some errors in grammar and punctuation but they rarely reduce communication."
+        "taskResponse": "Addresses the main task and gives a relevant position, though some points need fuller development.",
+        "coherenceAndCohesion": "Maintains a clear overall progression, with occasional mechanical or faulty cohesion.",
+        "lexicalResource": "Has adequate task vocabulary and attempts less common words with some inaccuracy.",
+        "grammaticalRangeAndAccuracy": "Uses both simple and complex forms; errors seldom impede meaning."
       },
       "5": {
-        "taskResponse": "Addresses the task only partially; the format may be inappropriate in places. Expresses a position but the development is not always clear. Presents some main ideas but these are limited and not sufficiently developed.",
-        "coherenceAndCohesion": "Presents information with some organisation but there may be a lack of overall progression. Makes inadequate, inaccurate or over-use of cohesive devices.",
-        "lexicalResource": "Uses a limited range of vocabulary, but this is minimally adequate for the task. May make noticeable errors in spelling and/or word formation.",
-        "grammaticalRangeAndAccuracy": "Uses only a limited range of structures. Attempts complex sentences but these tend to be less accurate than simple sentences."
+        "taskResponse": "Addresses the task only partly; ideas and the position may be limited or unclear.",
+        "coherenceAndCohesion": "Shows some organisation, but progression and linking are uneven.",
+        "lexicalResource": "Uses a limited range that is just adequate, with noticeable errors.",
+        "grammaticalRangeAndAccuracy": "Uses mostly limited structures and frequent errors in complex sentences."
       }
     }
   },
@@ -69,18 +69,18 @@
     {
       "id": "task2-001",
       "taskType": "task2",
-      "title": "Advertising Effectiveness vs Saturation",
+      "title": "Advertising effectiveness and consumer attention",
       "category": "Media & Marketing",
       "questionType": "Discuss both views and give your opinion",
-      "prompt": "Some people say that advertising is extremely successful at persuading us to buy things. Other people think that advertising is so common that we no longer pay attention to it. Discuss both these views and give your own opinion. Give reasons for your answer and include any relevant examples from your own knowledge or experience. Write at least 250 words.",
-      "sampleEssay": "Advertisement has always been a crucial part in the world of marketing. Throughout the decade, we have seen a significant increase in the amount of advertisements, whether it is on the media via television or widespread through social network platforms. The goal of advertisements is to get consumers to buy a targeted product, and while this method has been proven considerably successful generally, some people view it as too prevalent to catch the consumers attention any more.\n\nAdvertisements can act as a strong persuasion device to seemingly hypnotize people into buying goods and services. This is so because of the tactics placed in the messages, such as showing people having a good time together when using a particular product, using bandwagon, showing only the upsides of usage, and applying compare and contrast strategies to show the effects of using the product and make it stand out. Even if people do not know it, these messages are repeated several times and soon it may brainwash people to finally go out and get the product. For instance, if a person is watching television and sees a certain advertisement of a snack many times, the repeated sight of the scrumptious food may result in that person feeling hungry and succumbing to the advertisement at last.\n\nNevertheless, there is another point of view in which the widespread of advertisements makes it a normal thing. After watching a dozen of advertisements people will see it as a mere every day routine and cease to pay attention to the message of the advertisement. Some people may even choose to turn off a television channel, for instance, only just to avoid seeing and hearing repetitive advertisements. After a certain frequency, they start to get bored and stop paying attention to ads. Hence, in the end, the main goal of advertisements is not complete since the people whom the messages are sent out to do not receive that message. A real life example can be seen from advertisements in a particular social media platform, YouTube. In the YouTube marketing mechanism advertisements are placed before and in between videos, hoping that the viewers would also be forced to watch the advertisements, too. However, this is not usually the case, since many people would just click \"Skip Ad\" and continue on.\n\nIn conclusion, advertisements can be successful in persuading people to purchase goods and services, or they can be unsuccessful in many ways. They are very commonly seen nowadays, but not all of them fulfill their purpose. Thus, advertisements must be designed and presented in the correct way to result in the highest effectiveness.",
+      "prompt": "Some people believe advertising strongly influences what we buy. Others think that advertising is so widespread that people no longer notice it. Discuss both views and give your own opinion. Write at least 250 words.",
+      "sampleEssay": "Advertising is a powerful part of modern commerce, but its influence is not uniform. Some campaigns change purchasing habits by making a product memorable, whereas constant exposure can make other advertisements almost invisible. In my view, advertising remains effective when it is relevant and credible, but repetition alone soon loses its impact.\n\nWell-designed advertising can persuade consumers in several ways. A clear demonstration may show how a product solves a genuine problem, while a story can associate it with a desirable lifestyle. Useful comparisons, transparent evidence, and carefully chosen audiences can make a campaign feel informative rather than intrusive. This kind of message gives people a reason to consider a purchase instead of merely demanding attention. Repeated but moderate exposure also helps people remember a brand when they eventually need a particular service. For example, a local repair company that explains its prices and displays independent reviews may attract customers who value reliability rather than novelty and short-term excitement.\n\nHowever, the sheer volume of advertising can produce indifference. People routinely skip online adverts, mute television commercials, or ignore banners while concentrating on another task. When every message uses exaggerated claims, consumers may also become sceptical and rely on recommendations instead. This is especially true for audiences who have seen the same campaign many times without finding it useful.\n\nOverall, advertising still shapes consumer decisions, but saturation limits its power. Campaigns that offer relevant information and respect the audience are more likely to succeed than those that simply repeat a slogan.",
       "bandScore": 7.5,
-      "wordCount": 395,
+      "wordCount": 250,
       "examinerFeedback": {
-        "taskResponse": "This candidate has addressed all parts of the prompt and presents a clear position throughout the response. Main ideas are presented, extended and supported.",
-        "coherenceAndCohesion": "Ideas and information are presented logically and there is a clear progression throughout the answer. There is a range of cohesive devices (For instance, Nevertheless, Hence, A real life example, However, In conclusion, Thus), including reference and substitution (this method, this is so, these messages).",
-        "lexicalResource": "The range of vocabulary is wide enough to show some precise meanings and also shows less common items (prevalent, hypnotize, tactics, brainwash, succumbing) and collocations (significant increase, catch the consumers attention, having a good time together, compare and contrast strategies).",
-        "grammaticalRangeAndAccuracy": "There is a variety of complex structures and the writer shows good control over grammar and punctuation."
+        "taskResponse": "The response discusses both perspectives and maintains a clear position, with relevant examples and a developed conclusion.",
+        "coherenceAndCohesion": "The ideas progress from the persuasive role of advertising to the effects of saturation, with clear paragraphing and linking.",
+        "lexicalResource": "The response uses a varied range of topic vocabulary, including consumer decisions, independent reviews, and audience saturation.",
+        "grammaticalRangeAndAccuracy": "A range of sentence structures is used accurately, including concession, condition, and relative clauses."
       }
     },
     {

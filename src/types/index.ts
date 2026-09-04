@@ -132,7 +132,7 @@ export interface SpeakingFormula {
   criterionTarget: string;
 }
 
-export interface AuthenticTranscript {
+export interface PracticeTranscript {
   act: string;
   title: string;
   speakers: string[];
@@ -182,12 +182,12 @@ export interface CollegeItem {
 export interface ResourceItem {
   id: string;
   title: string;
-  filename: string;
+  filename?: string;
   author: string;
   skill: string;
   category: string;
   format: string;
-  fileSizeBytes: number;
+  fileSizeBytes?: number;
   description: string;
   sourceUrl: string;
 }

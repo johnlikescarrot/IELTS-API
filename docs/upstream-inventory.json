@@ -1,0 +1,2104 @@
+{
+  "repository": "zhengyishiming/IELTS",
+  "branch": "main",
+  "snapshot": "2026-09-04",
+  "commit": "a9e2d6c9a070eecea6ffaa6f15b2a00c1c7b938c",
+  "fileCount": 404,
+  "totalBytes": 6415962435,
+  "extensionSummary": {
+    ".azw": {
+      "files": 3,
+      "bytes": 16739090
+    },
+    ".azw3": {
+      "files": 3,
+      "bytes": 3148494
+    },
+    ".docx": {
+      "files": 1,
+      "bytes": 212392
+    },
+    ".epub": {
+      "files": 54,
+      "bytes": 302638231
+    },
+    ".gds": {
+      "files": 1,
+      "bytes": 6400114
+    },
+    ".jpg": {
+      "files": 1,
+      "bytes": 441254
+    },
+    ".m3u": {
+      "files": 2,
+      "bytes": 1280571
+    },
+    ".mobi": {
+      "files": 9,
+      "bytes": 46493772
+    },
+    ".mp3": {
+      "files": 19,
+      "bytes": 102570125
+    },
+    ".mp4": {
+      "files": 3,
+      "bytes": 26989943
+    },
+    ".pdf": {
+      "files": 52,
+      "bytes": 441773980
+    },
+    ".php": {
+      "files": 1,
+      "bytes": 13932
+    },
+    ".rar": {
+      "files": 244,
+      "bytes": 5463372145
+    },
+    ".txt": {
+      "files": 3,
+      "bytes": 7420
+    },
+    ".xlsx": {
+      "files": 2,
+      "bytes": 1325327
+    },
+    ".zip": {
+      "files": 2,
+      "bytes": 2498312
+    },
+    "<none>": {
+      "files": 4,
+      "bytes": 57333
+    }
+  },
+  "explicitIeltsCount": 30,
+  "explicitIeltsBytes": 128907922,
+  "structuredTextCount": 6,
+  "structuredTextBytes": 64589,
+  "files": [
+    {
+      "path": "1-22yas.xlsx",
+      "size": 1230016,
+      "sha": "d66fded8b74057a96a677eb25d9b9f7b39965ce3"
+    },
+    {
+      "path": "100K_polyg.gds",
+      "size": 6400114,
+      "sha": "624af8c01d59ef57f9d0fe37fa0b03e463daf4f9"
+    },
+    {
+      "path": "100K_polyg.zip",
+      "size": 2460388,
+      "sha": "3683c6400ff6c22647a3a62c9e3acf901176e472"
+    },
+    {
+      "path": "110-common-mistakes-in-writing.pdf",
+      "size": 2397416,
+      "sha": "ce502266e5cbefb4e3bf9f16283561e3938548e0"
+    },
+    {
+      "path": "1368个单词就够了_2.pdf",
+      "size": 1664005,
+      "sha": "3ecff58f0c51978a7bba4a5446a7d3f4813a7435"
+    },
+    {
+      "path": "18672-太阳能电池原理与应用（仅供参考）.part1.rar",
+      "size": 25165824,
+      "sha": "8ce2a1f4ee0f90998c330bc7604fa610f57b9af5"
+    },
+    {
+      "path": "18672-太阳能电池原理与应用（仅供参考）.part2.rar",
+      "size": 25165824,
+      "sha": "ca1fd1d0e67d1ba7b1985903554a6ce435233df6"
+    },
+    {
+      "path": "18672-太阳能电池原理与应用（仅供参考）.part3.rar",
+      "size": 25165824,
+      "sha": "c0b4fad57677f94b21d68e5a357867c3a9498a14"
+    },
+    {
+      "path": "18672-太阳能电池原理与应用（仅供参考）.part4.rar",
+      "size": 25165824,
+      "sha": "dcc379a559862d08268b4e92284ef4aedf2be588"
+    },
+    {
+      "path": "18672-太阳能电池原理与应用（仅供参考）.part5.rar",
+      "size": 19721345,
+      "sha": "b408097627102b4cc9ea3da263aa3959fab1572f"
+    },
+    {
+      "path": "1Kpolyg.zip",
+      "size": 37924,
+      "sha": "3427ded590f6178eb5b728f8e5633db6b8f94bbd"
+    },
+    {
+      "path": "1_1_GaN HEMT器件制造工艺简介_GaN HEMT器件制造工艺简介.mp4",
+      "size": 9491141,
+      "sha": "f6ee92458fdf494d4582f014bbff9f59030465e2"
+    },
+    {
+      "path": "1_1_GaN结晶过程动画解析_GaN结晶过程动画解析.mp4",
+      "size": 13582663,
+      "sha": "7c46e557c46d294b178f9258e0f0dcbc1e3e85cf"
+    },
+    {
+      "path": "202 Useful Exercises for IELTS by Garry Adams, Terry Peck (z-lib.org).pdf",
+      "size": 9546505,
+      "sha": "89aac55b4b7d42fc4ee77bd69272bdd628f306eb"
+    },
+    {
+      "path": "20221203",
+      "size": 803,
+      "sha": "3811ba0ff225b1df84a837e31e00833eae0abbd0"
+    },
+    {
+      "path": "20230510",
+      "size": 407,
+      "sha": "40b96e84841dbce63e0765b9bc416c65a102da3b"
+    },
+    {
+      "path": "2088485441.mp3",
+      "size": 10242216,
+      "sha": "8cee5c0ff0f4753f2b30d2b776d572b8723ed757"
+    },
+    {
+      "path": "22348-汽车制造工艺（第2版）.part1.rar",
+      "size": 25165824,
+      "sha": "d170e891d51979f0bbad5a2e05db25fc844cedd9"
+    },
+    {
+      "path": "22348-汽车制造工艺（第2版）.part2.rar",
+      "size": 25165824,
+      "sha": "0b134efeb4b8aeb31ac8168dc0c48f67c0af609d"
+    },
+    {
+      "path": "22348-汽车制造工艺（第2版）.part3.rar",
+      "size": 25165824,
+      "sha": "fed6922b3547d5566573819e3b4726953fbcf1f5"
+    },
+    {
+      "path": "22348-汽车制造工艺（第2版）.part4.rar",
+      "size": 25165824,
+      "sha": "154e1ce58753d266ec23c17a436d44765468f020"
+    },
+    {
+      "path": "22348-汽车制造工艺（第2版）.part5.rar",
+      "size": 25165824,
+      "sha": "4b7d01d3180b8eb6826f525a7ed151e36128faf4"
+    },
+    {
+      "path": "22348-汽车制造工艺（第2版）.part6.rar",
+      "size": 13205226,
+      "sha": "403ced0ec8cb11a8d1680f796181f3393a17f917"
+    },
+    {
+      "path": "230 IELTS Writing Samples by Munan Shaik (z-lib.org).pdf",
+      "size": 3978042,
+      "sha": "e35b68d9ce346b045b7611d673bb2c0fe131d574"
+    },
+    {
+      "path": "24506-电子技术项目教程（第2版）.part1.rar",
+      "size": 25165824,
+      "sha": "91ea1d0ec33f97bd4487361d78f8613f1de7cc6d"
+    },
+    {
+      "path": "24506-电子技术项目教程（第2版）.part2.rar",
+      "size": 25165824,
+      "sha": "ff3dae7b12c7ee0f3c87c3228a637dd706df2ba7"
+    },
+    {
+      "path": "24506-电子技术项目教程（第2版）.part3.rar",
+      "size": 25165824,
+      "sha": "ddfb20d49980ad93381830ec22d52f87ea0b84e2"
+    },
+    {
+      "path": "24506-电子技术项目教程（第2版）.part4.rar",
+      "size": 11396982,
+      "sha": "9a59d5fde302353bf8a2a4a0ebfdbd17f277579e"
+    },
+    {
+      "path": "25507~模拟电子技术基础学习指导与习题分析~李大军  唐  颖.part1.rar",
+      "size": 25165824,
+      "sha": "1e1d407fa0fdeb3bce55afe7eafb91f779a0cb3e"
+    },
+    {
+      "path": "25507~模拟电子技术基础学习指导与习题分析~李大军  唐  颖.part2.rar",
+      "size": 25165824,
+      "sha": "67676a5bad24b9bd54b139b709d131e85a638da9"
+    },
+    {
+      "path": "25507~模拟电子技术基础学习指导与习题分析~李大军  唐  颖.part3.rar",
+      "size": 7902733,
+      "sha": "f74399ddc40f2c0f7e4f3c70190ea4172270a49b"
+    },
+    {
+      "path": "25634-材料力学性能（第2版）.part1.rar",
+      "size": 25165824,
+      "sha": "7cc573babe160ac185beb63785a5532ca54db078"
+    },
+    {
+      "path": "25634-材料力学性能（第2版）.part2.rar",
+      "size": 25165824,
+      "sha": "b894478366d81a58555b1f07695af4c862d85db3"
+    },
+    {
+      "path": "25634-材料力学性能（第2版）.part3.rar",
+      "size": 25165824,
+      "sha": "564b849e6410a8fd283fb6d7e3f96486bb9544c9"
+    },
+    {
+      "path": "25634-材料力学性能（第2版）.part4.rar",
+      "size": 25165824,
+      "sha": "300d96c24e66dcac06810a2ba9b0f97651071666"
+    },
+    {
+      "path": "25634-材料力学性能（第2版）.part5.rar",
+      "size": 25165824,
+      "sha": "3ac380f0f35c2cd5316094fa865005050907c7d8"
+    },
+    {
+      "path": "25634-材料力学性能（第2版）.part6.rar",
+      "size": 5830277,
+      "sha": "276677e4fa03d7d060aba32b4b87cd5d825479cc"
+    },
+    {
+      "path": "26062-简明电路分析 姜涛.part1.rar",
+      "size": 25165824,
+      "sha": "b7c100da280d03557a9ee33e3eb70895248b15cd"
+    },
+    {
+      "path": "26062-简明电路分析 姜涛.part2.rar",
+      "size": 25165824,
+      "sha": "209a571229938f33284df9b0b36be2a223bf0064"
+    },
+    {
+      "path": "26062-简明电路分析 姜涛.part3.rar",
+      "size": 25165824,
+      "sha": "1420281509407ea6569d90197690bfc0f7b9ba0c"
+    },
+    {
+      "path": "26062-简明电路分析 姜涛.part4.rar",
+      "size": 24857688,
+      "sha": "c88c49b0232f8dabbc79bd08924946cda11564a1"
+    },
+    {
+      "path": "26609~激光技术与光纤通信实验~周建华  兰  岚.part1.rar",
+      "size": 25165824,
+      "sha": "5c7de72b0c2ae4e8613ee846126fc53b3f52e72e"
+    },
+    {
+      "path": "26609~激光技术与光纤通信实验~周建华  兰  岚.part2.rar",
+      "size": 25165824,
+      "sha": "99db86d227e6428cd7f612ddc8db049f601a2a27"
+    },
+    {
+      "path": "26609~激光技术与光纤通信实验~周建华  兰  岚.part3.rar",
+      "size": 14107876,
+      "sha": "d6777b33b029d8f4df7bc22cc198448ead508f66"
+    },
+    {
+      "path": "26866-新能源汽车动力电池技术.part1.rar",
+      "size": 25165824,
+      "sha": "dc76c8174bd0617acb6d94497d51a088aabb145b"
+    },
+    {
+      "path": "26866-新能源汽车动力电池技术.part2.rar",
+      "size": 25165824,
+      "sha": "a23d7630204393a596adb4883d0d0ec24555d4ca"
+    },
+    {
+      "path": "26866-新能源汽车动力电池技术.part3.rar",
+      "size": 25165824,
+      "sha": "15d0e808f7466c12d43f36b119696d696fe45afb"
+    },
+    {
+      "path": "26866-新能源汽车动力电池技术.part4.rar",
+      "size": 25165824,
+      "sha": "368f6751a3df842bbcba6866f1225ecb01d44793"
+    },
+    {
+      "path": "26866-新能源汽车动力电池技术.part5.rar",
+      "size": 25165824,
+      "sha": "fc986ca76ada028b764368bf5e1ac573995b3458"
+    },
+    {
+      "path": "26866-新能源汽车动力电池技术.part6.rar",
+      "size": 17547498,
+      "sha": "9afea115d3e271aaf81f13467259416a2d026c55"
+    },
+    {
+      "path": "27267-VHDL数字系统设计与应用-黄卉.part1.rar",
+      "size": 25165824,
+      "sha": "2021565318aaa3cef7323962465213f9eb368f0a"
+    },
+    {
+      "path": "27267-VHDL数字系统设计与应用-黄卉.part2.rar",
+      "size": 25165824,
+      "sha": "812b44dc325da11a032884de33580e4b160f9893"
+    },
+    {
+      "path": "27267-VHDL数字系统设计与应用-黄卉.part3.rar",
+      "size": 25165824,
+      "sha": "6583cbca1972afb55da197a6099b8e7ed4ccdc29"
+    },
+    {
+      "path": "27267-VHDL数字系统设计与应用-黄卉.part4.rar",
+      "size": 15588005,
+      "sha": "c760f676b58368768a23064efe1b290b311cbdbd"
+    },
+    {
+      "path": "27275-汽车电气设备（第三版）.part1.rar",
+      "size": 25165824,
+      "sha": "00e197a54befa035e1d5c3744734d0cc65d32656"
+    },
+    {
+      "path": "27275-汽车电气设备（第三版）.part2.rar",
+      "size": 25165824,
+      "sha": "4d8430424c39718706f3e8ce35d6786386fb6307"
+    },
+    {
+      "path": "27275-汽车电气设备（第三版）.part3.rar",
+      "size": 25165824,
+      "sha": "b215c400e8331e15b7f7171861b1d52bd73ff291"
+    },
+    {
+      "path": "27275-汽车电气设备（第三版）.part4.rar",
+      "size": 25165824,
+      "sha": "3701f7dbafdb1b1359addca7147c8d5bfd38dbb5"
+    },
+    {
+      "path": "27275-汽车电气设备（第三版）.part5.rar",
+      "size": 25165824,
+      "sha": "dc120ec7bc2adbb3ed98f0e1dc48795426b29fd1"
+    },
+    {
+      "path": "27275-汽车电气设备（第三版）.part6.rar",
+      "size": 5316934,
+      "sha": "66a1bd16aba1850e695c3cfeb584db979f92cb76"
+    },
+    {
+      "path": "28721-集成电路EDA设计—仿真与版图实例.part1.rar",
+      "size": 25165824,
+      "sha": "8e3308fe2cd026a729ab35c958c25d35930d6af2"
+    },
+    {
+      "path": "28721-集成电路EDA设计—仿真与版图实例.part2.rar",
+      "size": 25165824,
+      "sha": "6914af6802e6d357fbb142d5a74a8d970cba95dc"
+    },
+    {
+      "path": "28721-集成电路EDA设计—仿真与版图实例.part3.rar",
+      "size": 18024731,
+      "sha": "5b4b37d26b37d6d30ec316e1653667490b7dd3d8"
+    },
+    {
+      "path": "29371~模拟电子技术（第2版）~张绪光.part1.rar",
+      "size": 25165824,
+      "sha": "26bb90d8c78e1e17660e8eeba15e8c92e1d582b5"
+    },
+    {
+      "path": "29371~模拟电子技术（第2版）~张绪光.part2.rar",
+      "size": 25165824,
+      "sha": "64cc9e7a5706f9bf71880d0dc96b58e72ca0828a"
+    },
+    {
+      "path": "29371~模拟电子技术（第2版）~张绪光.part3.rar",
+      "size": 25165824,
+      "sha": "57817135236b14cf71890efc1b4ecd4d8b08969b"
+    },
+    {
+      "path": "29371~模拟电子技术（第2版）~张绪光.part4.rar",
+      "size": 25165824,
+      "sha": "2b9e51b098b1b01a0f6b206af321e3290de7b685"
+    },
+    {
+      "path": "29371~模拟电子技术（第2版）~张绪光.part5.rar",
+      "size": 25165824,
+      "sha": "6a7c3f2bd7679a951fd978437c8124a14a5d225d"
+    },
+    {
+      "path": "29371~模拟电子技术（第2版）~张绪光.part6.rar",
+      "size": 5551571,
+      "sha": "b5c188671476c3e5440cbdfa99def69dced787fa"
+    },
+    {
+      "path": "29691~集成电路版图设计（第2版）~陆学斌.part1.rar",
+      "size": 25165824,
+      "sha": "ed6ad4e7be2ae4603ce6b590f961fd14048c7510"
+    },
+    {
+      "path": "29691~集成电路版图设计（第2版）~陆学斌.part2.rar",
+      "size": 25165824,
+      "sha": "2fb6b7015d3799e6afd73e928b635eba9fb4209c"
+    },
+    {
+      "path": "29691~集成电路版图设计（第2版）~陆学斌.part3.rar",
+      "size": 25165824,
+      "sha": "603ccbae5bdd742b8c9840caf207f8698739adc3"
+    },
+    {
+      "path": "29691~集成电路版图设计（第2版）~陆学斌.part4.rar",
+      "size": 22598783,
+      "sha": "30b5039a216f351ac92791cdb55d0084810e0c38"
+    },
+    {
+      "path": "29712~物理光学理论与应用（第3版）~宋贵才.part1.rar",
+      "size": 25165824,
+      "sha": "90d79faef685ae42c78bac42cfbdbe130452edd5"
+    },
+    {
+      "path": "29712~物理光学理论与应用（第3版）~宋贵才.part2.rar",
+      "size": 16269371,
+      "sha": "ddf3f8062948d8bd4bf4b17f32ee9b0f3c025cf2"
+    },
+    {
+      "path": "30080 电子工艺实习(第2版）.part1.rar",
+      "size": 25165824,
+      "sha": "302b0d57c13e2ce3e57e7fcbc92d817c34c0bcda"
+    },
+    {
+      "path": "30080 电子工艺实习(第2版）.part2.rar",
+      "size": 25165824,
+      "sha": "0e5ef8a4bcde760fae996117f0748efd76d6af9e"
+    },
+    {
+      "path": "30080 电子工艺实习(第2版）.part3.rar",
+      "size": 25165824,
+      "sha": "132446734b121b01472f2c7d83f34130d6173ff5"
+    },
+    {
+      "path": "30080 电子工艺实习(第2版）.part4.rar",
+      "size": 4238771,
+      "sha": "5b6399896054c24893e7eeeed23ea7fafd5fd097"
+    },
+    {
+      "path": "31种雅思口语高分必背公式.epub",
+      "size": 5793487,
+      "sha": "aa6a5b66034e043d5e699ea6d991f9f164e9d02a"
+    },
+    {
+      "path": "3218199_化学元素狂想曲.part1.rar",
+      "size": 25165824,
+      "sha": "bf3eb26b304e0d34183597d486d9614166a7dbc1"
+    },
+    {
+      "path": "3218199_化学元素狂想曲.part2.rar",
+      "size": 25165824,
+      "sha": "e1bdb661aa8981c0d88fb80f1ff6e0bc80f13579"
+    },
+    {
+      "path": "3218199_化学元素狂想曲.part3.rar",
+      "size": 12495752,
+      "sha": "6233676fc960e8b9fcfb7be2fd4725b938c2f13b"
+    },
+    {
+      "path": "35家跨国公司的薪酬政策_后东升.epub",
+      "size": 1567144,
+      "sha": "a7dcbd34a4b63fe01a3493d735e555d0f6eac2b5"
+    },
+    {
+      "path": "4000+ 国内外直播源.m3u",
+      "size": 626832,
+      "sha": "7719d039661f138afe37215d62afd0ebd0f963a8"
+    },
+    {
+      "path": "5 20AM - soldier.mp3",
+      "size": 11344447,
+      "sha": "4222f177ff83255be951f5b65c6692e35a4ccaa4"
+    },
+    {
+      "path": "9分雅思口语 (环球雅思学校雅思(IELTS)考试指定辅导用书) by 李一萌 (z-lib.org).mobi",
+      "size": 8691365,
+      "sha": "c6e0f65719ed1d7e06ca615de2354fac26bbd050"
+    },
+    {
+      "path": "9分雅思口语考试指定辅导用书).epub",
+      "size": 8440399,
+      "sha": "25cc91c634b49c3057c47eb4fd51182989d86edc"
+    },
+    {
+      "path": "A Guide to Crypto Collectibles and Non-fungible Tokens NFTS (crypto, cryptocurrency, polkadot, trading, bitcoin, staking, earn money online, invest, ethereum, blockchain, defi, oracle, chainlink) by J (z-lib.org).epub",
+      "size": 40264,
+      "sha": "e8bb4ae12bf33fa54d1f155934895e91d28365f4"
+    },
+    {
+      "path": "AI for Learners (AI for Everything)_Carmel Kent, Benedict du Boulay.epub",
+      "size": 2744474,
+      "sha": "0df0b65b1ae5e6ca32aec2e0cc83b8b98ca31f58"
+    },
+    {
+      "path": "American Prometheus- The Triumph & Tragedy of J Robert Oppenheimer_Bird, Kai; Sherwin, Martin J.mobi",
+      "size": 8030075,
+      "sha": "4cb8a704cf33f31921c0d5f2d82b57cd858af389"
+    },
+    {
+      "path": "Atlas (World Atlas)_ella32.part1.rar",
+      "size": 25165824,
+      "sha": "d6481fbd3540ddb923d98099f6e92784608f92b8"
+    },
+    {
+      "path": "Atlas (World Atlas)_ella32.part2.rar",
+      "size": 11950109,
+      "sha": "2bd7310f81e564fb12cd42e50e82ceaa43ff968c"
+    },
+    {
+      "path": "Atlas of Pediatric EEG (Atlas Series)  _Pramote Laoprasert.part1.rar",
+      "size": 25165824,
+      "sha": "2cf223975795b039c0d4cdf4556d4fc95608a303"
+    },
+    {
+      "path": "Atlas of Pediatric EEG (Atlas Series)  _Pramote Laoprasert.part2.rar",
+      "size": 25165824,
+      "sha": "f2926d72194fed934ef62e2cd773c65fce06cf8a"
+    },
+    {
+      "path": "Atlas of Pediatric EEG (Atlas Series)  _Pramote Laoprasert.part3.rar",
+      "size": 25165824,
+      "sha": "c2a9fde559e46582e047e4eda0f502cb4eac3261"
+    },
+    {
+      "path": "Atlas of Pediatric EEG (Atlas Series)  _Pramote Laoprasert.part4.rar",
+      "size": 25165824,
+      "sha": "39c5d93d9cc4a801d9f761b2c480d8d0c283552c"
+    },
+    {
+      "path": "Atlas of Pediatric EEG (Atlas Series)  _Pramote Laoprasert.part5.rar",
+      "size": 25165824,
+      "sha": "5b417dcfcd1aae0a7ba6cd17bf40179568f48af8"
+    },
+    {
+      "path": "Atlas of Pediatric EEG (Atlas Series)  _Pramote Laoprasert.part6.rar",
+      "size": 3730687,
+      "sha": "9e5b29c6998eaef2751747a371cf011375b716a8"
+    },
+    {
+      "path": "Australian-Semiconductor-Sector-Study.pdf",
+      "size": 769630,
+      "sha": "b58c384a84599435793aa3ecb3332857a50ae32e"
+    },
+    {
+      "path": "CMOS集成电路EDA技术.part1.rar",
+      "size": 25165824,
+      "sha": "db34e1c9b0eec38f944993c8849f0e4f2d724ef0"
+    },
+    {
+      "path": "CMOS集成电路EDA技术.part2.rar",
+      "size": 15711497,
+      "sha": "34f70bfd0b1468b6e139c69d6993ac65f0b8d27e"
+    },
+    {
+      "path": "Collins Get Ready for IELTS Writing - Pre-Intermediate A2+ (Fiona Aish, Jo Tomlinson) (z-lib.org).pdf",
+      "size": 5900594,
+      "sha": "15b6bfd482e7e9fd18a1cc072d5af0d2e5c2fd93"
+    },
+    {
+      "path": "Concise Oxford Dictionary of Quotations (Susan Ratcliffe) (https___zh.z-lib.org).pdf",
+      "size": 2570539,
+      "sha": "ae61bac22b1c6c3665f7c10d75da5354a6e22ef6"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part01.rar",
+      "size": 25165824,
+      "sha": "519f569a1b92ddf0a1b3636930e7caa1b7b5cb57"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part02.rar",
+      "size": 25165824,
+      "sha": "c53259b6249bd67745335b1083566ed5f1046e87"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part03.rar",
+      "size": 25165824,
+      "sha": "5b01e96a3839d9ac5c72afcf176d26c7d0a93153"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part04.rar",
+      "size": 25165824,
+      "sha": "c8cb84a00c3409fb2762fb87b54f7a91510597aa"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part05.rar",
+      "size": 25165824,
+      "sha": "2abe1a3ace936f639d489aaae0d67fb5e74eaaf6"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part06.rar",
+      "size": 25165824,
+      "sha": "b74dcbc38ea1b1d2f3c366eabb14b0e2b71ac17d"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part07.rar",
+      "size": 25165824,
+      "sha": "7723dc027b8817d5ba5836f5081e27ee0df6b8ec"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part08.rar",
+      "size": 25165824,
+      "sha": "6bafceccf9985ee6d6a22d5d0438adbd7ec4362c"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part09.rar",
+      "size": 25165824,
+      "sha": "651f334b9e2145cb860e62de19d9ada88d6deb7c"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part10.rar",
+      "size": 25165824,
+      "sha": "1d9c122dbfd2aa6469dc2914f98072eaf8580bf2"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part11.rar",
+      "size": 25165824,
+      "sha": "012c05bb2f35728766bf446dbdcc159bba6cefb9"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part12.rar",
+      "size": 25165824,
+      "sha": "ebd35ca7edd07208fcc01311c132bcf496e6b822"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part13.rar",
+      "size": 25165824,
+      "sha": "5239212f011f4ba8d3db44a158ac1d1ef27c0f88"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part14.rar",
+      "size": 25165824,
+      "sha": "8714804376c83e148c6e0ae357952821e5e986e5"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part15.rar",
+      "size": 25165824,
+      "sha": "df5d80e92e9dc45ffc2949075872dd851c75c505"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part16.rar",
+      "size": 25165824,
+      "sha": "9f65b8517907f0b7bad4d2234fe0b3ae67610482"
+    },
+    {
+      "path": "Cornea Atlas_Jay H. Krachmer, David A Palay.part17.rar",
+      "size": 17310163,
+      "sha": "3d30e8896cacd66680f43acaf9f04c23b8ee671c"
+    },
+    {
+      "path": "Corrosion Atlas_Evert D. D. During.part1.rar",
+      "size": 25165824,
+      "sha": "60982a75716078dbf081c4bde44651e0aa11a6bc"
+    },
+    {
+      "path": "Corrosion Atlas_Evert D. D. During.part2.rar",
+      "size": 14903770,
+      "sha": "96ef00a848d10b1b5b3fa3dff8c71edce14ba9a1"
+    },
+    {
+      "path": "DK家庭医生常见病诊疗手册（第五版）_ 家庭健康顾问_英国DK公司.part1.rar",
+      "size": 25165824,
+      "sha": "577f42889b690d79e7f7c5746e6bcebe23ac4a5c"
+    },
+    {
+      "path": "DK家庭医生常见病诊疗手册（第五版）_ 家庭健康顾问_英国DK公司.part2.rar",
+      "size": 25165824,
+      "sha": "2404857ede06f458531371a53371aac560ee4555"
+    },
+    {
+      "path": "DK家庭医生常见病诊疗手册（第五版）_ 家庭健康顾问_英国DK公司.part3.rar",
+      "size": 11290832,
+      "sha": "30a158ebb0e1165ff8aec8c74e9c80fdc373474d"
+    },
+    {
+      "path": "DK星座百科：初学者观星指南_英国DK公司.part1.rar",
+      "size": 25165824,
+      "sha": "92dcda7435a2fd1c0f795d9b2c76f42178b367b6"
+    },
+    {
+      "path": "DK星座百科：初学者观星指南_英国DK公司.part2.rar",
+      "size": 2220594,
+      "sha": "174754e31a53b0ab7662809f16a7e9c9b892e014"
+    },
+    {
+      "path": "Encyclopedia of Cat Breeds (J. Anne Helgren) (Z-Library).part1.rar",
+      "size": 25165824,
+      "sha": "21a767943e1bc67478e59bd2dae0fcc229a9a6b4"
+    },
+    {
+      "path": "Encyclopedia of Cat Breeds (J. Anne Helgren) (Z-Library).part2.rar",
+      "size": 25165824,
+      "sha": "92ff70d0a073bd81357b5d27c836d03f5c92a541"
+    },
+    {
+      "path": "Encyclopedia of Cat Breeds (J. Anne Helgren) (Z-Library).part3.rar",
+      "size": 20912715,
+      "sha": "a98203c10d3581885d39b2ddce59784724b5b316"
+    },
+    {
+      "path": "Encyclopedia of Dog Breeds_Ph. D. Coile (Caroline).part1.rar",
+      "size": 25165824,
+      "sha": "041f04da8525287e7251219381adb7b217d13b4f"
+    },
+    {
+      "path": "Encyclopedia of Dog Breeds_Ph. D. Coile (Caroline).part2.rar",
+      "size": 25165824,
+      "sha": "ff113e3e19dbc96b0632d14daa737253250e43ec"
+    },
+    {
+      "path": "Encyclopedia of Dog Breeds_Ph. D. Coile (Caroline).part3.rar",
+      "size": 25165824,
+      "sha": "7b6388657924a91861b246b88cb2ed6cf9ca68d7"
+    },
+    {
+      "path": "Encyclopedia of Dog Breeds_Ph. D. Coile (Caroline).part4.rar",
+      "size": 25165824,
+      "sha": "30b37758050fdc436424017855b4e86394e21d0b"
+    },
+    {
+      "path": "Encyclopedia of Dog Breeds_Ph. D. Coile (Caroline).part5.rar",
+      "size": 25165824,
+      "sha": "22c3e5237ffb718e89eca4027e8a91ab623e7b51"
+    },
+    {
+      "path": "Encyclopedia of Dog Breeds_Ph. D. Coile (Caroline).part6.rar",
+      "size": 25165824,
+      "sha": "a520f1a46aa90dcc887291b4989f5a0b0d198047"
+    },
+    {
+      "path": "Encyclopedia of Dog Breeds_Ph. D. Coile (Caroline).part7.rar",
+      "size": 11246214,
+      "sha": "7935893b0d9d55b608ea61f90899ba6b7e5a0938"
+    },
+    {
+      "path": "English - Speak Like a Native in 5 Lesson for Busy People by Ken Xiao (z-lib.org).mobi",
+      "size": 2529901,
+      "sha": "2b6f5e58e4a3d7e20c399830b7c71a82281c5fb3"
+    },
+    {
+      "path": "English Pronunciation in Use Advanced by Martin Hewings (z-lib.org).pdf",
+      "size": 9289260,
+      "sha": "4c3420475f3c1797047ee6d7d9f9351eca4d2224"
+    },
+    {
+      "path": "English for Everyone - English Phrasal Verbs (Thomas Booth, Ben Ffrancon Davies, Peter Dainty etc.) (Z-Library).part1.rar",
+      "size": 25165824,
+      "sha": "d9308f4d3d6c4b5a8a84950863868f81205783a4"
+    },
+    {
+      "path": "English for Everyone - English Phrasal Verbs (Thomas Booth, Ben Ffrancon Davies, Peter Dainty etc.) (Z-Library).part2.rar",
+      "size": 25165824,
+      "sha": "a87deb61531ec0e8453d8fd84b31f01d22110b61"
+    },
+    {
+      "path": "English for Everyone - English Phrasal Verbs (Thomas Booth, Ben Ffrancon Davies, Peter Dainty etc.) (Z-Library).part3.rar",
+      "size": 25165824,
+      "sha": "a868af0a687c7420de6e419e953ff6e88391bafb"
+    },
+    {
+      "path": "English for Everyone - English Phrasal Verbs (Thomas Booth, Ben Ffrancon Davies, Peter Dainty etc.) (Z-Library).part4.rar",
+      "size": 12865952,
+      "sha": "bbc0e68702700e7c4bf9727f6ac6909cbc4d1670"
+    },
+    {
+      "path": "Euv Lithography_Vivek Bakshi.part1.rar",
+      "size": 25165824,
+      "sha": "81ec9982b3745aa2c3cc91ca7e1bfa9f389c18e8"
+    },
+    {
+      "path": "Euv Lithography_Vivek Bakshi.part2.rar",
+      "size": 25165824,
+      "sha": "70e15162899af1f38585a147b81052d506958eb5"
+    },
+    {
+      "path": "Euv Lithography_Vivek Bakshi.part3.rar",
+      "size": 25165824,
+      "sha": "afc09ccc1d0d1ba54a9f02904c1552546128480b"
+    },
+    {
+      "path": "Euv Lithography_Vivek Bakshi.part4.rar",
+      "size": 25165824,
+      "sha": "4e8a43203a4e9287db3d7f8687d3bcb7e7f1fdf5"
+    },
+    {
+      "path": "Euv Lithography_Vivek Bakshi.part6.rar",
+      "size": 13006817,
+      "sha": "369636b09dfb1aac0839c558a92ec8120c2c804a"
+    },
+    {
+      "path": "Everybody Dies In Their Nightmares - XXXTENTACION.mp3",
+      "size": 1528520,
+      "sha": "3b79246b9bf75664ed8598b9c816536eff41555c"
+    },
+    {
+      "path": "Extreme Ultraviolet Lithography_Harry J. Levinson.pdf",
+      "size": 24535075,
+      "sha": "cf809cbf3174940c782aea4efa24aad6782688ac"
+    },
+    {
+      "path": "Fluent English Perfect Natural Speech, Sharpen Your Grammar, Master Idiomatic Expressions, Speak Fluently by Barbara Raifsnider (z-lib.org).pdf",
+      "size": 1619021,
+      "sha": "b30e329f7b7c1462399a5f9b6dde6290b22d7f15"
+    },
+    {
+      "path": "Get Rid of You Accent.pdf",
+      "size": 10831475,
+      "sha": "5c83cf1076d0d2710b417fdaf75b9e243a56821c"
+    },
+    {
+      "path": "HD陳一發兒 - 童話鎮 [歌詞字幕][完整高清音質] Chen Yifa - Fairy Town.mp3",
+      "size": 6192621,
+      "sha": "79036549a57132911678154f7098289285bb7f4e"
+    },
+    {
+      "path": "I-2.5.pdf",
+      "size": 1205891,
+      "sha": "ba31a17f089f9f5a31e7f010f4f2f3e4e0b7c323"
+    },
+    {
+      "path": "IELTS Academic Writing Task 1 The Ultimate Guide with Practice to Get a Target Band Score of 8.0+ In 10 Minutes a Day (Rachel Mitchell) (z-lib.org).pdf",
+      "size": 2949673,
+      "sha": "e6d16800fe1089257c1e40764bdc8de288bc0e96"
+    },
+    {
+      "path": "IELTS Examiner’s Tips An Academic Guide to IELTS Speaking and Writing (Karolina Achirri) (z-lib.org).epub",
+      "size": 7231290,
+      "sha": "e07c7070a8cf11f15b422e8a9697b94ecebe6917"
+    },
+    {
+      "path": "IELTS Grammar Masterclass 8.5 © English Grammar for IELTS 8.5 (Roche, Marc  Writing Consultants, IELTS) (z-lib.org).epub",
+      "size": 717860,
+      "sha": "669f2abad5a641d49c78763ee544355f0849ff1e"
+    },
+    {
+      "path": "IELTS Model Essays Kindle by buddy, IELTS (z-lib.org).epub",
+      "size": 5993568,
+      "sha": "d2677f91e51ef1bf33c211569ba21cb80479ac36"
+    },
+    {
+      "path": "IELTS Simon- IELTS Speaking.pdf",
+      "size": 325881,
+      "sha": "1070cd28217868d6415c893e0b17d985ebb23198"
+    },
+    {
+      "path": "IELTS Success Formula General The Complete Practical Guide to a Top IELTS Score (Simone Braverman, Stephen Slater) (z-lib.org).epub",
+      "size": 1260274,
+      "sha": "10a593c31210807c9d781fd74aa142b556a51d2e"
+    },
+    {
+      "path": "IELTS Writing Task 1 + 2 The Ultimate Guide with Practice to Get a Target Band Score of 8.0+ In 10 Minutes a Day (MITCHELL RACHEL) (z-lib.org).epub",
+      "size": 3263141,
+      "sha": "0cb94efdd23af93813f4a2c4e519df48207bab49"
+    },
+    {
+      "path": "IELTS Writing Task 2 Success Through Understanding (Arvinder Chauhan) (z-lib.org).mobi",
+      "size": 215260,
+      "sha": "edc69bb175b7c89d9b0d66fb83d09aa2bcf19506"
+    },
+    {
+      "path": "IELTS Writing and Speaking Skills Get a 7+ Band Score (Activate Your IELTS Book 1) (Kristin Espinar) (z-lib.org).epub",
+      "size": 11408367,
+      "sha": "99e370e41fe170b23811ae754ef29f0638d535a1"
+    },
+    {
+      "path": "IMG_20211103_125908.jpg",
+      "size": 441254,
+      "sha": "66f854a7cc91a6943449996db209d3c4794e3339"
+    },
+    {
+      "path": "Ideas for IELTS Topics (Updated) (Simon.) (z-lib.org).pdf",
+      "size": 184244,
+      "sha": "8f5d9444ab9f152959fdbae455d26e93aa847292"
+    },
+    {
+      "path": "Ielts.txt",
+      "size": 4172,
+      "sha": "0bc69c15a66455e0d7db3b2fec5002681700c75e"
+    },
+    {
+      "path": "Immigration_ Examining the Facts_Cari Lee Skogberg Eastman.epub",
+      "size": 2176037,
+      "sha": "16caf149edbec8e0a6ac44dfc6a24e63b2f6d8dc"
+    },
+    {
+      "path": "Interperetable AI_Ajay Thampi.epub",
+      "size": 4598608,
+      "sha": "aadd4507c0ceafadca49c9dc0b3a24f1afd68f53"
+    },
+    {
+      "path": "Lessons from Nanoelectronics A New Perspective on Transport _ Basic Concepts by Supriyo Datta (z-lib.org).pdf",
+      "size": 4713453,
+      "sha": "da2ee125daf9265455dcd253d34137fdb4b34bb2"
+    },
+    {
+      "path": "Lithography Process Control_Harry J. Levinson.pdf",
+      "size": 13559025,
+      "sha": "14c7f231800bd081ea91cc8fe74e90cc65cc4ccd"
+    },
+    {
+      "path": "Lithography [semiconductor mfg]_M. Wang .part1.rar",
+      "size": 25165824,
+      "sha": "1a3f9fdf6ee45f3319b8a67657090511d46a76af"
+    },
+    {
+      "path": "Lithography [semiconductor mfg]_M. Wang .part2.rar",
+      "size": 25165824,
+      "sha": "39008bba52c13c1f8ad913e39125ba44d7876fcf"
+    },
+    {
+      "path": "Lithography [semiconductor mfg]_M. Wang .part3.rar",
+      "size": 25165824,
+      "sha": "a679d6c541011781b02e7efcfe8a170ec0e4f70e"
+    },
+    {
+      "path": "Lithography [semiconductor mfg]_M. Wang .part4.rar",
+      "size": 5422231,
+      "sha": "f1a9133a80371f2f236e1667de3431772992556b"
+    },
+    {
+      "path": "Lithography_Michael Wang.part1.rar",
+      "size": 25165824,
+      "sha": "1a06c37285556fce27d932c982d23534816d3bca"
+    },
+    {
+      "path": "Lithography_Michael Wang.part2.rar",
+      "size": 25165824,
+      "sha": "7633f85a0e3640b69ac25a9089226bd0dab11162"
+    },
+    {
+      "path": "Lithography_Michael Wang.part3.rar",
+      "size": 25165824,
+      "sha": "4cc936a7b9fda3faa50fb2b5ad04a254ebd4178a"
+    },
+    {
+      "path": "Lithography_Michael Wang.part4.rar",
+      "size": 5460129,
+      "sha": "387f23fa579495cf1202d5e5471221d1dbeccadc"
+    },
+    {
+      "path": "Master IELTS Writing Band 9.0 Essays © Includes FREE Online IELTS Writing Course + Band 9 Essay Templates. Preparation Book +... (Writing Consultants, IELTS  Roche, Marc) (z-lib.org).pdf",
+      "size": 2151998,
+      "sha": "6b98d34122bf67764d110d71456c08c5e07b5d2d"
+    },
+    {
+      "path": "Mastering Bitcoin Unlocking Digital Cryptocurrencies by Andreas M. Antonopoulos (z-lib.org).pdf",
+      "size": 7469064,
+      "sha": "eee69fce0bf166d61038fd851946cb28d70af80b"
+    },
+    {
+      "path": "McGraw-Hill Education Handbook of English Grammar  Usage by Mark Lester (z-lib.org).epub",
+      "size": 13563684,
+      "sha": "6abdd6bb67385f25996c1777b6967db907b8f2d1"
+    },
+    {
+      "path": "Merriam-Websters Vocabulary Builder by Mary W. Cornog (z-lib.org).mobi",
+      "size": 817484,
+      "sha": "32651ea385a7cc57c8aa04649a647e7d2355f5bc"
+    },
+    {
+      "path": "Modern Electronic Test Equipment_Keith Brindley (Auth.).pdf",
+      "size": 25786556,
+      "sha": "ce9fbb005f3bf5cbf83be784e891a0b3a989b24f"
+    },
+    {
+      "path": "Nano Lithography_Landis S..pdf",
+      "size": 19617162,
+      "sha": "1663a19f88555dd5f913528d821733db92efd2dd"
+    },
+    {
+      "path": "Nano and Micromachining  _J. Paul Davim, Mark J. Jackson.pdf",
+      "size": 5857161,
+      "sha": "5d366a55611bb9e00bfdfcc1bd8c03e4753c1cf4"
+    },
+    {
+      "path": "Nano- and Micromaterials_Kaoru Ohno, Kaoru Ohno, Masatoshi Tanaka, Jun Takeda, Yoshiyuki Kawazoe.pdf",
+      "size": 14566024,
+      "sha": "2622dd48d68cd8cf7f331d9fb8549e79ac00da73"
+    },
+    {
+      "path": "New Text Document.php",
+      "size": 13932,
+      "sha": "bda30803a6c930ea59a697cfb809c65d42f500a3"
+    },
+    {
+      "path": "On Writing Well, 30th Anniversary Edition An Informal Guide to Writing Nonfiction by William Zinsser (z-lib.org).epub",
+      "size": 468965,
+      "sha": "9531271c0c11eab86866a8d779fe141918ec13cd"
+    },
+    {
+      "path": "Oxford Collocations Dictionary For Students of English by Colin McIntosh, Ben Francis, Richard Poole (Editors) (z-lib.org).epub",
+      "size": 8191824,
+      "sha": "fd7b722813d1362724213020aa00b204bc6a5104"
+    },
+    {
+      "path": "Oxford Modern English Grammar by Bas Aarts (z-lib.org).epub",
+      "size": 1964286,
+      "sha": "df35b87fd34a00a89e69e4159110815fad1abded"
+    },
+    {
+      "path": "Oxford Word Magic  _Collectif.part1.rar",
+      "size": 25165824,
+      "sha": "545960eb298383f3ef90479e8fd2de28dcbcc953"
+    },
+    {
+      "path": "Oxford Word Magic  _Collectif.part2.rar",
+      "size": 24107565,
+      "sha": "01cd4d7117368ec1ce458114ee692ed0d9d23ebd"
+    },
+    {
+      "path": "Practice Makes Perfect English Conversation (Jean Yates).pdf",
+      "size": 9618487,
+      "sha": "5337c4eaee18758f1ee880a43f19bc9b79790d3d"
+    },
+    {
+      "path": "Principles of Lithography_Levinson H.J..pdf",
+      "size": 17805073,
+      "sha": "c5d15a4c41c8b60c72b1f2415c1c4dc2ac6adec3"
+    },
+    {
+      "path": "Process Engineering Equipment Handbook_Claire Marguerite Soares, Claire Marquerite Soares.pdf",
+      "size": 23535346,
+      "sha": "659d15de0ce43886c4d718e746befc0cd3ac3fba"
+    },
+    {
+      "path": "STEMPostgraduateProspectus2022.pdf",
+      "size": 7572791,
+      "sha": "d8e11b0e8f36a6d0bda382adb81478eabe699239"
+    },
+    {
+      "path": "Semiconductor physics and devices basic principles by Donald A. Neamen (z-lib.org).pdf",
+      "size": 14026838,
+      "sha": "97378307643f167f941f196c723fddf3a8fdaf85"
+    },
+    {
+      "path": "SnapSave.io - 经济舱 (128 kbps).mp3",
+      "size": 3510997,
+      "sha": "14c96c792de4a3cd62e2a0e5a0cbee2093f8641c"
+    },
+    {
+      "path": "Talk English The Secret To Speak English Like A Native In 6 Months For Busy People, Learn Spoken English From The Success by Ken Xiao (z-lib.org).epub",
+      "size": 501603,
+      "sha": "4729414c98f0721818a1012576d54af6f221be0e"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part01.rar",
+      "size": 25165824,
+      "sha": "a1527a4d69ac27945cbbc9db279ca6d5541db9e7"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part02.rar",
+      "size": 25165824,
+      "sha": "b3a6213675585d890b2d29fcf55e815063a310bd"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part03.rar",
+      "size": 25165824,
+      "sha": "fb87ab6e146fc765b663213b29e9d0ab24af6cbe"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part04.rar",
+      "size": 25165824,
+      "sha": "e400d335e38ffb471bec78acc66152ef74ca25ac"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part05.rar",
+      "size": 25165824,
+      "sha": "64a71cf9a2891da6efdce440ed64ef0230e74171"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part06.rar",
+      "size": 25165824,
+      "sha": "11e0119f4dbc6fd3cdc7708da11863b5b51bb79e"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part07.rar",
+      "size": 25165824,
+      "sha": "5cb46050eb710fdc542438aa62abe237b60d6f9a"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part08.rar",
+      "size": 25165824,
+      "sha": "26643b1cb3aa7ffa1bde99de2ce90a31ca9f1877"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part09.rar",
+      "size": 25165824,
+      "sha": "ba3fcadf262eeed7513d95ba6de6053a7e3dd96f"
+    },
+    {
+      "path": "The Black History Book Big Ideas Simply Explained (DK, David Olusoga) (Z-Library).part10.rar",
+      "size": 17029055,
+      "sha": "18f80012f8c61fdb420c0bd27a3d35ddbda90065"
+    },
+    {
+      "path": "The Claws of Evil_Andrew Beasley.epub",
+      "size": 6783353,
+      "sha": "2cf9dc8ea9294d9f40c61ce22ab3a0f60368fe1c"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part01.rar",
+      "size": 25165824,
+      "sha": "688c2eb48cf62a06c85bb279d54bce6930443a58"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part02.rar",
+      "size": 25165824,
+      "sha": "47a021a2a7d46ed4cff5ee50ba239a907b52e05a"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part03.rar",
+      "size": 25165824,
+      "sha": "fb0486eb57583bedd668c3bc756d18971969146f"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part04.rar",
+      "size": 25165824,
+      "sha": "9207ae21538249b5542ecad61ad0c9f3762656f2"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part05.rar",
+      "size": 25165824,
+      "sha": "3dbf8419f774ba8287b0496c4823f2bd8ee6540a"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part06.rar",
+      "size": 25165824,
+      "sha": "aafcefaf371ad4d85c1993113af2cd3225b19807"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part07.rar",
+      "size": 25165824,
+      "sha": "e469b27f196f09e6f20cd29cf167baef2843c55a"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part08.rar",
+      "size": 25165824,
+      "sha": "de54ecfd04def5e0424ee1668f42b329c99f66eb"
+    },
+    {
+      "path": "The Feminism Book (DK) (Z-Library).part09.rar",
+      "size": 22595267,
+      "sha": "143aa589e5b6e29a4a6358bfc4e1d9170dcd5572"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part01.rar",
+      "size": 25165824,
+      "sha": "6daa0269f8f03b75234e2d9c2d044dfb0b27eaec"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part02.rar",
+      "size": 25165824,
+      "sha": "dc6b7ca65848490b69f1dbe56e4f0afe55555656"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part03.rar",
+      "size": 25165824,
+      "sha": "acd9f9448cf0a6a78df70c7ad08941ba125ea8c5"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part04.rar",
+      "size": 25165824,
+      "sha": "bf14df59602c23962b2f51c7a28d3b6500f77a6d"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part05.rar",
+      "size": 25165824,
+      "sha": "d432b17f7d48deb1a04f293cf2f8686a5eb5eb11"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part06.rar",
+      "size": 25165824,
+      "sha": "abbee7ff1c4402462602de2c23e41bbe133d2f38"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part07.rar",
+      "size": 25165824,
+      "sha": "26b776c53314cbfe2cc176271acea056afd70b23"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part08.rar",
+      "size": 25165824,
+      "sha": "62678399ef18276a78ba5963ffceec4439656765"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part09.rar",
+      "size": 25165824,
+      "sha": "87e378df122709bc8bcbe30530af507e160fae8f"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part10.rar",
+      "size": 25165824,
+      "sha": "09282f53e673b9e082a5f043205dfb522888608a"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part11.rar",
+      "size": 25165824,
+      "sha": "535d8d9cf148e3324e09e4afb668c4b4342c65a1"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part12.rar",
+      "size": 25165824,
+      "sha": "ea6de12d98ef27803eeae427e5c245120d027ae0"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part13.rar",
+      "size": 25165824,
+      "sha": "4265b971c029e834e99a5f24fc269d4768b854fb"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part14.rar",
+      "size": 25165824,
+      "sha": "a888dab9a6f4591267fbf7b231363b95f24f71d4"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part15.rar",
+      "size": 25165824,
+      "sha": "d03c02cd054ac31ad4edcbcdab1cb287c44521e9"
+    },
+    {
+      "path": "The Islam Book Big Ideas Simply Explained (DK) (Z-Library).part16.rar",
+      "size": 16367336,
+      "sha": "ccd19e231195dd6e9ee91835ca54a59cd688e738"
+    },
+    {
+      "path": "The Oxford Thesaurus An A-Z Dictionary of Synonyms by Laurence Urdang (z-lib.org).pdf",
+      "size": 3786697,
+      "sha": "7ca44239c7a564ad1e98547a3a644f54508b32d9"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part01.rar",
+      "size": 25165824,
+      "sha": "212475ad3180c67639df6d078eeb254828f98bc0"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part02.rar",
+      "size": 25165824,
+      "sha": "fb08602418ee999e72f4602d99bc7b8a412dd551"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part03.rar",
+      "size": 25165824,
+      "sha": "04594af4d76ddcba922d3f165c99a1c983bc3af3"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part04.rar",
+      "size": 25165824,
+      "sha": "6d9f36b4559e8d84dc9725dc424949198e81b138"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part05.rar",
+      "size": 25165824,
+      "sha": "76ea80f489bead0ffbe491b4ab0afdc64d47a0e8"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part06.rar",
+      "size": 25165824,
+      "sha": "2f6040f62a4bd7b274e672054d4d9a48a83ecff1"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part07.rar",
+      "size": 25165824,
+      "sha": "2437811b15965166b9b060dad45f5c4e2d454c6b"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part08.rar",
+      "size": 25165824,
+      "sha": "e62c7faf9c51251321c3a5bd674e8d4f01423af6"
+    },
+    {
+      "path": "The Sherlock Holmes Book Big Ideas Simply Explained ( etc.) (Z-Library).part09.rar",
+      "size": 6653053,
+      "sha": "a2025a93825568abf1de27663342d74f8556d46e"
+    },
+    {
+      "path": "The Well-Spoken Thesaurus The Most Powerful Ways to Say Everyday Words and Phrases by Tom Heehler (z-lib.org).pdf",
+      "size": 3067785,
+      "sha": "9389dc704b4172942071dc7d60ad274d838449cd"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part01.rar",
+      "size": 25165824,
+      "sha": "3c062288896dd5f29732040f903ad54ba111777b"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part02.rar",
+      "size": 25165824,
+      "sha": "93311e7a929fe27a87ffb91cf3a2f79871930cf5"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part03.rar",
+      "size": 25165824,
+      "sha": "d5d420f11c584235d10e3b30b7158d29c4283efb"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part04.rar",
+      "size": 25165824,
+      "sha": "abb7a7ffd6d0d03441c6fe3c76e2c938885ef6e1"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part05.rar",
+      "size": 25165824,
+      "sha": "400e4bbcfd14dc43c285154cfd12aed51bb508fb"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part06.rar",
+      "size": 25165824,
+      "sha": "4c7decfa63a6b3a4fe36cf0b2ac2cb73ff6b1ce8"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part07.rar",
+      "size": 25165824,
+      "sha": "090c70749ad9c48b2f282b19ee441839cd90ee29"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part08.rar",
+      "size": 25165824,
+      "sha": "b6b4282901e137473fad2590c840da89aa3c0c1a"
+    },
+    {
+      "path": "The World’s Worst Pets (David Walliams) (Z-Library).part09.rar",
+      "size": 753044,
+      "sha": "1ff844349950698ab0acbdb93bfa34e857ddaec6"
+    },
+    {
+      "path": "Thinking for Yourself_Marlys Mayfield.pdf",
+      "size": 13424150,
+      "sha": "66ee7882d5e1af637d8fc387c91ccee849c93469"
+    },
+    {
+      "path": "True.docx",
+      "size": 212392,
+      "sha": "56c05fde438193362ddb2020e6f6b54eaf80cf0e"
+    },
+    {
+      "path": "ULSI Semiconductor Technology Atlas by Chih-Hang Tung, George T. T. Sheng, Chih-Yuan Lu (z-lib.org)_337-end.pdf",
+      "size": 13797880,
+      "sha": "5782bb9ab8f8f9d0059c9e2b120607e321f0699b"
+    },
+    {
+      "path": "Word power made easy by Norman Lewis (z-lib.org).pdf",
+      "size": 6938788,
+      "sha": "87bc8abc75a15c295e548a6a2512f70f18b2888e"
+    },
+    {
+      "path": "Writing Task 2 - Unknown.epub",
+      "size": 1319238,
+      "sha": "68567eeec9024df9bcc6b4f0993010e88495d102"
+    },
+    {
+      "path": "XXXM3U.M3U",
+      "size": 653739,
+      "sha": "b9bc24ecdef4832cca834284059340a00c66b699"
+    },
+    {
+      "path": "aa.txt",
+      "size": 3227,
+      "sha": "78ca29331858bce412888fc792e3fa3104040eb2"
+    },
+    {
+      "path": "aiya.txt",
+      "size": 21,
+      "sha": "3664855c6b8d4ad9259897fe967a0115c10e9f9d"
+    },
+    {
+      "path": "always onlin.mp3",
+      "size": 3564399,
+      "sha": "c16e5a7f0c6ccf86ba0b90c470b3e633f2ce827f"
+    },
+    {
+      "path": "molody.mp3",
+      "size": 4728416,
+      "sha": "9617425f3baef5a711d55b2eb20f36d1a404d811"
+    },
+    {
+      "path": "pas_5500.pdf",
+      "size": 119488,
+      "sha": "1a88d270cfcfc1966ea36e8f75162c8d2130a814"
+    },
+    {
+      "path": "postgraduate-prospectus-nui-galway.pdf",
+      "size": 13929013,
+      "sha": "47b902e9aa8e83a0631cd25d96c54cba209f59cd"
+    },
+    {
+      "path": "speaking",
+      "size": 55959,
+      "sha": "bf4c7fca1812c4c29ed00d74d852bc420f8f364a"
+    },
+    {
+      "path": "updated-psi-list-nov2018.pdf",
+      "size": 857399,
+      "sha": "0997e19142eeea654b782ad3469072aae7286702"
+    },
+    {
+      "path": "videoplayback 3.mp4",
+      "size": 3916139,
+      "sha": "ba1bd99d0ab78a682ad115e50b34dc1b3c2cb0c4"
+    },
+    {
+      "path": "wmr_2018_ch.pdf",
+      "size": 9157303,
+      "sha": "5172136f84dc7c240563e895dada998a1a168427"
+    },
+    {
+      "path": "y2mate.bz - 30首陳奕迅經典_-_單-80後90後必聽回憶-2個鐘無限loop-eason-chan-演唱會補習_.part1.rar",
+      "size": 25165824,
+      "sha": "3db7d929369bd88156e3c173856681a0853b60f1"
+    },
+    {
+      "path": "y2mate.bz - 30首陳奕迅經典_-_單-80後90後必聽回憶-2個鐘無限loop-eason-chan-演唱會補習_.part2.rar",
+      "size": 17837858,
+      "sha": "a350c15e48a26647f8782414ed6d1ebd8c8654a7"
+    },
+    {
+      "path": "y2mate.bz - 【周杰伦】经典好听的高品质音乐合集.part1.rar",
+      "size": 25165824,
+      "sha": "e114228b96961174a4f1ec8fa9e6c7213472dbb6"
+    },
+    {
+      "path": "y2mate.bz - 【周杰伦】经典好听的高品质音乐合集.part2.rar",
+      "size": 25165824,
+      "sha": "dd3aba471c811462076592110167bcd393616276"
+    },
+    {
+      "path": "y2mate.bz - 【周杰伦】经典好听的高品质音乐合集.part3.rar",
+      "size": 25165824,
+      "sha": "3875fdef12957de9a5e2c9813e85dcfccf348103"
+    },
+    {
+      "path": "y2mate.bz - 【周杰伦】经典好听的高品质音乐合集.part4.rar",
+      "size": 25165824,
+      "sha": "ef467cf152d47b1755261c34f8825c39969f1484"
+    },
+    {
+      "path": "y2mate.bz - 【周杰伦】经典好听的高品质音乐合集.part5.rar",
+      "size": 25165824,
+      "sha": "133d72eba4c1cf4f70000cdd5b2a2893010f2775"
+    },
+    {
+      "path": "y2mate.bz - 【周杰伦】经典好听的高品质音乐合集.part6.rar",
+      "size": 130838,
+      "sha": "2b0a5f5586ba302c1c4a69c816edf951290ca2ec"
+    },
+    {
+      "path": "y2mate.bz - 鄧紫棋-g-e-m無廣告鄧紫棋好聽的20首_-_鄧紫棋-2020-best-songs-of-g-e-m很久以後來自天_-_的_-_鬼光年之外再见倒数句號-鄧紫棋最偉大的命_.part1.rar",
+      "size": 25165824,
+      "sha": "8b5eacdd98899a44deee2265f141a34a570d051a"
+    },
+    {
+      "path": "y2mate.bz - 鄧紫棋-g-e-m無廣告鄧紫棋好聽的20首_-_鄧紫棋-2020-best-songs-of-g-e-m很久以後來自天_-_的_-_鬼光年之外再见倒数句號-鄧紫棋最偉大的命_.part2.rar",
+      "size": 1170476,
+      "sha": "ea454ad0df7b0360ef3f401bd01d2268f3af1263"
+    },
+    {
+      "path": "zzz",
+      "size": 164,
+      "sha": "afc92c44bf377cb9b9fae6d70e771000e209d4b4"
+    },
+    {
+      "path": "《典型模拟集成电路识图与应用快捷入门》.pdf",
+      "size": 8968961,
+      "sha": "1b64558e64d0a0fad294089fc3253e64965675d2"
+    },
+    {
+      "path": "《半导体器件物理》.pdf",
+      "size": 20793653,
+      "sha": "838b93b7343b8d7620280a0f6ba143e9d0f6db2e"
+    },
+    {
+      "path": "《精通比特币》第二版 by it-ebooks (z-lib.org).epub",
+      "size": 9884598,
+      "sha": "7a6601c4cff5570bc2476387d6d5fb833e5ce6e2"
+    },
+    {
+      "path": "《纳电子器件及其应用》.pdf",
+      "size": 5280990,
+      "sha": "04b30f91f156eab735aa68e6ba1cd15f7e9faa77"
+    },
+    {
+      "path": "《经济学人》百词斩 · 每日一词100期合辑（每天三分钟，助你一年读懂《经济学人》的英文！） (《经济学人·商_Q63BYMK5OASJWG6YH3JF6ZUEOSBW7K4P.azw",
+      "size": 863830,
+      "sha": "1b1c0df8699c393b06b03c5e150f995e410b79a9"
+    },
+    {
+      "path": "一天一课新概念英语写作365(第3册) (新概念英语名师导学系列) by Unknown (z-lib.org).epub",
+      "size": 1606245,
+      "sha": "859f08e0007506e6db08fe5f068357ad96103190"
+    },
+    {
+      "path": "丽声指南针英语名著分级读物高中版第三级（套装共6册，北京师范大学王蔷教授与英国儿童桂冠作家Michael Morpurgo 共同担纲主编，精选世界文学经典... (z-lib.org).part01.rar",
+      "size": 25165824,
+      "sha": "9bf692c55bf61ffb18135f2b0c28f0deef975a09"
+    },
+    {
+      "path": "丽声指南针英语名著分级读物高中版第三级（套装共6册，北京师范大学王蔷教授与英国儿童桂冠作家Michael Morpurgo 共同担纲主编，精选世界文学经典... (z-lib.org).part02.rar",
+      "size": 25165824,
+      "sha": "ef4dae49c0045a534e3be4c206875471fb009679"
+    },
+    {
+      "path": "丽声指南针英语名著分级读物高中版第三级（套装共6册，北京师范大学王蔷教授与英国儿童桂冠作家Michael Morpurgo 共同担纲主编，精选世界文学经典... (z-lib.org).part03.rar",
+      "size": 25165824,
+      "sha": "55bdcccb8ef01e8c8ecc2d435219c443c2311386"
+    },
+    {
+      "path": "丽声指南针英语名著分级读物高中版第三级（套装共6册，北京师范大学王蔷教授与英国儿童桂冠作家Michael Morpurgo 共同担纲主编，精选世界文学经典... (z-lib.org).part04.rar",
+      "size": 25165824,
+      "sha": "730eddc6d0eaee667b4a2faee2f9729edbb91a87"
+    },
+    {
+      "path": "丽声指南针英语名著分级读物高中版第三级（套装共6册，北京师范大学王蔷教授与英国儿童桂冠作家Michael Morpurgo 共同担纲主编，精选世界文学经典... (z-lib.org).part05.rar",
+      "size": 25165824,
+      "sha": "c7fce9d79f358f5b28231c65152314cd42eb415f"
+    },
+    {
+      "path": "丽声指南针英语名著分级读物高中版第三级（套装共6册，北京师范大学王蔷教授与英国儿童桂冠作家Michael Morpurgo 共同担纲主编，精选世界文学经典... (z-lib.org).part06.rar",
+      "size": 25165824,
+      "sha": "f348413e67fe12966f757fb4f80229bac7b7f421"
+    },
+    {
+      "path": "丽声指南针英语名著分级读物高中版第三级（套装共6册，北京师范大学王蔷教授与英国儿童桂冠作家Michael Morpurgo 共同担纲主编，精选世界文学经典... (z-lib.org).part07.rar",
+      "size": 25165824,
+      "sha": "25f2c988b7bb4a41a3e168642ae0c084786c75c2"
+    },
+    {
+      "path": "丽声指南针英语名著分级读物高中版第三级（套装共6册，北京师范大学王蔷教授与英国儿童桂冠作家Michael Morpurgo 共同担纲主编，精选世界文学经典... (z-lib.org).part08.rar",
+      "size": 16706059,
+      "sha": "3f752a6506b5145a1f0d4a9633d0fa011ed92e14"
+    },
+    {
+      "path": "书虫入门级-6级套装（本套装共137册） (布鲁克 (Helen Brooke)) (z-lib.org).part1.rar",
+      "size": 25165824,
+      "sha": "3e6e3ee7946f57c94a0b3dc7867742769616d80c"
+    },
+    {
+      "path": "书虫入门级-6级套装（本套装共137册） (布鲁克 (Helen Brooke)) (z-lib.org).part2.rar",
+      "size": 25165824,
+      "sha": "37542e12255658d9e447acc8bbff110f9158cfee"
+    },
+    {
+      "path": "书虫入门级-6级套装（本套装共137册） (布鲁克 (Helen Brooke)) (z-lib.org).part3.rar",
+      "size": 25165824,
+      "sha": "7340dd06fcad97b298320a1e3d8fb20fd72a271a"
+    },
+    {
+      "path": "书虫入门级-6级套装（本套装共137册） (布鲁克 (Helen Brooke)) (z-lib.org).part4.rar",
+      "size": 25165824,
+      "sha": "2c111b3861353b52ce5ac115f299e629d046976d"
+    },
+    {
+      "path": "书虫入门级-6级套装（本套装共137册） (布鲁克 (Helen Brooke)) (z-lib.org).part5.rar",
+      "size": 25165824,
+      "sha": "8b0d26fe05173ec4cab40d1b0b41243275d2ce8d"
+    },
+    {
+      "path": "书虫入门级-6级套装（本套装共137册） (布鲁克 (Helen Brooke)) (z-lib.org).part6.rar",
+      "size": 11417849,
+      "sha": "0186a61c3e0875594b78cdeb81b839ed2f6be576"
+    },
+    {
+      "path": "了不起的物理_严伯钧.epub",
+      "size": 4093311,
+      "sha": "13bc9d32ae9e1b39939a28dc644c54ff9026a6b8"
+    },
+    {
+      "path": "人工智能_腾讯研究院 等.epub",
+      "size": 12528052,
+      "sha": "03db9c2ceda79a73a0e3dc66de9c0a5f94a4e6b4"
+    },
+    {
+      "path": "人工智能简史_尼克.epub",
+      "size": 2927160,
+      "sha": "0cc1909e3ff678f13137bbc3ce0d51231398d4b7"
+    },
+    {
+      "path": "会说话的新概念英语单词(1-4册合集) by 盛丹丹 (z-lib.org).epub",
+      "size": 1055833,
+      "sha": "42356c1a272ea301a290830cca1170807b2aee03"
+    },
+    {
+      "path": "修炼爱情 - 百威吖.mp3",
+      "size": 4597177,
+      "sha": "3f3501a4df40d90866d7263af0e1dd531b1ddff9"
+    },
+    {
+      "path": "光影北歐_ 跟著電影去旅行_黃作炎.epub",
+      "size": 6296694,
+      "sha": "4df23c17e498fb37dbeae6bb36d7e93979bf4f66"
+    },
+    {
+      "path": "剑桥雅思最新真题题源详解_阅读.epub",
+      "size": 1267618,
+      "sha": "37807ba92dea7a7a88eab85494381c9bff943d79"
+    },
+    {
+      "path": "功率半导体器件——原理、特性和可靠性.part1.rar",
+      "size": 25165824,
+      "sha": "159c139ccb8a6cbd2d281871c3543a0f9a1cb72c"
+    },
+    {
+      "path": "功率半导体器件——原理、特性和可靠性.part2.rar",
+      "size": 10479755,
+      "sha": "8aa5d1f10fd481bd76c6df9891771b72711a12ef"
+    },
+    {
+      "path": "半导体照明产业及政策标准解读.pdf",
+      "size": 16105801,
+      "sha": "a8f3bdba421e4ebcc7987b8d08136ad5ce06665b"
+    },
+    {
+      "path": "半导体行业深度专题之九：MCU篇，MCU缺货涨价背后的国产化浪潮-20210707-招商证券.pdf",
+      "size": 8448089,
+      "sha": "e6da1bac61bc6ec9e83f50df5f1aaa5ca92d2955"
+    },
+    {
+      "path": "半導體MCU產業117頁深度研究報告：MCU缺貨漲價背後的國產化浪潮_鄢凡、曹輝.epub",
+      "size": 697336,
+      "sha": "bf211d26b01f2f8f0390a2c6e32fbcad5ab0ef4b"
+    },
+    {
+      "path": "吉规模集成电路互连工艺及设计.part1.rar",
+      "size": 25165824,
+      "sha": "2cbc3dd41e01dd2695639ab67c1bb3e464217898"
+    },
+    {
+      "path": "吉规模集成电路互连工艺及设计.part2.rar",
+      "size": 25165824,
+      "sha": "170ccab57f17a9cfb76e38b0133ae8d91785c2f2"
+    },
+    {
+      "path": "吉规模集成电路互连工艺及设计.part3.rar",
+      "size": 25165824,
+      "sha": "f7bd832084fabf88361d70ff2aa7e983f25a542c"
+    },
+    {
+      "path": "吉规模集成电路互连工艺及设计.part4.rar",
+      "size": 24504169,
+      "sha": "174f68d397a2630090abb504af2ddd137adb07fa"
+    },
+    {
+      "path": "图解268句俚语：看幽默漫画哈哈笑，英语俚语记得牢.epub",
+      "size": 18403513,
+      "sha": "96f04071e85c7a29877673f1866071c348bfb099"
+    },
+    {
+      "path": "奇妙的材料：改变世界的12种化学物质和它们背后的科学传奇（黄金、丝绸、半导体……换个角度看待身边的物质世界）_佐藤健太郎.epub",
+      "size": 6136367,
+      "sha": "cbc9e1e2b39bf3e0bec4c90bbd093edd95d8f1f4"
+    },
+    {
+      "path": "如果有个直达天堂的电梯 - 岳云鹏.mp3",
+      "size": 4384435,
+      "sha": "c28166a2b06c38a425bbbe285d268ad67e4c15b7"
+    },
+    {
+      "path": "巧攻雅思---记单词不如记短语.epub",
+      "size": 407666,
+      "sha": "0c69dc15efd0ab8cffc4b3dca3028355549b8cc1"
+    },
+    {
+      "path": "布拉格广场.mp3",
+      "size": 4702920,
+      "sha": "3f1ea1c995359296980b5e7a9f4ba90240414fa3"
+    },
+    {
+      "path": "微光学和纳米光学制造技术.part1.rar",
+      "size": 25165824,
+      "sha": "439f32074643f0eb05b69137175da574882ed52f"
+    },
+    {
+      "path": "微光学和纳米光学制造技术.part2.rar",
+      "size": 25165824,
+      "sha": "d53e3f5b3158998bcad3a0f39ca003e53274fedf"
+    },
+    {
+      "path": "微光学和纳米光学制造技术.part3.rar",
+      "size": 24399575,
+      "sha": "def1d909451af08d2abd272df7192b62e1a19fcd"
+    },
+    {
+      "path": "微制造与纳米技术.pdf",
+      "size": 20408100,
+      "sha": "c7dfbacef5acb6ba1ea9d4c10ef1cfa49a156286"
+    },
+    {
+      "path": "推特中文用户粉丝排行.xlsx",
+      "size": 95311,
+      "sha": "a5cde364f1b72904eaa17559318ba123a4222b23"
+    },
+    {
+      "path": "新东方•新东方大愚英语学习丛书•IELTS剑桥雅思写作高分范文(附MP3光盘1张) by 刘巍巍 (z-lib.org).azw3",
+      "size": 1127133,
+      "sha": "7eda3130816d33d1595c23c971be3826445fc0ce"
+    },
+    {
+      "path": "新火（走向自主创新2）【北大路风教授继《光变》后再推出《新火》，破解中国高铁、核电、半导体显示器、数控机床的发展之谜】_路风.mobi",
+      "size": 5074347,
+      "sha": "ce26658dc32eb51aa424826ff2f06c257fc597c6"
+    },
+    {
+      "path": "新航道 雅思真词汇 第3版 by 胡敏 (z-lib.org).mobi",
+      "size": 2941154,
+      "sha": "959c197b21459adc439502b97784cba07f6e0f35"
+    },
+    {
+      "path": "模拟电子系统设计指南 实践篇 从半导体、分立元件到TI集成电路的分析与实现_何宾.part1.rar",
+      "size": 25165824,
+      "sha": "77020e43ba1dbd33d1f5a644cec589f00291d558"
+    },
+    {
+      "path": "模拟电子系统设计指南 实践篇 从半导体、分立元件到TI集成电路的分析与实现_何宾.part2.rar",
+      "size": 12956565,
+      "sha": "3493f6f95edcbda88e91342c7190a97048292f7a"
+    },
+    {
+      "path": "模拟电子系统设计指南（基础篇）从半导体、分立元件到ADI集成电路的分析与实现_何宾.part1.rar",
+      "size": 25165824,
+      "sha": "da691b6821e36e9880909f9016c128161f923745"
+    },
+    {
+      "path": "模拟电子系统设计指南（基础篇）从半导体、分立元件到ADI集成电路的分析与实现_何宾.part2.rar",
+      "size": 25165824,
+      "sha": "a783aff881bb172e762dbfa459a86ce39f4965bd"
+    },
+    {
+      "path": "模拟电子系统设计指南（基础篇）从半导体、分立元件到ADI集成电路的分析与实现_何宾.part3.rar",
+      "size": 25165824,
+      "sha": "95b12da17dcbc61bb8f1dd24fa2f21d35000c0a5"
+    },
+    {
+      "path": "模拟电子系统设计指南（基础篇）从半导体、分立元件到ADI集成电路的分析与实现_何宾.part4.rar",
+      "size": 25165824,
+      "sha": "db03fc509a846822dce9ea6afffbe1eb9bc6632d"
+    },
+    {
+      "path": "模拟电子系统设计指南（基础篇）从半导体、分立元件到ADI集成电路的分析与实现_何宾.part5.rar",
+      "size": 10392234,
+      "sha": "7107595e189b39886d25f2c62b586a70c6163547"
+    },
+    {
+      "path": "武舒奕-物料计划.pdf(2).pdf",
+      "size": 99834,
+      "sha": "3009d54735a41167bd41f7a489d7eb96a1c8a818"
+    },
+    {
+      "path": "武舒奕-物料计划.pdf.pdf",
+      "size": 96097,
+      "sha": "6546564c8ac6e96c10e124dd251a91145e8fd79f"
+    },
+    {
+      "path": "比特币一种点对点的电子现金系统 Bitcoin A Peer-to-Peer Electronic Cash System by 中本聪(Satoshi Nakamoto) (z-lib.org).pdf",
+      "size": 1187646,
+      "sha": "de7c9adb5679dd8f8ca1bb38fb62f4dbf8db56a0"
+    },
+    {
+      "path": "比特币：一个虚幻而真实的金融世界 by 李钧；长铗 [李钧；长铗] (z-lib.org).epub",
+      "size": 507066,
+      "sha": "683614de70074f4d2f676b171b53366fd2820731"
+    },
+    {
+      "path": "民謠愛上一匹野馬可我的家裡沒有草原董小姐.mp3",
+      "size": 7633116,
+      "sha": "2b516b9a93bf2c067f4434fd7b59f13d43f88101"
+    },
+    {
+      "path": "潘成皮卡潘- 白鴿烏鴉相愛的戲碼從前我們彼此偏愛啊後來只剩下偏差就像野花觸不到月牙只能被晚風折下動態歌詞MV.mp3",
+      "size": 4167405,
+      "sha": "d91b02ad028a1dc406f6fc9b95ab0b2595d0823e"
+    },
+    {
+      "path": "物质结构_徐光宪; 王祥云.part1.rar",
+      "size": 25165824,
+      "sha": "241cac268fdd795f0f942b955022e3089c9c3c7f"
+    },
+    {
+      "path": "物质结构_徐光宪; 王祥云.part2.rar",
+      "size": 5138155,
+      "sha": "b7a57c776c0704f7fc5dc9447bec60d963a23a41"
+    },
+    {
+      "path": "王蓉 – 爸爸妈妈.mp3",
+      "size": 4742173,
+      "sha": "0a4ecd5cb2b24554fac25be6cfb32557158b3096"
+    },
+    {
+      "path": "现代家居细部设计1300例（客厅） (美丽新家)_现代家居细部设计1300例（吊顶、卧室、卫浴）.epub",
+      "size": 20522862,
+      "sha": "d55fe1f52d41f19e153323b53f29e2689b39f6ba"
+    },
+    {
+      "path": "用地图说话_在商业分析与演示中运用Excel数据地图_A6NEBKRDUUKYW6YSYHLKEKXSRX7M3SXD.azw",
+      "size": 8335611,
+      "sha": "76a94ad6e5e4b908503cdff812028508c436f92f"
+    },
+    {
+      "path": "电力半导体器件原理与应用.pdf",
+      "size": 15157759,
+      "sha": "7c30523c42df5b3eec868d46af6a64f061ef34d8"
+    },
+    {
+      "path": "电力半导体新器件及其制造技术.part1.rar",
+      "size": 25165824,
+      "sha": "0dbc1786021b87bea9767f380024f81a9dc205af"
+    },
+    {
+      "path": "电力半导体新器件及其制造技术.part2.rar",
+      "size": 7600778,
+      "sha": "ff297113079efcbef603624c0ea85fc4a0448def"
+    },
+    {
+      "path": "相对论—少年版_曹则贤.pdf",
+      "size": 14111626,
+      "sha": "79d44ea87715fe718a6239485bdfeb450db61e2b"
+    },
+    {
+      "path": "看图学集成电路选用检测与查用100问.part1.rar",
+      "size": 25165824,
+      "sha": "830450c145f8afdabdeeb170650d523293d14b1b"
+    },
+    {
+      "path": "看图学集成电路选用检测与查用100问.part2.rar",
+      "size": 25165824,
+      "sha": "95c3999a0e47c299eada8d89fa28ff15be30415f"
+    },
+    {
+      "path": "看图学集成电路选用检测与查用100问.part3.rar",
+      "size": 6927064,
+      "sha": "c75dbeefb347a6deda2d82f848b91cdea5aace74"
+    },
+    {
+      "path": "碳化硅宽带隙半导体技术 (郝跃) (Z-Library).pdf",
+      "size": 3804347,
+      "sha": "4a81a8ab7da42b118fa91d4b68f0c8e0ec0abd97"
+    },
+    {
+      "path": "程序员修炼之道：专业程序员必知的33个技巧_Josh·Carter.epub",
+      "size": 199466,
+      "sha": "d565911a60b2ec0329c321ed45259e437967d86f"
+    },
+    {
+      "path": "第二次世界大战完整历史实录（套装共38册）（全面记录二战的起源背景、相持转折、结局等内容，是对二战的完整总结和隆重纪念）_马夫.epub",
+      "size": 10722964,
+      "sha": "a1e4fda7508a2fb571e5bbbe72ef2c5ff4a30875"
+    },
+    {
+      "path": "粒子物理导论_杜东生; 杨茂志.part1.rar",
+      "size": 25165824,
+      "sha": "d4189b2220a1efe68205e203f38397688020939b"
+    },
+    {
+      "path": "粒子物理导论_杜东生; 杨茂志.part2.rar",
+      "size": 25165824,
+      "sha": "0a197fb1f7cd1dc6ff97bdb3072564a67c8c2349"
+    },
+    {
+      "path": "粒子物理导论_杜东生; 杨茂志.part3.rar",
+      "size": 25165824,
+      "sha": "02a07ba27eeccb9ce32a34ec55705bd73303fc39"
+    },
+    {
+      "path": "粒子物理导论_杜东生; 杨茂志.part4.rar",
+      "size": 20421037,
+      "sha": "3fa71596c1042933f5b03d53bc103607d5e8a515"
+    },
+    {
+      "path": "精通比特币(elib.cc) by 李笑来 elib.cc (z-lib.org).epub",
+      "size": 4011594,
+      "sha": "63a8dfe764281eea6e6da06498b5617341a40f3b"
+    },
+    {
+      "path": "红色高跟鞋 - 喔喔.mp3",
+      "size": 3901275,
+      "sha": "689ff92506b925eaea9a02bed3f63e477642f37f"
+    },
+    {
+      "path": "红色高跟鞋(0.88x) - swagger.mp3",
+      "size": 3762512,
+      "sha": "2d52bf05e3233d41b21151ea92e70bfa396bfb88"
+    },
+    {
+      "path": "纳米CMOS电路和物理设计.part1.rar",
+      "size": 25165824,
+      "sha": "b95d2b0bb0c0b1218558926adf18f79433e05864"
+    },
+    {
+      "path": "纳米CMOS电路和物理设计.part2.rar",
+      "size": 6349075,
+      "sha": "05fda6933383e4102673ba1386328d5cec22db77"
+    },
+    {
+      "path": "纳米级集成电路系统电源完整性分析.part1.rar",
+      "size": 25165824,
+      "sha": "78d534cf1febe3e3cbddf83f3b37c05e23b2b80b"
+    },
+    {
+      "path": "纳米级集成电路系统电源完整性分析.part2.rar",
+      "size": 6675198,
+      "sha": "fe8e52066a2e77f1e102e1b7683fb4a76a3fc0af"
+    },
+    {
+      "path": "老外最想和你聊的101个英语话题.epub",
+      "size": 3644028,
+      "sha": "fe48547b368f789ba9e7809da9015737c7181094"
+    },
+    {
+      "path": "肝病病人最关心的260个问题_陆恒.epub",
+      "size": 1411815,
+      "sha": "70f9f7bc4029e27db9747706aaca3f1ea24c67d7"
+    },
+    {
+      "path": "能带.pdf",
+      "size": 6328074,
+      "sha": "55a93e9a6babb602e9c43873bca6793f0b5a8286"
+    },
+    {
+      "path": "英语学霸练成记——新东方名师的英语学习之路.epub",
+      "size": 302026,
+      "sha": "e0b2d320d93c790c159583a10c3362abec3d672b"
+    },
+    {
+      "path": "英语民族史.epub",
+      "size": 2177702,
+      "sha": "7c0271c85edd4403e51d63e79370db7dd71bf2ae"
+    },
+    {
+      "path": "英语词汇的奥秘_超级10000单词.epub",
+      "size": 12354660,
+      "sha": "1f24d202ba16ff39549aee4a740ccb783eacc334"
+    },
+    {
+      "path": "英语词组全书.epub",
+      "size": 1493499,
+      "sha": "5356381c03adc2b471a32eb8c09c8243f9e6d608"
+    },
+    {
+      "path": "英语语法超图解_30天用思维导图战胜英语语法.epub",
+      "size": 11558381,
+      "sha": "3ba5f7bcc6e90ae87a9a531b3d8fb538b05a26f4"
+    },
+    {
+      "path": "英语，阅读是金!北外妈妈团家庭英语阅读实录.epub",
+      "size": 13462506,
+      "sha": "114dc5c8594abfe1275bdbd8c62ed29532565025"
+    },
+    {
+      "path": "营养配餐和膳食评价实用指导——营养师必读.epub",
+      "size": 18799707,
+      "sha": "11f9be7641def78c84ea678d1e200f4e37d6dd05"
+    },
+    {
+      "path": "蔡健雅-红色高跟鞋+Letting go 梦幻联动（DJ Boen remix） - DJ Boen.mp3",
+      "size": 5718979,
+      "sha": "5b5bc79b77ca62d94885ec49d34649c6facc7121"
+    },
+    {
+      "path": "虚拟货币投资实战技巧 by it-ebooks (z-lib.org).epub",
+      "size": 4030615,
+      "sha": "b024680d7befd7878c96fba5e62461da39298ad6"
+    },
+    {
+      "path": "词以类记_GRE词汇_JCGTLPPKOZ3JUH6UFFYM3KQGBXHV7UFO.azw",
+      "size": 7539649,
+      "sha": "0a06097e7cfb9c2c00fe205f8ca1dcd3c96b2709"
+    },
+    {
+      "path": "读客经典文库：三体全集 （套装共3册） by 刘慈欣 (z-lib.org).mobi",
+      "size": 3267272,
+      "sha": "e83fe5c632610a4b7ba4e0caa262238e306bc0cf"
+    },
+    {
+      "path": "货币革命：改变经济未来的虚拟货币 by （美）卡斯特罗诺瓦 (z-lib.org).azw3",
+      "size": 423626,
+      "sha": "ecc8f01f87503e430e7fdc17d80fe3cb032787ee"
+    },
+    {
+      "path": "趣味物理_Unknown.epub",
+      "size": 8726829,
+      "sha": "164ee91f0175c4afd9b136e7be748875a840d638"
+    },
+    {
+      "path": "重磅！不止是芯片！半导体全产业链分析_kindle@eub-inc.com.epub",
+      "size": 8379378,
+      "sha": "36ad9f9414ccca72c933be7a4c4cacb03536ea38"
+    },
+    {
+      "path": "陈一发儿千千闕歌.mp3",
+      "size": 7061229,
+      "sha": "e1012b853d5d82354b70be37ef875d1687336eb0"
+    },
+    {
+      "path": "陈一发儿随便唱唱执迷不悔   电视剧 繁花插曲.mp3",
+      "size": 6404589,
+      "sha": "4b1bb2f1f3510f107146b100a0433945617a04aa"
+    },
+    {
+      "path": "陈旭 – 哥 只是个传说.mp3",
+      "size": 4382699,
+      "sha": "1f889b5655cec2e6178d173e9c61d7a5f9d5d44a"
+    },
+    {
+      "path": "雅思一月通阅读胜典.epub",
+      "size": 4534988,
+      "sha": "409fa461b1c2fa934e01dc2fbad15011f88c548d"
+    },
+    {
+      "path": "雅思全科超核心词汇4000词汇.pdf",
+      "size": 1582708,
+      "sha": "723faa23cc6e2f7ff9e8f62583a7c9bd053d0116"
+    },
+    {
+      "path": "雅思写作.epub",
+      "size": 7028546,
+      "sha": "5eb2d9e6dca2b4489ea5fce4d4073f66891c0ee2"
+    },
+    {
+      "path": "雅思写作语料一本通.epub",
+      "size": 2250389,
+      "sha": "df4400e3481059e4e3338cc1905bce47f1bf6be8"
+    },
+    {
+      "path": "雅思听力1000词.epub",
+      "size": 757528,
+      "sha": "c49475b8a9dcabc1f4e0803952fd8a16cfb83621"
+    },
+    {
+      "path": "雅思词组必备▪ 新东方出国考试图书系列 by 俞敏洪 (z-lib.org).azw3",
+      "size": 1597735,
+      "sha": "e3b281b9eb83bda073547c7e39a613d109b31f4f"
+    },
+    {
+      "path": "雅思语法精要及剑桥雅思阅读长难句分析.epub",
+      "size": 12429423,
+      "sha": "34efe2cf5f25b481cc51fe28bb64e90da5f9ccea"
+    },
+    {
+      "path": "集成电力电子变换器及数字控制.part1.rar",
+      "size": 25165824,
+      "sha": "65d50d37d81d2d233f493c75cfe7f92cb494cb95"
+    },
+    {
+      "path": "集成电力电子变换器及数字控制.part2.rar",
+      "size": 25165824,
+      "sha": "6a5b27d6a64e1b36a832c08e658e3d5e21a95e10"
+    },
+    {
+      "path": "集成电力电子变换器及数字控制.part3.rar",
+      "size": 25165824,
+      "sha": "ad7b63d4258b6ce65454e690f642798456eaac2c"
+    },
+    {
+      "path": "集成电力电子变换器及数字控制.part4.rar",
+      "size": 236679,
+      "sha": "2554a8a566dd76d96b039cf3623f882828d71be0"
+    },
+    {
+      "path": "集成电路热管理：片上和系统级的监测及冷却.pdf",
+      "size": 10275563,
+      "sha": "8b2c51072feed866e6ff5e7a722ee0e24f215157"
+    },
+    {
+      "path": "顾家北手把手教你雅思写作(剑9版) by 顾家北 (z-lib.org).mobi",
+      "size": 14926914,
+      "sha": "18b2b6b5a1c6ed060478f3ad7ac9facea1cee7d2"
+    }
+  ]
+}

@@ -8,7 +8,7 @@
 
 A high-performance, completely **free**, **unauthenticated**, and **production-ready** REST API in TypeScript built for IELTS test takers, ESL educators, and educational application developers.
 
-Based on comprehensive IELTS open-source data from [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS), this API provides structured access to over 4,300 vocabulary terms with IPA phonetics, scoring calculators, automated essay evaluation algorithms, speaking topic banks, practice mock tests, and university admission cutoffs.
+This API provides structured access to over 4,300 project-maintained vocabulary terms with IPA phonetics, scoring calculators, automated essay evaluation algorithms, speaking topic banks, practice mock tests, and university admission cutoffs. Its upstream research is documented separately; no unlicensed upstream archive files are redistributed.
 
 ---
 
@@ -18,7 +18,7 @@ Based on comprehensive IELTS open-source data from [`zhengyishiming/IELTS`](http
 - **📚 4,310+ IELTS Vocabulary Database**: Spanning 22 structured thematic chapters with phonetic IPA, definitions, mnemonics, and notes.
 - **⚡ Interactive Vocabulary Quiz & Flashcards Generator**: Dynamic multiple-choice, phonetic transcription matching, and definition pairing questions.
 - **🧮 Comprehensive Band Score Calculator**:
-  - Official raw score (0–40) to Band conversion for Academic Reading, General Training Reading, and Listening.
+  - Indicative raw score (0–40) to Band conversion for Academic Reading, General Training Reading, and Listening.
   - Overall band calculation with official IELTS half-band rounding logic.
   - Target Score Planner: calculates required sub-scores to achieve a target overall band.
   - Canadian Language Benchmark (CLB) conversion matrix for Express Entry & immigration streams.
@@ -28,11 +28,11 @@ Based on comprehensive IELTS open-source data from [`zhengyishiming/IELTS`](http
   - Extensive bank of Task 1 and Task 2 prompts with Band 7–9 sample model essays.
   - Reference guides for cohesive linkers, transition words, and Lexical Resource tiers (Band 6 vs Band 7 vs Band 8+).
 - **🗣️ Speaking Question Bank & Framework**:
-  - Official 4-pillar band descriptors (FC, LR, GRA, PR).
+  - Concise study summaries of the 4-pillar band descriptors (FC, LR, GRA, PR), with links to the official sources.
   - Part 1 topic repository with sample Q&As.
   - Part 2/3 cue cards categorized by People, Places, Objects, Events, and Media.
-  - Native response formulas (AREA, PREP, 5W1H) and authentic candidate transcript analyses.
-- **📖 Practice Test Suite**: Authentic academic reading passages and listening test transcripts with automated scoring and band estimation.
+  - Native response formulas (AREA, PREP, 5W1H) and project-created transcript practice.
+- **📖 Practice Test Suite**: Original academic reading passages and listening practice transcripts with automated scoring and band estimation.
 - **🏫 Institutional IELTS Requirements**: 30 Canadian colleges and universities with minimum overall and individual band cutoffs.
 - **📖 Interactive Swagger / OpenAPI 3.0 Documentation**: Live API explorer built-in at `/api/v1/docs`.
 - **🧪 100% Test Coverage**: Complete test coverage across Statements, Branches, Functions, and Lines with strict Jest thresholds.
@@ -75,23 +75,24 @@ The server will be running on `http://localhost:3000`.
 
 ### Available Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start development server using `ts-node` |
-| `npm run build` | Compile TypeScript to production JavaScript in `dist/` |
-| `npm start` | Run compiled production server from `dist/server.js` |
-| `npm run test` | Run test suite with Jest |
-| `npm run test:coverage` | Run full test suite with 100% coverage validation |
-| `npm run lint` | Check code quality with ESLint |
-| `npm run lint:fix` | Automatically fix ESLint violations |
-| `npm run format` | Format codebase using Prettier |
-| `npm run format:check` | Verify formatting consistency |
+| Command                 | Description                                            |
+| ----------------------- | ------------------------------------------------------ |
+| `npm run dev`           | Start development server using `ts-node`               |
+| `npm run build`         | Compile TypeScript to production JavaScript in `dist/` |
+| `npm start`             | Run compiled production server from `dist/server.js`   |
+| `npm run test`          | Run test suite with Jest                               |
+| `npm run test:coverage` | Run full test suite with 100% coverage validation      |
+| `npm run lint`          | Check code quality with ESLint                         |
+| `npm run lint:fix`      | Automatically fix ESLint violations                    |
+| `npm run format`        | Format codebase using Prettier                         |
+| `npm run format:check`  | Verify formatting consistency                          |
 
 ---
 
 ## 📖 API Documentation & Live Explorer
 
 Interactive Swagger UI documentation is available directly in the browser:
+
 - **Interactive UI**: `http://localhost:3000/api/v1/docs`
 - **OpenAPI 3.0 JSON Spec**: `http://localhost:3000/api/v1/openapi.json`
 - **Root API Index**: `http://localhost:3000/` or `http://localhost:3000/api`
@@ -103,20 +104,22 @@ Interactive Swagger UI documentation is available directly in the browser:
 
 ### 1. 🔤 Vocabulary Endpoints (`/api/v1/vocabulary`)
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/v1/vocabulary` | Paginated vocabulary list. Supports `page`, `limit`, `chapter`, `search`, `prefix`, `category`, `sort`. |
-| `GET` | `/api/v1/vocabulary/:id` | Retrieve vocabulary item by numeric ID (1–4310). |
-| `GET` | `/api/v1/vocabulary/word/:word` | Retrieve vocabulary item by word string (e.g. `ubiquitous`). |
-| `GET` | `/api/v1/vocabulary/random` | Get random word(s). Query parameters: `count` (1–20), `chapter` (1–22). |
-| `GET` | `/api/v1/vocabulary/chapters` | Get list and metadata for all 22 chapters with sample words. |
-| `GET` | `/api/v1/vocabulary/quiz` | Generate IELTS vocabulary quiz questions (`multipleChoice`, `definitionMatch`, `phoneticMatch`). |
-| `GET` | `/api/v1/vocabulary/flashcards` | Generate revision flashcards with hints and mnemonics. |
+| Method | Endpoint                        | Description                                                                                             |
+| ------ | ------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/api/v1/vocabulary`            | Paginated vocabulary list. Supports `page`, `limit`, `chapter`, `search`, `prefix`, `category`, `sort`. |
+| `GET`  | `/api/v1/vocabulary/:id`        | Retrieve vocabulary item by numeric ID (1–4310).                                                        |
+| `GET`  | `/api/v1/vocabulary/word/:word` | Retrieve vocabulary item by word string (e.g. `ubiquitous`).                                            |
+| `GET`  | `/api/v1/vocabulary/random`     | Get random word(s). Query parameters: `count` (1–20), `chapter` (1–22).                                 |
+| `GET`  | `/api/v1/vocabulary/chapters`   | Get list and metadata for all 22 chapters with sample words.                                            |
+| `GET`  | `/api/v1/vocabulary/quiz`       | Generate IELTS vocabulary quiz questions (`multipleChoice`, `definitionMatch`, `phoneticMatch`).        |
+| `GET`  | `/api/v1/vocabulary/flashcards` | Generate revision flashcards with hints and mnemonics.                                                  |
 
 #### Example: Get Vocabulary with Filters
+
 ```http
 GET /api/v1/vocabulary?chapter=1&limit=2&sort=word_asc
 ```
+
 ```json
 {
   "success": true,
@@ -157,17 +160,18 @@ GET /api/v1/vocabulary?chapter=1&limit=2&sort=word_asc
 
 ### 2. ✍️ Writing Endpoints (`/api/v1/writing`)
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/v1/writing/prompts` | List Task 1 & Task 2 prompts with Band 7–9 sample essays. Filter by `taskType`, `category`, `search`. |
-| `GET` | `/api/v1/writing/prompts/:id` | Get specific writing prompt and sample essay by ID. |
-| `GET` | `/api/v1/writing/prompts/random` | Get a random writing prompt. |
-| `GET` | `/api/v1/writing/band-descriptors` | Official IELTS writing evaluation criteria across all 4 criteria. |
-| `GET` | `/api/v1/writing/cohesive-devices` | Comprehensive guide of cohesive linkers categorized by function. |
-| `GET` | `/api/v1/writing/vocabulary-tiers` | Lexical upgrade guide comparing Band 6, Band 7, and Band 8+ terms. |
-| `POST` | `/api/v1/writing/analyze` | Automated essay evaluation engine for word count, readability, cohesive linkers, and estimated band score. |
+| Method | Endpoint                           | Description                                                                                                |
+| ------ | ---------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/api/v1/writing/prompts`          | List Task 1 & Task 2 prompts with Band 7–9 sample essays. Filter by `taskType`, `category`, `search`.      |
+| `GET`  | `/api/v1/writing/prompts/:id`      | Get specific writing prompt and sample essay by ID.                                                        |
+| `GET`  | `/api/v1/writing/prompts/random`   | Get a random writing prompt.                                                                               |
+| `GET`  | `/api/v1/writing/band-descriptors` | Concise study summaries of writing criteria; consult official sources for current descriptors.             |
+| `GET`  | `/api/v1/writing/cohesive-devices` | Comprehensive guide of cohesive linkers categorized by function.                                           |
+| `GET`  | `/api/v1/writing/vocabulary-tiers` | Lexical upgrade guide comparing Band 6, Band 7, and Band 8+ terms.                                         |
+| `POST` | `/api/v1/writing/analyze`          | Automated essay evaluation engine for word count, readability, cohesive linkers, and estimated band score. |
 
 #### Example: Automated Essay Assessment
+
 ```http
 POST /api/v1/writing/analyze
 Content-Type: application/json
@@ -177,6 +181,7 @@ Content-Type: application/json
   "taskType": "task2"
 }
 ```
+
 ```json
 {
   "success": true,
@@ -229,30 +234,31 @@ Content-Type: application/json
 
 ### 3. 🗣️ Speaking Endpoints (`/api/v1/speaking`)
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/v1/speaking/band-descriptors` | Speaking assessment criteria for Band 5 through Band 9. |
-| `GET` | `/api/v1/speaking/part1-topics` | Part 1 topics with model answers. Filter by `topic`, `search`. |
-| `GET` | `/api/v1/speaking/part1-topics/:id` | Retrieve single Part 1 topic by ID. |
-| `GET` | `/api/v1/speaking/part2-cue-cards` | Part 2 cue cards and Part 3 follow-ups. Filter by `category`, `search`. |
-| `GET` | `/api/v1/speaking/part2-cue-cards/:id` | Retrieve single Part 2 cue card by ID. |
-| `GET` | `/api/v1/speaking/part2-cue-cards/random` | Get a random speaking cue card. |
-| `GET` | `/api/v1/speaking/formulas` | Proven speaking answer structures (AREA, PREP, 5W1H). |
-| `GET` | `/api/v1/speaking/transcripts` | Authentic candidate speech transcript analysis with examiner breakdown. |
+| Method | Endpoint                                  | Description                                                                |
+| ------ | ----------------------------------------- | -------------------------------------------------------------------------- |
+| `GET`  | `/api/v1/speaking/band-descriptors`       | Speaking assessment criteria for Band 5 through Band 9.                    |
+| `GET`  | `/api/v1/speaking/part1-topics`           | Part 1 topics with model answers. Filter by `topic`, `search`.             |
+| `GET`  | `/api/v1/speaking/part1-topics/:id`       | Retrieve single Part 1 topic by ID.                                        |
+| `GET`  | `/api/v1/speaking/part2-cue-cards`        | Part 2 cue cards and Part 3 follow-ups. Filter by `category`, `search`.    |
+| `GET`  | `/api/v1/speaking/part2-cue-cards/:id`    | Retrieve single Part 2 cue card by ID.                                     |
+| `GET`  | `/api/v1/speaking/part2-cue-cards/random` | Get a random speaking cue card.                                            |
+| `GET`  | `/api/v1/speaking/formulas`               | Proven speaking answer structures (AREA, PREP, 5W1H).                      |
+| `GET`  | `/api/v1/speaking/transcripts`            | Project-created transcript practice with collocations and speaking themes. |
 
 ---
 
 ### 4. 🧮 Band Score Calculator Endpoints (`/api/v1/calculator`)
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` or `GET` | `/api/v1/calculator/overall` | Compute overall IELTS band from 4 sub-scores with official rounding. |
-| `GET` | `/api/v1/calculator/raw-to-band` | Convert raw score (0–40) to band score. Query params: `score`, `type` (`academicReading`, `generalTrainingReading`, `listening`). |
-| `POST` | `/api/v1/calculator/target-planner` | Plan required sub-scores needed to achieve a target overall band. |
-| `POST` or `GET` | `/api/v1/calculator/clb` | Convert IELTS scores to Canadian Language Benchmark (CLB) levels. |
-| `GET` | `/api/v1/calculator/tables` | Reference datasets (raw-to-band matrices, CEFR mappings, CLB tables). |
+| Method          | Endpoint                            | Description                                                                                                                       |
+| --------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `POST` or `GET` | `/api/v1/calculator/overall`        | Compute overall IELTS band from 4 sub-scores with official rounding.                                                              |
+| `GET`           | `/api/v1/calculator/raw-to-band`    | Convert raw score (0–40) to band score. Query params: `score`, `type` (`academicReading`, `generalTrainingReading`, `listening`). |
+| `POST`          | `/api/v1/calculator/target-planner` | Plan required sub-scores needed to achieve a target overall band.                                                                 |
+| `POST` or `GET` | `/api/v1/calculator/clb`            | Convert IELTS scores to Canadian Language Benchmark (CLB) levels.                                                                 |
+| `GET`           | `/api/v1/calculator/tables`         | Reference datasets (raw-to-band matrices, CEFR mappings, CLB tables).                                                             |
 
 #### Example: Calculate Overall Band Score
+
 ```http
 POST /api/v1/calculator/overall
 Content-Type: application/json
@@ -264,6 +270,7 @@ Content-Type: application/json
   "speaking": 7.0
 }
 ```
+
 ```json
 {
   "success": true,
@@ -286,33 +293,33 @@ Content-Type: application/json
 
 ### 5. 🏫 Canadian Colleges & Universities (`/api/v1/colleges`)
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/v1/colleges` | List institutions with minimum overall & sub-score requirements. Filter by `province`, `provinceCode`, `city`, `minOverall`, `search`. |
-| `GET` | `/api/v1/colleges/:id` | Retrieve institutional requirements by numeric ID. |
-| `GET` | `/api/v1/colleges/provinces` | Aggregated statistics on institutions per Canadian province. |
+| Method | Endpoint                     | Description                                                                                                                            |
+| ------ | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/api/v1/colleges`           | List institutions with minimum overall & sub-score requirements. Filter by `province`, `provinceCode`, `city`, `minOverall`, `search`. |
+| `GET`  | `/api/v1/colleges/:id`       | Retrieve institutional requirements by numeric ID.                                                                                     |
+| `GET`  | `/api/v1/colleges/provinces` | Aggregated statistics on institutions per Canadian province.                                                                           |
 
 ---
 
 ### 6. 📖 Study Resources & References (`/api/v1/resources`)
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/v1/resources` | Curated library of 15 IELTS preparation books, tools, and materials. Filter by `category`, `skill`, `level`, `format`, `search`. |
-| `GET` | `/api/v1/resources/:id` | Get details of a specific resource. |
-| `GET` | `/api/v1/resources/summary` | Distribution of resources grouped by skill. |
+| Method | Endpoint                    | Description                                                                                                                  |
+| ------ | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `GET`  | `/api/v1/resources`         | Curated directory of 15 free-access IELTS and English-learning resources. Filter by `category`, `skill`, `format`, `search`. |
+| `GET`  | `/api/v1/resources/:id`     | Get details of a specific resource.                                                                                          |
+| `GET`  | `/api/v1/resources/summary` | Distribution of resources grouped by skill.                                                                                  |
 
 ---
 
 ### 7. 📝 Practice Mock Tests (`/api/v1/practice`)
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/v1/practice/reading` | List academic reading practice passages and questions. |
-| `GET` | `/api/v1/practice/reading/:id` | Retrieve reading passage and questions by ID. |
-| `GET` | `/api/v1/practice/listening` | List listening practice tests with transcripts and questions. |
-| `GET` | `/api/v1/practice/listening/:id` | Retrieve listening test by ID. |
-| `POST` | `/api/v1/practice/submit` | Submit test answers to receive automated grading, detailed explanations, and estimated band score. |
+| Method | Endpoint                         | Description                                                                                        |
+| ------ | -------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `GET`  | `/api/v1/practice/reading`       | List academic reading practice passages and questions.                                             |
+| `GET`  | `/api/v1/practice/reading/:id`   | Retrieve reading passage and questions by ID.                                                      |
+| `GET`  | `/api/v1/practice/listening`     | List listening practice tests with transcripts and questions.                                      |
+| `GET`  | `/api/v1/practice/listening/:id` | Retrieve listening test by ID.                                                                     |
+| `POST` | `/api/v1/practice/submit`        | Submit test answers to receive automated grading, detailed explanations, and estimated band score. |
 
 ---
 
@@ -327,26 +334,29 @@ npm run test:coverage
 
 ### Coverage Table
 
-| File | % Statements | % Branch | % Functions | % Lines |
-|---|---|---|---|---|
-| **All Files** | **100%** | **100%** | **100%** | **100%** |
-| `src/app.ts` | 100% | 100% | 100% | 100% |
-| `src/controllers/*` | 100% | 100% | 100% | 100% |
-| `src/middlewares/*` | 100% | 100% | 100% | 100% |
-| `src/routes/*` | 100% | 100% | 100% | 100% |
-| `src/utils/*` | 100% | 100% | 100% | 100% |
+| File                | % Statements | % Branch | % Functions | % Lines  |
+| ------------------- | ------------ | -------- | ----------- | -------- |
+| **All Files**       | **100%**     | **100%** | **100%**    | **100%** |
+| `src/app.ts`        | 100%         | 100%     | 100%        | 100%     |
+| `src/controllers/*` | 100%         | 100%     | 100%        | 100%     |
+| `src/middlewares/*` | 100%         | 100%     | 100%        | 100%     |
+| `src/routes/*`      | 100%         | 100%     | 100%        | 100%     |
+| `src/utils/*`       | 100%         | 100%     | 100%        | 100%     |
 
 ---
 
 ## 🛡️ Continuous Integration & Super-Linter
 
 Two automated GitHub Action workflows run on every push and pull request:
+
 1. **CI Pipeline (`.github/workflows/ci.yml`)**: Builds across Node.js 18, 20, and 22, performs type checking, validates formatting, and executes tests against the 100% coverage threshold.
 2. **Super-Linter (`.github/workflows/linter.yml`)**: Multi-language validation scanning TypeScript, JSON, Markdown, and YAML files.
 
 ---
 
-## 📜 License & Attribution
+## 📜 License, provenance & attribution
 
-- **License**: MIT License
-- **Source Data Attribution**: Based on open-source IELTS preparation datasets by [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS).
+- **License**: MIT License (see [`LICENSE`](./LICENSE)).
+- **Project data**: The JSON fixtures shipped in `src/data/` are project-maintained study material and summaries. They are not official IELTS content, and the API does not mirror or redistribute the binary archive in the upstream repository.
+- **Free resources**: `/api/v1/resources` links to publicly accessible pages from IELTS organisations, universities, and independent educators. Those pages retain their own terms and copyright; the API does not proxy or host them.
+- **Upstream research**: The full audit of [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS), including its file inventory and the scope decision not to redistribute its unlicensed archive, is documented in [`docs/upstream-research.md`](./docs/upstream-research.md).

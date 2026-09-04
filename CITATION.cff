@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+title: IELTS API
+message: >-
+  If this software or its original practice dataset contributes to your work,
+  please cite this repository.
+type: software
+authors:
+  - family-names: likescarrot
+    given-names: john
+repository-code: https://github.com/johnlikescarrot/IELTS-API
+license: MIT
+abstract: >-
+  A free, authentication-free IELTS practice and scoring API implemented in
+  TypeScript, with original content and auditable upstream provenance research.
+keywords:
+  - IELTS
+  - English language learning
+  - TypeScript
+  - REST API
+  - open educational resources

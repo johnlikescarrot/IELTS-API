@@ -7,7 +7,7 @@ import {
   getCueCardById,
   getRandomCueCard,
   getSpeakingFormulas,
-  getAuthenticTranscripts
+  getPracticeTranscripts
 } from '../../controllers/speaking.controller';
 
 const router = Router();
@@ -19,6 +19,6 @@ router.get('/part2-cue-cards/random', getRandomCueCard);
 router.get('/part2-cue-cards/:id', getCueCardById);
 router.get('/part2-cue-cards', getPart2CueCards);
 router.get('/formulas', getSpeakingFormulas);
-router.get('/transcripts', getAuthenticTranscripts);
+router.get('/transcripts', getPracticeTranscripts);
 
 export default router;

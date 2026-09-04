@@ -74,7 +74,7 @@ describe('Speaking Endpoints (/api/v1/speaking)', () => {
     expect(resFallback.body.data.topic).toBeDefined();
   });
 
-  it('GET /api/v1/speaking/formulas and /transcripts return authentic study data', async () => {
+  it('GET /api/v1/speaking/formulas and /transcripts return practice data', async () => {
     const resFormulas = await request(app).get('/api/v1/speaking/formulas');
     expect(resFormulas.status).toBe(200);
     expect(resFormulas.body.data.length).toBeGreaterThan(0);

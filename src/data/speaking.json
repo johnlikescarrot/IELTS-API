@@ -1,34 +1,34 @@
 {
   "bandDescriptors": {
     "9": {
-      "fluencyAndCoherence": "Speaks fluently with only rare repetition or self-correction; any hesitation is content-related rather than to find words or grammar. Speaks coherently with fully appropriate cohesive features. Develops topics fully and appropriately.",
-      "lexicalResource": "Uses vocabulary with full flexibility and precision in all topics. Uses idiomatic language naturally and accurately.",
-      "grammaticalRangeAndAccuracy": "Uses a full range of structures naturally and appropriately. Produces consistently accurate structures apart from rare non-systematic errata.",
-      "pronunciation": "Uses a full range of pronunciation features with precision and subtlety. Sustains flexible use of features throughout. Is effortless to understand."
+      "fluencyAndCoherence": "Speaks effortlessly and coherently, developing every topic fully with rare self-correction.",
+      "lexicalResource": "Uses vocabulary precisely and flexibly, including idiomatic language naturally.",
+      "grammaticalRangeAndAccuracy": "Uses a full range of structures accurately and appropriately.",
+      "pronunciation": "Uses pronunciation features precisely and remains effortless to understand."
     },
     "8": {
-      "fluencyAndCoherence": "Speaks fluently with only occasional repetition or self-correction; hesitation is usually content-related and only rarely to search for language. Develops topics coherently and appropriately.",
-      "lexicalResource": "Uses a wide and flexible vocabulary resource readily and flexibly to convey precise meaning. Uses less common and idiomatic vocabulary skilfully, with occasional inaccuracies.",
-      "grammaticalRangeAndAccuracy": "Uses a wide range of structures flexibly. Produces a majority of error-free sentences with only very occasional inaccuracies or basic non-systematic errors.",
-      "pronunciation": "Uses a wide range of pronunciation features. Sustains flexible use of features, with only occasional lapses. Is easy to understand throughout; L1 accent has minimal effect on intelligibility."
+      "fluencyAndCoherence": "Speaks fluently at length with only occasional hesitation or repetition and develops topics coherently.",
+      "lexicalResource": "Uses a wide, flexible vocabulary with precise meaning and skilled use of less common items.",
+      "grammaticalRangeAndAccuracy": "Uses a wide range of structures flexibly; inaccuracies are occasional.",
+      "pronunciation": "Uses a broad range of features consistently and is easy to understand."
     },
     "7": {
-      "fluencyAndCoherence": "Speaks at length without noticeable effort or loss of coherence. May demonstrate language-related hesitation at times, or some repetition and/or self-correction. Uses a range of connectives and discourse markers with some flexibility.",
-      "lexicalResource": "Uses vocabulary resource flexibly to discuss a variety of topics. Uses some less common and idiomatic vocabulary and shows some awareness of style and collocation, with some inappropriate choices.",
-      "grammaticalRangeAndAccuracy": "Uses a range of complex structures with some flexibility. Frequently produces error-free sentences, though some grammatical mistakes persist.",
-      "pronunciation": "Shows all positive features of Band 6 and some, but not all, of Band 8. Generally clear and easy to follow."
+      "fluencyAndCoherence": "Speaks at length with clear progression, though some hesitation or repetition may occur.",
+      "lexicalResource": "Uses vocabulary flexibly across topics, with some less common language and occasional awkward choices.",
+      "grammaticalRangeAndAccuracy": "Uses complex structures with reasonable flexibility and frequent accurate sentences.",
+      "pronunciation": "Is generally clear and easy to follow, with several strong pronunciation features."
     },
     "6": {
-      "fluencyAndCoherence": "Is willing to speak at length, though may lose coherence at times due to occasional repetition, self-correction or hesitation. Uses a range of connectives and discourse markers but not always appropriately.",
-      "lexicalResource": "Has a wide enough vocabulary to discuss topics at length and make meaning clear in spite of inaccuracies. Generally succeeds in paraphrasing.",
-      "grammaticalRangeAndAccuracy": "Uses a mix of simple and complex structures, but with limited flexibility. May make frequent mistakes with complex structures, though these rarely cause comprehension problems.",
-      "pronunciation": "Uses a range of pronunciation features with mixed control. Shows some effective use of features but this is not sustained. Can generally be understood throughout."
+      "fluencyAndCoherence": "Can speak at length, though repetition, self-correction, or hesitation sometimes affects coherence.",
+      "lexicalResource": "Has enough vocabulary for extended discussion and can usually paraphrase successfully.",
+      "grammaticalRangeAndAccuracy": "Uses simple and complex forms, but complex grammar has frequent errors.",
+      "pronunciation": "Uses a range of features with mixed control and can generally be understood."
     },
     "5": {
-      "fluencyAndCoherence": "Usually maintains flow of speech but uses repetition, self-correction and/or slow speech to keep going. Over-uses certain connectives and discourse markers. Produces simple speech fluently, but more complex communication causes fluency problems.",
-      "lexicalResource": "Manages to talk about familiar and unfamiliar topics but uses vocabulary with limited flexibility. Attempts paraphrase with mixed success.",
-      "grammaticalRangeAndAccuracy": "Produces basic sentence forms with reasonable accuracy. Uses a limited range of more complex structures, but these usually contain errors and may cause some comprehension problems.",
-      "pronunciation": "Shows all positive features of Band 4 and some, but not all, of Band 6."
+      "fluencyAndCoherence": "Maintains simple speech but relies on repetition, self-correction, or slow delivery for more complex ideas.",
+      "lexicalResource": "Handles familiar and some unfamiliar topics with limited flexibility and mixed paraphrasing.",
+      "grammaticalRangeAndAccuracy": "Produces basic forms with reasonable accuracy; complex forms are often faulty.",
+      "pronunciation": "Can be understood overall, though control of pronunciation features is inconsistent."
     }
   },
   "part1Topics": [
@@ -184,37 +184,37 @@
       "criterionTarget": "Grammatical Range and Accuracy (Inverted Third Conditional)"
     }
   ],
-  "authenticTranscripts": [
+  "practiceTranscripts": [
     {
-      "act": "Prologue",
-      "title": "Embarrassment & Social Perception",
+      "act": "Practice dialogue 1",
+      "title": "A neighbourhood repair project",
       "speakers": [
-        "Elna Baker",
-        "Jane Marie"
+        "Maya",
+        "Jon"
       ],
-      "theme": "Psychological Resilience & Self-Consciousness",
+      "theme": "Community, planning, and problem solving",
       "keyCollocations": [
-        "take the lesson to heart",
-        "center of the universe",
-        "inner critic",
-        "scrappy and opinionated"
+        "take responsibility",
+        "reach a compromise",
+        "practical solution",
+        "long-term benefit"
       ],
-      "excerpt": "To be embarrassed would be to assume that anyone in this room or anyone who witnessed this actually spends more than 5 seconds thinking about me. And they do not... This worldview, that others were not judging her, helped her not judge herself."
+      "excerpt": "Maya describes how neighbours turned an unused courtyard into a shared garden. Jon asks how they handled different priorities, and she explains that a short planning meeting helped the group reach a practical compromise."
     },
     {
-      "act": "Act Two",
-      "title": "Judgment Day & Linguistic Awareness",
+      "act": "Practice dialogue 2",
+      "title": "Learning from a difficult presentation",
       "speakers": [
-        "Elna Baker"
+        "Noah"
       ],
-      "theme": "Communication, Pronunciation & Vulnerability",
+      "theme": "Confidence, reflection, and communication",
       "keyCollocations": [
-        "mispronouncing the word",
-        "break out into a rash",
-        "incongruous",
-        "reveal sides of ourselves"
+        "organise ideas",
+        "speak at a steady pace",
+        "respond to questions",
+        "learn from feedback"
       ],
-      "excerpt": "I learned from a coworker that all my life I have been mispronouncing the word incongruous. Embarrassment is on me all the time, and I want to get it off... The best stories say so much about us, reveal sides of ourselves maybe we would rather not see."
+      "excerpt": "Noah reflects on a presentation that did not go to plan. He explains how recording a rehearsal helped him notice rushed speech, organise his ideas more clearly, and respond to questions with greater confidence."
     }
   ]
 }

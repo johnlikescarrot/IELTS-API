@@ -1,6 +1,6 @@
 name: Lint Code Base
 
-on:
+on: # yamllint disable-line rule:truthy
   push:
     branches: [main, 'arena/**', 'feature/**', 'fix/**']
   pull_request:
@@ -21,14 +21,30 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install lint dependencies
+        run: npm ci
       - name: Lint Code Base
-        uses: super-linter/super-linter/slim@v7
+        uses: super-linter/super-linter/slim@v8.3.0
         env:
-          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
+          LINTER_RULES_PATH: .
+          MARKDOWN_CONFIG_FILE: .markdownlint.yml
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.mjs
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.mjs
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_TYPESCRIPT_ES: true
           VALIDATE_JSON: true
           VALIDATE_MARKDOWN: true
           VALIDATE_YAML: true
+          VALIDATE_JAVASCRIPT_PRETTIER: false
+          VALIDATE_TYPESCRIPT_PRETTIER: false
+          VALIDATE_JSON_PRETTIER: true
+          VALIDATE_MARKDOWN_PRETTIER: true
+          VALIDATE_YAML_PRETTIER: false
+          VALIDATE_NATURAL_LANGUAGE: false

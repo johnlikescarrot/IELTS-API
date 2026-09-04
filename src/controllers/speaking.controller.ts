@@ -1,11 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import speakingData from '../data/speaking.json';
-import {
-  SpeakingPart1Topic,
-  SpeakingCueCard,
-  SpeakingFormula,
-  AuthenticTranscript
-} from '../types';
+import { SpeakingPart1Topic, SpeakingCueCard, SpeakingFormula, PracticeTranscript } from '../types';
 import { paginateArray } from '../utils/pagination';
 import { shuffleArray } from '../utils/quizGenerator';
 import { AppError } from '../middlewares/errorHandler';
@@ -13,7 +8,7 @@ import { AppError } from '../middlewares/errorHandler';
 const part1Topics: SpeakingPart1Topic[] = speakingData.part1Topics;
 const part2CueCards: SpeakingCueCard[] = speakingData.part2CueCards;
 const speakingFormulas: SpeakingFormula[] = speakingData.speakingFormulas;
-const authenticTranscripts: AuthenticTranscript[] = speakingData.authenticTranscripts;
+const practiceTranscripts: PracticeTranscript[] = speakingData.practiceTranscripts;
 
 export function getSpeakingBandDescriptors(req: Request, res: Response, next: NextFunction): void {
   try {
@@ -167,11 +162,11 @@ export function getSpeakingFormulas(req: Request, res: Response, next: NextFunct
   }
 }
 
-export function getAuthenticTranscripts(req: Request, res: Response, next: NextFunction): void {
+export function getPracticeTranscripts(req: Request, res: Response, next: NextFunction): void {
   try {
     res.json({
       success: true,
-      data: authenticTranscripts
+      data: practiceTranscripts
     });
   } catch (error) {
     next(error);
