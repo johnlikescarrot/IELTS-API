@@ -1,0 +1,18 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata below."
+title: "IELTS API"
+type: software
+authors:
+  - name: "IELTS API Contributors"
+version: 1.0.0
+date-released: 2026-09-04
+abstract: "A free, no-authentication TypeScript API for citable IELTS reference data, transparent score calculations, and original CC0 practice prompts."
+license: MIT
+repository-code: "https://github.com/johnlikescarrot/IELTS-API"
+url: "https://github.com/johnlikescarrot/IELTS-API"
+keywords:
+  - IELTS
+  - API
+  - language assessment
+  - education
+  - TypeScript

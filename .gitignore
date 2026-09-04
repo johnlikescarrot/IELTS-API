@@ -1,0 +1,7 @@
+coverage/
+dist/
+node_modules/
+super-linter.log
+.env
+.env.*
+!.env.example
