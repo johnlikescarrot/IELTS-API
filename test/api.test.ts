@@ -17,6 +17,12 @@ describe('discovery endpoints', () => {
     expect((await get('/health')).status).toBe(200);
     const meta = await get('/v1/meta');
     expect((meta.body as { counts: { vocabulary: number } }).counts.vocabulary).toBeGreaterThan(0);
+    expect(
+      (meta.body as { contentPolicy: { upstreamMaterialIncluded: boolean } }).contentPolicy
+        .upstreamMaterialIncluded,
+    ).toBe(false);
+    const sources = await get('/v1/sources');
+    expect((sources.body as { sources: unknown[] }).sources).toHaveLength(2);
     const spec = await get('/openapi.json');
     expect((spec.body as { openapi: string }).openapi).toBe('3.1.0');
     expect(Object.keys(openApiDocument().paths as object).length).toBeGreaterThan(10);

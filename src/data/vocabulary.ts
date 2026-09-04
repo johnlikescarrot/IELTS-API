@@ -1,7 +1,7 @@
 /**
- * A compact academic vocabulary resource. Headwords are drawn from the
- * frequency-ordered sublists of the Academic Word List family; the definitions
- * and collocations are original to this project.
+ * A compact academic vocabulary resource composed for this project. The
+ * project-specific sublist field groups common academic headwords; definitions,
+ * examples, and collocations are written for this repository.
  */
 
 /** A vocabulary entry. */

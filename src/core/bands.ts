@@ -48,10 +48,9 @@ export function overallBand(scores: Record<Skill, number>): {
 /**
  * Raw-score (out of 40) to band conversion tables.
  *
- * Each entry is `[minimumRawScore, band]`, sorted descending. Values follow the
- * conversion charts published in the official Cambridge IELTS practice test
- * series; they are indicative rather than contractual, as real tests are
- * equated individually.
+ * Each entry is `[minimumRawScore, band]`, sorted descending. These are
+ * source-informed indicative thresholds, not an official score converter: real
+ * tests are equated individually and precise marks may vary by test version.
  */
 const CONVERSION: Record<
   'listening' | 'reading_academic' | 'reading_general',

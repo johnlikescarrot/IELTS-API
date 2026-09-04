@@ -15,6 +15,7 @@ import { requireEnum, requireNumber, requireObject, requireString } from './core
 import { estimateWriting } from './core/writing.ts';
 import { openApiDocument } from './openapi.ts';
 import { READING_PASSAGES, SPEAKING_PROMPTS, WRITING_PROMPTS } from './data/prompts.ts';
+import { CONTENT_POLICY, REFERENCE_SOURCES } from './data/sources.ts';
 import { COHESIVE_DEVICES, VOCABULARY } from './data/vocabulary.ts';
 
 /** Semantic version of the API surface. */
@@ -56,6 +57,7 @@ export function createApp(): Router {
       endpoints: [
         'GET /health',
         'GET /v1/meta',
+        'GET /v1/sources',
         'GET /openapi.json',
         'POST /v1/band/overall',
         'GET /v1/band/convert',
@@ -96,9 +98,19 @@ export function createApp(): Router {
         readingPassages: READING_PASSAGES.length,
         vocabulary: VOCABULARY.length,
         cohesiveDevices: COHESIVE_DEVICES.length,
+        referenceSources: REFERENCE_SOURCES.length,
       },
+      contentPolicy: CONTENT_POLICY,
       license: 'MIT',
       authentication: 'none',
+    }),
+  );
+
+  router.get('/v1/sources', () =>
+    ok({
+      revision: CONTENT_POLICY.upstreamReviewDate,
+      sources: REFERENCE_SOURCES,
+      contentPolicy: CONTENT_POLICY,
     }),
   );
 

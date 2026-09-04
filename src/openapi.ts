@@ -20,6 +20,12 @@ export function openApiDocument(): Record<string, unknown> {
       '/v1/meta': {
         get: { summary: 'Dataset and capability metadata', responses: jsonOk('Metadata') },
       },
+      '/v1/sources': {
+        get: {
+          summary: 'Citable source records and content-provenance boundary',
+          responses: jsonOk('Sources and content policy'),
+        },
+      },
       '/v1/band/overall': {
         post: {
           summary: 'Compute overall band from four skill bands',

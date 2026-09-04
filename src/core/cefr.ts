@@ -12,7 +12,7 @@ interface CefrRow {
   readonly descriptor: string;
 }
 
-/** Band ranges published by the IELTS partners for CEFR alignment. */
+/** Approximate IELTS-to-CEFR reference bands for orientation, not diagnosis. */
 export const CEFR_TABLE: readonly CefrRow[] = [
   { level: 'C2', minBand: 8.5, maxBand: 9, descriptor: 'Expert / fully operational command.' },
   { level: 'C1', minBand: 7, maxBand: 8, descriptor: 'Effective operational proficiency.' },
