@@ -24,6 +24,7 @@ jobs:
           fetch-depth: 0
       - name: Lint code base with super-linter
         uses: super-linter/super-linter/slim@v6
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: main
@@ -49,6 +50,24 @@ jobs:
           # job instead.
           VALIDATE_TYPESCRIPT_PRETTIER: false
           VALIDATE_JAVASCRIPT_PRETTIER: false
+      - name: Report super-linter errors as annotations
+        if: always()
+        run: |
+          LOG="${GITHUB_WORKSPACE}/super-linter.log"
+          if [ -f "$LOG" ]; then
+            grep -n -E 'ERROR|error found|Errors found|Standard output|Result' "$LOG" | head -c 3000 > /tmp/sl-errors.txt
+            COUNT=0
+            while IFS= read -r line; do
+              if [ "$COUNT" -ge 8 ]; then break; fi
+              TRUNCATED=$(printf '%s' "$line" | head -c 400)
+              echo "::error::${TRUNCATED//\%/}"
+              COUNT=$((COUNT + 1))
+            done < /tmp/sl-errors.txt
+          else
+            echo '::error::super-linter.log not found in workspace'
+            ls -la "${GITHUB_WORKSPACE}" || true
+          fi
+          exit 1
 
   build-test:
     name: Build, test and coverage (Node ${{ matrix.node }})
