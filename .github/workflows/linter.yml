@@ -1,0 +1,30 @@
+name: Super-Linter
+
+# Runs the full Super-Linter suite on every push and pull request so that
+# all languages and file types stay clean, not just TypeScript/ESLint.
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+permissions:
+  contents: read
+  packages: read
+  statuses: write
+
+jobs:
+  super-lint:
+    name: Lint codebase
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          filter: blob:none
+
+      - name: Run Super-Linter
+        uses: github/super-linter@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false

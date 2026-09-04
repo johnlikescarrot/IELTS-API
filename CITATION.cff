@@ -1,0 +1,39 @@
+# This CITATION.cff makes the software citable (e.g. via GitHub's "Cite this
+# repository" button and Zenodo DOI minting). APA/BibTeX exports below.
+cff-version: 1.2.0
+title: 'IELTS-API: A Free, No-Auth, Open IELTS Practice API in TypeScript'
+message: 'If you use IELTS-API in research or teaching, please cite it as below.'
+type: software
+version: 1.0.0
+date-released: 2026-09-04
+license: MIT
+repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
+url: 'https://github.com/johnlikescarrot/IELTS-API'
+abstract: >-
+  IELTS-API is a free, no-authentication REST API and open dataset for IELTS
+  (International English Language Testing System) preparation. It serves
+  CEFR-graded vocabulary, Writing Task 1/2 prompts with band-scored samples,
+  Speaking Parts 1-3 topics, Reading/Listening question taxonomies and practice
+  sets, grammar rules, academic collocations, idioms, phrasal verbs, study
+  plans, and deterministic band-score calculators. Implemented in TypeScript
+  with 100% test coverage.
+keywords:
+  - ielts
+  - english-language-assessment
+  - esl
+  - efl
+  - computer-assisted-language-learning
+  - open-educational-resources
+  - rest-api
+  - typescript
+authors:
+  - family-names: 'IELTS-API contributors'
+    name: 'IELTS-API contributors'
+preferred-citation:
+  type: unpublished
+  title: 'IELTS-API: A Free, No-Auth, Open IELTS Practice API in TypeScript'
+  authors:
+    - family-names: 'IELTS-API contributors'
+      name: 'IELTS-API contributors'
+  year: 2026
+  url: 'https://github.com/johnlikescarrot/IELTS-API'
