@@ -1,0 +1,63 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "name": "IELTS-API",
+  "description": "A free, authentication-free, dependency-free and fully reproducible reference implementation of IELTS scoring and language-assessment analytics, written in TypeScript.",
+  "version": "1.0.0",
+  "softwareVersion": "1.0.0",
+  "dateCreated": "2026-09-04",
+  "datePublished": "2026-09-04",
+  "license": "https://spdx.org/licenses/MIT",
+  "codeRepository": "https://github.com/johnlikescarrot/IELTS-API",
+  "issueTracker": "https://github.com/johnlikescarrot/IELTS-API/issues",
+  "programmingLanguage": [
+    {
+      "@type": "ComputerLanguage",
+      "name": "TypeScript"
+    }
+  ],
+  "runtimePlatform": ["Node.js >= 20.11"],
+  "operatingSystem": ["Linux", "macOS", "Windows"],
+  "applicationCategory": "Educational and language assessment software",
+  "developmentStatus": "active",
+  "keywords": [
+    "IELTS",
+    "language assessment",
+    "band score",
+    "CEFR",
+    "academic word list",
+    "readability",
+    "automated writing evaluation",
+    "reproducible research",
+    "open API",
+    "TypeScript"
+  ],
+  "author": [
+    {
+      "@type": "Organization",
+      "name": "IELTS-API Contributors"
+    }
+  ],
+  "maintainer": [
+    {
+      "@type": "Organization",
+      "name": "IELTS-API Contributors"
+    }
+  ],
+  "referencePublication": [
+    {
+      "@type": "ScholarlyArticle",
+      "name": "A New Academic Word List",
+      "author": "Averil Coxhead",
+      "datePublished": "2000",
+      "identifier": "https://doi.org/10.2307/3587951"
+    },
+    {
+      "@type": "ScholarlyArticle",
+      "name": "A new readability yardstick",
+      "author": "Rudolf Flesch",
+      "datePublished": "1948",
+      "identifier": "https://doi.org/10.1037/h0057532"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+---
+name: Super-Linter
+
+# Always run the full super-linter suite over the whole code base, on every
+# push and every pull request.
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  super-linter:
+    name: Lint code base
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: read
+      statuses: write
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+        with:
+          # Super-linter needs the full history to diff against the base branch.
+          fetch-depth: 0
+
+      - name: Run super-linter
+        uses: super-linter/super-linter@v8
+        env:
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: true
+          LINTER_RULES_PATH: .
+          MARKDOWN_CONFIG_FILE: .markdown-lint.yml
+          YAML_CONFIG_FILE: .yaml-lint.yml
+          FILTER_REGEX_EXCLUDE: (dist/|coverage/|node_modules/|src/data/awl\.ts)
+          # TypeScript semantics are checked by the project's own type-aware
+          # ESLint configuration in the `verify` workflow; super-linter enforces
+          # formatting, documentation, workflow and secret hygiene.
+          VALIDATE_TYPESCRIPT_PRETTIER: true
+          VALIDATE_JSON_PRETTIER: true
+          VALIDATE_MARKDOWN: true
+          VALIDATE_MARKDOWN_PRETTIER: true
+          VALIDATE_YAML: true
+          VALIDATE_YAML_PRETTIER: true
+          VALIDATE_GITHUB_ACTIONS: true
+          VALIDATE_GITLEAKS: true

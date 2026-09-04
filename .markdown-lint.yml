@@ -1,0 +1,19 @@
+---
+# Configuration for markdownlint, used by super-linter and locally.
+default: true
+
+# Long lines are acceptable in prose and in tables of endpoints.
+MD013: false
+
+# Duplicate headings are acceptable under different parents.
+MD024:
+  siblings_only: true
+
+# Inline HTML is used sparingly for badges and templates.
+MD033: false
+
+# A bold lead paragraph under the title is intentional, not a heading.
+MD036: false
+
+# The first line of a file need not be a top-level heading (front matter).
+MD041: false

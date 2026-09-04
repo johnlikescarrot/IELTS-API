@@ -1,0 +1,103 @@
+cff-version: 1.2.0
+title: >-
+  IELTS-API: a free, authentication-free, reproducible reference implementation
+  of IELTS scoring and language-assessment analytics
+message: >-
+  If you use this software, please cite it using the metadata in this file.
+type: software
+authors:
+  - name: IELTS-API Contributors
+    website: https://github.com/johnlikescarrot/IELTS-API
+repository-code: https://github.com/johnlikescarrot/IELTS-API
+url: https://github.com/johnlikescarrot/IELTS-API
+abstract: >-
+  IELTS-API is a dependency-free TypeScript library and HTTP API that implements
+  the arithmetic and the analytics of the International English Language Testing
+  System: the official Overall Band Score rounding rule, raw-score to band-score
+  conversion for Listening and Reading, the published alignment to the Common
+  European Framework of Reference, analytic band descriptors, Academic Word List
+  profiling, classical readability indices, a rule base of frequent learner
+  errors, and a transparent glass-box estimator for Writing band scores. Every
+  endpoint is free and requires no authentication of any kind, and every response
+  is deterministic, so published results can be reproduced exactly.
+keywords:
+  - IELTS
+  - language assessment
+  - band score
+  - CEFR
+  - academic word list
+  - readability
+  - automated writing evaluation
+  - reproducible research
+  - open API
+  - TypeScript
+license: MIT
+version: 1.0.0
+date-released: "2026-09-04"
+references:
+  - type: article
+    authors:
+      - family-names: Coxhead
+        given-names: Averil
+    title: A New Academic Word List
+    journal: TESOL Quarterly
+    volume: 34
+    issue: 2
+    start: 213
+    end: 238
+    year: 2000
+    doi: 10.2307/3587951
+  - type: article
+    authors:
+      - family-names: Flesch
+        given-names: Rudolf
+    title: A new readability yardstick
+    journal: Journal of Applied Psychology
+    volume: 32
+    issue: 3
+    start: 221
+    end: 233
+    year: 1948
+    doi: 10.1037/h0057532
+  - type: report
+    authors:
+      - family-names: Kincaid
+        given-names: J. Peter
+      - family-names: Fishburne
+        given-names: Robert P.
+      - family-names: Rogers
+        given-names: Richard L.
+      - family-names: Chissom
+        given-names: Brad S.
+    title: >-
+      Derivation of new readability formulas for Navy enlisted personnel
+    institution:
+      name: Naval Technical Training Command
+    year: 1975
+  - type: book
+    authors:
+      - family-names: Gunning
+        given-names: Robert
+    title: The Technique of Clear Writing
+    publisher:
+      name: McGraw-Hill
+    year: 1952
+  - type: report
+    authors:
+      - family-names: Senter
+        given-names: R. J.
+      - family-names: Smith
+        given-names: E. A.
+    title: Automated Readability Index
+    institution:
+      name: Aerospace Medical Research Laboratories
+    year: 1967
+  - type: report
+    authors:
+      - name: Council of Europe
+    title: >-
+      Common European Framework of Reference for Languages: Learning, teaching,
+      assessment - Companion volume
+    publisher:
+      name: Council of Europe Publishing
+    year: 2020
