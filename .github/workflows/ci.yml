@@ -51,24 +51,22 @@ jobs:
           # job instead.
           VALIDATE_TYPESCRIPT_PRETTIER: false
           VALIDATE_JAVASCRIPT_PRETTIER: false
-      - name: Report super-linter errors as annotations
+      - name: Publish super-linter log to PR (temporary diagnostics)
         if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           LOG="${GITHUB_WORKSPACE}/super-linter.log"
           if [ -f "$LOG" ]; then
-            CLEAN=$(tr -cd '\11\12\15\40-\176' < "$LOG")
-            TOTAL=${#CLEAN}
-            echo "::error::log chars: $TOTAL"
-            TAIL_CLEAN=$(printf '%s' "$CLEAN" | tail -c 6500)
-            printf '%s\n' "$TAIL_CLEAN" | fold -w 800 > /tmp/sl-chunks.txt
-            n=0
-            while IFS= read -r CHUNK; do
-              n=$((n + 1))
-              ESC=$(printf '%s' "$CHUNK" | sed -e 's/%/%25/g' -e 's/\r/%0D/g')
-              echo "::error::[part $n] $ESC"
-            done < /tmp/sl-chunks.txt
+            jq -Rs '{body: ("### super-linter log (diagnostics)\n```\n" + . + "\n```")}' "$LOG" > /tmp/body.json
+            curl -sS -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{ github.event.pull_request.number }}/comments" \
+              -d @/tmp/body.json > /dev/null
+            echo "log published"
           else
-            echo '::error::super-linter.log not found in workspace'
+            echo "log not found at $LOG"
           fi
           exit 1
 
