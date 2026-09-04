@@ -58,6 +58,7 @@ jobs:
           # extraction scripts are standalone Python utilities with their own
           # formatting.
           # Linter configuration files.
+          LINTER_RULES_PATH: /
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
