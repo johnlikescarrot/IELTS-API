@@ -25,7 +25,7 @@ easy to render into flashcards, mobile apps, chatbots and learning tools.
 
 The API is designed to be **citable** in academic and teaching work: it ships an
 OpenAPI contract, a CITATION file, semantic versioning, and permissive MIT
-licensing. See [Citation](#citation).
+licensing. See [the citation section](#cite-this-api).
 
 ---
 
@@ -202,7 +202,7 @@ APA style:
 
 > IELTS API contributors. (2026). _IELTS API: A free, no-authentication TypeScript
 > API for IELTS study content_ [Computer software]. GitHub.
-> https://github.com/johnlikescarrot/IELTS-API
+> <https://github.com/johnlikescarrot/IELTS-API>
 
 The versioned `/openapi.json` document is the authoritative machine-readable
 contract — reference the version tag you used in any reproducibility statement.

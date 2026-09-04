@@ -1,0 +1,7 @@
+---
+# Custom markdownlint configuration for the IELTS API.
+# Long lines are intentionally allowed: tables and reference URLs are clearer
+# on a single line than wrapped mid-word.
+default: true
+MD013:
+  line_length: 200

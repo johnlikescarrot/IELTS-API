@@ -1,4 +1,0 @@
-# Configuration for super-linter (https://github.com/super-linter/super-linter)
-# See: https://github.com/super-linter/super-linter/blob/main/README.md#configure-super-linter
----
-linter-rules-path: .

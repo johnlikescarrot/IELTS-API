@@ -1,0 +1,12 @@
+---
+extends: default
+rules:
+  # Document start markers are optional.
+  document-start:
+    present: false
+  # Allow the GitHub Actions "on:" key, which YAML 1.1 parses as a boolean.
+  truthy:
+    allowed-values: ["true", "false", "on", "off"]
+    check-keys: false
+  line-length:
+    max: 200
