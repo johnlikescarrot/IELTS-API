@@ -33,7 +33,7 @@ jobs:
           persist-credentials: false
 
       - name: Run super-linter
-        uses: super-linter/super-linter/slim@v7
+        uses: super-linter/super-linter/slim@v8.3.1
         env:
           DEFAULT_BRANCH: main
           DEFAULT_WORKSPACE: ${{ github.workspace }}
