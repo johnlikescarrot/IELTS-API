@@ -24,10 +24,7 @@ jobs:
           fetch-depth: 0
       - name: Lint code base with super-linter
         uses: super-linter/super-linter/slim@v6
-        continue-on-error: true
         env:
-          OUTPUT_DETAILS: detailed
-          SAVE_SUPER_LINTER_SUMMARY: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: main
           VALIDATE_ALL_CODEBASE: true
@@ -46,21 +43,12 @@ jobs:
           VALIDATE_ENV: true
           VALIDATE_GITLEAKS: true
           VALIDATE_JSCPD: false
-      - name: Expose super-linter log to job summary
-        if: always()
-        run: |
-          echo '### super-linter log tail' >> "$GITHUB_STEP_SUMMARY"
-          if [ -f "${GITHUB_WORKSPACE}/super-linter.log" ]; then
-            tail -c 50000 "${GITHUB_WORKSPACE}/super-linter.log" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo 'log file not in workspace; listing candidates' >> "$GITHUB_STEP_SUMMARY"
-            ls -la "${GITHUB_WORKSPACE}" >> "$GITHUB_STEP_SUMMARY" || true
-            find /tmp -maxdepth 3 -name '*.log' 2>/dev/null | head >> "$GITHUB_STEP_SUMMARY" || true
-            for f in $(find /tmp -maxdepth 3 -name '*.log' 2>/dev/null | head -3); do
-              echo "== $f ==" >> "$GITHUB_STEP_SUMMARY"
-              tail -c 30000 "$f" >> "$GITHUB_STEP_SUMMARY" || true
-            done
-          fi
+          # Prettier variants are disabled here because the super-linter image
+          # bundles an older prettier than the lockfile-pinned one; formatting
+          # is strictly enforced by `npm run format:check` in the build-test
+          # job instead.
+          VALIDATE_TYPESCRIPT_PRETTIER: false
+          VALIDATE_JAVASCRIPT_PRETTIER: false
 
   build-test:
     name: Build, test and coverage (Node ${{ matrix.node }})

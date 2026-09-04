@@ -64,12 +64,14 @@ export interface GeneralTask1Question {
   readonly suggestedMinutes: 20;
 }
 
+export type EssayType =
+  'opinion' | 'discussion' | 'problem-solution' | 'advantages-disadvantages' | 'double-question';
+
 export interface Task2Question {
   readonly id: string;
   readonly skill: 'writing';
   readonly part: 2;
-  readonly essayType:
-    'opinion' | 'discussion' | 'problem-solution' | 'advantages-disadvantages' | 'double-question';
+  readonly essayType: EssayType;
   readonly topic: string;
   readonly prompt: string;
   readonly minWords: 250;
