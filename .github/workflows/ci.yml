@@ -56,12 +56,19 @@ jobs:
         run: |
           LOG="${GITHUB_WORKSPACE}/super-linter.log"
           if [ -f "$LOG" ]; then
-            echo "::error::log size $(stat -c%s "$LOG") bytes, $(wc -l < "$LOG") lines"
-            TAIL_TEXT=$(tail -c 3000 "$LOG" | tr '\n' '|' | tr '%' '_' | head -c 3400)
-            echo "::error::${TAIL_TEXT}"
+            CLEAN=$(sed -e 's/\x1b\[[0-9;]*[A-Za-z]//g' "$LOG" | tr -d '\000-\010\013\014\016-\037\177')
+            TOTAL=${#CLEAN}
+            echo "::error::log chars: $TOTAL"
+            TAIL_CLEAN=$(printf '%s' "$CLEAN" | tail -c 6500)
+            printf '%s\n' "$TAIL_CLEAN" | fold -w 800 > /tmp/sl-chunks.txt
+            n=0
+            while IFS= read -r CHUNK; do
+              n=$((n + 1))
+              ESC=$(printf '%s' "$CHUNK" | sed -e 's/%/%25/g' -e 's/\r/%0D/g')
+              echo "::error::[part $n] $ESC"
+            done < /tmp/sl-chunks.txt
           else
             echo '::error::super-linter.log not found in workspace'
-            ls -la "${GITHUB_WORKSPACE}" || true
           fi
           exit 1
 
