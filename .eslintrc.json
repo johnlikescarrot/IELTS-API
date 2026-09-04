@@ -30,5 +30,11 @@
     "prefer-const": "error",
     "eqeqeq": ["error", "always"]
   },
+  "overrides": [
+    {
+      "files": ["*.json"],
+      "parser": "jsonc-eslint-parser"
+    }
+  ],
   "ignorePatterns": ["dist", "coverage", "node_modules"]
 }

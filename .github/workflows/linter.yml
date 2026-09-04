@@ -30,3 +30,8 @@ jobs:
           # The dataset deliberately contains IPA transcriptions, proper
           # nouns, and exam vocabulary that trip spell-checkers.
           VALIDATE_NATURAL_LANGUAGE: false
+          # TYPESCRIPT_ES (our .eslintrc.json, which passed) is the
+          # authoritative TypeScript linter; ts-standard enforces a
+          # semicolon-less style that conflicts with the project's
+          # Prettier configuration.
+          VALIDATE_TYPESCRIPT_STANDARD: false

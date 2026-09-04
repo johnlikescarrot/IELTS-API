@@ -37,7 +37,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "lint": "eslint src tests --ext .ts && prettier --check . && markdownlint --config .markdown-lint.json \"*.md\" \"docs/**/*.md\"",
+    "lint": "eslint src tests --ext .ts && prettier --check . && markdownlint --config .markdown-lint.json \"*.md\" \"docs/**/*.md\" \".github/**/*.md\"",
     "format": "prettier --write . && eslint src tests --ext .ts --fix",
     "test": "node --import tsx --test --test-force-exit \"tests/*.test.ts\"",
     "test:coverage": "c8 npm run test"

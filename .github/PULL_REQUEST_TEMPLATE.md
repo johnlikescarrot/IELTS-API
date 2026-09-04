@@ -1,3 +1,6 @@
+<!-- markdownlint-disable MD041 -->
+<!-- PR templates conventionally start below H1; the PR title is the H1. -->
+
 ## Summary
 
 <!-- What does this change do, and why? -->

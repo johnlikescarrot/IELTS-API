@@ -1,0 +1,9 @@
+{
+  "minTokens": 120,
+  "ignore": [
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/coverage/**",
+    "**/package-lock.json"
+  ]
+}

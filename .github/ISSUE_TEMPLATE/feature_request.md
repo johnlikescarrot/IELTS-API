@@ -6,12 +6,12 @@ labels: enhancement
 assignees: ""
 ---
 
-**Is your feature request related to a problem?**
+## Is your feature request related to a problem?
 
-**Describe the solution you'd like**
+## Describe the solution you'd like
 
 <!-- New endpoint, dataset category, filter, documentation, tooling... -->
 
-**Describe alternatives you've considered**
+## Describe alternatives you've considered
 
-**Additional context**
+## Additional context

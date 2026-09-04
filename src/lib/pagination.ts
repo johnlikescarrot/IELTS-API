@@ -14,19 +14,15 @@ export const MAX_LIMIT = 100;
 export const MAX_PAGE = 1_000_000_000;
 
 /**
- * Parse an optional positive integer parameter. `null` (parameter absent)
- * falls back to `fallback`; anything non-numeric or out of range is a 400.
+ * Parse an integer parameter that is known to be present: the raw string is
+ * validated strictly (digits only, within range) and returned.
  */
-export function parsePositiveInt(
-  value: string | null,
+function parseIntInRange(
+  value: string,
   name: string,
-  fallback: number,
   min: number,
   max: number,
 ): number {
-  if (value === null) {
-    return fallback;
-  }
   const trimmed = value.trim();
   if (!/^-?\d+$/.test(trimmed)) {
     throw badRequest(
@@ -42,6 +38,23 @@ export function parsePositiveInt(
     );
   }
   return parsed;
+}
+
+/**
+ * Parse an optional positive integer parameter. `null` (parameter absent)
+ * falls back to `fallback`; anything non-numeric or out of range is a 400.
+ */
+export function parsePositiveInt(
+  value: string | null,
+  name: string,
+  fallback: number,
+  min: number,
+  max: number,
+): number {
+  if (value === null) {
+    return fallback;
+  }
+  return parseIntInRange(value, name, min, max);
 }
 
 export interface Pagination {
@@ -81,21 +94,7 @@ export function parseOptionalInt(
   if (value === null) {
     return null;
   }
-  const trimmed = value.trim();
-  if (!/^-?\d+$/.test(trimmed)) {
-    throw badRequest(
-      `Parameter '${name}' must be an integer between ${min} and ${max}`,
-      { parameter: name, value },
-    );
-  }
-  const parsed = Number.parseInt(trimmed, 10);
-  if (parsed < min || parsed > max) {
-    throw badRequest(
-      `Parameter '${name}' must be an integer between ${min} and ${max}`,
-      { parameter: name, value },
-    );
-  }
-  return parsed;
+  return parseIntInRange(value, name, min, max);
 }
 
 /** Build the standard list envelope for one page of a collection. */
