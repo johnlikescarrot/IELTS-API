@@ -1,0 +1,90 @@
+---
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  super-linter:
+    name: Super-Linter (always)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Lint code base with super-linter
+        uses: super-linter/super-linter/slim@v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DEFAULT_BRANCH: main
+          VALIDATE_ALL_CODEBASE: true
+          LINTER_RULES_PATH: .
+          TYPESCRIPT_ES_CONFIG_FILE: .eslintrc.cjs
+          YAML_CONFIG_FILE: .yamllint.yml
+          MARKDOWN_CONFIG_FILE: .markdown-lint.yml
+          VALIDATE_TYPESCRIPT_ES: true
+          VALIDATE_TYPESCRIPT_STANDARD: false
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_JSON: true
+          VALIDATE_YAML: true
+          VALIDATE_MD: true
+          VALIDATE_DOCKERFILE_HADOLINT: true
+          VALIDATE_ENV: true
+          VALIDATE_GITLEAKS: true
+          VALIDATE_JSCPD: false
+
+  build-test:
+    name: Build, test and coverage (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node:
+          - 20
+          - 22
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Check formatting
+        run: npm run format:check
+      - name: Lint Markdown
+        run: npm run lint:markdown
+      - name: Test with 100% coverage gate
+        run: npm test
+      - name: Build
+        run: npm run build
+      - name: Smoke test the compiled server
+        run: |
+          node dist/bin.js &
+          SERVER_PID=$!
+          sleep 3
+          curl --fail --silent http://127.0.0.1:3000/health
+          kill "$SERVER_PID"
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-node-${{ matrix.node }}
+          path: coverage
+          retention-days: 14
