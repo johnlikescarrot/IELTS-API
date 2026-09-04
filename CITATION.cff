@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: >-
+  If you use IELTS-API in your research or teaching, please cite it using the
+  metadata below.
+title: "IELTS-API: a free and open REST API for IELTS study data"
+type: software
+authors:
+  - given-name: IELTS-API
+    family-name: Contributors
+repository-code: "https://github.com/johnlikescarrot/IELTS-API"
+url: "https://github.com/johnlikescarrot/IELTS-API"
+abstract: >-
+  A free, open-source REST API serving structured IELTS study data: academic
+  vocabulary with CEFR levels, speaking topics for Parts 1-3, academic and
+  general training writing prompts, common learner mistakes with corrections,
+  band-score descriptors, and an official-rule overall band-score calculator.
+  Requires no authentication or API key.
+keywords:
+  - IELTS
+  - ESL
+  - EFL
+  - vocabulary
+  - REST API
+  - open data
+  - education
+license: MIT
+version: 1.0.0
+date-released: "2026-09-04"
