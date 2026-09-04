@@ -11,6 +11,7 @@ describe('package entry point', () => {
     expect(typeof api.estimateWriting).toBe('function');
     expect(api.VOCABULARY.length).toBeGreaterThan(0);
     expect(api.WRITING_PROMPTS.length).toBeGreaterThan(0);
+    expect(api.REFERENCE_SOURCES).toHaveLength(2);
     expect(api.CEFR_LEVELS).toContain('B2');
   });
 });

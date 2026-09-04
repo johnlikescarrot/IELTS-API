@@ -12,5 +12,6 @@ export * from './core/text.ts';
 export * from './core/validate.ts';
 export * from './core/writing.ts';
 export * from './data/prompts.ts';
+export * from './data/sources.ts';
 export * from './data/vocabulary.ts';
 export { openApiDocument } from './openapi.ts';

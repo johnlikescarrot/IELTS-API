@@ -21,6 +21,7 @@ no runtime dependencies.
 - [No authentication, ever](#no-authentication-ever)
 - [API reference](#api-reference)
 - [Scoring methodology](#scoring-methodology)
+- [Data provenance and sources](#data-provenance-and-sources)
 - [Reproducibility](#reproducibility)
 - [Testing](#testing)
 - [Linting](#linting)
@@ -34,15 +35,19 @@ no runtime dependencies.
 ## Why this project exists
 
 Research and courseware around the International English Language Testing
-System (IELTS) is fragmented across PDFs, spreadsheets and paywalled tools. The
-widely shared [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)
-repository is representative: a valuable but unstructured pile of preparation
-material with no programmable interface.
+System (IELTS) is fragmented across PDFs, spreadsheets, and paywalled tools.
+A full Git-tree review of
+[`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS) on 2026-09-04
+found a heterogeneous binary collection and no repository licence in its GitHub
+metadata. Public availability does not establish redistribution rights for test
+papers, books, audio, answer keys, or other preparation material.
 
-This project turns that domain into a **machine-readable, permanently free
-service**. Researchers can compute band conversions reproducibly, courseware
-authors can pull openly licensed prompts, and learners can get transparent,
-explainable feedback without handing over an email address.
+This project therefore builds a **machine-readable, permanently free service**
+without importing, transforming, linking to, or exposing any file from that
+repository. Researchers can compute source-informed band guidance
+reproducibly, courseware authors can use newly written prompts under this
+project's MIT licence, and learners can get transparent, explainable feedback
+without handing over an email address.
 
 ## Design goals
 
@@ -100,12 +105,13 @@ The full machine-readable contract is served at `GET /openapi.json`
 
 ### Discovery
 
-| Method | Path            | Description                               |
-| ------ | --------------- | ----------------------------------------- |
-| `GET`  | `/`             | Service index and endpoint listing.       |
-| `GET`  | `/health`       | Liveness probe.                           |
-| `GET`  | `/v1/meta`      | Dataset counts, supported enums, licence. |
-| `GET`  | `/openapi.json` | OpenAPI 3.1 document.                     |
+| Method | Path            | Description                                    |
+| ------ | --------------- | ---------------------------------------------- |
+| `GET`  | `/`             | Service index and endpoint listing.            |
+| `GET`  | `/health`       | Liveness probe.                                |
+| `GET`  | `/v1/meta`      | Dataset counts, supported enums, licence.      |
+| `GET`  | `/v1/sources`   | Citable source records and content provenance. |
+| `GET`  | `/openapi.json` | OpenAPI 3.1 document.                          |
 
 ### Band scores
 
@@ -187,11 +193,12 @@ Codes: `BAD_REQUEST` (400), `NOT_FOUND` (404), `METHOD_NOT_ALLOWED` (405),
 rounds up to the next half band and `.75` rounds up to the next whole band.
 `roundToBand` implements exactly this rule.
 
-**Raw-score conversion.** `src/core/bands.ts` contains three conversion tables
-(listening, academic reading, general training reading) expressed as
-`[minimumRawScore, band]` pairs, following the charts published in the
-Cambridge IELTS practice test series. Real tests are equated individually, so
-these are _indicative_.
+**Raw-score conversion.** `src/core/bands.ts` contains three source-informed
+conversion tables (Listening, Academic Reading, General Training Reading)
+expressed as `[minimumRawScore, band]` pairs. They are **indicative guidance**,
+not an official score converter: real tests are equated individually and the
+precise mark can vary by test version. The source endpoint links to the official
+score guidance used to bound these reference values.
 
 **Writing estimate.** `/v1/writing/analyze` applies a transparent rubric over
 surface features, one component per official criterion:
@@ -210,7 +217,26 @@ heuristic with silent-`e` correction.
 
 This is **not** an official band score and does not model argument quality or
 grammatical accuracy. It is a reproducible baseline: given identical input it
-returns identical output, forever, with no model drift.
+returns identical output with no model drift.
+
+## Data provenance and sources
+
+The API's `GET /v1/sources` endpoint returns versioned source records,
+access dates, supported claims, and the content boundary in machine-readable
+form. The records currently point to:
+
+1. [IELTS scoring in detail](https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail)
+   for overall-band rounding and indicative Listening and Reading raw-score
+   guidance.
+2. [British Council: Understanding and explaining IELTS scores](https://takeielts.britishcouncil.org/teach-ielts/test-information/ielts-scores-explained)
+   for band-scale reporting and CEFR alignment context.
+
+The review date is `2026-09-04`. Small factual fields are linked to these
+sources; the sources remain authoritative. The repository contains no official
+test material, commercial preparation material, audio, answer keys, or copied
+content from the researched upstream repository. All bundled practice passages,
+questions, prompts, examples, and vocabulary definitions were authored for this
+project and are covered by its [MIT licence](LICENSE).
 
 ## Reproducibility
 
@@ -237,8 +263,12 @@ npm run format  # prettier --check
 ```
 
 The repository additionally runs
-[super-linter](https://github.com/super-linter/super-linter) on every push and
-pull request via `.github/workflows/super-linter.yml`.
+[Super-Linter](https://github.com/super-linter/super-linter) `v8.7.0` on every
+push, pull request, and manual dispatch via
+`.github/workflows/super-linter.yml`. TypeScript, JavaScript, and JSON linting
+remain in the dependency-aware CI job (`npm ci`, ESLint, and Prettier); the
+containerized Super-Linter job validates the remaining repository-wide formats,
+workflow syntax, and secret hygiene.
 
 ## Citing this work
 
