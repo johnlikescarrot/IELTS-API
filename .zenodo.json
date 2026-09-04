@@ -1,0 +1,35 @@
+{
+  "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
+  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
+  "upload_type": "software",
+  "access_right": "open",
+  "creators": [
+    {
+      "name": "The IELTS API contributors",
+      "affiliation": "johnlikescarrot/IELTS-API"
+    }
+  ],
+  "keywords": [
+    "IELTS",
+    "English for Academic Purposes",
+    "second language assessment",
+    "vocabulary",
+    "band descriptors",
+    "score concordance",
+    "open data",
+    "REST API"
+  ],
+  "license": "other-open",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/johnlikescarrot/IELTS-API",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/zhengyishiming/IELTS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    }
+  ]
+}
