@@ -27,14 +27,9 @@ jobs:
       - name: Format check (Prettier, project config)
         run: npm run format:check
 
-      # Super-Linter is scoped to the linters that can run without the project's
-      # node_modules and that have verified project rules in LINTER_RULES_PATH
-      # (Markdown, YAML, JSON). ESLint/Prettier run through the project's own
-      # footsteps above. The Test & Coverage workflow adds the build, type-check
-      # and 100%-coverage gates. Container linters such as gitleaks and
-      # editorconfig-checker are left disabled here.
       - name: Super-Linter
         uses: super-linter/super-linter@v6
+        id: linter
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           DEFAULT_BRANCH: main
@@ -50,3 +45,16 @@ jobs:
           VALIDATE_EDITORCONFIG: false
           VALIDATE_DOCKERFILE: false
           LINTER_RULES_PATH: .
+          CREATE_LOG_FILE: true
+          LOG_LEVEL: DEBUG
+
+      - name: Report Super-Linter diagnostics (temporary)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "=== super-linter.log ==="
+          cat super-linter.log 2>/dev/null | tail -80 || echo "(no log file in workspace)"
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            gh pr comment "${{ github.event.pull_request.number }}" --body "$(cat super-linter.log 2>/dev/null | tail -80 || echo 'no log')"
+          fi
