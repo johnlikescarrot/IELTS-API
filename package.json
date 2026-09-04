@@ -1,0 +1,48 @@
+{
+  "name": "ielts-api",
+  "version": "1.0.0",
+  "description": "A free, no-authentication, dependency-free IELTS API written in TypeScript: band score conversion, CEFR mapping, writing/speaking analytics and open practice content.",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/server.js",
+    "dev": "node --experimental-strip-types src/server.ts",
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "test": "vitest run --coverage"
+  },
+  "keywords": [
+    "ielts",
+    "api",
+    "band-score",
+    "cefr",
+    "language-testing",
+    "typescript",
+    "open-data"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "@eslint/js": "^9.13.0",
+    "@types/node": "^22.7.0",
+    "@vitest/coverage-v8": "^2.1.3",
+    "eslint": "^9.13.0",
+    "prettier": "^3.3.3",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.11.0",
+    "vitest": "^2.1.3"
+  }
+}

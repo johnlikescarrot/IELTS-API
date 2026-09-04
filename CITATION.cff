@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: 'If you use this software, please cite it using these metadata.'
+title: 'IELTS API: a free, open, no-authentication TypeScript API for IELTS band conversion, CEFR alignment and writing analytics'
+abstract: >-
+  IELTS API is a dependency-free, MIT licensed TypeScript service that exposes
+  IELTS band score conversion, IELTS-to-CEFR alignment, deterministic
+  readability and lexical analytics for written responses, and an openly
+  licensed corpus of writing, speaking and reading practice material. The API
+  requires no authentication, performs no network or model inference at request
+  time, and is fully deterministic, which makes every result exactly
+  reproducible from a pinned commit.
+type: software
+authors:
+  - name: 'IELTS API Contributors'
+version: '1.0.0'
+date-released: '2026-09-04'
+license: MIT
+repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
+url: 'https://github.com/johnlikescarrot/IELTS-API'
+keywords:
+  - IELTS
+  - language testing
+  - CEFR
+  - automated writing evaluation
+  - readability
+  - open science
+  - reproducible research
+  - TypeScript
+  - REST API
