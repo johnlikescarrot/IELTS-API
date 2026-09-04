@@ -22,24 +22,43 @@ jobs:
       statuses: write
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        # actions/checkout v4.4.0
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           fetch-depth: 0
       - name: Run super-linter
-        uses: super-linter/super-linter@v7
+        # super-linter v7.3.0
+        uses: super-linter/super-linter@4e8a7c2bf106c4c766c816b35ec612638dc9b6b2
         env:
           VALIDATE_ALL_CODEBASE: true
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Build artifacts never enter the repo, but exclude defensively.
+          FILTER_REGEX_EXCLUDE: .*(dist|coverage)/.*
+          # TypeScript and JavaScript are linted more strictly by this repo's
+          # own ESLint 9 flat config, Prettier and tsc in the build-test job.
+          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_STANDARD: false
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_JAVASCRIPT_STANDARD: false
+          # JSON syntax and formatting are enforced by JSON_PRETTIER (enabled)
+          # and by tests that parse every dataset and config file.
+          VALIDATE_JSON: false
+          # The vocabulary/mistake datasets are intentionally repetitive literals.
+          VALIDATE_JSCPD: false
+          # Prose quality is enforced by markdownlint (enabled).
+          VALIDATE_NATURAL_LANGUAGE: false
 
   build-test:
     name: Build, lint, type-check, 100% coverage
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        # actions/checkout v4.4.0
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        # actions/setup-node v4.4.0
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
         with:
           node-version: 22
           cache: npm
@@ -62,7 +81,8 @@ jobs:
           kill $SERVER_PID
       - name: Upload coverage report
         if: always()
-        uses: actions/upload-artifact@v4
+        # actions/upload-artifact v4.6.2
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: coverage-report
           path: coverage/

@@ -240,7 +240,7 @@ src/
   data/             the datasets (pure typed constants)
   routes/           one module per resource plus the route table
 tests/              unit and integration tests (100% coverage enforced)
-.github/            super-linter config, CI workflow, dependabot
+.github/            CI workflow (super-linter + build/test), dependabot
 ```
 
 ## Development
