@@ -35,6 +35,7 @@ jobs:
           DEFAULT_BRANCH: main
           LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdownlint.yml
+          YAML_CONFIG_FILE: .yamllint.yml
           JAVASCRIPT_ES_CONFIG_FILE: eslint.config.mjs
           TYPESCRIPT_ES_CONFIG_FILE: eslint.config.mjs
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
