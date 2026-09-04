@@ -1,0 +1,126 @@
+name: ci
+
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Typecheck, lint, format, test (Node ${{ matrix.node }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20.10.0', '22.x']
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run format:check
+
+      - name: Test with 100% coverage gate
+        run: npm run test
+
+      - name: Upload coverage report
+        if: matrix.node == '22.x'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+          retention-days: 7
+          if-no-files-found: error
+
+  build:
+    name: Build and smoke-test the compiled package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Smoke-test the compiled CLI
+        run: |
+          node dist/cli.js --version
+          node dist/cli.js --help
+          node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
+          SERVER_PID=$!
+          for attempt in $(seq 1 20); do
+            if curl -fsS "http://127.0.0.1:4010/health" > /tmp/health.json; then break; fi
+            sleep 0.5
+          done
+          kill "${SERVER_PID}"
+          cat /tmp/health.json
+          grep -q '"status": 200' /tmp/health.json
+
+  datasets:
+    name: Verify dataset integrity
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Re-derive the vocabulary dataset from the upstream workbook
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+            "https://api.github.com/repos/zhengyishiming/IELTS/git/blobs/d66fded8b74057a96a677eb25d9b9f7b39965ce3" \
+            -o /tmp/1-22yas.xlsx
+          python3 scripts/extract_vocabulary.py /tmp/1-22yas.xlsx /tmp/vocabulary.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/vocabulary.json'))
+          regenerated = json.load(open('/tmp/vocabulary.json'))
+          assert committed == regenerated, 'data/vocabulary.json is out of date'
+          print(f"dataset reproducible: {regenerated['meta']['words']} words")
+          PY
+
+      - name: Validate the JSON datasets
+        run: |
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); print('datasets are valid JSON')"

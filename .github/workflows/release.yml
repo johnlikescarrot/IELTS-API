@@ -1,0 +1,62 @@
+name: release
+
+# Cutting a tag publishes a citable, archived release. Zenodo mints a DOI for
+# every tag once the repository is enabled there; the CITATION.cff identifier
+# is updated automatically by the Zenodo integration.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build, verify and publish the release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify the release
+        run: npm run validate
+
+      - name: Build
+        run: npm run build
+
+      - name: Create the GitHub release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "${GITHUB_REF_NAME}" \
+            --generate-notes \
+            --verify-tag \
+            README.md CITATION.cff codemeta.json .zenodo.json
+
+      - name: Refresh the archived OpenAPI snapshot
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
+          SERVER_PID=$!
+          for attempt in $(seq 1 20); do
+            if curl -fsS "http://127.0.0.1:4010/openapi.json" -o docs/openapi.json; then break; fi
+            sleep 0.5
+          done
+          kill "${SERVER_PID}"
+          test -s docs/openapi.json

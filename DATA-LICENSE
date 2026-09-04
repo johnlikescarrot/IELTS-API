@@ -1,0 +1,58 @@
+DATA LICENCE
+============
+
+Unless stated otherwise, the datasets shipped in `data/` are licensed under the
+Creative Commons Attribution 4.0 International licence (CC BY 4.0).
+
+  SPDX-License-Identifier: CC-BY-4.0
+  Canonical text: https://creativecommons.org/licenses/by/4.0/legalcode
+  Human-readable summary: https://creativecommons.org/licenses/by/4.0/
+
+You are free to:
+
+  * Share — copy and redistribute the material in any medium or format.
+  * Adapt — remix, transform, and build upon the material for any purpose,
+    even commercially.
+
+Under the following terms:
+
+  * Attribution — you must give appropriate credit, provide a link to the
+    licence, and indicate if changes were made. The recommended citation is in
+    CITATION.cff and in the "Citing this project" section of README.md; please
+    also cite the upstream corpus (https://github.com/zhengyishiming/IELTS),
+    from which the vocabulary dataset was derived.
+  * No additional restrictions — you may not apply legal terms or technological
+    measures that legally restrict others from doing anything the licence
+    permits.
+
+Attribution example
+-------------------
+
+  Datasets: Cambridge IELTS 1-22 vocabulary and the IELTS research corpus index,
+  compiled by the IELTS API contributors and derived from the open corpus
+  https://github.com/zhengyishiming/IELTS. Licensed under CC BY 4.0.
+
+Scope
+-----
+
+The licence covers the *derived datasets* (the normalised JSON in `data/`): the
+selection, normalisation, de-duplication, part-of-speech tagging and
+provenance metadata added by this project. It does not transfer any rights in
+the upstream files themselves, which remain the property of their respective
+copyright holders and are never redistributed by this project. The corpus index
+in `data/corpus.json` publishes metadata only.
+
+The band descriptors in `src/data/bands.ts` are original condensed paraphrases
+written for this project. They are not the official IELTS band descriptors,
+which are published by the British Council, IDP: IELTS Australia and Cambridge
+Assessment English (https://www.ielts.org/for-organisations/ielts-scoring-in-detail).
+Researchers who need the authoritative wording must cite the published
+descriptors directly.
+
+The score concordances in `src/data/conversions.ts` are indicative values
+compiled from the test providers' own published comparison tables. Receiving
+institutions apply their own rules; always verify against the current published
+table.
+
+The source code of this project is licensed separately under the MIT licence —
+see LICENSE.

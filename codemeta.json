@@ -1,0 +1,64 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": "ielts-api",
+  "name": "IELTS API",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks and an indexed open research corpus.",
+  "version": "1.0.0",
+  "dateCreated": "2026-09-04",
+  "datePublished": "2026-09-04",
+  "programmingLanguage": [
+    {
+      "@type": "ComputerLanguage",
+      "name": "TypeScript",
+      "url": "https://www.typescriptlang.org/"
+    }
+  ],
+  "runtimePlatform": "Node.js >= 20.10",
+  "operatingSystem": ["Linux", "macOS", "Windows"],
+  "codeRepository": "https://github.com/johnlikescarrot/IELTS-API",
+  "url": "https://github.com/johnlikescarrot/IELTS-API",
+  "issueTracker": "https://github.com/johnlikescarrot/IELTS-API/issues",
+  "license": ["https://spdx.org/licenses/MIT.html", "https://spdx.org/licenses/CC-BY-4.0.html"],
+  "keywords": [
+    "IELTS",
+    "English for Academic Purposes",
+    "second language assessment",
+    "vocabulary",
+    "band descriptors",
+    "score concordance",
+    "open data",
+    "REST API",
+    "TypeScript"
+  ],
+  "author": [
+    {
+      "@type": "Organization",
+      "name": "The IELTS API contributors",
+      "url": "https://github.com/johnlikescarrot/IELTS-API"
+    }
+  ],
+  "applicationCategory": "WebService",
+  "developmentStatus": "active",
+  "softwareRequirements": [],
+  "referencePublication": [
+    {
+      "@type": "ScholarlyArticle",
+      "name": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
+      "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/paper/paper.md"
+    }
+  ],
+  "isAccessibleForFree": true,
+  "funding": "None",
+  "citation": [
+    {
+      "@type": "CreativeWork",
+      "name": "IELTS: an open corpus of IELTS preparation materials",
+      "url": "https://github.com/zhengyishiming/IELTS",
+      "creator": {
+        "@type": "Person",
+        "name": "zhengyishiming"
+      }
+    }
+  ]
+}
