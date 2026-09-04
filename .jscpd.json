@@ -1,6 +1,7 @@
 {
+  "threshold": 0,
   "minTokens": 120,
-  "formats": ["typescript", "javascript", "json", "yaml"],
+  "format": ["typescript", "javascript", "json", "yaml"],
   "ignore": [
     "**/node_modules/**",
     "**/dist/**",
