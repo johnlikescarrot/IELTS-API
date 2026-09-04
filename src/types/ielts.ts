@@ -25,11 +25,17 @@ export type ReadingModule = 'academic' | 'general-training';
 
 /** The four Writing assessment criteria. */
 export type WritingCriterion =
-  'task-achievement' | 'coherence-cohesion' | 'lexical-resource' | 'grammatical-range-accuracy';
+  | 'task-achievement'
+  | 'coherence-cohesion'
+  | 'lexical-resource'
+  | 'grammatical-range-accuracy';
 
 /** The four Speaking assessment criteria. */
 export type SpeakingCriterion =
-  'fluency-coherence' | 'lexical-resource' | 'grammatical-range-accuracy' | 'pronunciation';
+  | 'fluency-coherence'
+  | 'lexical-resource'
+  | 'grammatical-range-accuracy'
+  | 'pronunciation';
 
 /** A band-level descriptor for a single assessment criterion. */
 export interface CriterionDescriptor {

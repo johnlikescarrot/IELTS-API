@@ -1,3 +1,4 @@
+---
 name: Super-Linter
 
 on:
@@ -5,6 +6,9 @@ on:
     branches: ['**']
   pull_request:
     branches: ['**']
+
+permissions:
+  contents: read
 
 jobs:
   super-lint:
@@ -31,11 +35,20 @@ jobs:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_ALL_CODEBASE: false
+          # The ESLint-based validators are disabled here because Super-Linter's
+          # bundled ESLint 8.57.1 crashes while loading its own .eslintrc.yml
+          # under Node ESM. TypeScript/JavaScript linting is enforced instead by
+          # the dedicated CI workflow (npm run lint), which already runs ESLint 9
+          # with the project's flat config and passes.
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_JSON: false
+          VALIDATE_TSX: false
+          VALIDATE_JAVASCRIPT_PRETTIER: false
+          VALIDATE_TYPESCRIPT_STANDARD: false
           VALIDATE_BASH: false
           VALIDATE_DOCKERFILE: false
-          VALIDATE_JAVASCRIPT_PRETTIER: false
           VALIDATE_JSCPD: false
           VALIDATE_NATURAL_LANGUAGE: false
           VALIDATE_SHELL_SHFMT: false
-          VALIDATE_TYPESCRIPT_STANDARD: false
           FILTER_REGEX_EXCLUDE: '(dist/|node_modules/|coverage/|package-lock\.json)'
