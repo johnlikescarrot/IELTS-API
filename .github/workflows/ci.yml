@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['20.10.0', '22.x']
+        node: ['20.19.0', '22.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -109,7 +109,7 @@ jobs:
 
       - name: Re-derive the vocabulary dataset from the upstream workbook
         run: |
-          curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+          curl -fsSL -H "Accept: application/vnd.github.v3.raw" -H "User-Agent: IELTS-API-CI" \
             "https://api.github.com/repos/zhengyishiming/IELTS/git/blobs/d66fded8b74057a96a677eb25d9b9f7b39965ce3" \
             -o /tmp/1-22yas.xlsx
           python3 scripts/extract_vocabulary.py /tmp/1-22yas.xlsx /tmp/vocabulary.json

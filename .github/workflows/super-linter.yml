@@ -54,23 +54,6 @@ jobs:
           VALIDATE_ENV: true
           VALIDATE_GITLEAKS: true
           VALIDATE_CHECKOV: true
-          VALIDATE_TRIVY: false
-          VALIDATE_XML: false
-          # Deliberately disabled: the code base is TypeScript-only and the
-          # extraction scripts are standalone Python utilities with their own
-          # formatting.
-          VALIDATE_PYTHON: false
-          VALIDATE_PYTHON_BLACK: false
-          VALIDATE_PYTHON_FLAKE8: false
-          VALIDATE_PYTHON_ISORT: false
-          VALIDATE_PYTHON_MYPY: false
-          VALIDATE_PYTHON_PYLINT: false
-          VALIDATE_NATURAL_LANGUAGE: false
-          VALIDATE_JSCPD: false
-          VALIDATE_TYPESCRIPT_STANDARD: false
-          VALIDATE_JAVASCRIPT_STANDARD: false
-          VALIDATE_HTML: false
-          VALIDATE_CSS: false
           # Linter configuration files.
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
