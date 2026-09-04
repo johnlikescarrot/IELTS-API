@@ -55,6 +55,7 @@ jobs:
           VALIDATE_GITLEAKS: true
           VALIDATE_CHECKOV: true
           # Linter configuration files.
+          LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
