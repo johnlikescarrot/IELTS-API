@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  statuses: write
 
 jobs:
   super-linter:
@@ -20,16 +21,36 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
       - name: Run Super-Linter
         uses: super-linter/super-linter/slim@v8.7.0
         env:
           DEFAULT_BRANCH: main
           FILTER_REGEX_EXCLUDE: '(dist|coverage|node_modules)/.*'
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITLEAKS_CONFIG_FILE: .gitleaks.toml
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          LINTER_RULES_PATH: .github/linters
+          MARKDOWN_CONFIG_FILE: .markdownlint.yaml
+          PRETTIER_CONFIG_FILE: .prettierrc.json
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           VALIDATE_ALL_CODEBASE: true
-          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_CHECKOV: false
+          VALIDATE_JAVASCRIPT_PRETTIER: false
           VALIDATE_JAVASCRIPT_STANDARD: false
+          VALIDATE_JSON_PRETTIER: false
           VALIDATE_JSCPD: false
-          VALIDATE_JSON: false
-          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_MARKDOWN_PRETTIER: false
+          VALIDATE_NATURAL_LANGUAGE: false
+          VALIDATE_TYPESCRIPT_PRETTIER: false
           VALIDATE_TYPESCRIPT_STANDARD: false
+          VALIDATE_YAML_PRETTIER: false
+          YAML_CONFIG_FILE: .yaml-lint.yml
