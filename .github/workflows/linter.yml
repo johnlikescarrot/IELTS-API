@@ -27,12 +27,12 @@ jobs:
       - name: Format check (Prettier, project config)
         run: npm run format:check
 
-      # Super-Linter validates the linters that don't depend on the project's
-      # node_modules (Markdown, YAML and JSON), using the project-specific rules
-      # in LINTER_RULES_PATH. Setting VALIDATE_* true disables every unset
-      # validator, so JS/TS ESLint and Prettier are deliberately left to the
-      # project's own footsteps above. The Test & Coverage workflow adds the
-      # build, type-check and 100%-coverage gates.
+      # Super-Linter is scoped to the linters that can run without the project's
+      # node_modules and that have verified project rules in LINTER_RULES_PATH
+      # (Markdown, YAML, JSON). ESLint/Prettier run through the project's own
+      # footsteps above. The Test & Coverage workflow adds the build, type-check
+      # and 100%-coverage gates. Container linters such as gitleaks and
+      # editorconfig-checker are left disabled here.
       - name: Super-Linter
         uses: super-linter/super-linter@v6
         env:
@@ -42,4 +42,11 @@ jobs:
           VALIDATE_MARKDOWN: true
           VALIDATE_YAML: true
           VALIDATE_JSON: true
+          VALIDATE_JAVASCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_ES: false
+          VALIDATE_TYPESCRIPT_STANDARD: false
+          VALIDATE_JSCPD: false
+          VALIDATE_GITLEAKS: false
+          VALIDATE_EDITORCONFIG: false
+          VALIDATE_DOCKERFILE: false
           LINTER_RULES_PATH: .
