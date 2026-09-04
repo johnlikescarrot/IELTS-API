@@ -10,6 +10,8 @@ on:
 permissions:
   contents: read
   statuses: write
+  issues: write
+  pull-requests: write
 
 jobs:
   super-linter:
@@ -56,6 +58,30 @@ jobs:
           VALIDATE_TYPESCRIPT_STANDARD: false
           VALIDATE_YAML_PRETTIER: false
           YAML_CONFIG_FILE: .yaml-lint.yml
+
+      - name: Report lint findings
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          {
+            echo '## Super-Linter findings'
+            echo
+            for f in super-linter-output/**/*.log super-linter-output/*.log; do
+              [ -f "$f" ] || continue
+              echo "### $f"
+              echo '```'
+              tail -c 8000 "$f"
+              echo '```'
+            done
+            if [ -f super-linter-summary.md ]; then
+              echo '### Summary'
+              cat super-linter-summary.md
+            fi
+          } > /tmp/findings.md 2>/dev/null || true
+          cat /tmp/findings.md >> "$GITHUB_STEP_SUMMARY" || true
+          gh api "repos/${GITHUB_REPOSITORY}/issues/4/comments" \
+            -f body="$(head -c 60000 /tmp/findings.md)" || true
 
       - name: Upload lint report
         if: always()
