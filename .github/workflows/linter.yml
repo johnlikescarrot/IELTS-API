@@ -27,11 +27,12 @@ jobs:
       - name: Format check (Prettier, project config)
         run: npm run format:check
 
-      # Super-Linter is scoped to linters that run without the project's
-      # node_modules and have verified project rules in LINTER_RULES_PATH:
-      # Markdown, YAML and JSON. ESLint and Prettier are run through the
-      # project's own scripts above, and the Test & Coverage workflow adds the
-      # build, type-check and 100%-coverage gates.
+      # Super-Linter validates Markdown, YAML and JSON using the project rules
+      # in LINTER_RULES_PATH. JavaScript/TypeScript ESLint and Prettier are run
+      # through the project's own scripts above, and Test & Coverage gates the
+      # build, type-check and 100%-coverage. Files that need the dependency tree
+      # (node_modules, built output) are excluded so Super-Linter only sees the
+      # checked-in source.
       - name: Super-Linter
         uses: super-linter/super-linter@v6
         env:
@@ -56,12 +57,4 @@ jobs:
           VALIDATE_HTML_PRETTIER: false
           VALIDATE_CSS_PRETTIER: false
           LINTER_RULES_PATH: .
-          CREATE_LOG_FILE: true
-
-      - name: Upload Super-Linter log (diagnostic)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: super-linter-log
-          path: super-linter.log
-          if-no-files-found: warn
+          FILTER_REGEX_EXCLUDE: "(.*\\.(ts|js|cjs|mjs)$)|(node_modules/)|(dist/)|(coverage/)|(\\.git/)"
