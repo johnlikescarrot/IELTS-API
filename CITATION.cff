@@ -1,0 +1,32 @@
+cff-version: 1.2.0
+message: >-
+  If this software or its datasets helped your research or teaching, please
+  cite it as below.
+type: software
+title: "IELTS-API: A free and open IELTS study API"
+authors:
+  - name: johnlikescarrot
+    website: "https://github.com/johnlikescarrot"
+repository-code: "https://github.com/johnlikescarrot/IELTS-API"
+url: "https://github.com/johnlikescarrot/IELTS-API"
+abstract: >-
+  A free, open, no-authentication IELTS study API written in TypeScript.
+  It serves band-scored academic vocabulary, original academic reading and
+  listening practice tests with worked explanations, IELTS writing tasks
+  with model answers, a bank of common writing mistakes, a speaking
+  question bank with cue cards and sample responses, indicative band-score
+  conversion tables, and per-skill exam tips. The implementation is fully
+  tested (100% line, branch, and function coverage) and requires no API
+  keys, accounts, or payment.
+keywords:
+  - IELTS
+  - API
+  - TypeScript
+  - REST
+  - education
+  - vocabulary
+  - ESL
+  - open-data
+license: MIT
+version: 1.0.0
+date-released: "2026-09-04"

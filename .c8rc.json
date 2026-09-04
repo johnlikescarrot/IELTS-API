@@ -1,0 +1,11 @@
+{
+  "all": true,
+  "include": ["src/**"],
+  "exclude": ["tests/**", "dist/**", "node_modules/**", "coverage/**"],
+  "reporter": ["text", "text-summary", "lcov"],
+  "check-coverage": true,
+  "lines": 100,
+  "statements": 100,
+  "functions": 100,
+  "branches": 100
+}

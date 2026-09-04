@@ -1,0 +1,52 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    name: Lint, build, and test (100% coverage)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (eslint, prettier, markdownlint)
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
+      - name: Test with enforced 100% coverage
+        run: npm run test:coverage
+
+      - name: Smoke-test the built server
+        run: |
+          PORT=3199 node dist/index.js &
+          sleep 1
+          curl --fail http://127.0.0.1:3199/health
+          curl --fail "http://127.0.0.1:3199/v1/bands/calculator?skill=listening&raw=30"
+          curl --fail http://127.0.0.1:3199/openapi.json > /dev/null
+          kill %1
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14

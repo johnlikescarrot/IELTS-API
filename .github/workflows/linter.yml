@@ -1,0 +1,32 @@
+name: Super-Linter
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+  packages: read
+  statuses: write
+
+jobs:
+  super-linter:
+    name: Run super-linter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+        with:
+          # Full history is required for validation of changed files.
+          fetch-depth: 0
+
+      - name: Run super-linter
+        uses: super-linter/super-linter@v7
+        env:
+          VALIDATE_ALL_CODEBASE: true
+          DEFAULT_BRANCH: main
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # The dataset deliberately contains IPA transcriptions, proper
+          # nouns, and exam vocabulary that trip spell-checkers.
+          VALIDATE_NATURAL_LANGUAGE: false
