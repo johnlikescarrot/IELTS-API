@@ -56,18 +56,31 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          LOG="${GITHUB_WORKSPACE}/super-linter.log"
-          if [ -f "$LOG" ]; then
-            jq -Rs '{body: ("### super-linter log (diagnostics)\n```\n" + . + "\n```")}' "$LOG" > /tmp/body.json
+          post() {
             curl -sS -X POST \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
-              "https://api.github.com/repos/${GITHUB_REPOSITORY}/issues/${{ github.event.pull_request.number }}/comments" \
-              -d @/tmp/body.json > /dev/null
-            echo "log published"
+              "https://api.github.com/repos/johnlikescarrot/IELTS-API/issues/11/comments" \
+              -d "{\"body\": \"$1\"}" > /dev/null
+          }
+          LOG="${GITHUB_WORKSPACE}/super-linter.log"
+          post "checkpoint-1: diagnostics started; workspace=$GITHUB_WORKSPACE"
+          if [ -f "$LOG" ]; then
+            post "checkpoint-2: log exists, $(stat -c%s "$LOG") bytes"
           else
-            echo "log not found at $LOG"
+            post "checkpoint-2: LOG MISSING"
+            ls -la "$GITHUB_WORKSPACE" | head -30 | sed 's/\"/\x27/g' > /tmp/ls.txt
+            post "checkpoint-2b: $(cat /tmp/ls.txt | tr '\n' ' ' | head -c 800)"
+            exit 1
           fi
+          jq --version > /tmp/jqv.txt 2>&1 && post "checkpoint-3: $(cat /tmp/jqv.txt)" || post "checkpoint-3: JQ MISSING $(cat /tmp/jqv.txt | head -c 200)"
+          jq -Rs '{body: ("### super-linter log (diagnostics)\n```\n" + . + "\n```")}' "$LOG" > /tmp/body.json && post "checkpoint-4: body built $(stat -c%s /tmp/body.json) bytes" || post "checkpoint-4: JQ FAILED"
+          CODE=$(curl -sS -o /tmp/resp.json -w "%{http_code}" -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/johnlikescarrot/IELTS-API/issues/11/comments" \
+            -d @/tmp/body.json)
+          post "checkpoint-5: comment POST http=$CODE resp=$(head -c 300 /tmp/resp.json | tr -d '\n' | sed 's/\"/\x27/g')"
           exit 1
 
   build-test:
