@@ -132,3 +132,63 @@ describe('GET /v1/scores/interpret', () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
   });
 });
+
+interface Target {
+  target: number;
+  component: 'listening' | 'reading' | 'writing' | 'speaking';
+  components: Record<'listening' | 'reading' | 'writing' | 'speaking', number>;
+  assumed: string[];
+  required: number | null;
+  feasible: boolean;
+  mean: number;
+  overall: number;
+  cefr: string;
+  explanation: string;
+}
+
+describe('GET /v1/scores/target', () => {
+  it('solves for the required component score', async () => {
+    const response = await server.json<Target>(
+      '/v1/scores/target?target=7&component=writing&listening=7&reading=7&speaking=7',
+    );
+    expect(response.status).toBe(200);
+    expect(response.data.required).toBe(6);
+    expect(response.data.feasible).toBe(true);
+    expect(response.data.overall).toBe(7);
+    expect(response.data.cefr).toBe('C1');
+    expect(response.data.assumed).toEqual([]);
+    expect(response.meta.rule).toContain('rounded to the nearest half band');
+  });
+
+  it('assumes unsupplied components at the target level', async () => {
+    const response = await server.json<Target>('/v1/scores/target?target=6.5&component=speaking');
+    expect(response.data.required).toBe(5.5);
+    expect(response.data.assumed).toEqual(['listening', 'reading', 'writing']);
+    expect(response.data.components.listening).toBe(6.5);
+    expect(response.data.cefr).toBe('B2');
+  });
+
+  it('reports unreachable targets', async () => {
+    const response = await server.json<Target>(
+      '/v1/scores/target?target=9&component=writing&listening=6&reading=6&speaking=6',
+    );
+    expect(response.data.feasible).toBe(false);
+    expect(response.data.required).toBeNull();
+    expect(response.data.overall).toBe(7);
+  });
+
+  it('requires target and component', async () => {
+    expect((await server.json('/v1/scores/target?component=writing')).status).toBe(400);
+    const missing = await server.json('/v1/scores/target?target=7');
+    expect(missing.status).toBe(400);
+    expect((missing.meta.error as { details: Record<string, string> }).details.allowed).toContain('writing');
+  });
+
+  it('rejects invalid targets, components and known scores', async () => {
+    expect((await server.json('/v1/scores/target?target=7.25&component=writing')).status).toBe(400);
+    expect((await server.json('/v1/scores/target?target=7&component=spelling')).status).toBe(400);
+    expect((await server.json('/v1/scores/target?target=7&component=writing&listening=6.3')).status).toBe(
+      400,
+    );
+  });
+});

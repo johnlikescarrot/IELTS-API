@@ -38,6 +38,11 @@
       "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
       "relation": "isDerivedFrom",
       "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/johnlikescarrot/IELTS-API/blob/main/paper/paper.md",
+      "relation": "isDocumentedBy",
+      "scheme": "url"
     }
   ]
 }

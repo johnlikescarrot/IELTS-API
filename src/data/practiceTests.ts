@@ -11,6 +11,7 @@
  */
 
 import { loadDataset } from '../lib/dataset.js';
+import { seededIndices } from '../lib/rng.js';
 import { matchesFilter, matchesQuery, paginate, sortBy } from '../lib/search.js';
 
 import type { Page } from '../lib/search.js';
@@ -197,6 +198,41 @@ export function searchPracticeItems(options: PracticeQuery): Page<PracticeItem> 
   const unrated = filtered.filter((item) => item.readability === null);
   const sorted = sortBy(rated, (item) => key(item.readability as ReadabilityStats), order);
   return paginate([...sorted, ...unrated], options.limit, options.offset);
+}
+
+/** Options accepted by {@link recommendPracticeItems}. */
+export type PracticeRecommendationOptions = Omit<PracticeQuery, 'limit' | 'offset'> & {
+  /** Number of items to recommend (clamped to the number of matches). */
+  count: number;
+  /** Seed; identical filters and seeds return identical recommendations. */
+  seed: string;
+};
+
+/** Result of {@link recommendPracticeItems}. */
+export type PracticeRecommendation = {
+  /** Recommended items, in ascending identifier order. */
+  items: readonly PracticeItem[];
+  /** Number of items that matched the filters. */
+  total: number;
+  /** Seed echoed back for reproducibility. */
+  seed: string;
+};
+
+/**
+ * Deterministically sample practice items from the filtered index.
+ *
+ * Matches are taken in ascending identifier order and sampled with the seeded
+ * generator, so a recommendation is reproducible across processes, machines
+ * and releases for a given filter set and seed.
+ *
+ * @param options - Filter options plus sample size and seed.
+ * @returns The recommended items and the match total.
+ */
+export function recommendPracticeItems(options: PracticeRecommendationOptions): PracticeRecommendation {
+  const matches = searchPracticeItems({ ...options, limit: practiceItems().length, offset: 0 });
+  const indices = seededIndices(options.seed, matches.items.length, options.count);
+  const items = indices.map((index) => matches.items[index] as PracticeItem);
+  return { items, total: matches.items.length, seed: options.seed };
 }
 
 /** Facet values available for filtering, derived from the index. */

@@ -23,7 +23,10 @@ reproduce a result years later.
 Everything here is derived from two open collections — [`zhengyishiming/IELTS`][corpus] for the
 vocabulary and the corpus index, and [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
 question-type taxonomy and the practice-test structure and readability index. Neither is
-redistributed: the API publishes derived, non-substitutive metadata and statistics. See
+redistributed: the API publishes derived, non-substitutive metadata and statistics. A third
+collection, [`Oxidaner/ielts`][notes], was evaluated and excluded — no licence, no
+machine-readable structure; the reproducible assessment is recorded in
+[RESEARCH.md, Part III](RESEARCH.md#part-iii--the-self-study-notes-evaluated-excluded). See
 [RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every dataset, and
 [paper/paper.md](paper/paper.md) for the short research paper.
 
@@ -40,6 +43,12 @@ curl -s "http://localhost:3000/v1/vocabulary?q=environment&limit=3"
 
 # Overall band score, with the IELTS rounding rule applied
 curl -s "http://localhost:3000/v1/scores/overall?listening=7&reading=6.5&writing=6&speaking=7"
+
+# The minimum writing band needed for an overall 7.0
+curl -s "http://localhost:3000/v1/scores/target?target=7&component=writing&listening=7&reading=7&speaking=7"
+
+# Five seeded B1-B2 reading lessons: the same request always returns the same plan
+curl -s "http://localhost:3000/v1/tests/recommend?skill=reading&level=b1-b2&count=5&seed=week-1"
 
 # One headword, with phonetics, senses and morpheme hints
 curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
@@ -102,6 +111,7 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/scores/overall`     | Overall band from the four components                                                             |
 | GET    | `/v1/scores/convert`     | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
 | GET    | `/v1/scores/interpret`   | Another scale back to an indicative IELTS band                                                    |
+| GET    | `/v1/scores/target`      | Minimum score one component must reach for a target overall band (`target`, `component`)          |
 | GET    | `/v1/topics/writing`     | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
 | GET    | `/v1/topics/speaking`    | Speaking Parts 1-3 (`part`, `q`)                                                                  |
 | GET    | `/v1/topics/themes`      | Recurring exam themes (`group`, `skill`, `q`)                                                     |
@@ -111,6 +121,7 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/tests`              | Practice-test index: provenance, statistics, facets                                               |
 | GET    | `/v1/tests/stats`        | Question-type and readability statistics                                                          |
 | GET    | `/v1/tests/items`        | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)          |
+| GET    | `/v1/tests/recommend`    | Deterministic, seeded sample matching the facet filters (`count`, `seed`)                         |
 | GET    | `/v1/tests/:id`          | One indexed practice test or graded reading lesson                                                |
 | GET    | `/v1/corpus`             | Corpus metadata, statistics and facets                                                            |
 | GET    | `/v1/corpus/stats`       | Corpus statistics                                                                                 |
@@ -187,7 +198,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 359 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -265,3 +276,4 @@ partners.
 
 [corpus]: https://github.com/zhengyishiming/IELTS
 [practice]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
+[notes]: https://github.com/Oxidaner/ielts

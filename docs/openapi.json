@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "IELTS API",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
     "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, a structure and readability\nindex of 1,702 practice tests, and an index of the open IELTS research corpus.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:4011/",
+      "url": "http://127.0.0.1:4321/",
       "description": "This instance"
     }
   ],
@@ -1084,6 +1084,177 @@
             "in": "query",
             "required": true,
             "description": "Band score for speaking (0-9 in 0.5 steps).",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/scores/target": {
+      "get": {
+        "operationId": "v1_scores_target",
+        "summary": "Minimum score one component must reach for a target overall band.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "target",
+            "in": "query",
+            "required": true,
+            "description": "Desired overall band (0-9 in 0.5 steps).",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "component",
+            "in": "query",
+            "required": true,
+            "description": "The skill to solve for.",
+            "schema": {
+              "type": "string",
+              "enum": ["listening", "reading", "writing", "speaking"]
+            }
+          },
+          {
+            "name": "listening",
+            "in": "query",
+            "description": "Known band score for listening; do not supply the component being solved for. Unsupplied skills are assumed at the target level.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "reading",
+            "in": "query",
+            "description": "Known band score for reading; do not supply the component being solved for. Unsupplied skills are assumed at the target level.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "writing",
+            "in": "query",
+            "description": "Known band score for writing; do not supply the component being solved for. Unsupplied skills are assumed at the target level.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "speaking",
+            "in": "query",
+            "description": "Known band score for speaking; do not supply the component being solved for. Unsupplied skills are assumed at the target level.",
             "schema": {
               "type": "number",
               "minimum": 0,
@@ -2591,6 +2762,181 @@
               "type": "integer",
               "minimum": 0,
               "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tests/recommend": {
+      "get": {
+        "operationId": "v1_tests_recommend",
+        "summary": "Deterministic, seeded sample of practice tests matching the facet filters.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "collection",
+            "in": "query",
+            "description": "Comma-separated collections.",
+            "schema": {
+              "type": "string",
+              "enum": ["reading-full-test", "listening-full-test", "graded-reading"]
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "description": "Comma-separated skills.",
+            "schema": {
+              "type": "string",
+              "enum": ["reading", "listening"]
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "Comma-separated CEFR bands.",
+            "schema": {
+              "type": "string",
+              "enum": ["a1-a2", "b1-b2", "c1-c2"]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Comma-separated canonical question types; items must contain all of them.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "multiple-choice",
+                "multiple-choice-multiple-answer",
+                "true-false-not-given",
+                "yes-no-not-given",
+                "matching",
+                "matching-information",
+                "matching-headings",
+                "matching-features",
+                "matching-sentence-endings",
+                "sentence-completion",
+                "summary-completion",
+                "diagram-label-completion",
+                "short-answer"
+              ]
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Number of items to recommend (clamped to the number of matches).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 5
+            }
+          },
+          {
+            "name": "seed",
+            "in": "query",
+            "description": "Seed; identical filters and seeds return identical recommendations.",
+            "schema": {
+              "type": "string",
+              "default": "ielts"
             }
           }
         ],

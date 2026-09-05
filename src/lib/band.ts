@@ -117,3 +117,80 @@ export function calculateOverall(
     : `The mean of the four components is ${mean.toFixed(2)}, which rounds to the nearest half band: ${overall.toFixed(1)}.`;
   return { components, mean, overall, cefr: cefrFor(overall), spread, explanation };
 }
+
+/** Result of {@link calculateTarget}. */
+export type TargetResult = {
+  /** The overall band the candidate wants. */
+  target: number;
+  /** The component solved for. */
+  component: Skill;
+  /** Component scores used for the calculation, including the solved one. */
+  components: Record<Skill, number>;
+  /** Components that were assumed rather than supplied by the caller. */
+  assumed: readonly Skill[];
+  /** Minimum band in the solved component that reaches the target, or `null` when infeasible. */
+  required: number | null;
+  /** `false` when the target is unreachable even with a 9 in the component. */
+  feasible: boolean;
+  /** Unrounded mean of the four components at the required score. */
+  mean: number;
+  /** Overall band achieved at the required score. */
+  overall: number;
+  /** Human-readable explanation of the calculation. */
+  explanation: string;
+};
+
+/**
+ * Solve the inverse band problem: the minimum score one component must reach
+ * so that the rounded overall band is at least the target.
+ *
+ * The search walks every reportable band in ascending order, so the first hit
+ * is the minimum by construction.
+ *
+ * @param target - Desired overall band.
+ * @param component - Skill to solve for.
+ * @param known - Known scores of the other components; missing skills are assumed at the target level.
+ * @returns The target result including a worked explanation.
+ */
+export function calculateTarget(
+  target: number,
+  component: Skill,
+  known: Partial<Record<Skill, number>>,
+): TargetResult {
+  const assumed = SKILLS.filter((skill) => skill !== component && known[skill] === undefined);
+  const components = {} as Record<Skill, number>;
+  for (const skill of SKILLS) {
+    components[skill] = skill === component ? MAX_BAND : (known[skill] ?? target);
+  }
+  let required: number | undefined;
+  for (let steps = 0; steps <= (MAX_BAND - MIN_BAND) / BAND_STEP; steps += 1) {
+    const candidate = MIN_BAND + steps * BAND_STEP;
+    components[component] = candidate;
+    if (roundBand(meanOf(components)) >= target) {
+      required = candidate;
+      break;
+    }
+  }
+  components[component] = required ?? MAX_BAND;
+  const mean = meanOf(components);
+  const overall = roundBand(mean);
+  const assumedNote =
+    assumed.length === 0
+      ? 'All other components were supplied by the caller.'
+      : `Missing components (${assumed.join(', ')}) were assumed at the target level of ${target.toFixed(1)}.`;
+  const explanation =
+    required !== undefined
+      ? `Scoring at least ${required.toFixed(1)} in ${component} raises the mean to ${mean.toFixed(2)}, which rounds to overall ${overall.toFixed(1)}, reaching the target of ${target.toFixed(1)}. ${assumedNote}`
+      : `Even a band 9.0 in ${component} leaves the mean at ${mean.toFixed(2)}, which rounds to ${overall.toFixed(1)} and misses the target of ${target.toFixed(1)}. ${assumedNote}`;
+  return {
+    target,
+    component,
+    components,
+    assumed,
+    required: required ?? null,
+    feasible: required !== undefined,
+    mean,
+    overall,
+    explanation,
+  };
+}

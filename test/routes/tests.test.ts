@@ -95,6 +95,55 @@ describe('GET /v1/tests/items', () => {
   });
 });
 
+describe('GET /v1/tests/recommend', () => {
+  it('returns a deterministic default sample of five', async () => {
+    const first = await server.json<PracticeItem[]>('/v1/tests/recommend');
+    const second = await server.json<PracticeItem[]>('/v1/tests/recommend');
+    expect(first.status).toBe(200);
+    expect(first.data).toHaveLength(5);
+    expect(first.meta.count).toBe(5);
+    expect(first.meta.seed).toBe('ielts');
+    expect(first.meta.deterministic).toContain('Identical filters and seed');
+    expect(first.data.map((item) => item.id)).toEqual(second.data.map((item) => item.id));
+  });
+
+  it('respects count, seed and facet filters', async () => {
+    const custom = await server.json<PracticeItem[]>('/v1/tests/recommend?count=3&seed=lesson-plan');
+    expect(custom.data).toHaveLength(3);
+    expect(custom.meta.seed).toBe('lesson-plan');
+
+    const otherSeed = await server.json<PracticeItem[]>('/v1/tests/recommend?count=3&seed=different');
+    expect(otherSeed.data.map((item) => item.id)).not.toEqual(custom.data.map((item) => item.id));
+
+    const listening = await server.json<PracticeItem[]>('/v1/tests/recommend?skill=listening&count=4');
+    expect(listening.data.every((item) => item.skill === 'listening')).toBe(true);
+
+    const graded = await server.json<PracticeItem[]>(
+      '/v1/tests/recommend?level=a1-a2&type=true-false-not-given',
+    );
+    expect(graded.meta.total).toBeGreaterThan(0);
+    for (const item of graded.data) {
+      expect(item.level).toBe('A1-A2');
+      expect(item.questionTypes).toContain('true-false-not-given');
+    }
+  });
+
+  it('clamps the count to the number of matches', async () => {
+    const response = await server.json<PracticeItem[]>(
+      '/v1/tests/recommend?level=a1-a2&type=summary-completion&count=20&seed=x',
+    );
+    expect(response.meta.total).toBe(1);
+    expect(response.data).toHaveLength(1);
+    expect(response.meta.count).toBe(1);
+  });
+
+  it('rejects invalid facets and counts', async () => {
+    expect((await server.json('/v1/tests/recommend?skill=nope')).status).toBe(400);
+    expect((await server.json('/v1/tests/recommend?count=0')).status).toBe(400);
+    expect((await server.json('/v1/tests/recommend?count=21')).status).toBe(400);
+  });
+});
+
 describe('GET /v1/tests/:id', () => {
   it('returns one indexed item with its provenance', async () => {
     const response = await server.json<PracticeItem>('/v1/tests/grd-a1a2-001');

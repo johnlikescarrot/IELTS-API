@@ -10,6 +10,7 @@ import {
   practiceItems,
   practiceMeta,
   practiceStats,
+  recommendPracticeItems,
   searchPracticeItems,
 } from '../../src/data/practiceTests.js';
 import { QUESTION_TYPE_IDS } from '../../src/data/questionTypes.js';
@@ -185,5 +186,38 @@ describe('practiceFacets', () => {
     expect(facets['skill']).toEqual(PRACTICE_SKILLS);
     expect(facets['level']).toEqual(CEFR_BANDS);
     expect(facets['type']!.length).toBeGreaterThan(5);
+  });
+});
+
+describe('recommendPracticeItems', () => {
+  it('samples deterministically for a given seed', () => {
+    const first = recommendPracticeItems({ count: 10, seed: 'study-plan' });
+    const second = recommendPracticeItems({ count: 10, seed: 'study-plan' });
+    expect(first.total).toBe(practiceItems().length);
+    expect(first.seed).toBe('study-plan');
+    expect(first.items.map((item) => item.id)).toEqual(second.items.map((item) => item.id));
+    expect(new Set(first.items.map((item) => item.id)).size).toBe(10);
+  });
+
+  it('varies with the seed', () => {
+    const one = recommendPracticeItems({ count: 10, seed: 'alpha' });
+    const two = recommendPracticeItems({ count: 10, seed: 'beta' });
+    expect(one.items.map((item) => item.id)).not.toEqual(two.items.map((item) => item.id));
+  });
+
+  it('honours filters and clamps the count to the matches', () => {
+    const listening = recommendPracticeItems({ skills: ['listening'], count: 20, seed: 's' });
+    expect(listening.items.every((item) => item.skill === 'listening')).toBe(true);
+    const graded = recommendPracticeItems({ levels: ['A1-A2'], count: 3, seed: 's' });
+    expect(graded.items).toHaveLength(3);
+    expect(graded.items.every((item) => item.level === 'A1-A2')).toBe(true);
+    const clamped = recommendPracticeItems({ levels: ['A1-A2'], count: 5000, seed: 's' });
+    expect(clamped.items).toHaveLength(clamped.total);
+  });
+
+  it('returns an empty list when nothing matches', () => {
+    const none = recommendPracticeItems({ query: 'zzzzz-no-such-title', count: 5, seed: 's' });
+    expect(none.total).toBe(0);
+    expect(none.items).toEqual([]);
   });
 });

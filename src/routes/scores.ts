@@ -4,9 +4,9 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
-import { assertBand, calculateOverall } from '../lib/band.js';
+import { assertBand, calculateOverall, calculateTarget, MAX_BAND, MIN_BAND, SKILLS } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getNumber, getString, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -107,6 +107,39 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Solve the inverse band problem: what one component must reach for a target overall. */
+function target(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const rawTarget = requireString(params, 'target');
+  const targetBand = assertBand(Number.parseFloat(rawTarget), 'target');
+  const component = getEnum(params, 'component', SKILLS);
+  if (component === undefined) {
+    throw badRequest('Parameter "component" is required.', {
+      parameter: 'component',
+      allowed: SKILLS.join(','),
+    });
+  }
+  const known: Partial<Record<Skill, number>> = {};
+  for (const skill of SKILLS) {
+    if (skill === component) {
+      continue;
+    }
+    const raw = getString(params, skill);
+    if (raw === undefined) {
+      continue;
+    }
+    known[skill] = assertBand(Number.parseFloat(raw), skill);
+  }
+  const result = calculateTarget(targetBand, component, known);
+  return {
+    data: { ...result, cefr: cefrForBand(result.overall) },
+    meta: {
+      rule: 'Overall = mean of the four components rounded to the nearest half band; means ending in .25 or .75 round up.',
+      components: `component is required (${SKILLS.join('|')}); the other three are optional bands between ${MIN_BAND} and ${MAX_BAND} in 0.5 steps and default to the target.`,
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -115,6 +148,13 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Calculate an overall band score from the four component scores.',
     handler: overall,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/target',
+    versioned: true,
+    summary: 'Minimum score one component must reach for a target overall band.',
+    handler: target,
   },
   {
     method: 'GET',

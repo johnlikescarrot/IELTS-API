@@ -6,6 +6,31 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+Planning and reproducibility: the API learns to answer "what do I need?" and to recommend
+practice material deterministically. No dataset changed; every existing response is identical.
+
+### Added
+
+- **Target-score planning** (`/v1/scores/target`): solves the inverse band problem — the minimum
+  score one component must reach for a target overall band, under the official rounding rule
+  (means ending in .25 or .75 round up). Unsupplied components are assumed at the target level
+  and reported as such; unreachable targets are flagged with the best achievable overall.
+- **Deterministic practice recommendations** (`/v1/tests/recommend`): a seeded sample of the
+  practice-test index filtered by collection, skill, CEFR band and question type. Identical
+  filters and seed return identical recommendations, so a lesson plan or an experimental
+  stimulus set can be archived and reproduced exactly.
+- `RESEARCH.md` Part III: a reproducible evaluation of `Oxidaner/ielts` (commit `738c6082`,
+  2,385 blobs, ~4.7 GB) and the reasons it was excluded as a data source — no licence, no
+  machine-readable structure, mirrored commercial provenance.
+
+### Changed
+
+- Citation metadata (`CITATION.cff`, `codemeta.json`) follows the release to 1.2.0.
+- Test suite grown to 359 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection

@@ -5,6 +5,7 @@ import {
   MIN_BAND,
   assertBand,
   calculateOverall,
+  calculateTarget,
   isValidBand,
   meanOf,
   roundBand,
@@ -97,5 +98,52 @@ describe('calculateOverall', () => {
 
   it('exposes the four skills in report order', () => {
     expect(SKILLS).toEqual(['listening', 'reading', 'writing', 'speaking']);
+  });
+});
+
+describe('calculateTarget', () => {
+  it('finds the minimum component score for a target overall', () => {
+    const result = calculateTarget(7, 'writing', { listening: 7, reading: 7, speaking: 7 });
+    expect(result.feasible).toBe(true);
+    expect(result.required).toBe(6);
+    expect(result.mean).toBe(6.75);
+    expect(result.overall).toBe(7);
+    expect(result.assumed).toEqual([]);
+    expect(result.components.writing).toBe(6);
+    expect(result.explanation).toContain('Scoring at least 6.0 in writing');
+    expect(result.explanation).toContain('supplied by the caller');
+  });
+
+  it('exploits the tie-break rule when the mean ends in .25', () => {
+    const result = calculateTarget(6.5, 'speaking', { listening: 6, reading: 6, writing: 6 });
+    expect(result.required).toBe(7);
+    expect(result.mean).toBe(6.25);
+    expect(result.overall).toBe(6.5);
+  });
+
+  it('assumes missing components at the target level', () => {
+    const result = calculateTarget(6.5, 'speaking', {});
+    expect(result.assumed).toEqual(['listening', 'reading', 'writing']);
+    expect(result.required).toBe(5.5);
+    expect(result.components.listening).toBe(6.5);
+    expect(result.overall).toBe(6.5);
+    expect(result.explanation).toContain('assumed at the target level of 6.5');
+  });
+
+  it('reports target 0 as always reachable', () => {
+    const result = calculateTarget(0, 'reading', { listening: 0, writing: 0, speaking: 0 });
+    expect(result.feasible).toBe(true);
+    expect(result.required).toBe(0);
+    expect(result.overall).toBe(0);
+  });
+
+  it('flags unreachable targets', () => {
+    const result = calculateTarget(9, 'writing', { listening: 6, reading: 6, speaking: 6 });
+    expect(result.feasible).toBe(false);
+    expect(result.required).toBeNull();
+    expect(result.components.writing).toBe(MAX_BAND);
+    expect(result.mean).toBe(6.75);
+    expect(result.overall).toBe(7);
+    expect(result.explanation).toContain('Even a band 9.0 in writing');
   });
 });

@@ -15,12 +15,14 @@ import {
   practiceFacets,
   practiceMeta,
   practiceStats,
+  recommendPracticeItems,
   searchPracticeItems,
 } from '../data/practiceTests.js';
 import { parseList } from '../lib/search.js';
 import { getBoolean, getEnum, getInt, getNumber, getString, toParams } from '../lib/query.js';
 import { notFound } from '../lib/errors.js';
 
+import type { PracticeQuery } from '../data/practiceTests.js';
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
 import type { CefrBand, PracticeCollection, QuestionTypeId } from '../types.js';
@@ -41,14 +43,11 @@ function stats(): HandlerResult {
   return { data: practiceStats(), meta: { note: practiceMeta().note } };
 }
 
-/** Search the index. */
-function items(context: RouteContext): HandlerResult {
-  const params = toParams(context.url);
-  const query = getString(params, 'q') ?? '';
-  const limit = getInt(params, 'limit', 1, 100, 20);
-  const offset = getInt(params, 'offset', 0, 10000, 0);
-  const sort = getEnum(params, 'sort', SORT_KEYS);
-  const order = getEnum(params, 'order', ORDERS);
+/** Facet filters shared by `/v1/tests/items` and `/v1/tests/recommend`. */
+type FacetFilters = Pick<PracticeQuery, 'collections' | 'skills' | 'levels' | 'types'>;
+
+/** Parse the comma-separated facet filters. */
+function facetFilters(params: Record<string, string | string[] | undefined>): FacetFilters {
   const collections = parseList(getString(params, 'collection'), 'collection', PRACTICE_COLLECTIONS);
   const skills = parseList(getString(params, 'skill'), 'skill', PRACTICE_SKILLS);
   const levels = parseList(
@@ -57,6 +56,23 @@ function items(context: RouteContext): HandlerResult {
     CEFR_BANDS.map((band) => band.toLowerCase()),
   );
   const types = parseList(getString(params, 'type'), 'type', observedQuestionTypes());
+  return {
+    ...(collections === undefined ? {} : { collections: collections as PracticeCollection[] }),
+    ...(skills === undefined ? {} : { skills: skills as ('reading' | 'listening')[] }),
+    ...(levels === undefined ? {} : { levels: levels.map((level) => level.toUpperCase() as CefrBand) }),
+    ...(types === undefined ? {} : { types: types as QuestionTypeId[] }),
+  };
+}
+
+/** Search the index. */
+function items(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const query = getString(params, 'q') ?? '';
+  const limit = getInt(params, 'limit', 1, 100, 20);
+  const offset = getInt(params, 'offset', 0, 10000, 0);
+  const sort = getEnum(params, 'sort', SORT_KEYS);
+  const order = getEnum(params, 'order', ORDERS);
+  const facets = facetFilters(params);
   const minQuestions = getInt(params, 'minQuestions', 0, 1000, -1);
   const maxQuestions = getInt(params, 'maxQuestions', 0, 1000, -1);
   const minReadingEase = getNumber(params, 'minReadingEase', -1000, 1000);
@@ -67,10 +83,7 @@ function items(context: RouteContext): HandlerResult {
     limit,
     offset,
     query,
-    ...(collections === undefined ? {} : { collections: collections as PracticeCollection[] }),
-    ...(skills === undefined ? {} : { skills: skills as ('reading' | 'listening')[] }),
-    ...(levels === undefined ? {} : { levels: levels.map((level) => level.toUpperCase() as CefrBand) }),
-    ...(types === undefined ? {} : { types: types as QuestionTypeId[] }),
+    ...facets,
     ...(minQuestions < 0 ? {} : { minQuestions }),
     ...(maxQuestions < 0 ? {} : { maxQuestions }),
     ...(minReadingEase === undefined ? {} : { minReadingEase }),
@@ -90,6 +103,25 @@ function items(context: RouteContext): HandlerResult {
       query: query.length > 0 ? query : null,
       sort: sort ?? 'id',
       order: order ?? 'asc',
+      facets: practiceFacets(),
+      note: practiceMeta().note,
+    },
+  };
+}
+
+/** Deterministic, seeded practice recommendations. */
+function recommend(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const count = getInt(params, 'count', 1, 20, 5);
+  const seed = getString(params, 'seed') ?? 'ielts';
+  const recommendation = recommendPracticeItems({ ...facetFilters(params), count, seed });
+  return {
+    data: recommendation.items,
+    meta: {
+      total: recommendation.total,
+      count: recommendation.items.length,
+      seed: recommendation.seed,
+      deterministic: 'Identical filters and seed return identical recommendations, in ascending id order.',
       facets: practiceFacets(),
       note: practiceMeta().note,
     },
@@ -135,6 +167,13 @@ export const testRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Search indexed practice tests by collection, skill, CEFR band, question type or readability.',
     handler: items,
+  },
+  {
+    method: 'GET',
+    path: '/v1/tests/recommend',
+    versioned: true,
+    summary: 'Deterministic, seeded sample of practice tests matching the facet filters.',
+    handler: recommend,
   },
   {
     method: 'GET',

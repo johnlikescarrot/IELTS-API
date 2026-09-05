@@ -135,11 +135,15 @@ uniformly. Collections paginate with `limit` and `offset` and report `total` and
 return a machine-readable code and the offending parameter with its allowed range. The OpenAPI 3.1
 document is generated from the live route table, so documentation cannot drift from the
 implementation. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
-reproducible stimulus for longitudinal studies rather than a novelty.
+reproducible stimulus for longitudinal studies rather than a novelty; the same seeded machinery
+backs `/v1/tests/recommend`, a deterministic sample of the practice-test index for lesson planning
+and experimental stimulus sets. The service also answers the inverse scoring question:
+`/v1/scores/target` reports the minimum component score required for a target overall band under
+the official rounding rule, stating explicitly which components were assumed.
 
 # Quality control
 
-The test suite (341 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (359 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

@@ -126,6 +126,28 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
   ],
+  '/v1/scores/target': [
+    {
+      name: 'target',
+      in: 'query',
+      required: true,
+      description: 'Desired overall band (0-9 in 0.5 steps).',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'component',
+      in: 'query',
+      required: true,
+      description: 'The skill to solve for.',
+      schema: { type: 'string', enum: ['listening', 'reading', 'writing', 'speaking'] },
+    },
+    ...['listening', 'reading', 'writing', 'speaking'].map((skill) => ({
+      name: skill,
+      in: 'query',
+      description: `Known band score for ${skill}; do not supply the component being solved for. Unsupplied skills are assumed at the target level.`,
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    })),
+  ],
   '/v1/topics/writing': [
     QUERY,
     { name: 'category', in: 'query', schema: { type: 'string', enum: [...WRITING_CATEGORIES] } },
@@ -202,6 +224,44 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
     LIMIT,
     OFFSET,
+  ],
+  '/v1/tests/recommend': [
+    {
+      name: 'collection',
+      in: 'query',
+      description: 'Comma-separated collections.',
+      schema: { type: 'string', enum: [...PRACTICE_COLLECTIONS] },
+    },
+    {
+      name: 'skill',
+      in: 'query',
+      description: 'Comma-separated skills.',
+      schema: { type: 'string', enum: [...PRACTICE_SKILLS] },
+    },
+    {
+      name: 'level',
+      in: 'query',
+      description: 'Comma-separated CEFR bands.',
+      schema: { type: 'string', enum: CEFR_BANDS.map((band) => band.toLowerCase()) },
+    },
+    {
+      name: 'type',
+      in: 'query',
+      description: 'Comma-separated canonical question types; items must contain all of them.',
+      schema: { type: 'string', enum: [...QUESTION_TYPE_IDS] },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Number of items to recommend (clamped to the number of matches).',
+      schema: { type: 'integer', minimum: 1, maximum: 20, default: 5 },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical filters and seeds return identical recommendations.',
+      schema: { type: 'string', default: 'ielts' },
+    },
   ],
   '/v1/corpus/items': [
     QUERY,

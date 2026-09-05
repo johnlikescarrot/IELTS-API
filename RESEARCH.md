@@ -3,14 +3,15 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Two independent upstream collections are analysed, and a third was evaluated and excluded:
 
-| Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
-| [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| Part                                                           | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                         | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
+| [Part II](#part-ii--the-practice-test-collection)              | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| [Part III](#part-iii--the-self-study-notes-evaluated-excluded) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | nothing — evaluated and excluded                                                 |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+Neither of the two analysed collections is redistributed. Both are indexed, measured and cited.
 
 ## Part I — the research corpus
 
@@ -328,3 +329,68 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 
 The script is standard library only and deterministic: the same tree and the same files always
 produce byte-identical output.
+
+## Part III — the self-study notes (evaluated, excluded)
+
+[`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) was evaluated as a candidate third source on
+5 September 2026 and **excluded**: it yields no dataset for this API. The analysis is recorded here
+because a negative result with a reproducible method is still a result.
+
+**Snapshot:** commit `738c60828118f8f9d720e548b73245dd0fe70a30` (20 November 2025), single branch
+`main`, 72 commits, no tags, no releases, 530 directories, 2,385 blobs totalling roughly 4.7 GB.
+
+### 1. What the repository actually contains
+
+The repository describes itself as 自学笔记 — personal self-study notes. Fetching the tree through
+the GitHub API and classifying by file type gives:
+
+| Format                                      | Files | Bytes (approx.) |
+| ------------------------------------------- | ----: | --------------: |
+| `.pdf`                                      | 1,282 |          1.9 GB |
+| `.mp3`                                      |   370 |          2.6 GB |
+| `.html` (saved web pages)                   |   336 |           14 MB |
+| `.jpg`                                      |   159 |          305 MB |
+| `.docx`                                     |   108 |           20 MB |
+| `.js` / `.cjs` / `.css` (page assets)       |    65 |            1 MB |
+| `.xlsx`                                     |     8 |           17 MB |
+| `.txt` / `.md`                              |    13 |          130 KB |
+| other (`.zip`, `.png`, `.ico`, `.ds_store`) |    49 |          193 MB |
+
+Top-level breakdown: 阅读 (Reading) 1,623 files, 听力 (Listening) 722, 作文 (Writing) 27,
+口语 (Speaking) 8, 经验 (Experience reports) 2, plus a 20-byte `README.md`, a 72 KB
+`ai_dev_roadmap.md` (a Java-to-AI career-change study plan, off-topic for this project) and a link
+list (`网站链接.txt`).
+
+### 2. Why nothing was derived from it
+
+1. **No licence.** The repository publishes no licence file and GitHub reports no licence, so all
+   rights are reserved by default. Neither the files nor datasets derived from them could be
+   redistributed, which defeats the purpose of an open API.
+2. **No machine-readable structure.** The content is scanned or exported commercial preparation
+   material (PDFs, audio recordings, saved web pages) plus a handful of tiny answer-key text files
+   (six files, about 300 bytes each). There is no item-level JSON, no vocabulary list with
+   glosses, no stable identifiers — nothing an extractor could consume without first transcribing
+   1.9 GB of PDFs.
+3. **Third-party provenance.** The bulk of the material is recognisably mirrored commercial IELTS
+   preparation content, the same class of material Part II declines to redistribute.
+4. **Off-topic remainder.** The only original text of substance is the career-change roadmap, which
+   concerns AI engineering rather than IELTS.
+
+Conclusion: `Oxidaner/ielts` is a personal mirror of preparation material, not a corpus. It is
+cited here as a related, non-redistributable artefact, and excluded from every dataset. The same
+extraction pipeline used in Parts I and II could not have produced a citable dataset from it even
+if a licence had existed, because there is no structured layer to extract.
+
+### 3. Reproducing Part III
+
+```bash
+# Repository metadata: licence, size, head commit.
+curl -sL "https://api.github.com/repos/Oxidaner/ielts"
+
+# Full tree at the analysed snapshot.
+curl -sL "https://api.github.com/repos/Oxidaner/ielts/git/trees/738c60828118f8f9d720e548b73245dd0fe70a30?recursive=1"
+```
+
+Classifying the returned blobs by extension reproduces the table above. No content was downloaded
+or stored while preparing this analysis: the exclusion decision rests entirely on the repository's
+public metadata.
