@@ -7,6 +7,13 @@
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import {
+  DEFAULT_QUESTIONS,
+  DIAGNOSTIC_FORMATS,
+  MAX_QUESTIONS,
+  MIN_QUESTIONS,
+} from '../lib/diagnostic.js';
+import { MAX_RAW_SCORE, RAW_BAND_SCALES } from '../data/rawBands.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
@@ -15,6 +22,7 @@ import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
+import { SCENE_SKILLS } from '../data/scenes.js';
 import { TASK_MODULES } from '../data/tasks.js';
 
 import type { RouteDefinition } from './route.js';
@@ -129,6 +137,74 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
   ],
+  '/v1/scores/raw-to-band': [
+    {
+      name: 'scale',
+      in: 'query',
+      required: true,
+      schema: { type: 'string', enum: [...RAW_BAND_SCALES] },
+    },
+    {
+      name: 'raw',
+      in: 'query',
+      required: true,
+      description: 'Raw score out of 40.',
+      schema: { type: 'integer', minimum: 0, maximum: MAX_RAW_SCORE },
+    },
+  ],
+  '/v1/scores/raw-tables': [
+    {
+      name: 'scale',
+      in: 'query',
+      description: 'Restrict the listing to one scale; omit for all three tables.',
+      schema: { type: 'string', enum: [...RAW_BAND_SCALES] },
+    },
+  ],
+  '/v1/diagnostic/quiz': [
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds return identical quizzes.',
+      schema: { type: 'string' },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      schema: { type: 'integer', minimum: MIN_QUESTIONS, maximum: MAX_QUESTIONS, default: DEFAULT_QUESTIONS },
+    },
+    {
+      name: 'formats',
+      in: 'query',
+      description: 'Comma-separated question formats.',
+      schema: { type: 'string', enum: [...DIAGNOSTIC_FORMATS] },
+    },
+  ],
+  '/v1/diagnostic/evaluate': [
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed the quiz was built from.',
+      schema: { type: 'string' },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      schema: { type: 'integer', minimum: MIN_QUESTIONS, maximum: MAX_QUESTIONS, default: DEFAULT_QUESTIONS },
+    },
+    {
+      name: 'formats',
+      in: 'query',
+      description: 'Comma-separated question formats.',
+      schema: { type: 'string', enum: [...DIAGNOSTIC_FORMATS] },
+    },
+    {
+      name: 'answers',
+      in: 'query',
+      required: true,
+      description: 'Comma-separated answers in question order: letters A-D or headwords.',
+      schema: { type: 'string' },
+    },
+  ],
   '/v1/topics/writing': [
     QUERY,
     { name: 'category', in: 'query', schema: { type: 'string', enum: [...WRITING_CATEGORIES] } },
@@ -156,6 +232,22 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     QUERY,
     { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
     { name: 'family', in: 'query', schema: { type: 'string', enum: [...QUESTION_TYPE_FAMILIES] } },
+  ],
+  '/v1/scenes': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...SCENE_SKILLS] } },
+    {
+      name: 'section',
+      in: 'query',
+      description: 'Listening section (1-4) or reading passage (1-3).',
+      schema: { type: 'integer', minimum: 1, maximum: 4 },
+    },
+    {
+      name: 'type',
+      in: 'query',
+      description: 'Keep contexts that favour this canonical question type.',
+      schema: { type: 'string', enum: [...QUESTION_TYPE_IDS] },
+    },
   ],
   '/v1/frameworks': [
     QUERY,

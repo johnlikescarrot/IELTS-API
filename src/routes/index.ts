@@ -8,11 +8,13 @@
 import { archiveRoutes } from './archive.js';
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
+import { diagnosticRoutes } from './diagnostic.js';
 import { frameworkRoutes } from './frameworks.js';
 import { materialRoutes } from './materials.js';
 import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
+import { sceneRoutes } from './scenes.js';
 import { scoreRoutes } from './scores.js';
 import { studyRoutes } from './study.js';
 import { testRoutes } from './tests.js';
@@ -29,6 +31,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...scoreRoutes,
   ...topicRoutes,
   ...questionTypeRoutes,
+  ...diagnosticRoutes,
   ...frameworkRoutes,
   ...testRoutes,
   ...corpusRoutes,
@@ -37,6 +40,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...materialRoutes,
   ...archiveRoutes,
   ...resourceRoutes,
+  ...sceneRoutes,
 ];
 
 /** Every route served by the API. */

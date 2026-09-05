@@ -132,3 +132,86 @@ describe('GET /v1/scores/interpret', () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
   });
 });
+
+describe('GET /v1/scores/raw-to-band', () => {
+  it('converts a listening raw score', async () => {
+    const response = await server.json<{
+      scale: string;
+      raw: number;
+      band: number;
+      label: string;
+      cefr: string;
+      belowPublishedRows: boolean;
+    }>('/v1/scores/raw-to-band?scale=listening&raw=30');
+    expect(response.status).toBe(200);
+    expect(response.data).toMatchObject({
+      scale: 'listening',
+      raw: 30,
+      band: 7,
+      label: 'Good user',
+      cefr: 'C1',
+      belowPublishedRows: false,
+    });
+    expect(response.meta.note).toContain('Indicative conversion');
+  });
+
+  it('converts academic and general training reading raw scores', async () => {
+    const academic = await server.json<{ band: number }>(
+      '/v1/scores/raw-to-band?scale=academic-reading&raw=33',
+    );
+    expect(academic.data.band).toBe(7.5);
+    const general = await server.json<{ band: number }>(
+      '/v1/scores/raw-to-band?scale=general-reading&raw=30',
+    );
+    expect(general.data.band).toBe(6);
+  });
+
+  it('flags raw scores below the published rows', async () => {
+    const response = await server.json<{ band: number; belowPublishedRows: boolean }>(
+      '/v1/scores/raw-to-band?scale=general-reading&raw=2',
+    );
+    expect(response.data.band).toBe(2);
+    expect(response.data.belowPublishedRows).toBe(true);
+  });
+
+  it('requires scale and raw', async () => {
+    expect((await server.json('/v1/scores/raw-to-band')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw-to-band?scale=listening')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw-to-band?raw=30')).status).toBe(400);
+  });
+
+  it('rejects unknown scales and out-of-range raw scores', async () => {
+    expect((await server.json('/v1/scores/raw-to-band?scale=nope&raw=30')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw-to-band?scale=listening&raw=many')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw-to-band?scale=listening&raw=41')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw-to-band?scale=listening&raw=-1')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/scores/raw-tables', () => {
+  it('lists every table expanded to one row per raw score', async () => {
+    const response = await server.json<{
+      tables: { scale: string; thresholds: unknown[]; rows: { raw: number; band: number }[] }[];
+    }>('/v1/scores/raw-tables');
+    expect(response.status).toBe(200);
+    expect(response.data.tables).toHaveLength(3);
+    for (const table of response.data.tables) {
+      expect(table.rows).toHaveLength(41);
+      expect(table.thresholds.length).toBeGreaterThan(5);
+    }
+    expect(response.meta.count).toBe(3);
+  });
+
+  it('restricts the listing to one scale', async () => {
+    const response = await server.json<{ tables: { scale: string }[] }>(
+      '/v1/scores/raw-tables?scale=listening',
+    );
+    expect(response.data.tables).toHaveLength(1);
+    expect(response.data.tables[0]?.scale).toBe('listening');
+    expect(response.meta.count).toBe(1);
+  });
+
+  it('rejects unknown scales', async () => {
+    expect((await server.json('/v1/scores/raw-tables?scale=nope')).status).toBe(400);
+  });
+});

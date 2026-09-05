@@ -3,13 +3,21 @@
  */
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
+import {
+  MAX_RAW_SCORE,
+  RAW_BAND_SCALES,
+  RAW_BAND_TABLES,
+  rawBandRows,
+  rawToBand,
+} from '../data/rawBands.js';
 import { cefrForBand } from '../data/bands.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getNumber, getInt, getString, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
+import type { RawBandScale } from '../data/rawBands.js';
 import type { ConversionEntry, Skill } from '../types.js';
 
 /** Read and validate one component of the test report. */
@@ -107,6 +115,51 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Convert a raw score out of 40 to a band score. */
+function rawScore(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const scale = getEnum(params, 'scale', RAW_BAND_SCALES);
+  if (scale === undefined) {
+    throw badRequest('Parameter "scale" is required.', {
+      parameter: 'scale',
+      allowed: RAW_BAND_SCALES.join(','),
+    });
+  }
+  if (getString(params, 'raw') === undefined) {
+    throw badRequest('Parameter "raw" is required.', { parameter: 'raw' });
+  }
+  const raw = getInt(params, 'raw', 0, MAX_RAW_SCORE, 0);
+  const table = RAW_BAND_TABLES[scale];
+  return {
+    data: rawToBand(scale, raw),
+    meta: {
+      method: 'The band comes from the first threshold row whose minimum raw score is met.',
+      provenance: table.provenance,
+      publishedMinimum: table.publishedMinimum,
+      sourceUrl: table.sourceUrl,
+      note: table.note,
+    },
+  };
+}
+
+/** List the raw-score conversion tables, optionally restricted to one scale. */
+function rawTables(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const scale = getEnum(params, 'scale', RAW_BAND_SCALES);
+  const scales = scale === undefined ? [...RAW_BAND_SCALES] : [scale];
+  const first = RAW_BAND_TABLES[scales[0] as RawBandScale];
+  const tables = scales.map((entry) => ({ ...RAW_BAND_TABLES[entry], rows: rawBandRows(entry) }));
+  return {
+    data: { tables },
+    meta: {
+      count: tables.length,
+      scales,
+      items: MAX_RAW_SCORE,
+      note: first.note,
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -129,5 +182,19 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Map a score on another scale back to an indicative IELTS band.',
     handler: interpret,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw-to-band',
+    versioned: true,
+    summary: 'Convert a raw score out of 40 to a band score (Listening, Academic or GT Reading).',
+    handler: rawScore,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw-tables',
+    versioned: true,
+    summary: 'The raw-score to band conversion tables, expanded to one row per raw score.',
+    handler: rawTables,
   },
 ];
