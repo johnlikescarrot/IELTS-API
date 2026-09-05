@@ -69,14 +69,22 @@ jobs:
           VALIDATE_ENV: true
           VALIDATE_GITLEAKS: true
           VALIDATE_CHECKOV: true
+          # `src/cli.ts` legitimately carries a `#!/usr/bin/env node` shebang for
+          # the published `ielts-api` bin; the file itself is not executable in
+          # git, so bash-exec must not treat it as a shell script.
+          BASH_EXEC_IGNORE_LIBRARIES: true
           # Deliberately disabled: the code base is TypeScript-only and the
           # extraction scripts are standalone Python utilities with their own
           # formatting.
           # Keep the full log so a failure can be diagnosed from the artifact.
           SAVE_SUPER_LINTER_OUTPUT: true
           SAVE_SUPER_LINTER_SUMMARY: true
-          # Linter configuration files (paths are relative to the workspace).
-          LINTER_RULES_PATH: /
+          # Linter configuration files live at the workspace root, next to the
+          # configs they belong to (`.`, not `/`: with `/` super-linter never
+          # finds `eslint.config.js` and silently falls back to its own
+          # bundled defaults — which enforce eslint-plugin-n rules this repo
+          # deliberately does not use).
+          LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           CHECKOV_FILE_NAME: .checkov.yaml
           YAML_CONFIG_FILE: .yamllint.yml
