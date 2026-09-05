@@ -57,8 +57,12 @@ jobs:
           # Deliberately disabled: the code base is TypeScript-only and the
           # extraction scripts are standalone Python utilities with their own
           # formatting.
-          # Linter configuration files.
+          # Linter configuration files. The ESLint file names default to
+          # `eslint.config.mjs`, so the repository config must be named
+          # explicitly, otherwise Super-Linter lints with its own defaults.
           LINTER_RULES_PATH: /
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
