@@ -739,6 +739,129 @@ export type ResponseFramework = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Lexical network (definition graph)                                         */
+/* -------------------------------------------------------------------------- */
+
+/** How an adjacent word relates to the queried word in the lexical network. */
+export type LexgraphRelation =
+  /** The neighbour occurs in the queried word's glosses. */
+  'defines' /** The queried word occurs in the neighbour's glosses. */ | 'used-by';
+
+/** A directed edge of the lexical network with a multiplicity. */
+export type LexgraphEdge = {
+  /** Identifier of the entry the edge points to. */
+  id: string;
+  /** Headword of the entry the edge points to. */
+  word: string;
+  /** Number of occurrences of the source headword in the target's glosses. */
+  weight: number;
+};
+
+/** One adjacent word returned by `/v1/lexgraph/:word`. */
+export type LexgraphNeighbour = {
+  /** Identifier of the adjacent entry. */
+  id: string;
+  /** Headword of the adjacent entry. */
+  word: string;
+  /** Part of speech of the adjacent entry. */
+  partOfSpeech: PartOfSpeech;
+  /** Primary definition of the adjacent entry. */
+  definition: string | null;
+  /** How the neighbour relates to the queried word. */
+  relation: LexgraphRelation;
+  /** Occurrences of the source headword in the target glosses. */
+  weight: number;
+  /** Cambridge IELTS volumes both entries appear in. */
+  sharedVolumes: number[];
+};
+
+/** A word ranked by its participation in the lexical network. */
+export type LexgraphHub = {
+  /** Headword. */
+  word: string;
+  /** Occurrences of this word in other entries' glosses. */
+  usageWeight: number;
+  /** Occurrences of other headwords in this entry's glosses. */
+  definerWeight: number;
+  /** Sum of the two weights. */
+  totalWeight: number;
+  /** Distinct entries this word helps define (in-degree). */
+  inDegree: number;
+  /** Distinct entries that use this word in their glosses (out-degree). */
+  outDegree: number;
+};
+
+/** Aggregate statistics of the lexical network. */
+export type LexgraphStats = {
+  /** Entries in the graph (nodes). */
+  nodes: number;
+  /** Distinct directed definers relations (edges). */
+  directedEdges: number;
+  /** Total occurrences counted across all edges. */
+  occurrences: number;
+  /** Entries glossed with at least one other headword. */
+  nodesWithDefiners: number;
+  /** Entries whose headword occurs in at least one other gloss. */
+  nodesUsedInOtherGlosses: number;
+  /** Mean total degree in the undirected projection, two decimals. */
+  meanDegree: number;
+  /** Mean occurrences per directed edge, two decimals. */
+  meanEdgeWeight: number;
+  /** Directed edges over the maximum possible number of edges, six decimals. */
+  density: number;
+  /** Connected components of the undirected projection. */
+  components: number;
+  /** Size of the largest connected component. */
+  largestComponent: number;
+  /** Share of nodes in the largest component, four decimals. */
+  largestComponentShare: number;
+  /** Nodes with no edges at all. */
+  singletons: number;
+  /** Node counts by total degree bucket. */
+  degreeHistogram: Record<string, number>;
+  /** Most connected words, ranked by total weight. */
+  topHubs: LexgraphHub[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Deterministic drill generation                                             */
+/* -------------------------------------------------------------------------- */
+
+/** One generated definition-cloze item. */
+export type ClozeItem = {
+  /** Identifier of the target entry. */
+  id: string;
+  /** Gloss with the target headword replaced by a blank. */
+  text: string;
+  /** Which gloss the cloze was cut from. */
+  source: 'definition' | 'sense';
+  /** Candidate words, in presentation order. */
+  options: string[];
+  /** Zero-based position of the correct option. */
+  answerIndex: number;
+  /** The correct headword. */
+  answer: string;
+  /** Part of speech of the target entry. */
+  partOfSpeech: PartOfSpeech;
+  /** Cambridge IELTS volumes of the target entry. */
+  volumes: number[];
+  /** Morpheme hint for the target, when the dataset carries one. */
+  morphemes: string | null;
+};
+
+/** One generated word-definition matching set. */
+export type MatchingSet = {
+  /** Words to match, in presentation order. */
+  words: string[];
+  /** Definitions shown in a shuffled order. */
+  definitions: string[];
+  /** Solution: the definition index that matches each word. */
+  answers: number[];
+  /** Entry identifiers behind each word, aligned with `words`. */
+  ids: string[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

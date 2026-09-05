@@ -520,3 +520,122 @@ python3 scripts/extract_materials.py tree.json data/materials.json
 The script is standard library only and deterministic: the same tree always produces byte-identical
 output. The continuous-integration workflow re-derives the index from the upstream tree on every run
 and fails if the committed file disagrees.
+
+## Part V — the definitional lexical network and generated drills
+
+Parts I–IV derive datasets from upstream collections. Part V is different: every number here is
+computed from data this API already publishes — the glosses of the 4,174-entry vocabulary dataset —
+which makes the lexical network and the drills fully self-contained, offline-reproducible and
+upgradable together with the dataset they read.
+
+### 23. The definitional lexical network
+
+A controlled defining vocabulary is the promise every learner's dictionary makes: definitions are
+written so that knowing the defining words is enough to understand the entry. The Cambridge-flavoured
+glosses in the upstream workbook follow that discipline closely enough for the structure to be
+recovered mechanically.
+
+**Construction rules** (`src/lib/lexgraph.ts`, published at `GET /v1/lexgraph`):
+
+1. **Nodes** are the 4,174 vocabulary entries, identified by their stable `wNNNNN` ids.
+2. **Glosses** of an entry are its primary definition plus every sense text, with identical texts
+   de-duplicated. De-duplication matters: the workbook repeats the primary definition as the first
+   sense for most entries, and counting both would double every edge weight.
+3. **Tokens** are found with the analyser regex `[a-zA-Z][a-zA-Z'’-]*` lower-cased — the same
+   tokenisation as the readability tools. A headword matches a gloss when a token is case-fold equal
+   to it. No stemming: `restraint` does not match `restrain`, so all weights in this document are
+   **lower bounds** of true lexical reuse.
+4. **Edges** are directed: an occurrence of headword _A_ in the glosses of entry _B_ creates (or
+   strengthens) the edge _A → B_; the edge weight is the occurrence count. Self-mentions (an entry
+   glossed with its own headword) are excluded from edges but are what make an entry clozable
+   (§24). Multi-word headwords (`ice cream`, `heart attack`) can never be matched by the single-token
+   scanner, so they occur as edge targets but never as sources — a property of the matching rule,
+   documented rather than patched around.
+
+**Measured structure** (commit-pinned dataset; re-run with `curl -s localhost:3000/v1/lexgraph`):
+
+| Quantity                                  |          Value | Reading                                                   |
+| ----------------------------------------- | -------------: | --------------------------------------------------------- |
+| Nodes                                     |          4,174 | one per vocabulary entry                                  |
+| Directed edges (distinct pairs)           |         25,191 | ≈ 6 definers per entry on average                         |
+| Counted mentions (total weight)           |         27,855 | mean edge weight 1.11 — reuse is mostly single mention    |
+| Entries with ≥ 1 definer                  |  3,979 (95.3%) | an entry is usually explained by headwords you also learn |
+| Entries used in ≥ 1 other gloss           |  2,973 (71.2%) | nearly three in four headwords do defining work           |
+| Mean total degree (undirected projection) |          12.07 |                                                           |
+| Density                                   |       0.001446 | sparse, as any definitional network must be               |
+| Connected components                      |             92 | including 89 singleton nodes                              |
+| Giant component                           | 4,081 (97.77%) | almost everything is gloss-connected to everything        |
+
+Degree histogram (total degree, undirected): 0 → 89, 1 → 216, 2 → 327, 3 → 352, 4 → 324,
+5–9 → 1,234, 10–19 → 962, 20–49 → 549, 50+ → 121.
+
+The top of the hub ranking is the collection's de-facto defining vocabulary: `act` (575 weighted
+mentions), `usually` (376), `can` (303), `state` (284), `force` (191), `order` (191), `surface`
+(160), `way` (158), `change` (145), `process` (141). It is dominated by high-frequency general and
+function words — exactly the vocabulary a learner can rely on to decode definitions, and a set
+whose overlap with the Academic Word List (Coxhead 2000, cited in `paper/paper.bib`) is an obvious
+follow-up study.
+
+The asymmetry between definers (95.3%) and defined (71.2%) is a compact, citable measure of
+definitional circularity: almost every entry can be explained with other headwords, but roughly a
+third of the headwords do no defining work anywhere.
+
+### 24. Generated drills with reproducible item sets
+
+`src/lib/drills.ts` turns the same dataset into assessment items. Both generators are pure functions
+of `(seed, dataset)`: identical requests return byte-identical items on every machine, which is what
+lets a study cite the generating URL instead of an appendix.
+
+- **Definition cloze** (`GET /v1/drills/cloze`). The 1,711 entries whose headword occurs as a whole
+  token inside one of their own glosses (41.0% of the dataset) form the clozable pool; the first
+  such gloss is used, definition before senses. That occurrence is replaced by `_____`. The correct
+  option is joined by `options − 1` distractors sampled (seeded Fisher–Yates) from the same-part-of-
+  speech headwords that do **not** occur as tokens in the item text, so a distractor can never be
+  eliminated by surface overlap with the sentence. Item count is clamped to the filtered pool
+  (`pos`, `volume`), and the answer key travels in the same response.
+- **Word–definition matching** (`GET /v1/drills/matching`). 4,026 entries carry a definition and a
+  gloss text no other selected entry shares (the workbook contains 148 duplicate definitions);
+  taking pairs from this pool makes the solution of every generated set unique by construction.
+  Words keep dataset order, definitions are presented in seeded shuffled order, and `answers[i]`
+  maps each word to the index of its own gloss.
+
+The published item statistics — pool sizes 1,711 and 4,026 — double as dataset-quality indicators:
+the cloze pool is a lower bound on how many glosses paraphrase their own headword, and the
+duplicate-definition count (148) is how many workbook entries would make naive matching ambiguous.
+
+### 25. Threats to validity (Part V)
+
+- **The glosses are not authored by the volume compilers.** The workbook's definition texts are the
+  upstream corpus' own borrowings (WordNet-flavoured glosses plus per-volume notes); the network is
+  therefore a measurement of _that_ defining vocabulary, not of Cambridge's published one.
+- **Exact-token matching under-counts.** Without stemming or lemma lookup, `restraint → restrain`
+  edges are missed; weights and edge counts are lower bounds. The giant component at 97.8% is the
+  most robust consequence of this conservatism: real connectivity is only denser.
+- **Hub words are function words.** `usually`, `can` and the like dominate by design of dictionary
+  metalanguage; researchers wanting content-word networks should filter by part of speech before
+  building, which `buildLexgraph` supports directly.
+- **Cloze items test form–meaning association, not IELTS performance.** A generated item is a research
+  instrument for vocabulary knowledge, not a IELTS task; nothing in the generation process claims
+  task-level difficulty calibration.
+- **Distractor validity is surface-level.** Same-part-of-speech and non-overlap constraints are
+  mechanical; whether a distractor is _plausible_ in the blank is not modelled and is left to the
+  researcher (the filterable pools make human review tractable).
+- **Seeded ≠ random.** The generators use FNV-1a + mulberry32; they are deterministic across
+  platforms by construction and must not be used where unpredictability matters.
+
+### 26. Reproducing Part V
+
+There is no extraction step to re-run: the graph and the drills are computed at request time from
+`data/vocabulary.json` (pinned by CI against the upstream workbook hash). Reproduction means
+re-asking the API:
+
+```bash
+npm ci && npm run build
+node dist/cli.js --port 3000 --silent &
+curl -s localhost:3000/v1/lexgraph | python3 -m json.tool | head -20
+curl -s "localhost:3000/v1/drills/cloze?seed=reproduce&count=3" | python3 -m json.tool
+```
+
+Both snippets print the values quoted in this section as long as `data/vocabulary.json` is the
+pinned file; the test suite (`npm test`) asserts the key counts (25,191 edges, 1,711 clozable,
+4,026 matchable) as regression guards.

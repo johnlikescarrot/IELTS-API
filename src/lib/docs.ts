@@ -90,11 +90,15 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
 <p>No API key. No registration. No rate limiting by key. Every response carries an ETag and open CORS headers.</p>
 <pre><code>curl -s "https://ielts-api.example/v1/vocabulary?q=environment&amp;limit=3"
 curl -s "https://ielts-api.example/v1/scores/overall?listening=7&amp;reading=6.5&amp;writing=6&amp;speaking=7"
-curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
+curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"
+curl -s "https://ielts-api.example/v1/lexgraph/abandon?minWeight=2"
+curl -s "https://ielts-api.example/v1/drills/cloze?seed=study-2026&amp;count=5&amp;pos=verb"</code></pre>
 
 <h2>Datasets</h2>
 <ul>
   <li><strong>${words.toLocaleString('en-US')} headwords</strong> extracted from the Cambridge IELTS 1&ndash;22 vocabulary lists, with phonetics, senses and morpheme hints.</li>
+  <li><strong>The definitional lexical network</strong> derived from those glosses: cross-referenced headwords with occurrence weights, per-word neighbours and whole-graph statistics at <code>/v1/lexgraph</code>.</li>
+  <li><strong>Seeded vocabulary drills</strong>: multiple-choice definition cloze and word&ndash;definition matching sets, reproducible from the request URL alone at <code>/v1/drills</code>.</li>
   <li><strong>${corpus.ieltsRelevantFiles} of ${corpus.filesInRepository} upstream files</strong> indexed from the open research corpus (${(corpus.coverageRatio * 100).toFixed(1)}% IELTS-relevant); only metadata is published.</li>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
@@ -139,7 +143,10 @@ ${service.map(routeRow).join('\n')}
     <tr><td class="path">sort</td><td><code>/v1/vocabulary</code>, <code>/v1/corpus/items</code></td><td>Sort key.</td></tr>
     <tr><td class="path">order</td><td>collections</td><td><code>asc</code> or <code>desc</code>.</td></tr>
     <tr><td class="path">match</td><td><code>/v1/vocabulary</code></td><td><code>contains</code>, <code>prefix</code> or <code>exact</code>.</td></tr>
-    <tr><td class="path">volume</td><td><code>/v1/vocabulary</code></td><td>Comma-separated Cambridge IELTS volumes, 1&ndash;22.</td></tr>
+    <tr><td class="path">volume</td><td><code>/v1/vocabulary</code>, <code>/v1/drills/cloze</code></td><td>Comma-separated Cambridge IELTS volumes, 1&ndash;22.</td></tr>
+    <tr><td class="path">direction</td><td><code>/v1/lexgraph/:word</code></td><td><code>defines</code>, <code>used-by</code> or <code>both</code>.</td></tr>
+    <tr><td class="path">minWeight</td><td><code>/v1/lexgraph/:word</code></td><td>Minimum edge weight in occurrences.</td></tr>
+    <tr><td class="path">seed</td><td><code>/v1/vocabulary/random</code>, <code>/v1/drills</code></td><td>Reproducibility seed; identical seeds return identical items.</td></tr>
   </tbody>
 </table>
 

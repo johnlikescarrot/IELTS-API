@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { hashString, mulberry32, seededIndices } from '../../src/lib/rng.js';
+import { hashString, mulberry32, seededIndices, shuffled } from '../../src/lib/rng.js';
 
 describe('hashString', () => {
   it('is deterministic and unsigned', () => {
@@ -49,5 +49,25 @@ describe('seededIndices', () => {
 
   it('caps the sample at the population size', () => {
     expect(seededIndices('seed', 3, 10)).toHaveLength(3);
+  });
+});
+
+describe('shuffled', () => {
+  it('is deterministic per seed', () => {
+    const items = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'];
+    expect(shuffled('seed-1', items)).toEqual(shuffled('seed-1', items));
+    expect(shuffled('seed-2', items)).not.toEqual(shuffled('seed-1', items));
+  });
+
+  it('permutes without changing the multiset, and leaves the input alone', () => {
+    const items = [1, 2, 3, 4, 5, 6];
+    const result = shuffled('any', items);
+    expect([...result].sort((a, b) => a - b)).toEqual(items);
+    expect(items).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it('handles tiny lists', () => {
+    expect(shuffled('seed', [])).toEqual([]);
+    expect(shuffled('seed', ['only'])).toEqual(['only']);
   });
 });

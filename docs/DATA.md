@@ -13,6 +13,13 @@ This directory holds the archived artefacts of the API contract.
 | `practice-tests.json`           | Structure, question-type normalisation, provenance and readability statistics for 1,702 practice items.         |
 | `materials.json`                | Metadata index of a 2,385-file self-study collection: recall banks, question banks, templates, vocabulary.      |
 
+No `data/` file backs two endpoint families: `/v1/lexgraph` derives the definitional lexical
+network from `vocabulary.json` at request time, and `/v1/drills/*` generates seeded cloze and
+matching items from the same dataset. Both publish their method in response `meta` and their
+construction is documented in [RESEARCH.md](../RESEARCH.md) Part V, so every published number can be
+re-derived offline with the library exports `lexgraphStats`, `neighboursFor`, `generateClozeItems`
+and `generateMatchingSet`.
+
 The datasets themselves live in [`data/`](../data) and are documented in
 [RESEARCH.md](../RESEARCH.md), which records the extraction methodology and the threats to validity
 that apply to each of them. Endpoint-level documentation is served by the API itself at `/docs`.

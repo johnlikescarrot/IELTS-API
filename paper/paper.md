@@ -7,6 +7,8 @@ tags:
   - vocabulary
   - readability
   - item types
+  - lexical networks
+  - cloze
   - open data
   - REST API
 authors:
@@ -24,8 +26,9 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
-from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
+JSON envelope. The service ships eleven kinds of data: a 4,174-headword vocabulary dataset derived
+from the Cambridge IELTS volumes 1-22 word lists; a definitional lexical network and seeded drill
+generators derived from that dataset alone; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
 IELTS preparation material [@coxhead2000]; a canonical taxonomy of the thirteen IELTS Reading and
@@ -137,6 +140,28 @@ composes the gap between a target band and current component scores into a deter
 week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
 pure functions of their inputs, so their outputs are as reproducible as the datasets.
 
+**Lexical network.** Learner's dictionaries promise to define with a controlled vocabulary; the
+promise can be measured when the glosses themselves are the data. The API matches every headword
+token against every other entry's definition and sense texts (exact, case-fold, no stemming) and
+publishes the resulting directed multigraph: 25,191 distinct definer relations carrying 27,855
+counted mentions over 4,174 nodes, with per-word neighbour lists weighted by occurrence and tagged
+with shared source volumes. Whole-graph statistics — mean degree 12.07, 92 components with a giant
+component covering 97.77% of nodes, a degree histogram and ranked hub words such as `act` (575
+mentions) — quantify the collection's de-facto defining vocabulary. Networks recovered from
+dictionary definitions have a long research lineage since WordNet [@miller1995]; because the
+workbook's glosses are largely WordNet-derived [@ieltscorpus], this endpoint publishes the measure
+for the Cambridge IELTS series for the first time. Being a pure function of the dataset, the network
+is exactly as citable and archivable as the vocabulary endpoint it reads.
+
+**Generated drills.** Reproducible item generation turns the same dataset into research stimuli.
+Definition-cloze items blank a headword out of its own gloss (1,711 of 4,174 entries qualify) and
+pair the blank with same-part-of-speech distractors that never occur in the item text;
+word–definition matching sets draw from the 4,026 entries with unique gloss texts, so each set has
+exactly one valid solution. Every item set is a deterministic function of a request seed —
+following the reproducibility logic that made c-scored cloze procedures standardised instruments in
+the first place [@oller1973] — so a study can cite the generating URL and re-fetch its stimuli years
+later. Answer keys ship inline and both generators filter by part of speech and source volume.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
@@ -152,7 +177,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (469 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (520 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

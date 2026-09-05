@@ -1,6 +1,6 @@
 {
   "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
+  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research. Version 1.3 adds the definitional lexical network (25,191 directed cross-reference edges over 4,174 Cambridge headwords, with degree, component and hub statistics) and seeded, reproducible vocabulary drills (multiple-choice definition cloze and word-definition matching) generated from the published glosses.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
@@ -24,7 +24,12 @@
     "REST API",
     "text analysis",
     "lexical diversity",
-    "study planning"
+    "study planning",
+    "lexical networks",
+    "defining vocabulary",
+    "cloze",
+    "vocabulary assessment",
+    "item generation"
   ],
   "license": "other-open",
   "related_identifiers": [
