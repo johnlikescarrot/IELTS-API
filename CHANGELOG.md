@@ -6,6 +6,49 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **test-centre layer**: the API can now score a mock paper and assemble a full mock exam. The
+design follows the loop a test centre implements — pick a paper, sit it under the official timings,
+count correct answers, convert marks to bands, compute the overall — but publishes the durable,
+citable parts as data instead of page-local state. Nothing is copied from any client-side test-centre
+project: the format reference and the guidance text are original compilations, and the conversion
+tables are derived numbers with provenance.
+
+### Added
+
+- **Raw-score conversion tables** (`src/data/rawScores.ts`, `/v1/scores/raw`, `/v1/scores/raw/tables`):
+  the partners' published raw-to-band guidance for the 40-question receptive papers, as three
+  machine-readable tables — one Listening table shared by both modules, separate Academic and
+  General Training Reading tables. Every row appears identically in at least two independent
+  reproductions; rows below band 3.0 are omitted because published tables diverge there, and the API
+  returns `band: null` instead of inventing a number. Each conversion names the matched range and
+  the margins to the neighbouring bands (`oneBandAhead`, `oneBandBehind`).
+- **Exam format reference** (`/v1/exams`): the official four-paper format as data — 30 min Listening
+  (+10 min paper-based transfer), 60 min Reading, 60 min Writing (Task 1: 20 min / 150 words, Task 2:
+  40 min / 250 words), 11-14 min Speaking — with part contexts and the commonly published Reading
+  splits (13/13/14 Academic, 14/13/13 General Training), flagged as varying by paper.
+- **Deterministic mock-exam blueprint** (`/v1/exams/blueprint`): `module`, `date`, optional `target`
+  and `seed` produce a byte-identical session — the official format, a question-type mix allocated
+  from the practice-corpus frequencies by the largest-remainder method (always exactly 40
+  questions), one linked listening paper, graded reading lessons matched to the target CEFR band,
+  an original Task 1 family and Task 2 prompt, Speaking Parts 1-3, and the scoring path from raw
+  marks to the overall band.
+- `src/lib/exam.ts`: pure blueprint and format builders; `allocateQuestions` (largest-remainder) is
+  exported and unit-tested in isolation.
+- `RESEARCH.md` Part VI: provenance of the tables, the row-by-row cross-check protocol, the
+  blueprint construction, what is deliberately not published, threats to validity and reproduction
+  steps.
+- `README.md`, `paper/paper.md` and `CITATION.cff` describe the test-centre layer; the service
+  index and `/health` now report the number of raw-score tables.
+
+### Changed
+
+- Test suite grown to 539 tests, still at 100% statement, branch, function and line coverage per
+  file, zero runtime dependencies.
+- `CITATION.cff`, `codemeta.json`, `.zenodo.json` and `paper/paper.bib` cite version 1.4.0 and the
+  partners' scoring guidance used for the conversion tables.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material

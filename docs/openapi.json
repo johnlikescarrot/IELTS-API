@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "IELTS API",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
     "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, response frameworks for the\nproductive papers, a structure and readability index of 1,702 practice tests,\nan index of the open IELTS research corpus, and an index of a 2,385-file\nself-study materials collection. The toolkit additionally scores any text\n(readability and essay profile) and composes the datasets into study plans.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:4101/",
+      "url": "http://127.0.0.1:4011/",
       "description": "This instance"
     }
   ],
@@ -1336,6 +1336,501 @@
             "required": true,
             "schema": {
               "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/scores/raw/tables": {
+      "get": {
+        "operationId": "v1_scores_raw_tables",
+        "summary": "The raw-score to band conversion tables for Listening and Reading (Academic and General Training).",
+        "tags": ["v1"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/scores/raw": {
+      "get": {
+        "operationId": "v1_scores_raw",
+        "summary": "Convert correct answers out of 40 into a band score for a receptive paper.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "skill",
+            "in": "query",
+            "required": true,
+            "description": "Receptive paper scored.",
+            "schema": {
+              "type": "string",
+              "enum": ["listening", "reading"]
+            }
+          },
+          {
+            "name": "module",
+            "in": "query",
+            "description": "Test module; required for Reading, ignored for Listening (one table serves both).",
+            "schema": {
+              "type": "string",
+              "enum": ["academic", "general-training"]
+            }
+          },
+          {
+            "name": "correct",
+            "in": "query",
+            "required": true,
+            "description": "Correct answers out of 40.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 40
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/exams": {
+      "get": {
+        "operationId": "v1_exams",
+        "summary": "Official four-paper format reference: structure, timings and minimum word counts.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "description": "Restrict the reference to one module.",
+            "schema": {
+              "type": "string",
+              "enum": ["academic", "general-training"]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/exams/blueprint": {
+      "get": {
+        "operationId": "v1_exams_blueprint",
+        "summary": "A deterministic, date-seeded full mock-exam blueprint with question-type mix and linked practice.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": ["academic", "general-training"]
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "ISO date (YYYY-MM-DD) seeding the session. Defaults to today.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "description": "Target band (4-9 in 0.5 steps); selects graded-reading sources of a matching CEFR level.",
+            "schema": {
+              "type": "number",
+              "minimum": 4,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "seed",
+            "in": "query",
+            "description": "Overrides the date as the selection seed; identical seeds return identical blueprints.",
+            "schema": {
+              "type": "string"
             }
           }
         ],

@@ -3,7 +3,7 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Six parts, four upstream collections:
 
 | Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
@@ -12,6 +12,7 @@ Five parts, four upstream collections:
 | [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
 | [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
 | [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| [Part VI](#part-vi--the-test-centre-layer)                                      | the IELTS partners' published scoring guidance and task descriptions                                  | —                              | the raw-score conversion tables and the deterministic mock-exam blueprint                                          |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -681,3 +682,143 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the test-centre layer
+
+Part VI is different in kind from Parts I-V: the raw-score conversion tables and the mock-exam
+blueprint do not come from an upstream file dump, they compile the IELTS partners' **published
+scoring guidance and task descriptions** into the API's own machine-readable tables, and then
+recombine the datasets of Parts I-V into an exam session. It exists because a mock-exam site is only
+as good as its scoring: a candidate sits a paper, gets a raw count, and needs a reproducible,
+citable answer for "what band is 27 out of 40?".
+
+The layer was designed after studying a static, client-side mock-exam centre
+([`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter): filterable exam list,
+countdown-timer exam viewer, score capture into local storage, results page). That project's content
+is unlicensed and its logic lives in the browser, so nothing is copied and nothing in this API makes
+the same architectural choice: the **data and the conversion** are the durable part, and they are
+published as a versioned, reproducibility-first HTTP contract instead of page-local state.
+
+### 29. The raw-score tables
+
+Listening and Reading each carry 40 questions, one mark per question, no negative marking. The
+partners publish raw-to-band conversion guidance per test version, and the thresholds move by up to
+one mark when a paper is unusually easy or hard. The three tables below are the indicative
+compilation published by `/v1/scores/raw/tables`:
+
+| Paper                     | Rows published | Floor |
+| ------------------------- | -------------: | ----: |
+| Listening (both modules)  |             13 |   3.0 |
+| Reading, Academic         |             13 |   3.0 |
+| Reading, General Training |             13 |   3.0 |
+
+Construction rules:
+
+1. **One Listening table for both modules.** The paper, the audio, the questions and the marking are
+   identical for Academic and General Training candidates, and every published table we found says
+   so. Only Reading differs by module, so only Reading carries two tables.
+2. **Cross-checked row by row against five independent reproductions.** For bands 4.5-9.0 the five
+   agree exactly in every row (Listening: 13-15 = 4.5 ... 39-40 = 9.0; Academic Reading: 13-14 =
+   4.5 ... 39-40 = 9.0; General Training Reading: 19-22 = 4.5 ... 40 = 9.0). The 3.5/4.0 boundary for
+   Listening is split: one 2026 reproduction places 4.0 at 11-12 and 3.5 at 8-10, the four others at
+   10-12 and 8-9. We publish the majority variant and say so.
+3. **Rows below band 3.0 are not published.** The whole table then becomes externally verifiable:
+   every row appears in at least two independent sources. A raw score below the floor returns
+   `band: null` with the closest band named, rather than a number the literature disagrees about -
+   the same policy Part V applies to untrustworthy question counts.
+4. **General Training starts higher** (3.0 = 9-11, not 6-7) because its texts are easier; the table
+   encodes the partner's balancing, not our own judgement.
+
+The source URL published with every table is the partners' scoring page
+(<https://www.ielts.org/for-organisations/ielts-scoring-in-detail>); the note repeats the caveat
+that the institution's own rules apply and that boundaries vary by test version.
+
+### 30. The exam format reference
+
+`/v1/exams` publishes the official four-paper format as data: 30 minutes of Listening plus 10
+minutes of answer transfer (paper-based), 60 minutes of Reading with no transfer time, 60 minutes of
+Writing (Task 1: 20 min / 150 words, Task 2: 40 min / 250 words), and an 11-14 minute Speaking
+interview (Part 1: 4-5 min, Part 2: 3-4 min with 1 min preparation and 2 min talk, Part 3: 4-5 min).
+Reading is split into three passages of 13/13/14 (Academic) or 14/13/13 (General Training) — the
+commonly published distribution; the note states that the split varies by paper, and 40 is the only
+count that is fixed. Listening is fixed at four parts of ten questions.
+
+The part contexts are original paraphrases of the public task descriptions, not official wording,
+consistent with how the band descriptors are handled.
+
+### 31. The blueprint
+
+`/v1/exams/blueprint?module=...&date=...&target=...&seed=...` builds one session from six sources,
+all already published by the API:
+
+- **Format:** the reference of section 30, per module.
+- **Question-type mix:** the observed frequencies in the practice-test index (Part II), per skill.
+  The largest four types for Listening and five for Reading are kept, and the 40 questions are
+  allocated by the **largest-remainder method** (floor each share, then give the remaining questions
+  to the largest fractional remainders), so the mix always sums to exactly 40 and every type with a
+  non-zero share is exercised.
+- **Practice links:** one `listening-full-test` item, and - when `target` is given - three
+  `graded-reading` lessons of the matching CEFR band (A1-A2 <= 4.5, B1-B2 <= 6.5, C1-C2 above),
+  otherwise one `reading-full-test` item. These are metadata links only; the item's own question
+  count is upstream data and is never claimed to be the paper.
+- **Writing tasks:** one Task 1 family from `/v1/tasks/writing` for the module, one Task 2 prompt
+  from `/v1/topics/writing`, each with its endpoint for the full bank.
+- **Speaking tasks:** one Part 1 set, one Part 2 cue card and one Part 3 set from
+  `/v1/topics/speaking`, seeded independently (the note states that a live Part 3 extends the Part 2
+  theme).
+- **Scoring path:** `/v1/scores/raw` for the receptive papers and `/v1/scores/overall` for the
+  overall band, with the rounding rule.
+
+All selections are seeded from the canonical session string
+(`ielts-api|exam|{module}|{seed}`), and the session identifier is an FNV-1a hash of that string, so
+identical inputs produce byte-identical sessions on every replica - the same reproducibility
+contract as the study planner and the vocabulary endpoints.
+
+### 32. What the API publishes, and deliberately does not
+
+- The blueprint publishes **structure, timings, mixes and links**; never a passage, a question, an
+  answer key, or a transcript. There is no auto-marking endpoint, because the API holds no
+  copyrighted content to mark.
+- The raw-score tables publish **numbers only**, with the source, the note and the nearest-band
+  margins; a candidate can learn "three more correct answers takes 27 to 30 and band 6.5 to 7.0"
+  without the API pretending to be the examiner.
+- The format reference is an original compilation. Where the partners' guidance is fixed (nine band
+  units, four papers, two Writing tasks) we say "fixed"; where it varies (the Reading split, the
+  Speaking question counts) we say "varies" and publish the common distribution with the caveat.
+
+### 33. Threats to validity (Part VI)
+
+- **The tables are indicative, not official per-paper conversions.** The partners convert each test
+  version on its own equating curve; a published table is the shape of that process, not a
+  guarantee. The note says so, and `matched: false` is returned rather than a guessed band when a
+  score falls below the published rows.
+- **Two variants exist at the low end of Listening.** We publish the majority variant and document
+  the disagreement; a future reproduction that lands inside the alternative 3.5/4.0 rows is not an
+  error in the data but a different editorial choice.
+- **The Reading split 13/13/14 and 14/13/13 is a convention, not a rule.** Each paper's split
+  differs; the blueprint outputs the convention and says so.
+- **The blueprint is a composition of other datasets' validity.** A misclassified question type in
+  Part II flows into the mix; a drift in the practice index changes the linked items. CI re-derives
+  and re-validates Part II on every run, and the blueprint never asserts more than its sources
+  contain.
+- **The linked practice items are unlicensed upstream material.** Only metadata is indexed
+  (Part II), and the blueprint repeats the caveat that the item's question count may differ from the
+  official 40.
+
+### 34. Reproducing Part VI
+
+The tables are data in `src/data/rawScores.ts`, the format reference and blueprint are pure
+functions in `src/lib/exam.ts`, and both are covered by the test suite at 100% statement, branch,
+function and line coverage:
+
+```bash
+npm run validate
+curl -s "http://localhost:3000/v1/scores/raw?skill=listening&correct=27"
+curl -s "http://localhost:3000/v1/scores/raw/tables"
+curl -s "http://localhost:3000/v1/exams?module=academic"
+curl -s "http://localhost:3000/v1/exams/blueprint?module=academic&date=2026-09-05&target=6.5"
+```
+
+There is no scripted extraction step for Part VI: every number is written down in the module with
+its source, and the row-by-row cross-check procedure of section 29 is the verification protocol - the
+same one a reviewer can rerun with the five reproductions cited in the source note.

@@ -657,6 +657,208 @@ export type StudyPlan = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Raw-score conversion and mock-exam blueprint                               */
+/* -------------------------------------------------------------------------- */
+
+/** IELTS test module. */
+export type IeltsModule = 'academic' | 'general-training';
+
+/** Identifiers of the raw-score conversion tables. */
+export type RawScoreTableId = 'listening' | 'reading-academic' | 'reading-general-training';
+
+/** One row of a raw-score conversion table. */
+export type RawScoreRow = {
+  /** Lowest number of correct answers in the range (out of 40). */
+  min: number;
+  /** Highest number of correct answers in the range. */
+  max: number;
+  /** Band score awarded for the range. */
+  band: BandScore;
+};
+
+/** A raw-score to band conversion table for one receptive paper. */
+export type RawScoreTable = {
+  /** Stable identifier. */
+  id: RawScoreTableId;
+  /** Receptive paper the table scores. */
+  skill: 'listening' | 'reading';
+  /** Module the table applies to; `null` when one table serves both modules. */
+  module: IeltsModule | null;
+  /** Number of questions on the paper. */
+  questions: 40;
+  /** Human-readable table name. */
+  name: string;
+  /** Title of the published guidance the table is compiled from. */
+  sourceTitle: string;
+  /** Public URL of the source guidance. */
+  sourceUrl: string;
+  /** Caveat surfaced with every conversion. */
+  note: string;
+  /** Rows, ordered from the lowest to the highest band. */
+  rows: readonly RawScoreRow[];
+};
+
+/** The nearest band threshold above or below a raw score. */
+export type RawScoreNeighbour = {
+  /** Band score of the neighbouring row. */
+  band: BandScore;
+  /** Correct answers needed to reach the row (`oneBandAhead`) or allowed to stay inside it (`oneBandBehind`). */
+  correct: number;
+};
+
+/** Result of converting one raw score. */
+export type RawScoreConversion = {
+  /** Table used. */
+  table: RawScoreTableId;
+  /** Paper scored. */
+  skill: 'listening' | 'reading';
+  /** Module the conversion applies to, or `null` for the shared Listening table. */
+  module: IeltsModule | null;
+  /** Correct answers submitted. */
+  correct: number;
+  /** Total questions on the paper. */
+  questions: 40;
+  /** Band score, or `null` outside the published rows. */
+  band: BandScore | null;
+  /** Whether `correct` falls inside a published row. */
+  matched: boolean;
+  /** The matched range, or `null`. */
+  row: RawScoreRow | null;
+  /** Next higher band, with the score needed to reach it. */
+  oneBandAhead: RawScoreNeighbour | null;
+  /** Next lower band, with the highest score that still attains it. */
+  oneBandBehind: RawScoreNeighbour | null;
+};
+
+/** A question-type share inside one blueprint paper. */
+export type ExamTypeShare = {
+  /** Canonical question type. */
+  id: QuestionTypeId;
+  /** Human-readable type name. */
+  name: string;
+  /** Share of the paper's corpus questions of this type. */
+  share: number;
+  /** Number of blueprint questions allocated to the type. */
+  questions: number;
+};
+
+/** One part or passage of a receptive paper. */
+export type ExamPaperPart = {
+  /** 1-based part or passage number. */
+  number: number;
+  /** Published context of the part. */
+  context: string;
+  /** Number of questions in the part. */
+  questions: number;
+};
+
+/** Official format of one receptive paper. */
+export type ExamPaperFormat = {
+  /** Time allowed for the paper in seconds, excluding answer transfer. */
+  durationSeconds: number;
+  /** Extra minutes allowed to transfer answers (paper-based Listening only). */
+  transferMinutes: number;
+  /** Total questions on the paper. */
+  questions: 40;
+  /** Parts or passages with their published contexts. */
+  parts: readonly ExamPaperPart[];
+};
+
+/** An indexed practice item linked by the blueprint (metadata only). */
+export type ExamSourceItem = {
+  /** Indexed item identifier. */
+  id: string;
+  /** Item title. */
+  title: string;
+  /** Public source URL. */
+  url: string;
+  /** Indexed collection. */
+  collection: PracticeCollection;
+  /** Questions in the indexed item. */
+  questions: number;
+  /** Question types present in the indexed item. */
+  questionTypes: QuestionTypeId[];
+  /** CEFR band for graded lessons, otherwise `null`. */
+  level: CefrBand | null;
+  /** Flesch Reading Ease when passage statistics exist, otherwise `null`. */
+  readingEase: number | null;
+};
+
+/** Official format reference for one IELTS module. */
+export type ExamFormat = {
+  /** Module the format describes. */
+  module: IeltsModule;
+  /** Receptive papers. */
+  listening: ExamPaperFormat;
+  /** Receptive papers. */
+  reading: ExamPaperFormat;
+  /** Productive papers. */
+  writing: {
+    /** Total time for both tasks in seconds. */
+    durationSeconds: number;
+    task1: { minutes: number; minimumWords: number };
+    task2: { minutes: number; minimumWords: number };
+  };
+  speaking: {
+    /** Published duration range of the whole Speaking test. */
+    duration: string;
+    parts: readonly { part: SpeakingPart; duration: string; notes: string }[];
+  };
+  /** Whole-test duration range, excluding waiting time. */
+  totalDuration: { minutes: string; note: string };
+};
+
+/** Generated session identity of a mock exam. */
+export type ExamSession = {
+  /** Stable identifier derived from module, date and seed. */
+  id: string;
+  /** Module the session simulates. */
+  module: IeltsModule;
+  /** Calendar date the session is for. */
+  date: string;
+  /** Seed used for every selection in the session. */
+  seed: string;
+  /** Whether identical inputs always produce this output. */
+  reproducible: true;
+};
+
+/** A mock exam generated by `/v1/exams/blueprint`. */
+export type MockExamBlueprint = {
+  /** Session identity and determinism marker. */
+  session: ExamSession;
+  /** Recurring themes selected for the session. */
+  themes: { id: string; group: string; name: string }[];
+  /** Listening paper plan and linked practice material. */
+  listening: { format: ExamPaperFormat; questionTypeMix: ExamTypeShare[]; sources: ExamSourceItem[] };
+  /** Reading paper plan and linked practice material. */
+  reading: { format: ExamPaperFormat; questionTypeMix: ExamTypeShare[]; sources: ExamSourceItem[] };
+  /** Writing tasks. */
+  writing: {
+    format: ExamFormat['writing'];
+    task1: { familyId: string; name: string; endpoint: string };
+    task2: {
+      prompt: string;
+      category: string;
+      questionType: EssayQuestionType;
+      positions: [string, string];
+      endpoint: string;
+    };
+  };
+  /** Speaking tasks. */
+  speaking: {
+    duration: string;
+    parts: ExamFormat['speaking']['parts'];
+    part1: { topic: string; questions: string[] };
+    part2: { topic: string; cueCard: string[] };
+    part3: { topic: string; questions: string[] };
+  };
+  /** How to score the session. */
+  scoring: { overallRule: string; rawEndpoint: string; tablesEndpoint: string };
+  /** Method notes. */
+  notes: string[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* Study-materials index                                                      */
 /* -------------------------------------------------------------------------- */
 

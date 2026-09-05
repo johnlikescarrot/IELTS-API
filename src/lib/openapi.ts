@@ -7,6 +7,7 @@
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { EXAM_MODULES } from '../lib/exam.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
@@ -128,6 +129,62 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/scores/interpret': [
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
+  ],
+  '/v1/scores/raw': [
+    {
+      name: 'skill',
+      in: 'query',
+      required: true,
+      description: 'Receptive paper scored.',
+      schema: { type: 'string', enum: ['listening', 'reading'] },
+    },
+    {
+      name: 'module',
+      in: 'query',
+      description: 'Test module; required for Reading, ignored for Listening (one table serves both).',
+      schema: { type: 'string', enum: [...TASK_MODULES] },
+    },
+    {
+      name: 'correct',
+      in: 'query',
+      required: true,
+      description: 'Correct answers out of 40.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+  ],
+  '/v1/exams': [
+    {
+      name: 'module',
+      in: 'query',
+      description: 'Restrict the reference to one module.',
+      schema: { type: 'string', enum: [...EXAM_MODULES] },
+    },
+  ],
+  '/v1/exams/blueprint': [
+    {
+      name: 'module',
+      in: 'query',
+      required: true,
+      schema: { type: 'string', enum: [...EXAM_MODULES] },
+    },
+    {
+      name: 'date',
+      in: 'query',
+      description: 'ISO date (YYYY-MM-DD) seeding the session. Defaults to today.',
+      schema: { type: 'string', format: 'date' },
+    },
+    {
+      name: 'target',
+      in: 'query',
+      description: 'Target band (4-9 in 0.5 steps); selects graded-reading sources of a matching CEFR level.',
+      schema: { type: 'number', minimum: 4, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Overrides the date as the selection seed; identical seeds return identical blueprints.',
+      schema: { type: 'string' },
+    },
   ],
   '/v1/topics/writing': [
     QUERY,
