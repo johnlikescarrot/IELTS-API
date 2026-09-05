@@ -45,6 +45,15 @@ All notable changes to this project are documented here. The format is based on
 
 ### Fixed
 
+- **super-linter was not linting this project's TypeScript.** It looks for `eslint.config.mjs`
+  and falls back to its own bundled rules when that file is missing; ours is `eslint.config.js`,
+  so every TypeScript run used rules the code was never written against. Named the real config
+  and install dependencies before the run so ESLint can resolve it.
+- `FILTER_REGEX_EXCLUDE` in the super-linter workflow read `.*data/.*`, which excluded
+  `src/data/` and `test/data/` — hand-written source — from every linter. Anchored to the
+  generated top-level `data/` directory.
+- Readiness polls in `ci.yml` and `release.yml` looped without using the counter and fell through
+  to a confusing assertion when the server never started; they now fail with a clear message.
 - JSON-LD blocks are now serialised with `<`, `>` and `&` escaped as JSON `\u` sequences. Embedding
   a raw `</script>` in any bibliographic field could previously break out of the script element.
 

@@ -46,6 +46,7 @@ jobs:
         run: npm ci
 
       - name: Run super-linter
+        id: lint
         uses: super-linter/super-linter/slim@v8.3.1
         env:
           DEFAULT_BRANCH: main
@@ -85,35 +86,40 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Findings go into the job summary, and onto the pull request when the run
+      # fails, because Actions logs are awkward to read and easy to lose.
       - name: Report findings
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
+          LINT_OUTCOME: ${{ steps.lint.outcome }}
         run: |
           report=super-linter-report.md
           {
-            echo '## super-linter findings'
+            echo '## super-linter'
             echo
             if [ -f super-linter-output/super-linter-summary.md ]; then
               cat super-linter-output/super-linter-summary.md
+            else
+              echo 'super-linter produced no summary.'
             fi
-            echo
-            find super-linter-output -type f | sort | while read -r log; do
-              case "$log" in
-                *.md) continue ;;
-              esac
-              echo "<details><summary>$log</summary>"
+            if [ "${LINT_OUTCOME}" != "success" ]; then
               echo
-              echo '```text'
-              tail -c 30000 "$log"
-              echo '```'
-              echo
-              echo '</details>'
-              echo
-            done
-          } > "$report"
-          cat "$report" >> "$GITHUB_STEP_SUMMARY"
-          if [ -n "$PR_NUMBER" ]; then
-            gh pr comment "$PR_NUMBER" --body-file "$report" --repo "$GITHUB_REPOSITORY"
+              for log in super-linter-output/super-linter/super-linter-parallel-stdout-*; do
+                [ -s "${log}" ] || continue
+                echo "<details><summary>$(basename "${log}")</summary>"
+                echo
+                echo '```text'
+                tail -c 20000 "${log}"
+                echo '```'
+                echo
+                echo '</details>'
+                echo
+              done
+            fi
+          } > "${report}"
+          cat "${report}" >> "${GITHUB_STEP_SUMMARY}"
+          if [ -n "${PR_NUMBER}" ] && [ "${LINT_OUTCOME}" != "success" ]; then
+            gh pr comment "${PR_NUMBER}" --body-file "${report}" --repo "${GITHUB_REPOSITORY}"
           fi
