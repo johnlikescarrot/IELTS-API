@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   group: super-linter-${{ github.ref }}
@@ -87,6 +88,27 @@ jobs:
               printf '\n===== %s =====\n' "${logfile##*/}"
               cat "${logfile}"
             done
+
+      # Temporary diagnostic: mirror the findings into a PR comment, because
+      # run logs and artifacts are not always reachable.
+      - name: Comment linter findings
+        if: ${{ failure() && steps.super_linter.outcome == 'failure' && github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          out="${{ github.workspace }}/super-linter-output"
+          body="$(mktemp)"
+          echo '### super-linter findings' >> "${body}"
+          echo '```text' >> "${body}"
+          find "${out}" -type f \( -name '*.log' -o -name '*.md' \) -print0 2>/dev/null |
+            while IFS= read -r -d '' f; do
+              printf '\n===== %s =====\n' "${f##*/}" >> "${body}"
+              tail -c 8000 "${f}" >> "${body}"
+            done
+          echo '```' >> "${body}"
+          gh pr comment "${PR_NUMBER}" --body-file "${body}" --repo "${GITHUB_REPOSITORY}"
 
       - name: Upload linter output
         if: ${{ failure() && steps.super_linter.outcome == 'failure' }}
