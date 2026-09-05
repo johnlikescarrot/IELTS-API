@@ -59,6 +59,15 @@ curl -s "http://localhost:3000/v1/study/plan?target=7&writing=6&speaking=6.5"
 # The 13 IELTS question types, ranked by how often they occur in 27,225 practice questions
 curl -s "http://localhost:3000/v1/question-types?skill=listening"
 
+# 30/40 on Academic Reading is band 7; on General Training Reading the same paper is band 6
+curl -s "http://localhost:3000/v1/scores/raw?paper=reading-academic&score=30"
+
+# Which component is the cheapest route from 6.5 overall to 7.0?
+curl -s "http://localhost:3000/v1/scores/target?target=7&listening=7&reading=7&writing=6&speaking=6.5"
+
+# Provenance and SHA-256 digest of every dataset behind a response
+curl -s "http://localhost:3000/v1/datasets"
+
 # Graded reading passages between Flesch Reading Ease 60 and 80
 curl -s "http://localhost:3000/v1/tests/items?level=b1-b2&minReadingEase=60&maxReadingEase=80"
 
@@ -124,6 +133,9 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
 | GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
 | GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
+| GET    | `/v1/scores/raw`          | Listening / Reading raw score out of 40 to an indicative band (`paper`, `score`)                        |
+| GET    | `/v1/scores/raw-tables`   | The published raw-score conversion tables for the three marked papers (`paper`)                         |
+| GET    | `/v1/scores/target`       | What each component must reach for a target overall band (`target`, `listening`, ...)                   |
 | GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
 | GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                        |
 | GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                           |
@@ -146,6 +158,9 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
 | GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                                |
+| GET    | `/v1/datasets`            | Provenance, licence, record count and SHA-256 digest of every dataset (`derivation`, `q`)               |
+| GET    | `/v1/datasets/:id`        | Provenance record for one dataset                                                                       |
+| GET    | `/v1/cite`                | Ready-to-paste citations in BibTeX, APA, MLA, Chicago and RIS (`format`, `accessed`)                    |
 
 ### Worked examples
 
@@ -291,6 +306,58 @@ GET /v1/materials/stats
 }
 ```
 
+**Raw-score conversion.** The Listening and Reading papers are marked out of 40 and converted with a
+published, paper-specific table. The same 30 marks are band 7 on Academic Reading and band 6 on
+General Training Reading:
+
+```jsonc
+GET /v1/scores/raw?paper=reading-general&score=30
+{
+  "status": 200,
+  "data": {
+    "paper": "reading-general", "name": "General Training Reading",
+    "rawScore": 30, "maximum": 40, "percentCorrect": 75,
+    "band": 6, "range": "30–31", "matched": true, "cefr": "B2",
+    "nextBand": { "band": 6.5, "rawScore": 32, "marksNeeded": 2 }
+  },
+  "meta": { "note": "Indicative conversion from official practice material. ..." }
+}
+```
+
+**Target planning.** Because the overall band is an exact arithmetic function of the four
+components, "what do I need?" has an exact answer. Each route is the lowest band one component can
+reach while the other three stay unchanged:
+
+```jsonc
+GET /v1/scores/target?target=7&listening=7&reading=7&writing=6&speaking=6.5
+{
+  "status": 200,
+  "data": {
+    "current": 6.5, "target": 7, "met": false,
+    "currentSum": 26.5, "requiredSum": 27, "pointsNeeded": 1,
+    "cheapest": { "skill": "listening", "current": 7, "required": 7.5, "lift": 0.5, "achievable": true },
+    "balanced": null
+  }
+}
+```
+
+**Dataset provenance.** Every dataset reports where it came from and the digest of the file this
+process loaded, so a cited response can be verified against an archived copy:
+
+```jsonc
+GET /v1/datasets/vocabulary
+{
+  "status": 200,
+  "data": {
+    "id": "vocabulary", "derivation": "extracted",
+    "source": "zhengyishiming/IELTS (1-22yas.xlsx)",
+    "license": "CC BY 4.0", "records": 4174,
+    "script": "scripts/extract_vocabulary.py",
+    "sha256": "…", "sizeBytes": 3_000_000
+  }
+}
+```
+
 ### What the practice-test index measures
 
 The 1,232 CEFR-graded lessons and the 470 machine-readable full tests are indexed by structure and by
@@ -323,7 +390,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 535 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -347,14 +414,28 @@ Configuration: `--port` / `PORT`, `--host` / `HOST`, `--silent`, `--help`, `--ve
 
 ## Citing this project
 
-If you use the API or the datasets, please cite it — citations are what keep the project free.
+If you use the API or the datasets, please cite it — citations are what keep the project free. The
+running service renders its own citation, so you never have to hand-write one:
+
+```bash
+curl -s "http://localhost:3000/v1/cite?format=bibtex"   # also: apa, mla, chicago, ris
+curl -s "http://localhost:3000/v1/cite"                 # all five formats in one JSON envelope
+```
+
+Every response can also be traced back to the exact bytes that produced it. `/v1/datasets` publishes
+the upstream source, derivation, licence, record count and **SHA-256 digest** of the dataset file the
+running process loaded, so a reviewer can verify an archived response against the archived file:
+
+```bash
+curl -s "http://localhost:3000/v1/datasets/vocabulary"
+```
 
 ```bibtex
 @software{ielts_api,
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.2.0},
+  version = {1.3.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -390,6 +471,11 @@ Please also cite the upstream collections the datasets were derived from:
   you need the authoritative text.
 - **Score concordances:** indicative values compiled from the providers' own published comparison
   tables. Receiving institutions apply their own rules.
+- **Raw-score tables:** indicative conversions reproduced from official practice material. Live tests
+  are equated, so the raw-score boundary for a band moves by a mark or two between versions; never
+  use them as an admissions rule.
+- **Dataset digests:** `/v1/datasets` reports a SHA-256 of the dataset file the running process
+  loaded, which is what makes an archived response independently verifiable.
 - **Upstream files:** never redistributed. `/v1/corpus` and `/v1/tests` publish derived metadata and
   statistics only — no passage, question, answer key, transcript or recording.
 - **Question-type strategies:** original wording. The task families follow the partners' public task

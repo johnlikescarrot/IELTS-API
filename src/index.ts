@@ -23,13 +23,31 @@ export * from './lib/query.js';
 export * from './lib/rng.js';
 export * from './lib/route.js';
 export * from './lib/search.js';
+export * from './lib/target.js';
+export * from './lib/citation.js';
+export * from './lib/analysis.js';
+export {
+  MAX_TEXT_LENGTH,
+  baseProfile,
+  fleschKincaidGrade,
+  fleschReadingEase,
+  round1,
+  round2,
+  sentencesOf,
+  stdevOf,
+  syllablesOf,
+  wordsOf,
+} from './lib/textstats.js';
+export * from './lib/study.js';
 export * from './data/bands.js';
 export * from './data/conversions.js';
 export * from './data/corpus.js';
 export * from './data/frameworks.js';
 export * from './data/materials.js';
 export * from './data/practiceTests.js';
+export * from './data/provenance.js';
 export * from './data/questionTypes.js';
+export * from './data/rawScores.js';
 export * from './data/resources.js';
 export * from './data/tasks.js';
 export * from './data/themes.js';

@@ -10,11 +10,13 @@ import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
+import { RAW_SCORE_PAPERS } from '../data/rawScores.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
+import { CITATION_FORMATS } from './citation.js';
 
 import type { RouteDefinition } from './route.js';
 import type { JsonValue } from '../types.js';
@@ -127,6 +129,69 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/scores/interpret': [
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
+  ],
+  '/v1/scores/raw': [
+    {
+      name: 'paper',
+      in: 'query',
+      required: true,
+      description: 'Marked paper whose published conversion table applies.',
+      schema: { type: 'string', enum: [...RAW_SCORE_PAPERS] },
+    },
+    {
+      name: 'score',
+      in: 'query',
+      required: true,
+      description: 'Raw score out of 40.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+  ],
+  '/v1/scores/raw-tables': [
+    {
+      name: 'paper',
+      in: 'query',
+      description: 'Restrict the response to one paper.',
+      schema: { type: 'string', enum: [...RAW_SCORE_PAPERS] },
+    },
+  ],
+  '/v1/scores/target': [
+    {
+      name: 'target',
+      in: 'query',
+      required: true,
+      description: 'Target overall band.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    ...['listening', 'reading', 'writing', 'speaking'].map((skill) => ({
+      name: skill,
+      in: 'query',
+      required: true,
+      description: `Current band for ${skill} (0-9 in 0.5 steps).`,
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    })),
+  ],
+  '/v1/datasets': [
+    QUERY,
+    {
+      name: 'derivation',
+      in: 'query',
+      description: 'How the dataset was produced.',
+      schema: { type: 'string', enum: ['extracted', 'original', 'compiled'] },
+    },
+  ],
+  '/v1/cite': [
+    {
+      name: 'format',
+      in: 'query',
+      description: 'Return a single citation as plain text instead of the full bundle.',
+      schema: { type: 'string', enum: [...CITATION_FORMATS] },
+    },
+    {
+      name: 'accessed',
+      in: 'query',
+      description: 'Access date recorded in the citation (ISO date). Defaults to today.',
+      schema: { type: 'string', format: 'date' },
+    },
   ],
   '/v1/topics/writing': [
     QUERY,
@@ -432,8 +497,14 @@ export function openApiDocument(
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, and an index of a 2,385-file',
-        'self-study materials collection. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        'self-study materials collection, and the published raw-score conversion',
+        'tables for the three marked papers. The toolkit additionally scores any text',
+        '(readability and essay profile), converts raw scores and target bands, and',
+        'composes the datasets into study plans.',
+        '',
+        'Every dataset is documented at /v1/datasets with its source, derivation,',
+        'licence and the SHA-256 digest of the file this process loaded, and /v1/cite',
+        'renders the citation in BibTeX, APA, MLA, Chicago and RIS.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

@@ -24,7 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -33,8 +33,9 @@ Listening question types, onto which 65 free-text annotation labels are normalis
 frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
-1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of three open IELTS collections.
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; curated
+metadata indexes of three open IELTS collections; and the published raw-score conversion tables for
+the three marked papers.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -123,6 +124,21 @@ overall, because they are ten times longer (2,642 words against roughly 250) at 
 ratio (0.388 against 0.54-0.64): short lessons cannot train reading stamina however dense their
 sentences are.
 
+**Score arithmetic.** The overall band is the mean of the four components rounded to the nearest
+half band, with .25 and .75 means rounded up, and the Listening and Reading papers are marked out of
+40 and converted with a published, paper-specific table. Both operations are exposed as endpoints
+rather than left to the reader. Three raw-score tables are published — Listening, Academic Reading
+and General Training Reading — which makes visible a distinction that candidate-facing material
+routinely elides: 30 marks is band 7 on Academic Reading and band 6 on General Training Reading, a
+full band for identical raw performance, because the General Training texts are less demanding. The
+tables also show that raw marks are not an interval scale, since the band 6-to-7 step spans seven
+marks on Academic Reading while the band 8-to-9 step spans four. A target planner inverts the
+overall-band rule by searching the nineteen-value reportable grid, reporting for each component the
+lowest band that would carry the target while the other three stay unchanged; the search is exact
+and auditable by recomputing four means. Every raw-score response repeats that live tests are
+equated and that the tables are indicative, and raw scores below the lowest published row are
+reported as unmatched rather than extrapolated.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -150,9 +166,19 @@ document is generated from the live route table, so documentation cannot drift f
 implementation. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
 reproducible stimulus for longitudinal studies rather than a novelty.
 
+Two endpoints exist specifically to lower the cost of citing and verifying a response. `/v1/datasets`
+publishes, per dataset, the upstream source, the derivation (extracted, compiled or original), the
+licence, the live record count, the serving endpoints, the regenerating script and — for the four
+datasets shipped as JSON files — the SHA-256 digest and byte size of the file the running process
+loaded. The digest is computed from disk at first use rather than baked in at build time, so it
+describes the running deployment and a divergence between a cited response and an archived file is
+detectable rather than masked by a build-time constant. `/v1/cite` renders the work metadata into
+BibTeX, APA 7, MLA 9, Chicago author-date and RIS with a caller-supplied access date, on the premise
+that citation friction is a real determinant of whether software gets cited at all.
+
 # Quality control
 
-The test suite (469 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (535 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

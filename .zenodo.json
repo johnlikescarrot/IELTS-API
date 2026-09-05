@@ -24,7 +24,11 @@
     "REST API",
     "text analysis",
     "lexical diversity",
-    "study planning"
+    "study planning",
+    "raw score conversion",
+    "provenance",
+    "reproducibility",
+    "citation metadata"
   ],
   "license": "other-open",
   "related_identifiers": [

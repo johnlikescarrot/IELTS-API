@@ -6,6 +6,57 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-05
+
+The **verifiability** release. Two capabilities the previous versions were missing: the arithmetic
+that candidates actually ask about — what a raw score out of 40 is worth, and what each component
+has to reach for a target overall band — and the machinery that makes a cited response checkable
+years later.
+
+### Added
+
+- **Raw-score conversion** (`GET /v1/scores/raw`): converts a Listening or Reading raw score out of
+  40 into its indicative band using the published, paper-specific table, and reports the percentage
+  correct, the raw-score range that awards the band, the indicative CEFR level and how many further
+  marks reach the next band. Three tables are published — Listening, Academic Reading and General
+  Training Reading — so the same 30 marks correctly report band 7 on Academic Reading and band 6 on
+  the stricter General Training paper. Scores below the lowest published row are reported as
+  unmatched rather than extrapolated: no number in a response is invented by this project.
+- **Raw-score tables** (`GET /v1/scores/raw-tables`): the conversion tables themselves, so a
+  researcher can inspect or archive the mapping instead of inferring it from point queries.
+- **Target planner** (`GET /v1/scores/target`): given four component scores and a target overall
+  band, the lowest band each component would have to reach while the other three stay unchanged,
+  ordered cheapest first, plus the total half-band points still missing and an even "balanced" lift
+  for the case where no single component can carry the target. The overall band is an exact
+  arithmetic function of the components, so the answer is exact rather than heuristic: the planner
+  searches the reportable band grid instead of inverting the rounding rule algebraically, which
+  keeps it auditable.
+- **Dataset provenance** (`GET /v1/datasets`, `GET /v1/datasets/{id}`): one record per dataset with
+  its upstream source, derivation (`extracted`, `original` or `compiled`), licence, live record
+  count, the endpoints that serve it, the extraction script that regenerates it, and — for the four
+  datasets shipped as JSON files — the **SHA-256 digest and byte size of the file the running
+  process loaded**. That last field is what makes a cited response independently verifiable: a
+  reviewer can hash the archived file and compare.
+- **Citation rendering** (`GET /v1/cite`): the API renders its own citation in BibTeX, APA 7, MLA 9,
+  Chicago author-date and RIS. `?format=bibtex` returns one citation as `text/plain` for piping
+  straight into a `.bib` file; without `format` the response carries all five plus links to the
+  machine-readable `CITATION.cff`, `codemeta.json` and `.zenodo.json`. `?accessed=YYYY-MM-DD`
+  controls the access date, which keeps the endpoint deterministic.
+
+### Changed
+
+- The service index (`/`) now advertises `/v1/cite` and `/v1/datasets` alongside `CITATION.cff`, and
+  `/docs` links both from its citation section.
+- The OpenAPI document documents every new parameter, generated as always from the live route table.
+- The library entry point additionally exports the analysis, text-statistics, study-planning,
+  target-planning, citation, provenance and raw-score modules, so the new arithmetic is usable
+  without starting a server.
+
+### Unchanged
+
+Still free, still GET-only, still authentication-free, still zero runtime dependencies, still 100%
+statement, branch, function and line coverage enforced per file.
+
 ## [1.2.0] - 2026-09-05
 
 Two additions in one release: the **toolkit** — the first capabilities that consume text as well as

@@ -4,13 +4,16 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
-import { assertBand, calculateOverall } from '../lib/band.js';
+import { RAW_SCORE_MAXIMUM, RAW_SCORE_PAPERS, RAW_SCORE_TABLES, bandForRaw } from '../data/rawScores.js';
+import { assertBand, calculateOverall, MAX_BAND } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getInt, getNumber, requireString, toParams } from '../lib/query.js';
+import { analyseTarget } from '../lib/target.js';
+import { round2 } from '../lib/textstats.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
-import type { ConversionEntry, Skill } from '../types.js';
+import type { ConversionEntry, RawScoreNextBand, RawScoreResult, Skill } from '../types.js';
 
 /** Read and validate one component of the test report. */
 function component(params: Record<string, string | string[] | undefined>, skill: Skill): number {
@@ -107,6 +110,99 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Convert a raw score out of 40 into the indicative band for a paper. */
+function raw(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const paper = getEnum(params, 'paper', RAW_SCORE_PAPERS);
+  if (paper === undefined) {
+    throw badRequest('Parameter "paper" is required.', {
+      parameter: 'paper',
+      allowed: RAW_SCORE_PAPERS.join(','),
+    });
+  }
+  const table = RAW_SCORE_TABLES[paper];
+  const score = getInt(params, 'score', 0, RAW_SCORE_MAXIMUM, -1);
+  if (score < 0) {
+    throw badRequest('Parameter "score" is required.', {
+      parameter: 'score',
+      min: '0',
+      max: String(RAW_SCORE_MAXIMUM),
+    });
+  }
+
+  const row = bandForRaw(paper, score);
+  let nextBand: RawScoreNextBand | null = null;
+  if (row !== undefined && row.band < MAX_BAND) {
+    // Rows are ordered highest band first, so the next band is the row before.
+    const index = table.bands.indexOf(row);
+    const above = table.bands[index - 1] as (typeof table.bands)[number];
+    nextBand = { band: above.band, rawScore: above.min, marksNeeded: above.min - score };
+  }
+
+  const result: RawScoreResult = {
+    paper,
+    name: table.name,
+    rawScore: score,
+    maximum: table.maximum,
+    percentCorrect: round2((score / table.maximum) * 100),
+    band: row?.band ?? null,
+    range: row?.display ?? null,
+    matched: row !== undefined,
+    nextBand,
+    cefr: row === undefined ? null : cefrForBand(row.band),
+  };
+  return {
+    data: result,
+    meta: {
+      note: table.note,
+      sourceUrl: table.sourceUrl,
+      unmatched:
+        row === undefined
+          ? `Raw score ${score} falls below the lowest published row of the ${table.name} table.`
+          : null,
+    },
+  };
+}
+
+/** Publish the raw-score conversion tables themselves. */
+function rawTables(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const paper = getEnum(params, 'paper', RAW_SCORE_PAPERS);
+  const papers = paper === undefined ? RAW_SCORE_PAPERS : [paper];
+  return {
+    data: papers.map((candidate) => RAW_SCORE_TABLES[candidate]),
+    meta: {
+      count: papers.length,
+      papers: RAW_SCORE_PAPERS,
+      maximum: RAW_SCORE_MAXIMUM,
+      note: 'Indicative conversions from official practice material; live tests are equated and move boundaries by one or two marks.',
+    },
+  };
+}
+
+/** Work out what each component must reach for a target overall band. */
+function target(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const wanted = assertBand(Number.parseFloat(requireString(params, 'target')), 'target');
+  const components: Record<Skill, number> = {
+    listening: component(params, 'listening'),
+    reading: component(params, 'reading'),
+    writing: component(params, 'writing'),
+    speaking: component(params, 'speaking'),
+  };
+  const analysis = analyseTarget(components, wanted);
+  return {
+    data: analysis,
+    meta: {
+      rule: 'Overall = mean of the four components rounded to the nearest half band; means ending in .25 or .75 round up.',
+      method:
+        'Each route is the lowest reportable band for one component that reaches the target while the other three stay unchanged; routes are ordered by the size of the lift.',
+      balanced:
+        'When no single component can reach the target, "balanced" raises every component by the same number of half bands.',
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -129,5 +225,26 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Map a score on another scale back to an indicative IELTS band.',
     handler: interpret,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw',
+    versioned: true,
+    summary: 'Convert a Listening or Reading raw score out of 40 into an indicative band.',
+    handler: raw,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw-tables',
+    versioned: true,
+    summary: 'The published raw-score to band conversion tables for the three marked papers.',
+    handler: rawTables,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/target',
+    versioned: true,
+    summary: 'What each component must reach for a target overall band, cheapest route first.',
+    handler: target,
   },
 ];

@@ -739,6 +739,179 @@ export type ResponseFramework = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Raw-score conversion                                                       */
+/* -------------------------------------------------------------------------- */
+
+/** Papers marked out of 40 for which a raw-score conversion is published. */
+export type RawScorePaper = 'listening' | 'reading-academic' | 'reading-general';
+
+/** One row of a raw-score conversion table. */
+export type RawScoreBand = {
+  /** Band awarded for the range. */
+  band: BandScore;
+  /** Lowest raw score in the range (inclusive). */
+  min: number;
+  /** Highest raw score in the range (inclusive). */
+  max: number;
+  /** Human-readable rendering of the range. */
+  display: string;
+};
+
+/** A published raw-score conversion table for one paper. */
+export type RawScoreTable = {
+  /** Paper identifier. */
+  paper: RawScorePaper;
+  /** Human-readable paper name. */
+  name: string;
+  /** IELTS module the paper belongs to. */
+  module: 'academic' | 'general-training' | 'both';
+  /** Number of scored questions. */
+  maximum: number;
+  /** Public URL documenting the scoring rules. */
+  sourceUrl: string;
+  /** Caveat repeated in every response built from the table. */
+  note: string;
+  /** Rows, highest band first. */
+  bands: RawScoreBand[];
+};
+
+/** How many more marks are needed to reach the next band. */
+export type RawScoreNextBand = {
+  /** The next band above the one awarded. */
+  band: BandScore;
+  /** Lowest raw score that reaches it. */
+  rawScore: number;
+  /** Additional correct answers required. */
+  marksNeeded: number;
+};
+
+/** Response of `/v1/scores/raw`. */
+export type RawScoreResult = {
+  /** Paper the conversion used. */
+  paper: RawScorePaper;
+  /** Paper name. */
+  name: string;
+  /** Raw score supplied. */
+  rawScore: number;
+  /** Scored questions in the paper. */
+  maximum: number;
+  /** Share of questions answered correctly, rounded to 2 decimals. */
+  percentCorrect: number;
+  /** Indicative band, or `null` below the published range. */
+  band: BandScore | null;
+  /** Raw-score range that awards the band, or `null` when unmatched. */
+  range: string | null;
+  /** Whether a published row matched the raw score. */
+  matched: boolean;
+  /** Marks to the next band, or `null` at band 9 or when unmatched. */
+  nextBand: RawScoreNextBand | null;
+  /** Indicative CEFR level of the band, or `null` when unmatched. */
+  cefr: string | null;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Target planning                                                            */
+/* -------------------------------------------------------------------------- */
+
+/** What one component must reach for the overall target to be met. */
+export type TargetComponent = {
+  /** Component. */
+  skill: Skill;
+  /** Current band supplied by the caller. */
+  current: number;
+  /** Band that closes the gap when the other components stay as they are. */
+  required: number | null;
+  /** `required - current`, or `null` when the target is unreachable this way. */
+  lift: number | null;
+  /** Whether a single-component lift can reach the target. */
+  achievable: boolean;
+};
+
+/** Response of `/v1/scores/target`. */
+export type TargetAnalysis = {
+  /** Component scores supplied. */
+  components: Record<Skill, number>;
+  /** Overall band the components currently produce. */
+  current: number;
+  /** Overall band requested. */
+  target: number;
+  /** Whether the target is already met. */
+  met: boolean;
+  /** Total half-band points that must be added across the components. */
+  pointsNeeded: number;
+  /** Smallest total sum of the four components that rounds to the target. */
+  requiredSum: number;
+  /** Sum of the components supplied. */
+  currentSum: number;
+  /** Per-component single-lift analysis, cheapest first. */
+  routes: TargetComponent[];
+  /** The cheapest single-component route, or `null` when none exists. */
+  cheapest: TargetComponent | null;
+  /** Even split across the components when no single lift suffices. */
+  balanced: Record<Skill, number> | null;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Provenance and citation                                                    */
+/* -------------------------------------------------------------------------- */
+
+/** Provenance record for one dataset published by the API. */
+export type DatasetRecord = {
+  /** Stable dataset identifier. */
+  id: string;
+  /** Human-readable name. */
+  name: string;
+  /** What the dataset contains. */
+  description: string;
+  /** How the dataset was produced. */
+  derivation: 'extracted' | 'original' | 'compiled';
+  /** Upstream source name, or `null` for datasets original to this project. */
+  source: string | null;
+  /** Upstream source URL, or `null`. */
+  sourceUrl: string | null;
+  /** Licence of the published dataset. */
+  license: string;
+  /** Number of records published. */
+  records: number;
+  /** Endpoints that serve the dataset. */
+  endpoints: string[];
+  /** Extraction script, when the dataset is generated. */
+  script: string | null;
+  /** SHA-256 of the shipped JSON file, when the dataset is a file. */
+  sha256: string | null;
+  /** Size of the shipped JSON file in bytes, when applicable. */
+  sizeBytes: number | null;
+};
+
+/** A ready-to-paste citation in one format. */
+export type CitationFormat = {
+  /** Format identifier. */
+  format: 'bibtex' | 'apa' | 'mla' | 'chicago' | 'ris';
+  /** Rendered citation string. */
+  text: string;
+};
+
+/** Response of `/v1/cite`. */
+export type CitationBundle = {
+  /** Work title. */
+  title: string;
+  /** Author string used in every rendering. */
+  authors: string;
+  /** Version cited. */
+  version: string;
+  /** Publication year. */
+  year: number;
+  /** Canonical URL. */
+  url: string;
+  /** DOI placeholder or minted DOI. */
+  doi: string;
+  /** Date the caller accessed the API (ISO-8601). */
+  accessed: string;
+  /** Renderings, one per supported format. */
+  citations: CitationFormat[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 
