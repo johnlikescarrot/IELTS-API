@@ -96,9 +96,12 @@ jobs:
             # Surface the failure through check-run annotations: they are
             # available through the Checks API even when the raw job log is
             # not reachable.
-            grep -nE "ERROR|Failed to validate|failed validation|Violations|❌" /tmp/super-linter.log \
-              | head -n 25 \
-              | sed -e 's/%/%25/g' -e 's/:/%3A/g' \
+            {
+              grep -nE "ERROR|Failed|failed|Violations|error|❌|⚠️" /tmp/super-linter.log | head -n 15
+              echo "---- tail ----"
+              tail -n 30 /tmp/super-linter.log
+            } \
+              | sed -e 's/%/%25/g' -e 's/:/%3A/g' -e 's/\r//g' \
               | while IFS= read -r line; do
                   echo "::error title=super-linter::$line"
                 done
