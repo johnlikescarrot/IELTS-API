@@ -132,3 +132,101 @@ describe('GET /v1/scores/interpret', () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
   });
 });
+
+interface RawScore {
+  paper: string;
+  module: string;
+  raw: number;
+  rawMax: number;
+  band: number | null;
+  range: [number, number] | null;
+  display: string | null;
+  cefr: string | null;
+  nextBand: number | null;
+  marksToNextBand: number | null;
+  matched: boolean;
+}
+
+describe('GET /v1/scores/raw', () => {
+  it('converts a listening raw mark with its range and next-band distance', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?paper=listening&raw=32');
+    expect(response.status).toBe(200);
+    expect(response.data).toMatchObject({
+      paper: 'listening',
+      module: 'both',
+      raw: 32,
+      rawMax: 40,
+      band: 7.5,
+      range: [32, 34],
+      display: '32–34',
+      cefr: 'C1',
+      nextBand: 8,
+      marksToNextBand: 3,
+      matched: true,
+    });
+    expect(response.meta.note).toContain('vary slightly');
+  });
+
+  it('applies the higher general-training thresholds to the same raw mark', async () => {
+    const academic = await server.json<RawScore>('/v1/scores/raw?paper=academic-reading&raw=30');
+    expect(academic.data.band).toBe(7);
+    const general = await server.json<RawScore>('/v1/scores/raw?paper=general-reading&raw=30');
+    expect(general.data.band).toBe(6);
+    expect(general.data.marksToNextBand).toBe(2);
+  });
+
+  it('reports the ceiling without a next band', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?paper=general-reading&raw=40');
+    expect(response.data.band).toBe(9);
+    expect(response.data.display).toBe('40');
+    expect(response.data.nextBand).toBeNull();
+    expect(response.data.marksToNextBand).toBeNull();
+  });
+
+  it('leaves marks below the published floor unmatched with the distance to band', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?paper=listening&raw=10');
+    expect(response.data.matched).toBe(false);
+    expect(response.data.band).toBeNull();
+    expect(response.data.range).toBeNull();
+    expect(response.data.nextBand).toBe(4);
+    expect(response.data.marksToNextBand).toBe(1);
+    expect(response.meta.note).toContain('below the lowest published row');
+  });
+
+  it('requires paper and raw', async () => {
+    const missingPaper = await server.json('/v1/scores/raw?raw=30');
+    expect(missingPaper.status).toBe(400);
+    expect((missingPaper.meta.error as { details: Record<string, string> }).details.allowed).toContain(
+      'listening',
+    );
+    expect((await server.json('/v1/scores/raw?paper=listening')).status).toBe(400);
+  });
+
+  it('rejects unknown papers and out-of-range or fractional marks', async () => {
+    expect((await server.json('/v1/scores/raw?paper=speaking&raw=30')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?paper=listening&raw=41')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?paper=listening&raw=-1')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?paper=listening&raw=30.5')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?paper=listening&raw=many')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/scores/tables', () => {
+  it('publishes every raw-score table with provenance', async () => {
+    const response =
+      await server.json<
+        { id: string; entries: { band: number; min: number; max: number }[]; sourceUrl: string }[]
+      >('/v1/scores/tables');
+    expect(response.status).toBe(200);
+    expect(response.data.map((table) => table.id)).toEqual([
+      'listening',
+      'academic-reading',
+      'general-reading',
+    ]);
+    expect(response.meta.count).toBe(3);
+    for (const table of response.data) {
+      expect(table.entries.length).toBeGreaterThan(10);
+      expect(table.sourceUrl).toContain('https://');
+    }
+  });
+});

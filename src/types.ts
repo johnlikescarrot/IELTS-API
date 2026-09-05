@@ -113,6 +113,39 @@ export type ConversionEntry = {
 /** Supported IELTS-equivalent scales. */
 export type ConversionTarget = 'cefr' | 'toefl-ibt' | 'cambridge-english-scale' | 'pte-academic' | 'duolingo';
 
+/** Papers with a published raw-score (marks out of 40) to band conversion. */
+export type RawScoreTableId = 'listening' | 'academic-reading' | 'general-reading';
+
+/** One row of a raw-score conversion table. */
+export type RawScoreRow = {
+  /** Band score the raw range maps onto. */
+  band: BandScore;
+  /** Lowest raw mark in the range (inclusive). */
+  min: number;
+  /** Highest raw mark in the range (inclusive). */
+  max: number;
+};
+
+/** A raw-score to band conversion table for one paper. */
+export type RawScoreTable = {
+  /** Table identifier. */
+  id: RawScoreTableId;
+  /** Paper the table applies to. */
+  paper: 'listening' | 'reading';
+  /** IELTS module the table applies to. */
+  module: 'both' | 'academic' | 'general-training';
+  /** Maximum raw mark (correct answers). */
+  rawMax: number;
+  /** Organisation publishing the table. */
+  provider: string;
+  /** Public URL of the published table. */
+  sourceUrl: string;
+  /** Caveat surfaced in every response that uses this table. */
+  note: string;
+  /** Rows, ordered by band ascending. */
+  entries: RawScoreRow[];
+};
+
 /* -------------------------------------------------------------------------- */
 /* Tasks, topics and resources                                                */
 /* -------------------------------------------------------------------------- */
@@ -407,6 +440,52 @@ export type QuestionType = {
   answerFormat: string;
   /** Whether answers usually follow the order of the text. */
   followsTextOrder: boolean;
+  /** Chinese labels for the task family (e.g. `单选题`), aligned with the labels used by Chinese-language mock-exam platforms; empty when the surveyed platforms use no distinct label. */
+  aliasesZh: string[];
+};
+
+/** Exam-paper identifiers: one per paper and module combination. */
+export type ExamPaperId =
+  'listening' | 'academic-reading' | 'general-reading' | 'academic-writing' | 'general-writing' | 'speaking';
+
+/** One timed block of an exam paper. */
+export type ExamSection = {
+  /** Section name (e.g. `Part 2`). */
+  name: string;
+  /** What the section contains. */
+  detail: string;
+  /** Suggested minutes, when the format fixes one. */
+  minutes: number | null;
+};
+
+/** The published format of one IELTS paper: timing, structure and marking. */
+export type ExamPaper = {
+  /** Paper identifier. */
+  id: ExamPaperId;
+  /** Skill the paper assesses. */
+  skill: Skill;
+  /** IELTS module the paper belongs to. */
+  module: 'both' | 'academic' | 'general-training';
+  /** Display name. */
+  name: string;
+  /** One-paragraph original summary of the paper's format. */
+  summary: string;
+  /** Timed test duration in minutes. */
+  durationMinutes: number;
+  /** Extra transfer or checking time in minutes (`null` when none is given). */
+  transferMinutes: number | null;
+  /** Ordered sections or parts of the paper. */
+  sections: ExamSection[];
+  /** Total number of questions, or `null` for papers marked by task. */
+  questions: number | null;
+  /** Minimum words per task, or `null` for papers without a word count. */
+  wordMinimums: number[] | null;
+  /** How the paper is marked, in one original sentence. */
+  marking: string;
+  /** Raw-score table id for objectively marked papers, otherwise `null`. */
+  rawScoreTable: RawScoreTableId | null;
+  /** Related endpoint for the paper's task families or descriptors. */
+  relatedUrl: string;
 };
 
 /** A recurring IELTS exam theme. */

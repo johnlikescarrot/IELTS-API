@@ -24,13 +24,15 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships eleven kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
+raw-score conversion tables mapping correct answers out of 40 onto bands for the objectively marked
+papers; an exam-format reference covering timing, sections and marking for the six papers;
 original Writing and Speaking task banks built on the question families and word lists that recur in
 IELTS preparation material [@coxhead2000]; a canonical taxonomy of the thirteen IELTS Reading and
 Listening question types, onto which 65 free-text annotation labels are normalised, carrying the
-frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
+frequency of each family observed in 27,225 practice questions and searchable Chinese aliases; an original taxonomy of twelve
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
@@ -90,6 +92,20 @@ the published descriptors [@ieltsdescriptors].
 English Scale, PTE Academic and the Duolingo English Test, compiled from the providers' own published
 comparison tables [@coe2001]. Each response carries the provider, the source URL, the provenance and an explicit
 caveat that receiving institutions apply their own rules.
+
+**Raw-score tables and exam formats.** Correct answers out of 40 convert onto bands through three
+tables transcribed from the partners' published conversion charts [@idplistening; @idpreading]: one
+for Listening (both modules, bands 4.0-9.0) and one per Reading module (Academic 2.5-9.0, General
+Training 3.0-9.0, whose thresholds sit markedly higher — 30 marks buy band 7.0 on Academic but band
+6.0 on General Training). Every conversion reports its raw range, the indicative CEFR level, the
+next band and the marks still needed for it; marks below the lowest published row are reported as
+unmatched rather than guessed. The six papers' timing, sections, question and word counts, marking
+and transfer time are compiled as an original machine-readable format reference, cross-linked to
+the raw-score tables and the task families. Both datasets were designed after surveying an open
+online mock-exam test centre [@yysdtestcenter] — 377 indexed mock and practice items with
+auto-grading and band estimates — whose score reports and Chinese annotation vocabulary showed what
+an exam shell consumes and what the taxonomy was missing; nothing was copied from the surveyed
+repository.
 
 **Task banks.** 111 original Writing Task 2 prompts across 15 thematic categories and the five
 recurring question families (opinion, discussion, advantages/disadvantages, problem/solution,
@@ -178,7 +194,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (537 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -201,7 +217,8 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
 assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
 grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
-response that draws on them. IELTS is a jointly owned trademark of the
+response that draws on them. The scoring and format layer was designed after surveying the open
+mock-exam test centre assembled by `wanli4473`, likewise cited. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

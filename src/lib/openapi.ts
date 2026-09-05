@@ -7,7 +7,9 @@
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { EXAM_MODULES, EXAM_SKILLS } from '../data/exams.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
+import { RAW_SCORE_TABLE_IDS } from '../data/rawScores.js';
 import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
@@ -128,6 +130,31 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/scores/interpret': [
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
+  ],
+  '/v1/scores/raw': [
+    {
+      name: 'paper',
+      in: 'query',
+      required: true,
+      schema: { type: 'string', enum: [...RAW_SCORE_TABLE_IDS] },
+    },
+    {
+      name: 'raw',
+      in: 'query',
+      required: true,
+      description: 'Correct answers out of 40.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+  ],
+  '/v1/exams': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...EXAM_SKILLS] } },
+    {
+      name: 'module',
+      in: 'query',
+      description: 'Shared papers (listening, speaking) match every module.',
+      schema: { type: 'string', enum: [...EXAM_MODULES] },
+    },
   ],
   '/v1/topics/writing': [
     QUERY,
@@ -450,8 +477,9 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, a canonical',
-        'question-type taxonomy with observed frequencies, response frameworks for the',
+        'descriptors, score concordances, raw-score conversion tables and an exam-format',
+        'reference, Writing and Speaking task banks, a canonical question-type taxonomy',
+        'with observed frequencies and Chinese aliases, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, and an index of a 2,385-file',
         'self-study materials collection. The toolkit additionally scores any text',

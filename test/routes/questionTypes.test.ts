@@ -43,6 +43,18 @@ describe('GET /v1/question-types', () => {
     expect(empty.data).toHaveLength(0);
   });
 
+  it('searches the Chinese aliases shared with mock-exam platforms', async () => {
+    const gapFill = await server.json<QuestionTypeWithFrequency[]>(
+      `/v1/question-types?q=${encodeURIComponent('填空题')}`,
+    );
+    expect(gapFill.data.map((type) => type.id).sort()).toEqual(['sentence-completion', 'summary-completion']);
+
+    const single = await server.json<QuestionTypeWithFrequency[]>(
+      `/v1/question-types?q=${encodeURIComponent('单选题')}`,
+    );
+    expect(single.data.map((type) => type.id)).toEqual(['multiple-choice']);
+  });
+
   it('rejects unknown filters', async () => {
     expect((await server.json('/v1/question-types?skill=writing')).status).toBe(400);
     expect((await server.json('/v1/question-types?family=nope')).status).toBe(400);

@@ -11,7 +11,9 @@
  *
  * The guidance is original wording written for this project; the task families
  * themselves follow the public task descriptions published by the IELTS
- * partners.
+ * partners. Each family also carries its Chinese labels (`aliasesZh`), aligned
+ * with the annotation vocabulary of Chinese-language mock-exam platforms (see
+ * RESEARCH.md Part VI), so the taxonomy is searchable in both languages.
  */
 
 import { practiceStats } from './practiceTests.js';
@@ -41,6 +43,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'One letter (A, B, C or D).',
     followsTextOrder: true,
+    aliasesZh: ['单选题'],
   },
   {
     id: 'multiple-choice-multiple-answer',
@@ -61,6 +64,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'Two or three letters, in any order.',
     followsTextOrder: false,
+    aliasesZh: ['多选题'],
   },
   {
     id: 'true-false-not-given',
@@ -83,6 +87,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'TRUE, FALSE or NOT GIVEN.',
     followsTextOrder: true,
+    aliasesZh: ['判断题'],
   },
   {
     id: 'yes-no-not-given',
@@ -103,6 +108,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'YES, NO or NOT GIVEN.',
     followsTextOrder: true,
+    aliasesZh: ['判断题'],
   },
   {
     id: 'matching',
@@ -122,6 +128,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'One letter per item.',
     followsTextOrder: true,
+    aliasesZh: ['配对题'],
   },
   {
     id: 'matching-information',
@@ -142,6 +149,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'A paragraph letter.',
     followsTextOrder: false,
+    aliasesZh: ['段落匹配题'],
   },
   {
     id: 'matching-headings',
@@ -161,6 +169,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'A roman numeral.',
     followsTextOrder: false,
+    aliasesZh: ['选段意题', '标题对应题'],
   },
   {
     id: 'matching-features',
@@ -181,6 +190,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'One letter per statement.',
     followsTextOrder: false,
+    aliasesZh: ['细节匹配题', '配对题'],
   },
   {
     id: 'matching-sentence-endings',
@@ -200,6 +210,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'One letter per sentence.',
     followsTextOrder: true,
+    aliasesZh: [],
   },
   {
     id: 'sentence-completion',
@@ -219,6 +230,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'Words from the text, within the stated word limit.',
     followsTextOrder: true,
+    aliasesZh: ['填空题', '句子完成题'],
   },
   {
     id: 'summary-completion',
@@ -239,6 +251,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'Words from the text (within the word limit) or letters from a supplied list.',
     followsTextOrder: true,
+    aliasesZh: ['总结题', '填空题', '流程题'],
   },
   {
     id: 'diagram-label-completion',
@@ -258,6 +271,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'Words from the text, or letters marked on the figure.',
     followsTextOrder: true,
+    aliasesZh: ['地图题', '图表标签题'],
   },
   {
     id: 'short-answer',
@@ -277,6 +291,7 @@ export const QUESTION_TYPES: readonly QuestionType[] = [
     ],
     answerFormat: 'Words from the text, within the stated word limit.',
     followsTextOrder: true,
+    aliasesZh: ['简答题'],
   },
 ];
 

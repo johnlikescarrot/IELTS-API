@@ -33,7 +33,30 @@ describe('the question-type taxonomy', () => {
       expect(type.traps.length).toBeGreaterThanOrEqual(2);
       expect(type.answerFormat.length).toBeGreaterThan(3);
       expect(typeof type.followsTextOrder).toBe('boolean');
+      expect(Array.isArray(type.aliasesZh)).toBe(true);
+      for (const alias of type.aliasesZh) {
+        expect(alias.length).toBeGreaterThan(0);
+      }
     }
+  });
+
+  it('aligns the Chinese aliases with the surveyed mock-exam labels', () => {
+    const byAlias = new Map<string, string[]>();
+    for (const type of QUESTION_TYPES) {
+      for (const alias of type.aliasesZh) {
+        byAlias.set(alias, [...(byAlias.get(alias) ?? []), type.id]);
+      }
+    }
+    // Broad source labels stay broad: 填空题 covers both completion families,
+    // 判断题 covers both identification families, 配对题 covers matching twice.
+    expect(byAlias.get('填空题')?.sort()).toEqual(['sentence-completion', 'summary-completion']);
+    expect(byAlias.get('判断题')?.sort()).toEqual(['true-false-not-given', 'yes-no-not-given']);
+    expect(byAlias.get('配对题')?.sort()).toEqual(['matching', 'matching-features']);
+    // The surveyed taxonomies use no distinct label for sentence-ending
+    // matching, and the taxonomy says so with an empty list rather than a guess.
+    expect(QUESTION_TYPES.filter((type) => type.aliasesZh.length === 0).map((type) => type.id)).toEqual([
+      'matching-sentence-endings',
+    ]);
   });
 
   it('is the target of every normalised upstream label', () => {

@@ -100,9 +100,11 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>${corpus.ieltsRelevantFiles} of ${corpus.filesInRepository} upstream files</strong> indexed from the open research corpus (${(corpus.coverageRatio * 100).toFixed(1)}% IELTS-relevant); only metadata is published.</li>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
+  <li><strong>Raw-score conversion tables</strong> mapping correct answers out of 40 to bands for Listening, Academic Reading and General Training Reading, with the marks still needed for the next band.</li>
+  <li><strong>An exam-format reference</strong> for the six papers: timing, sections, question counts and marking, cross-linked to the raw-score tables and the task families.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
   <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
-  <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
+  <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance, observed frequencies and searchable Chinese aliases.</li>
   <li><strong>Response frameworks</strong> for Writing Task&nbsp;2 and Speaking Parts&nbsp;2&ndash;3: ordered stage plans with cue language and pitfalls, cross-linked to the task banks.</li>
   <li><strong>${materials.indexedFiles.toLocaleString('en-US')} study-material files</strong> indexed from a ${materials.filesInRepository.toLocaleString('en-US')}-file self-study collection (recall banks, question banks, templates, vocabulary; metadata only).</li>
   <li><strong>A grey-literature archive index</strong>: ${archive.audioTracks.toLocaleString('en-US')} listening tracks across Cambridge IELTS volumes 1&ndash;18 with a naming-scheme and completeness table, the ${archive.readingSamples.files} official sample tasks profiled for readability and question type, and ${archive.assignments.essays} marked learner essays summarised statistically (metadata only).</li>
@@ -159,8 +161,9 @@ and the archived Zenodo release both carry full metadata.</p>
 
 <footer>
   <p class="meta">Code licensed under MIT; datasets under CC BY 4.0. Band descriptors are original condensed
-  paraphrases written for this project and are not the official IELTS wording. Score concordances are indicative
-  and compiled from the providers&rsquo; own published comparison tables.</p>
+  paraphrases written for this project and are not the official IELTS wording. Score concordances and raw-score
+  tables are indicative and compiled from the providers&rsquo; own published comparison tables; real conversions
+  vary slightly between test versions.</p>
   <p class="meta"><a href="/openapi.json">OpenAPI 3.1 document</a> &middot; <a href="/health">health</a> &middot;
   <a href="${escapeHtml(repository)}">source repository</a></p>
 </footer>

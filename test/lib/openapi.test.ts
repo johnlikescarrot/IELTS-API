@@ -36,6 +36,16 @@ describe('openApiDocument', () => {
     expect(parameters.map((parameter) => parameter.name)).toContain('volume');
   });
 
+  it('declares the scoring and exam-format parameters', () => {
+    const raw = document.paths['/v1/scores/raw']?.get.parameters ?? [];
+    expect(raw.map((parameter) => parameter.name)).toEqual(['paper', 'raw']);
+    const exams = document.paths['/v1/exams']?.get.parameters ?? [];
+    expect(exams.map((parameter) => parameter.name)).toEqual(['q', 'skill', 'module']);
+    expect(document.paths['/v1/exams/:id']?.get.parameters ?? []).toEqual([
+      { name: 'id', in: 'path', required: true, schema: { type: 'string' } },
+    ]);
+  });
+
   it('leaves undocumented endpoints without parameters', () => {
     expect(document.paths['/health']?.get.parameters).toEqual([]);
   });

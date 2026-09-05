@@ -6,6 +6,51 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **scoring and format layer**: everything a mock-exam client needs to time a paper, mark it and
+report a band. The release is motivated by a survey of an open online IELTS test centre
+([`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter), 377 indexed mock and
+practice items with auto-grading and band estimates), which showed that the two primitives every
+exam shell needs — a raw-marks-to-band conversion and a machine-readable paper format — were the two
+this API did not publish. Nothing is copied from the surveyed repository (it declares no licence):
+the survey contributes descriptive statistics, a label crosswalk and the design, while every value
+below is transcribed from the IELTS partners' published charts or compiled as original wording. The
+API remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Raw-score conversion tables** (`GET /v1/scores/raw`, `GET /v1/scores/tables`): correct answers
+  out of 40 mapped onto bands for Listening (both modules), Academic Reading and General Training
+  Reading, transcribed from the partners' published conversion charts. Every conversion reports its
+  raw range, the indicative CEFR level, the next band and how many more marks it needs — the fields
+  a mock platform's score report consumes. Marks below the lowest published row (11 for Listening, 4
+  for Academic Reading, 9 for General Training) are reported as unmatched rather than guessed, and
+  every response carries the partners' own caveat that published conversions are averages that vary
+  slightly between test versions.
+- **Exam-format reference** (`GET /v1/exams`, `GET /v1/exams/:id`): an original compilation of the
+  published format of the six papers — timing, sections, question and word counts, marking and
+  transfer time — with raw-score cross-links for the objectively marked papers and task-family or
+  descriptor links for the rest. Module filters treat Listening and Speaking as the shared papers
+  they are: `module=academic` returns the four papers an Academic candidate sits.
+- **Bilingual question-type taxonomy**: every canonical type now carries its Chinese labels
+  (`aliasesZh`), aligned with the annotation vocabulary of Chinese-language mock-exam platforms and
+  searchable through the existing `q` parameter (`q=填空题` finds both completion families). Broad
+  source labels stay broad — 判断题 covers both identification families — and the one family the
+  surveyed taxonomies never label distinctly (matching sentence endings) keeps an honest empty list.
+- `RESEARCH.md` Part VI: the test-centre survey — manifest composition, the listening and reading
+  taxonomy structures, the score-reporting protocol that motivated `/v1/scores/raw`, the full
+  twelve-label crosswalk onto the canonical taxonomy, and the threats to validity (unlicensed source,
+  average-not-exact conversions, the paper/computer transfer-time split).
+- The service index, `/docs` and `/openapi.json` now report the scoring and format datasets.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.4.0; the keyword
+  lists now include raw-score conversion, test format and multilingual taxonomy.
+- Test suite grown to 537 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material

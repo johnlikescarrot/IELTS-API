@@ -26,7 +26,10 @@ function index(context: RouteContext): HandlerResult {
     if (family !== undefined && type.family !== family) {
       return false;
     }
-    if (query.length > 0 && !matchesQuery([type.id, type.name, type.description, type.assesses], query)) {
+    if (
+      query.length > 0 &&
+      !matchesQuery([type.id, type.name, type.description, type.assesses, ...type.aliasesZh], query)
+    ) {
       return false;
     }
     return true;
@@ -61,7 +64,8 @@ export const questionTypeRoutes: readonly RouteDefinition[] = [
     method: 'GET',
     path: '/v1/question-types',
     versioned: true,
-    summary: 'Canonical IELTS question-type taxonomy with strategies and observed frequencies.',
+    summary:
+      'Canonical IELTS question-type taxonomy with strategies, observed frequencies and Chinese aliases.',
     handler: index,
   },
   {

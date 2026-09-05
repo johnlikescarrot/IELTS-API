@@ -4,13 +4,14 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
+import { RAW_SCORE_TABLE_IDS, RAW_SCORE_TABLES, convertRawScore } from '../data/rawScores.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getInt, getNumber, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
-import type { ConversionEntry, Skill } from '../types.js';
+import type { ConversionEntry, RawScoreRow, Skill } from '../types.js';
 
 /** Read and validate one component of the test report. */
 function component(params: Record<string, string | string[] | undefined>, skill: Skill): number {
@@ -107,6 +108,78 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Convert a raw mark (correct answers out of 40) to a band score. */
+function rawScore(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const paper = getEnum(params, 'paper', RAW_SCORE_TABLE_IDS);
+  if (paper === undefined) {
+    throw badRequest('Parameter "paper" is required.', {
+      parameter: 'paper',
+      allowed: RAW_SCORE_TABLE_IDS.join(','),
+    });
+  }
+  const raw = getInt(params, 'raw', 0, 40, -1);
+  if (raw < 0) {
+    throw badRequest('Parameter "raw" is required.', { parameter: 'raw' });
+  }
+  const table = RAW_SCORE_TABLES[paper];
+  const hit = convertRawScore(paper, raw);
+  if (hit === undefined) {
+    // The tables are ascending and gap-free, so an unmatched mark always falls
+    // below the lowest published row; the floor row is guaranteed to exist.
+    const floor = table.entries[0] as RawScoreRow;
+    return {
+      data: {
+        paper,
+        module: table.module,
+        raw,
+        rawMax: table.rawMax,
+        band: null,
+        range: null,
+        display: null,
+        cefr: null,
+        nextBand: floor.band,
+        marksToNextBand: floor.min - raw,
+        matched: false,
+        provider: table.provider,
+        sourceUrl: table.sourceUrl,
+      },
+      meta: {
+        note: `Raw ${raw} falls below the lowest published row (${floor.min}–${floor.max}, band ${floor.band}); ${table.note}`,
+      },
+    };
+  }
+  return {
+    data: {
+      paper,
+      module: table.module,
+      raw,
+      rawMax: table.rawMax,
+      band: hit.band,
+      range: [hit.min, hit.max],
+      display: hit.display,
+      cefr: cefrForBand(hit.band),
+      nextBand: hit.nextBand,
+      marksToNextBand: hit.marksToNextBand,
+      matched: true,
+      provider: table.provider,
+      sourceUrl: table.sourceUrl,
+    },
+    meta: { note: table.note },
+  };
+}
+
+/** Every raw-score conversion table. */
+function tables(): HandlerResult {
+  return {
+    data: RAW_SCORE_TABLE_IDS.map((id) => RAW_SCORE_TABLES[id]),
+    meta: {
+      count: RAW_SCORE_TABLE_IDS.length,
+      note: 'Average marks required per the partners’ published conversion charts; actual conversions vary slightly between test versions.',
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -129,5 +202,19 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Map a score on another scale back to an indicative IELTS band.',
     handler: interpret,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw',
+    versioned: true,
+    summary: 'Convert a raw mark out of 40 to a band score (listening, academic or general reading).',
+    handler: rawScore,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/tables',
+    versioned: true,
+    summary: 'Every published raw-score to band conversion table.',
+    handler: tables,
   },
 ];

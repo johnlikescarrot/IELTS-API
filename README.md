@@ -25,7 +25,10 @@ vocabulary and the corpus index, [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][prac
 question-type taxonomy and the practice-test structure and readability index,
 [`Oxidaner/ielts`][materials] for the study-materials index, and [`msneloy/IELTS`][archive] for the
 grey-literature archive index. None is redistributed: the API publishes derived, non-substitutive
-metadata and statistics, plus original guidance datasets written for this project. See
+metadata and statistics, plus original guidance datasets written for this project. A fifth
+collection — an open online mock-exam test centre — was surveyed but never copied (it declares no
+licence): the survey motivated the raw-score conversions and the exam-format reference, and aligned
+the taxonomy’s Chinese labels. See
 [RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every dataset, and
 [paper/paper.md](paper/paper.md) for the short research paper.
 
@@ -36,7 +39,10 @@ writing sample into lexical, structural and theme measurements with descriptor-a
 indexes what preparation material looks like before anyone curates it: `/v1/archive` catalogues a
 5.4 GB grey-literature archive — the Cambridge IELTS 1-18 listening audio with a per-volume
 naming-scheme and completeness table, the twelve official sample tasks measured for readability, and
-24 marked learner essays summarised statistically.
+24 marked learner essays summarised statistically. It also grades like a test centre:
+`/v1/scores/raw` converts correct answers out of 40 into bands for the objectively marked papers,
+`/v1/exams` publishes the timing, sections and marking of each paper, and the question-type taxonomy
+carries searchable Chinese labels.
 
 ## Quick start
 
@@ -75,6 +81,12 @@ curl -s "http://localhost:3000/v1/materials/items?category=past-paper-recall"
 
 # The Cambridge 1-18 listening archive, volume by volume: naming era, tests, completeness
 curl -s "http://localhost:3000/v1/archive/volumes"
+
+# Raw 32 in Listening is band 7.5 — three more marks buy band 8
+curl -s "http://localhost:3000/v1/scores/raw?paper=listening&raw=32"
+
+# The Speaking paper: timing, sections, marking, descriptor links
+curl -s "http://localhost:3000/v1/exams/speaking"
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -96,12 +108,14 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
 | Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`             | Original compilation                                                           |
 | Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                         |
+| Raw-score conversion tables     |                  3 tables (11/14/13 rows), bands 2.5–9.0 | `/v1/scores/raw`        | Transcribed from the partners' published charts                                |
+| Exam format reference           |                      6 papers: timing, sections, marking | `/v1/exams`             | Original compilation                                                           |
 | Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                   |
 | Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                 |
 | Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`     | Original compilation                                                           |
 | Free resources                  |                                             27 resources | `/v1/resources`         | Original catalogue (free + no login only)                                      |
 | Research corpus index           |                                 76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                                |
-| Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
+| Question-type taxonomy          |                    13 types, 65 labels + Chinese aliases | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
 | Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
 | Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
@@ -133,12 +147,16 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
 | GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
 | GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
+| GET    | `/v1/scores/raw`          | Raw marks out of 40 to a band, with the next-band distance (`paper`, `raw`)                             |
+| GET    | `/v1/scores/tables`       | Every published raw-score conversion table                                                              |
 | GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
 | GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                        |
 | GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                           |
 | GET    | `/v1/tasks/writing`       | Writing Task 1 families (`module`)                                                                      |
-| GET    | `/v1/question-types`      | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)                |
+| GET    | `/v1/question-types`      | Question-type taxonomy with strategies, frequencies, Chinese aliases (`skill`, `family`, `q`)           |
 | GET    | `/v1/question-types/:id`  | One question type, with its traps and upstream label variants                                           |
+| GET    | `/v1/exams`               | Published format of every paper (`skill`, `module`, `q`)                                                |
+| GET    | `/v1/exams/:id`           | One paper, with sections, timing and scoring cross-links                                                |
 | GET    | `/v1/frameworks`          | Response frameworks for Writing Task 2 and Speaking Parts 2-3 (`section`, `skill`, `type`, `part`, `q`) |
 | GET    | `/v1/frameworks/:id`      | One framework, with its ordered stages, cue language and pitfalls                                       |
 | GET    | `/v1/tests`               | Practice-test index: provenance, statistics, facets                                                     |
@@ -177,6 +195,23 @@ GET /v1/scores/overall?listening=7&reading=6&writing=6&speaking=6
     "explanation": "The mean of the four components is 6.25, which falls exactly between two
                     bands; IELTS rounds a .25/.75 mean up, giving 6.5."
   }
+}
+```
+
+**Raw-score conversion.** Thirty correct answers mean different bands on different papers — 7.0 on
+Academic Reading but 6.0 on General Training — and the response always says how far the next band
+is, which is what a mock platform's score report needs.
+
+```jsonc
+GET /v1/scores/raw?paper=general-reading&raw=30
+{
+  "status": 200,
+  "data": {
+    "paper": "general-reading", "raw": 30, "rawMax": 40, "band": 6.0,
+    "range": [30, 31], "display": "30–31", "cefr": "B2",
+    "nextBand": 6.5, "marksToNextBand": 2, "matched": true, "...": "..."
+  },
+  "meta": { "note": "Average marks required per the published conversion chart; ..." }
 }
 ```
 
@@ -372,7 +407,7 @@ dataset has drifted. The practice-test index is validated for internal consisten
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 502 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 537 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -403,7 +438,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.3.0},
+  version = {1.4.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -434,6 +469,18 @@ Please also cite the upstream collections the datasets were derived from:
   author = {msneloy},
   year   = {2022},
   url    = {https://github.com/msneloy/IELTS}
+}
+```
+
+The scoring layer was designed after surveying a fifth collection, cited here as related work
+rather than a data source — nothing was copied from it:
+
+```bibtex
+@misc{yysd_testcenter,
+  title  = {YYSD IELTS online mock-exam test center},
+  author = {wanli4473},
+  year   = {2026},
+  url    = {https://github.com/wanli4473/yysd-testcenter}
 }
 ```
 

@@ -3,7 +3,7 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Six parts, four upstream collections and one surveyed test centre:
 
 | Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
@@ -12,8 +12,11 @@ Five parts, four upstream collections:
 | [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
 | [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
 | [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| [Part VI](#part-vi--the-test-centre-survey)                                     | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | surveyed 2026-09-05            | design insight only: the raw-score conversions, the exam-format reference and the taxonomy's Chinese aliases       |
 
-None of the collections is redistributed. All are indexed, measured and cited.
+None of the collections is redistributed. All are indexed, measured and cited. A fifth repository
+— an online mock-exam test centre — is surveyed for design insight in Part VI and cited as related
+work; nothing is copied from it.
 
 ## Part I — the research corpus
 
@@ -681,3 +684,157 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the test-centre survey
+
+_Upstream: [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter), surveyed
+2026-09-05 through the GitHub API (tree and contents listings; the repository was never cloned).
+3,713 files, default branch `main`, no licence file. The survey contributes descriptive statistics,
+a label crosswalk and three design decisions; nothing — no item, no passage, no recording, no word
+list — is copied, transcribed or re-derived from it._
+
+### 29. What the test centre is
+
+Where Parts I, II, IV and V index _collections_ of material, this repository is an operating
+_mock-exam platform_: 优益思达雅思考试中心, a Chinese-language IELTS online test centre with a
+static HTML front end, an Express + SQLite Node API (login, score sync, teacher assignment, AI
+marking behind a quota), a computer-delivered-test exam shell with a three-skill score report, and
+a teacher end for scheduling work. Two optional sub-applications (rankings, admissions) sit
+alongside. Content lives in `library/`, indexed by a CI-generated `manifest.json`; each mock paper
+is a self-contained HTML file with its audio, auto-marking and a band estimate.
+
+That architecture is the point of the survey. This API had grown four dataset families without ever
+asking what an exam shell actually consumes at runtime. Reading the test centre's content index,
+its annotation taxonomies and its score-reporting protocol answers the question precisely — and two
+of the three answers were datasets this API did not publish.
+
+### 30. The manifest and the taxonomies
+
+The manifest (`library/manifest.json`, generated 2026-09-02, 377 items) splits into mock papers,
+drills and word books:
+
+| Zone     | Subject              | Items | Content                                                 |
+| -------- | -------------------- | ----: | ------------------------------------------------------- |
+| mock     | cambridge-listening  |    72 | Cambridge listening mocks with audio and auto-marking   |
+| mock     | cambridge-reading    |    76 | Cambridge reading mocks with auto-marking               |
+| mock     | cambridge-writing    |    74 | Cambridge writing mocks                                 |
+| mock     | ielts                |     4 | General IELTS mocks                                     |
+| practice | changnanju           |     7 | Long-difficult-sentence drills                          |
+| practice | ielts/jingting/shuzi |     3 | General practice, intensive listening, number dictation |
+| study    | vocab (+cet4, +lite) |   108 | General and CET-4 word books                            |
+| study    | vocab-special-*      |    32 | Listening / reading / writing skill-specific word books |
+| study    | grammar              |     1 | Grammar notes                                           |
+
+Two taxonomy files annotate the Cambridge mocks at question-group level
+(`listening-taxonomy.json`: 530 groups; `reading-taxonomy.json`: 569 groups), each group carrying
+a question-type label, a scene label and a difficulty tag (易 / 中 / 难):
+
+| Taxonomy  | Type labels | Scene labels | Difficulty | Groups |
+| --------- | ----------: | -----------: | ---------: | -----: |
+| listening |           7 |           16 | 3 (易中难) |    530 |
+| reading   |           8 |            8 | 3 (易中难) |    569 |
+
+The listening scenes (求职 job-hunting, 旅游 travel, 住宿 accommodation, 课题研究 research
+discussion, …) read as the classic IELTS listening scenario inventory; the reading scenes (历史发展,
+自然科技, 社会人文, …) are the standard Academic passage domains. The difficulty tags, however, are
+sparsely populated — the surveyed rows leave `diff` empty more often than not — and both annotation
+layers are subjective platform metadata rather than measurement, so neither is adopted (§33).
+
+### 31. What the score protocol demands
+
+A finished paper reports to its parent frame with one message:
+
+```js
+parent.postMessage({ type: 'yysd:score', score: 32, total: 40, band: 7 }, '*');
+```
+
+`score` (correct), `total` (40) and `band` (estimated). That triple is the whole runtime contract
+between a paper and its shell — and this API could not serve it. `/v1/scores/overall` averages
+component bands and `/v1/scores/convert` maps bands across scales, but nothing converted the raw
+marks an auto-marker produces into the band a report displays. `/v1/scores/raw` is that missing
+primitive, shaped by the protocol: it takes the paper and the raw mark and returns the band, the
+raw range, the indicative CEFR level and — the field a score report turns into its progress bar —
+the next band with the marks still needed for it.
+
+The shell needs a second dataset the API lacked: the paper formats themselves. The centre stores
+per-paper durations as `exam:duration` meta tags and builds countdown timers, section shells and
+report pages on top. `/v1/exams` publishes the same facts — timing, sections, question and word
+counts, marking, transfer time — as one machine-readable reference with cross-links to the
+raw-score tables and the task families, so any shell can configure itself from it instead of
+scraping marketing pages.
+
+### 32. The crosswalk: twelve Chinese labels onto thirteen canonical types
+
+The test centre annotates entirely in Chinese; this API's taxonomy was English-only. The twelve
+distinct labels across the two taxonomies (fifteen slots, three shared) align onto the canonical
+taxonomy of Part II as follows — the alignment is this project's own analysis, published here so it
+can be re-made:
+
+| Label      | Used in            | Canonical type(s)                           | Notes                                   |
+| ---------- | ------------------ | ------------------------------------------- | --------------------------------------- |
+| 填空题     | listening, reading | `sentence-completion`, `summary-completion` | gap-fill, the broad completion label    |
+| 配对题     | listening          | `matching`, `matching-features`             | matching                                |
+| 单选题     | listening, reading | `multiple-choice`                           | single-choice                           |
+| 多选题     | listening, reading | `multiple-choice-multiple-answer`           | multi-choice                            |
+| 地图题     | listening          | `diagram-label-completion`                  | map labelling                           |
+| 流程题     | listening          | `summary-completion`                        | flow-chart completion (see §33)         |
+| 简答题     | listening          | `short-answer`                              | short answer                            |
+| 总结题     | reading            | `summary-completion`                        | summary completion                      |
+| 判断题     | reading            | `true-false-not-given`, `yes-no-not-given`  | judgement, both identification families |
+| 段落匹配题 | reading            | `matching-information`                      | paragraph matching                      |
+| 细节匹配题 | reading            | `matching-features`                         | detail matching                         |
+| 选段意题   | reading            | `matching-headings`                         | heading selection                       |
+
+The taxonomy carries these as `aliasesZh`, searchable through the existing `q` parameter, with
+three standard pedagogical variants added for recall (句子完成题, 标题对应题, 图表标签题). Three
+properties of the crosswalk are deliberate:
+
+- **Broad labels stay broad.** 填空题, 配对题 and 判断题 each cover two canonical types, exactly as
+  they do upstream; a query for 判断题 returns both identification families, which is what the
+  label means.
+- **The gap is visible, not filled.** No surveyed label distinguishes matching sentence endings,
+  so `matching-sentence-endings` carries an empty alias list. Those items are presumably annotated
+  as 填空题 or 配对题 upstream; the taxonomy records the absence rather than guessing.
+- **Short labels are not copying.** Single generic terms (单选题 = "single-choice question") are
+  standard pedagogical vocabulary, not copyrightable expression; the selection, alignment and
+  documentation are original analysis. The repository's unlicensed status is precisely why the
+  survey stops at labels and statistics.
+
+### 33. Threats to validity (Part VI)
+
+- **The source is unlicensed and mutable.** The repository declares no licence, has no tags and may
+  change; the manifest generation date (2026-09-02) and the survey date (2026-09-05) pin the
+  statistics, and nothing beyond short labels and counts is taken from it.
+- **Conversions are averages, not exact.** The published charts state that real conversions vary
+  slightly between test versions; every response repeats the caveat. Corroborating secondary
+  sources agree everywhere except the General Training 7.5/8.0 boundary, where one source reads
+  36-37/38 against the published 36/37-38 — a ±1-mark disagreement of exactly the kind the caveat
+  warns about. The tables follow the partners' published chart.
+- **Transfer time splits by delivery mode.** The ten listening transfer minutes are the paper-based
+  format; computer-delivered candidates get two minutes to check answers instead. The data records
+  the paper-based canonical value and this section records the split.
+- **The crosswalk merges genuine distinctions.** Judgement items about facts and about views share
+  one label upstream and therefore share aliases here; 流程题 is genuinely ambiguous between
+  flow-chart completion (`summary-completion`, the common paper format, chosen here) and process
+  labelling (`diagram-label-completion`). Both decisions are published above so they can be
+  re-argued.
+- **Scenes and difficulty are not adopted.** The 24 scene labels are a reasonable inventory but a
+  subjective one, and the difficulty tags are too sparsely populated to calibrate against. The
+  taxonomy maps what is annotated reliably — the task families — and leaves the rest to the
+  platform that wrote it.
+
+### 34. Reproducing Part VI
+
+The survey is read-only and needs no clone:
+
+```bash
+gh api repos/wanli4473/yysd-testcenter/git/trees/main?recursive=1 \
+  --jq '[.tree[] | .path] | length'                       # 3,713 files
+gh api repos/wanli4473/yysd-testcenter/contents/library/manifest.json \
+  --jq '.content' | base64 -d | python3 -c 'import json,sys; print(json.load(sys.stdin)["count"])'
+gh api repos/wanli4473/yysd-testcenter/contents/library/listening-taxonomy.json \
+  --jq '.content' | base64 -d | python3 -c 'import json,sys; print(sorted(json.load(sys.stdin).keys()))'
+```
+
+The manifest counts and taxonomy shapes above are what these commands returned on 2026-09-05; the
+crosswalk itself is analysis, pinned by the test suite like the rest of the taxonomy.

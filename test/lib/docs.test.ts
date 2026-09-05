@@ -34,6 +34,8 @@ describe('renderDocs', () => {
     expect(page).toContain('https://github.com/johnlikescarrot/IELTS-API');
     expect(page).toContain('MIT');
     expect(page).toContain('CC BY 4.0');
+    expect(page).toContain('Raw-score conversion tables');
+    expect(page).toContain('exam-format reference');
   });
 
   it('escapes the values it interpolates', () => {
