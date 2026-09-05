@@ -81,6 +81,7 @@ jobs:
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           CHECKOV_FILE_NAME: .checkov.yml
           YAML_CONFIG_FILE: .yamllint.yml
+          EDITORCONFIG_FILE_NAME: .ecrc
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Surface the details in the job summary and the log when linting fails,
