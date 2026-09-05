@@ -132,3 +132,200 @@ describe('GET /v1/scores/interpret', () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
   });
 });
+
+interface RawConversion {
+  module: string;
+  moduleName: string;
+  correct: number;
+  outOf: number;
+  scaledCorrect: number;
+  percentage: number;
+  band: number;
+  cefr: string;
+  label: string;
+  bandRange: { minCorrect: number; maxCorrect: number };
+  nextBand: { band: number; minCorrect: number; marksNeeded: number } | null;
+  sensitivity: { minusOne: number | null; plusOne: number | null; stable: boolean };
+  target: { band: number; minCorrect: number | null; marksNeeded: number | null; achieved: boolean } | null;
+}
+
+describe('GET /v1/scores/raw', () => {
+  it('converts an Academic Reading raw score', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=reading-academic&correct=29');
+    expect(response.status).toBe(200);
+    expect(response.data.band).toBe(6.5);
+    expect(response.data.moduleName).toBe('Academic Reading');
+    expect(response.data.bandRange).toEqual({ minCorrect: 27, maxCorrect: 29 });
+    expect(response.data.nextBand).toEqual({ band: 7, minCorrect: 30, marksNeeded: 1 });
+    expect(response.meta.provenance).toBe('indicative-consensus');
+    expect(response.meta.note).toContain('equates every test version separately');
+  });
+
+  it('applies a different table to General Training Reading', async () => {
+    const academic = await server.json<RawConversion>('/v1/scores/raw?module=reading-academic&correct=30');
+    const general = await server.json<RawConversion>('/v1/scores/raw?module=reading-general&correct=30');
+    expect(academic.data.band).toBe(7);
+    expect(general.data.band).toBe(6);
+  });
+
+  it('converts a Listening raw score', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=listening&correct=30');
+    expect(response.data.band).toBe(7);
+    expect(response.data.cefr).toBe('C1');
+    expect(response.data.percentage).toBe(75);
+  });
+
+  it('flags a raw score that sits on a band boundary', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=listening&correct=30');
+    expect(response.data.sensitivity).toEqual({ minusOne: 6.5, plusOne: 7, stable: false });
+    expect(response.meta.threshold).toContain('band boundary');
+  });
+
+  it('does not flag a raw score in the middle of a band', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=listening&correct=24');
+    expect(response.data.sensitivity.stable).toBe(true);
+    expect(response.meta.threshold).toBeUndefined();
+  });
+
+  it('rescales a shorter practice section and says so', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=listening&correct=7&outOf=10');
+    expect(response.data.scaledCorrect).toBe(28);
+    expect(response.data.band).toBe(6.5);
+    expect(response.meta.rescaling).toContain('Rescaling is not equating');
+    expect(response.meta.rescaling).toContain('moves the scaled score by 4.0');
+  });
+
+  it('omits the rescaling note for a full paper', async () => {
+    const response = await server.json('/v1/scores/raw?module=listening&correct=20&outOf=40');
+    expect(response.meta.rescaling).toBeUndefined();
+  });
+
+  it('reports progress towards a target band', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=listening&correct=26&target=7');
+    expect(response.data.target).toEqual({ band: 7, minCorrect: 30, marksNeeded: 4, achieved: false });
+  });
+
+  it('reports a target that has already been reached', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=listening&correct=36&target=7');
+    expect(response.data.target?.achieved).toBe(true);
+    expect(response.data.target?.marksNeeded).toBe(0);
+  });
+
+  it('accepts a raw score of zero', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=listening&correct=0');
+    expect(response.status).toBe(200);
+    expect(response.data.band).toBe(2.5);
+  });
+
+  it('accepts full marks', async () => {
+    const response = await server.json<RawConversion>('/v1/scores/raw?module=listening&correct=40');
+    expect(response.data.band).toBe(9);
+    expect(response.data.nextBand).toBeNull();
+    expect(response.data.sensitivity.plusOne).toBeNull();
+  });
+
+  it('requires the module', async () => {
+    const response = await server.json('/v1/scores/raw?correct=30');
+    expect(response.status).toBe(400);
+    expect((response.meta.error as { details: Record<string, string> }).details.allowed).toContain(
+      'reading-general',
+    );
+  });
+
+  it('rejects an unknown module', async () => {
+    expect((await server.json('/v1/scores/raw?module=writing&correct=30')).status).toBe(400);
+  });
+
+  it('requires the raw score', async () => {
+    const response = await server.json('/v1/scores/raw?module=listening');
+    expect(response.status).toBe(400);
+    expect((response.meta.error as { details: Record<string, string> }).details.parameter).toBe('correct');
+  });
+
+  it('rejects a raw score outside 0-40', async () => {
+    expect((await server.json('/v1/scores/raw?module=listening&correct=41')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?module=listening&correct=-1')).status).toBe(400);
+  });
+
+  it('rejects a raw score that exceeds the section length', async () => {
+    const response = await server.json('/v1/scores/raw?module=listening&correct=9&outOf=5');
+    expect(response.status).toBe(400);
+    expect((response.meta.error as { message: string }).message).toContain('cannot exceed');
+  });
+
+  it('rejects an out-of-range section length', async () => {
+    expect((await server.json('/v1/scores/raw?module=listening&correct=1&outOf=0')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?module=listening&correct=1&outOf=41')).status).toBe(400);
+  });
+
+  it('rejects a target that is not a reportable band', async () => {
+    expect((await server.json('/v1/scores/raw?module=listening&correct=30&target=7.25')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/scores/raw/tables', () => {
+  interface TablesPayload {
+    tables: {
+      module: string;
+      rows: { band: number; minCorrect: number; maxCorrect: number }[];
+      anchors: { band: number; marks: number }[];
+      provenance: string;
+    }[];
+    variants: {
+      id: string;
+      module: string;
+      disagreements: { correct: number; consensusBand: number; variantBand: number }[];
+      disagreeingScores: number;
+      agreementRate: number;
+    }[];
+  }
+
+  it('publishes all three tables with their official anchors', async () => {
+    const response = await server.json<TablesPayload>('/v1/scores/raw/tables');
+    expect(response.status).toBe(200);
+    expect(response.data.tables.map((table) => table.module)).toEqual([
+      'listening',
+      'reading-academic',
+      'reading-general',
+    ]);
+    expect(response.meta.count).toBe(3);
+    expect(response.meta.totalQuestions).toBe(40);
+    expect(response.meta.caveat).toContain('no official raw-score table exists');
+    for (const table of response.data.tables) {
+      expect(table.provenance).toBe('indicative-consensus');
+      expect(table.anchors.length).toBeGreaterThan(0);
+      expect(table.rows[0]?.maxCorrect).toBe(40);
+    }
+  });
+
+  it('computes where published sources disagree', async () => {
+    const response = await server.json<TablesPayload>('/v1/scores/raw/tables');
+    const variant = response.data.variants.find((entry) => entry.id === 'general-upper-bands');
+    expect(variant).toBeDefined();
+    expect(variant?.disagreements).toEqual([{ correct: 37, consensusBand: 8, variantBand: 7.5 }]);
+    expect(variant?.disagreeingScores).toBe(1);
+    expect(variant?.agreementRate).toBe(97.6);
+    expect(response.meta.disagreementMethod).toContain('41 possible raw scores');
+  });
+
+  it('filters both tables and variants by module', async () => {
+    const response = await server.json<TablesPayload>('/v1/scores/raw/tables?module=listening');
+    expect(response.data.tables).toHaveLength(1);
+    expect(response.data.tables[0]?.module).toBe('listening');
+    expect(response.meta.count).toBe(1);
+    expect(response.data.variants.length).toBeGreaterThan(0);
+    for (const variant of response.data.variants) {
+      expect(variant.module).toBe('listening');
+    }
+  });
+
+  it('returns no variants for a module that has none recorded', async () => {
+    const response = await server.json<TablesPayload>('/v1/scores/raw/tables?module=reading-academic');
+    expect(response.data.tables).toHaveLength(1);
+    expect(response.data.variants).toEqual([]);
+  });
+
+  it('rejects an unknown module', async () => {
+    expect((await server.json('/v1/scores/raw/tables?module=speaking')).status).toBe(400);
+  });
+});

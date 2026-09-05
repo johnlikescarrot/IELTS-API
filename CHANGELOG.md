@@ -6,6 +6,48 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses
+to do it. IELTS marks Listening and Reading out of 40 and converts to the nine-band scale with a
+lookup table it does not publish — only the average marks scored at whole bands, with the warning
+that the precise thresholds "vary slightly from test version to test version". A de facto table
+circulates instead, copied inline into preparation software without provenance. This release
+publishes that table once, as a citable artefact, validated against every figure IELTS does publish.
+The API remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Raw-score conversion** (`GET /v1/scores/raw`): a raw score out of 40 to a band, with the band's
+  raw-score range, the marks still needed for the next band, a `sensitivity` block reporting the band
+  at one mark fewer and one mark more, and optional progress towards a `target` band. `module` is
+  required and has three values — `listening`, `reading-academic`, `reading-general` — with no
+  default and no inference.
+- **The three conversion tables** (`GET /v1/scores/raw/tables`), each carrying the official average
+  marks it is validated against. All twelve published anchors fall inside the row the table assigns
+  to them; the rows partition 0-40 exactly; General Training never scores above Academic at any raw
+  score. Every table is labelled `indicative-consensus`, never "official".
+- **Measured disagreement between sources**: three alternative published tables are recorded in full,
+  and the API computes exhaustively — over all 41 raw scores — where each disagrees with the
+  consensus (agreement 97.6%, 87.8% and 53.7%). Modern sources agree almost perfectly from band 5.5
+  up and diverge in the tail below band 4.5.
+- **Short-section rescaling** (`outOf`): a drill of fewer than 40 questions is rescaled
+  proportionally, and the response says so — one mark on a 10-question section moves the scaled
+  score by four, and rescaling is not equating.
+- `RESEARCH.md` Part VI: the missing-table problem, a field survey of a live mock-exam platform
+  ([`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter): 148 papers call the
+  conversion helper, 104 define a table inline, 44 define none and fall back to a shim that guesses
+  the module with `/reading/i.test(examId)` and so has no General Training branch), construction and
+  validation, the disagreement survey, why rescaling is not equating, and the threats to validity.
+- The service index, `/health`, `/docs` and `/openapi.json` now report the raw-score tables.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json`, `.zenodo.json` and the README citation block cite version 1.4.0;
+  the keyword lists now include score conversion and psychometrics.
+- Test suite grown to 573 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material
@@ -182,6 +224,9 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
+[1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

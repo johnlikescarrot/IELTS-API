@@ -114,6 +114,145 @@ export type ConversionEntry = {
 export type ConversionTarget = 'cefr' | 'toefl-ibt' | 'cambridge-english-scale' | 'pte-academic' | 'duolingo';
 
 /* -------------------------------------------------------------------------- */
+/* Raw-score to band conversion                                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The three objectively-marked papers, each of which converts a raw score out
+ * of 40 to a band on its own scale.
+ *
+ * Listening uses one table for both modules; Reading uses two, because a
+ * General Training candidate must answer more questions correctly to reach the
+ * same band.
+ */
+export type RawScoreModule = 'listening' | 'reading-academic' | 'reading-general';
+
+/** One contiguous run of raw scores that maps to a single band. */
+export type RawBandRow = {
+  /** Band awarded for any raw score in this row. */
+  band: BandScore;
+  /** Lowest raw score that earns {@link RawBandRow.band}. */
+  minCorrect: number;
+  /** Highest raw score that earns {@link RawBandRow.band}. */
+  maxCorrect: number;
+};
+
+/**
+ * A mark published by IELTS as the *average* raw score seen at a whole band.
+ *
+ * These are the only figures the test partners publish, and they are averages
+ * rather than thresholds; they are used here to validate the consensus table
+ * rather than to build it.
+ */
+export type RawScoreAnchor = {
+  /** Whole band the anchor describes. */
+  band: BandScore;
+  /** Average marks out of 40 reported at that band. */
+  marks: number;
+};
+
+/** A published raw-score conversion table for one paper. */
+export type RawScoreTable = {
+  /** Paper the table applies to. */
+  module: RawScoreModule;
+  /** Human-readable name of the paper. */
+  name: string;
+  /** Number of questions on the paper (always 40). */
+  totalQuestions: number;
+  /** Rows, ordered from the highest band down. */
+  rows: readonly RawBandRow[];
+  /** Average marks published by IELTS for whole bands. */
+  anchors: readonly RawScoreAnchor[];
+  /** Where the anchor marks are published. */
+  anchorSourceUrl: string;
+  /** How the table should be interpreted. */
+  provenance: 'indicative-consensus';
+  /** Caveat surfaced in every response that uses this table. */
+  note: string;
+};
+
+/**
+ * An alternative table published elsewhere, kept so that the API can report
+ * exactly where widely-cited sources disagree with the consensus.
+ */
+export type RawScoreVariant = {
+  /** Stable identifier. */
+  id: string;
+  /** Paper the variant applies to. */
+  module: RawScoreModule;
+  /** Short description of who publishes it. */
+  label: string;
+  /** Where the variant is published. */
+  sourceUrl: string;
+  /** Why the variant differs. */
+  note: string;
+  /** `[minCorrect, band]` thresholds, ordered from the highest band down. */
+  thresholds: readonly (readonly [number, number])[];
+};
+
+/** One raw score at which a variant disagrees with the consensus table. */
+export type RawScoreDisagreement = {
+  /** Raw score out of 40. */
+  correct: number;
+  /** Band awarded by the consensus table. */
+  consensusBand: BandScore;
+  /** Band awarded by the variant. */
+  variantBand: BandScore;
+};
+
+/** How the band would move if the raw score were one mark different. */
+export type RawScoreSensitivity = {
+  /** Band at one mark fewer, or `null` at a raw score of 0. */
+  minusOne: BandScore | null;
+  /** Band at one mark more, or `null` at full marks. */
+  plusOne: BandScore | null;
+  /** `true` when neither neighbouring mark changes the band. */
+  stable: boolean;
+};
+
+/** Progress towards a band the candidate is aiming for. */
+export type RawScoreTarget = {
+  /** Band requested by the client. */
+  band: BandScore;
+  /** Lowest raw score that earns it, or `null` when unreachable. */
+  minCorrect: number | null;
+  /** Additional marks still required (0 once achieved). */
+  marksNeeded: number | null;
+  /** Whether the supplied raw score already earns the target. */
+  achieved: boolean;
+};
+
+/** The result of converting a raw score to a band. */
+export type RawScoreConversion = {
+  /** Paper the conversion used. */
+  module: RawScoreModule;
+  /** Human-readable name of the paper. */
+  moduleName: string;
+  /** Raw score supplied by the client. */
+  correct: number;
+  /** Number of questions the raw score was out of. */
+  outOf: number;
+  /** Raw score rescaled to 40 questions (equal to `correct` when `outOf` is 40). */
+  scaledCorrect: number;
+  /** Percentage of questions answered correctly, to one decimal place. */
+  percentage: number;
+  /** Band awarded. */
+  band: BandScore;
+  /** Indicative CEFR level of the band. */
+  cefr: string;
+  /** IELTS proficiency label for the band. */
+  label: string;
+  /** Raw-score run that earns this band. */
+  bandRange: { minCorrect: number; maxCorrect: number };
+  /** The next band up, or `null` at band 9. */
+  nextBand: { band: BandScore; minCorrect: number; marksNeeded: number } | null;
+  /** How fragile the band is to a single mark. */
+  sensitivity: RawScoreSensitivity;
+  /** Progress towards a requested target band, when one was supplied. */
+  target: RawScoreTarget | null;
+};
+
+/* -------------------------------------------------------------------------- */
 /* Tasks, topics and resources                                                */
 /* -------------------------------------------------------------------------- */
 

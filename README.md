@@ -38,6 +38,14 @@ indexes what preparation material looks like before anyone curates it: `/v1/arch
 naming-scheme and completeness table, the twelve official sample tasks measured for readability, and
 24 marked learner essays summarised statistically.
 
+And it closes the gap between a mark sheet and a band: `/v1/scores/raw` converts a Listening or
+Reading raw score out of 40 into a band on the right table — Academic and General Training Reading
+are scored differently, and conflating them is worth a whole band at four raw scores — then reports
+how many marks the next band needs and how the band would move if one answer went the other way.
+IELTS publishes no official conversion table, only the average marks scored at whole bands, so
+`/v1/scores/raw/tables` publishes the reconstructed tables together with the exact raw scores at
+which widely-cited sources disagree. See [RESEARCH.md](RESEARCH.md) Part VI.
+
 ## Quick start
 
 ```bash
@@ -51,6 +59,9 @@ curl -s "http://localhost:3000/v1/vocabulary?q=environment&limit=3"
 
 # Overall band score, with the IELTS rounding rule applied
 curl -s "http://localhost:3000/v1/scores/overall?listening=7&reading=6.5&writing=6&speaking=7"
+
+# 29 correct out of 40: the band, how far the next one is, and how safe the score is
+curl -s "http://localhost:3000/v1/scores/raw?module=reading-academic&correct=29&target=7"
 
 # One headword, with phonetics, senses and morpheme hints
 curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
@@ -96,6 +107,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
 | Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`             | Original compilation                                                           |
 | Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                         |
+| Raw-score conversion tables     |            3 papers x 41 raw scores, 12 official anchors | `/v1/scores/raw`        | Reconstructed consensus, validated against ielts.org published averages        |
 | Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                   |
 | Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                 |
 | Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`     | Original compilation                                                           |
@@ -131,6 +143,8 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/bands/descriptors`   | Band descriptors (`set`, `criterion`, `band`)                                                           |
 | GET    | `/v1/bands/:band`         | One band, with the descriptors that bracket it                                                          |
 | GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
+| GET    | `/v1/scores/raw`          | Raw score out of 40 to a band (`module`, `correct`, `outOf`, `target`)                                  |
+| GET    | `/v1/scores/raw/tables`   | The three conversion tables, with measured disagreement between published sources                       |
 | GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
 | GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
 | GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
@@ -403,7 +417,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.3.0},
+  version = {1.4.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }

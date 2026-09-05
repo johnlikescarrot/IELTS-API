@@ -681,3 +681,193 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the raw-score conversion tables
+
+_Upstream: no upstream. Part VI is a reconstruction, validated against the figures published at
+[ielts.org](https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail) and compared against
+a field survey of a working mock-exam platform,
+[`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter). The dataset lives in
+`src/data/rawScores.ts`; the endpoints are `/v1/scores/raw` and `/v1/scores/raw/tables`._
+
+### 29. The table that everyone uses and nobody publishes
+
+Listening and Reading are objectively marked out of 40 and converted to the nine-band scale by a
+lookup table. That conversion is the single most frequently performed calculation in IELTS
+preparation. It is also the one piece of the scoring system that the test partners do **not**
+publish.
+
+What ielts.org publishes is four numbers per paper — the _average_ marks scored at whole bands —
+together with an explicit warning:
+
+> The precise number of marks needed to achieve these band scores will vary slightly from test
+> version to test version.
+
+| Paper                    | Band 4 | Band 5 | Band 6 | Band 7 | Band 8 |
+| ------------------------ | -----: | -----: | -----: | -----: | -----: |
+| Listening                |      — |     16 |     23 |     30 |     35 |
+| Academic Reading         |      — |     15 |     23 |     30 |     35 |
+| General Training Reading |     15 |     23 |     30 |     35 |      — |
+
+The warning is not boilerplate. Every IELTS version is equated separately, so the raw score that
+earns band 7 genuinely differs between sittings. A fixed table is therefore, in the strict
+psychometric sense, wrong — and yet preparation software cannot function without one.
+
+So a _de facto_ table circulates instead. It appears in coaching handouts, score calculators and
+test-centre software, almost always inline and almost always without provenance. Part VI publishes
+that table once, as a citable artefact, with the three properties the circulating copies lack:
+validation against the official averages, honest provenance, and a measurement of where reputable
+sources disagree.
+
+### 30. What a real deployment looks like
+
+The reference platform surveyed here is `yysd-testcenter`, a live IELTS and A-Level mock-exam centre
+serving Cambridge practice papers as static HTML. Its scoring behaviour was measured directly from
+the repository at clone time:
+
+| Measurement                                                | Count |
+| ---------------------------------------------------------- | ----: |
+| Papers that call `lookupBand(correct, total)`              |   148 |
+| Papers that define a `BAND_TABLE` literal inline           |   104 |
+| Distinct table literals among those definitions            |     2 |
+| Papers that call `lookupBand` **without** defining a table |    44 |
+
+Three findings follow, and each of them motivates a design decision in this API.
+
+**The table is copied, not referenced.** 104 papers carry their own copy of the same 14- or 15-row
+array. The copies happen to agree today — the survey found exactly two distinct literals, one per
+skill, with no drift — but agreement is maintained by nothing except care, across 104 files.
+
+**Nearly a third of papers have no table at all.** 44 papers call `lookupBand` without defining it.
+The platform patches this at runtime: a shim in `assets/js/exam-bridge.js` injects a fallback,
+carrying a maintainer's comment recording the failure it was written to fix — older papers "call
+`lookupBand`/`levelLabel` but omit the defs — submit then throws after locking `submitted`", leaving
+the candidate unable to submit. Scoring logic duplicated into content files is scoring logic that
+goes missing.
+
+**The fallback guesses the module from the file name.** The shim selects its table with
+`/reading/i.test(examId)` — a regex over the exam identifier — and so recognises exactly two cases,
+Reading and not-Reading. There is no General Training branch. Any GT Reading paper routed through
+the fallback is scored on the Academic table.
+
+That last one is not a rounding error. Across the 41 possible raw scores the two Reading tables
+differ at 30 of them, and at four raw scores the difference is a **whole band**:
+
+| Raw score | Academic | General Training | Difference |
+| --------: | -------: | ---------------: | ---------: |
+|        35 |      8.0 |              7.0 |        1.0 |
+|        30 |      7.0 |              6.0 |        1.0 |
+|        27 |      6.5 |              5.5 |        1.0 |
+|        23 |      6.0 |              5.0 |        1.0 |
+
+`/v1/scores/raw` therefore makes `module` a **required** parameter with three values
+(`listening`, `reading-academic`, `reading-general`) and no default. There is no inference from a
+file name, and no way to ask for "reading" without saying which one.
+
+### 31. Construction and validation
+
+Each table is written as a list of `[minCorrect, band]` thresholds — the form every published table
+uses — and expanded into contiguous rows by `expandRows`, which derives each row's upper bound from
+the threshold above it. Only the lower bounds are transcribed; the upper bounds are computed. Gaps
+and overlaps are therefore structurally impossible rather than merely checked for.
+
+Validation is executed, not asserted. The test suite enforces four invariants per table:
+
+1. **Anchor reproduction.** Every official average mark must fall inside the row this table assigns
+   to that band. All twelve published anchors pass. A single mistranscribed threshold would move an
+   anchor into a neighbouring row and fail the suite.
+2. **Total coverage.** The rows partition 0–40 exactly: 41 raw scores, each covered once.
+3. **Monotonicity.** Bands decrease strictly down the table, every band is a reportable value on the
+   0–9 half-band scale, and no raw score increase ever lowers the band.
+4. **Cross-table ordering.** For all 41 raw scores, the General Training band never exceeds the
+   Academic band — the direction of difficulty that ielts.org states in prose, checked numerically.
+
+The tables are labelled `indicative-consensus`, never "official", and every response repeats the
+equating caveat.
+
+### 32. Measuring the disagreement between sources
+
+Because no authoritative table exists, the spread between reputable published tables is itself a
+result: it bounds how precisely a raw score can be interpreted. Three alternative tables are
+recorded in full, and the API computes their disagreement with the consensus exhaustively over all
+41 raw scores rather than summarising it in prose.
+
+| Variant                      | Paper                    | Disagreeing scores | Agreement |
+| ---------------------------- | ------------------------ | -----------------: | --------: |
+| Alternative GT bands 7.5/8.0 | General Training Reading |            1 of 41 |     97.6% |
+| Alternative Listening tail   | Listening                |            5 of 41 |     87.8% |
+| Pre-2018 coaching table      | Listening                |           19 of 41 |     53.7% |
+
+The pattern is the useful part. Modern sources agree almost perfectly in the range that matters for
+admissions — bands 5.5 to 9 — and diverge in the tail below band 4.5, where few candidates sit and
+few sources bother to be careful. The pre-2018 table is different in kind: it disagrees at 19 raw
+scores and is stricter at every one of them, which is what a table drifting out of date looks like.
+
+`/v1/scores/raw/tables` returns these disagreements as data — the exact raw scores, the consensus
+band and the variant band — so that a study reporting bands derived from raw scores can state its
+sensitivity to table choice instead of ignoring it.
+
+### 33. Rescaling is not equating
+
+Mock platforms routinely convert a short drill into a band by scaling the raw score to 40, which is
+what `lookupBand`'s `total === 40 ? correct : Math.round(correct / total * 40)` does. The API
+supports this through the `outOf` parameter, because clients need it, and marks it as a hazard in
+the response rather than performing it silently.
+
+A 10-question section carries roughly a quarter of the measurement precision of a full paper: one
+mark moves the scaled score by four, which can move the reported band by a full band or more. Any
+response with `outOf` other than 40 therefore carries a `rescaling` note stating the multiplier and
+the fact that proportional rescaling is not equating.
+
+The same reasoning motivates the `sensitivity` block returned with every conversion. It reports the
+band the candidate would receive at one mark fewer and one mark more, and flags scores sitting on a
+threshold — precisely where the official "varies from version to version" caveat bites hardest. A
+band 7.0 from 30/40 and a band 7.0 from 31/40 are not equally safe, and the API says so.
+
+### 34. Threats to validity (Part VI)
+
+- **The consensus table is a reconstruction, not an equating table.** It cannot be otherwise: no
+  official table exists to reconstruct. It reproduces all twelve published anchors, which is
+  necessary but not sufficient — the anchors constrain four rows per paper, and the remaining rows
+  rest on cross-source agreement alone.
+- **The anchors are averages, not thresholds.** ielts.org describes them as the average marks scored
+  at each band. The validation therefore checks containment (the average falls inside the row), not
+  equality with the row's lower bound. A stricter reading of the published figures is possible and
+  would not change any row in these tables, but the distinction is real.
+- **The variant survey is not exhaustive.** Three alternative tables are recorded, selected because
+  they are widely cited and mutually inconsistent. A systematic survey of preparation publishers
+  would likely find more, and the agreement rates reported here would move.
+- **Source tables are undated and mutable.** Preparation sites revise tables without changelogs. The
+  variants are pinned by URL only; the pre-2018 entry is dated because it is a PDF, and the others
+  are not.
+- **The platform survey is a single case.** The 148/104/44 counts describe one mock-exam platform at
+  one commit. They are evidence that inline duplication fails in practice, not a measurement of how
+  often it fails across the sector.
+- **Band 9 is not the ceiling of ability.** The tables stop at 40 correct because the paper does.
+  Nothing here supports inference above the top row.
+
+### 35. Reproducing Part VI
+
+The tables are code, not generated data, so there is nothing to download. The validation is the test
+suite:
+
+```bash
+npm test -- test/data/rawScores.test.ts test/lib/rawScore.test.ts
+```
+
+The platform survey in §30 is reproducible against the reference repository:
+
+```bash
+git clone --depth 1 https://github.com/wanli4473/yysd-testcenter
+cd yysd-testcenter
+
+# 148 papers call the conversion helper
+grep -rl "lookupBand" library/ | wc -l
+
+# 104 define a table inline; the distinct literals show whether the copies have drifted
+grep -rl "BAND_TABLE" library/ | wc -l
+grep -rho "BAND_TABLE *= *\[\[.*\]\];" library/ | tr -d '[:space:]' | sort | uniq -c
+
+# 44 call the helper without defining a table, and depend on the runtime shim
+comm -23 <(grep -rl "lookupBand" library/ | sort) <(grep -rl "BAND_TABLE" library/ | sort) | wc -l
+```
