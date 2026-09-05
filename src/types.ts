@@ -114,6 +114,23 @@ export type ConversionEntry = {
 export type ConversionTarget = 'cefr' | 'toefl-ibt' | 'cambridge-english-scale' | 'pte-academic' | 'duolingo';
 
 /* -------------------------------------------------------------------------- */
+/* Raw-score conversion                                                       */
+/* -------------------------------------------------------------------------- */
+
+/** Objective papers that publish a raw-score conversion table. */
+export type RawScoreModuleId = 'listening' | 'reading-academic' | 'reading-general-training';
+
+/** One row of a raw-score conversion table: a range of correct answers maps to one band. */
+export type RawScoreBand = {
+  /** Inclusive lower bound of correct answers. */
+  min: number;
+  /** Inclusive upper bound of correct answers. */
+  max: number;
+  /** Band the range converts to. */
+  band: BandScore;
+};
+
+/* -------------------------------------------------------------------------- */
 /* Tasks, topics and resources                                                */
 /* -------------------------------------------------------------------------- */
 
@@ -736,6 +753,54 @@ export type ResponseFramework = {
   suggestedMinutes: number | null;
   /** Suggested length in words, when the format fixes one. */
   suggestedWords: number | null;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Cross-dataset search                                                       */
+/* -------------------------------------------------------------------------- */
+
+/** Datasets participating in the cross-dataset search. */
+export type SearchDatasetId =
+  | 'vocabulary'
+  | 'writing-topics'
+  | 'speaking-topics'
+  | 'task-types'
+  | 'question-types'
+  | 'frameworks'
+  | 'themes'
+  | 'resources'
+  | 'corpus'
+  | 'materials'
+  | 'tests';
+
+/** One cross-dataset search hit. */
+export type SearchHit = {
+  /** Stable identifier of the item inside its dataset (word, id or slug). */
+  ref: string;
+  /** Dataset the item belongs to. */
+  dataset: SearchDatasetId;
+  /** Primary display text of the item. */
+  title: string;
+  /** Secondary context (definition, category, path), clipped to one line, or `null`. */
+  snippet: string | null;
+  /** Most specific API URL that returns the item (item-level when one exists). */
+  url: string;
+  /** Deterministic rank score: 4 exact, 3 prefix, 2 substring, 1 secondary field. */
+  score: number;
+  /** Whether the query matched the primary or a secondary field. */
+  field: 'primary' | 'secondary';
+};
+
+/** Search outcome for one dataset. */
+export type DatasetSearch = {
+  /** Human-readable dataset name. */
+  label: string;
+  /** Browse endpoint of the dataset. */
+  endpoint: string;
+  /** Total matching items (before truncation). */
+  total: number;
+  /** Highest-ranked hits, truncated to the requested limit. */
+  items: SearchHit[];
 };
 
 /* -------------------------------------------------------------------------- */
