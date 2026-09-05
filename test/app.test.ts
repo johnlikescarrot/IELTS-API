@@ -88,7 +88,7 @@ describe('request handling', () => {
 });
 
 describe('the handler with a minimal request', () => {
-  it('defaults method, path and host when the request omits them', async () => {
+  it('defaults method and path when the request omits them', async () => {
     const handler = createRequestHandler({ routes: [] });
     const chunks: Buffer[] = [];
     const res = {

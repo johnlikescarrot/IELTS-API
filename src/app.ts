@@ -6,7 +6,7 @@
  * and request logging. Handlers stay pure and trivially testable.
  */
 
-import { HttpError, methodNotAllowed, notFound } from './lib/errors.js';
+import { HttpError, badRequest, methodNotAllowed, notFound } from './lib/errors.js';
 import { acceptsGzip, sendJson, writeResponse } from './lib/http.js';
 import { isRawResult, matchRoute, splitPath } from './lib/route.js';
 import { ROUTES } from './routes/index.js';
@@ -41,12 +41,18 @@ export function createRequestHandler(
   return (req, res) => {
     const started = process.hrtime.bigint();
     const method = (req.method ?? 'GET').toUpperCase();
-    const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
+    // Routing needs only a path/query. Never trust Host as a URL-constructor base.
+    let url = new URL('http://localhost/');
     const gzipAllowed = acceptsGzip(req.headers['accept-encoding']);
     const ifNoneMatch = req.headers['if-none-match'];
     let status = 200;
 
     try {
+      try {
+        url = new URL(req.url ?? '/', 'http://localhost/');
+      } catch {
+        throw badRequest('Malformed request target.');
+      }
       if (method === 'OPTIONS') {
         res.writeHead(204, {
           'access-control-allow-origin': '*',
@@ -105,7 +111,12 @@ export function createRequestHandler(
             },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          {
+            gzipAllowed,
+            headOnly: method === 'HEAD',
+            cacheControl: 'no-store',
+            headers: { 'x-endpoint': url.pathname },
+          },
         );
       } else {
         status = 500;
@@ -119,7 +130,12 @@ export function createRequestHandler(
             error: { code: 'internal_error', message: 'An unexpected error occurred.', details: {} },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          {
+            gzipAllowed,
+            headOnly: method === 'HEAD',
+            cacheControl: 'no-store',
+            headers: { 'x-endpoint': url.pathname },
+          },
         );
       }
     }

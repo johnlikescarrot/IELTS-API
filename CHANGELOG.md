@@ -18,6 +18,9 @@ All notable changes to this project are documented here. The format is based on
 
 ### Fixed
 
+- Parse request targets inside the error boundary with a trusted base. Malformed URLs/encoded IDs
+  return 400 instead of escaping or becoming 500; error responses are non-cacheable and bodyless for HEAD.
+
 - OpenAPI path templates, raw representation media types, and error envelopes; include service
   routes and advertise a relative server URL suitable for reverse-proxied instances.
 - Remove a placeholder DOI, invalid CFF fields/reference types, unverified archive/publication
