@@ -106,9 +106,9 @@ jobs:
             # not reachable.
             {
               for name in $(grep -oE "Errors found in [A-Z_]+" /tmp/super-linter.log | awk '{print $4}' | sort -u); do
-                echo "==== failing linter: $name ===="
-                awk -v g="::group::$name" 'index($0,g)==1{f=1;next} f && /::endgroup::/{f=0} f' /tmp/super-linter.log | head -n 45
-                grep -B 3 -A 3 "Errors found in $name" /tmp/super-linter.log | head -n 15
+                echo "==== failing linter: $name (first violations) ===="
+                awk -v pat="Command output for $name" 'index($0,pat){f=1;next} f && /^::/{f=0} f' /tmp/super-linter.log \
+                  | grep -E "Check:|Check ID|FAILED|Failed checks|Resource|File:|Line|Violation|error" | head -n 60
               done
             } \
               | sed -e 's/%/%25/g' -e 's/:/%3A/g' -e 's/\r//g' \
