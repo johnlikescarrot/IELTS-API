@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks and an indexed open research corpus.",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, an indexed open research corpus, and reproducible text analysis (readability, lexical diversity and mechanical Writing-response checks).",
   "version": "1.0.0",
   "dateCreated": "2026-09-04",
   "datePublished": "2026-09-04",
@@ -29,7 +29,10 @@
     "score concordance",
     "open data",
     "REST API",
-    "TypeScript"
+    "TypeScript",
+    "readability",
+    "lexical diversity",
+    "text analysis"
   ],
   "author": [
     {

@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/",
+      "url": "http://127.0.0.1:4011/",
       "description": "This instance"
     }
   ],
@@ -2280,6 +2280,372 @@
               "type": "integer",
               "minimum": 0,
               "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/analysis/readability": {
+      "get": {
+        "operationId": "v1_analysis_readability",
+        "summary": "Six classical readability formulas computed from one documented segmentation.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "required": true,
+            "description": "Text to analyse (1-5000 characters).",
+            "schema": {
+              "type": "string",
+              "maxLength": 5000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/analysis/lexical": {
+      "get": {
+        "operationId": "v1_analysis_lexical",
+        "summary": "Lexical diversity, Cambridge IELTS vocabulary coverage and word repetition.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "required": true,
+            "description": "Text to analyse (1-5000 characters).",
+            "schema": {
+              "type": "string",
+              "maxLength": 5000
+            }
+          },
+          {
+            "name": "top",
+            "in": "query",
+            "description": "How many frequent content words to return (1-50).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/analysis/essay": {
+      "get": {
+        "operationId": "v1_analysis_essay",
+        "summary": "Mechanical checks on a Writing Task response against published requirements.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "required": true,
+            "description": "Text to analyse (1-5000 characters).",
+            "schema": {
+              "type": "string",
+              "maxLength": 5000
+            }
+          },
+          {
+            "name": "task",
+            "in": "query",
+            "description": "Which Writing task to check against.",
+            "schema": {
+              "type": "string",
+              "enum": ["task-1", "task-2"],
+              "default": "task-2"
             }
           }
         ],

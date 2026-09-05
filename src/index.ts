@@ -10,6 +10,7 @@
 export { createApiServer, startApiServer } from './server.js';
 export { createRequestHandler } from './app.js';
 export { DOMAIN_ROUTES, ROUTES } from './routes/index.js';
+export { analysisRoutes, WRITING_TASKS } from './routes/analysis.js';
 export { createMetaRoutes } from './routes/meta.js';
 export { openApiDocument } from './lib/openapi.js';
 export { escapeHtml, renderDocs } from './lib/docs.js';
@@ -23,6 +24,10 @@ export * from './lib/query.js';
 export * from './lib/rng.js';
 export * from './lib/route.js';
 export * from './lib/search.js';
+export * from './lib/text.js';
+export * from './lib/readability.js';
+export * from './lib/lexical.js';
+export * from './lib/essay.js';
 export * from './data/bands.js';
 export * from './data/conversions.js';
 export * from './data/corpus.js';

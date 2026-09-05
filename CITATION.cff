@@ -11,7 +11,11 @@ abstract: >-
   descriptors for Speaking and Writing across bands 0-9, indicative score
   concordances for CEFR, TOEFL iBT, the Cambridge English Scale, PTE Academic
   and the Duolingo English Test, Writing and Speaking task banks, and a curated
-  index of an open IELTS research corpus. Every endpoint is free of charge,
+  index of an open IELTS research corpus. It also provides reproducible text
+  analysis: six classical readability formulas computed from a single
+  documented segmentation, length-corrected lexical-diversity measures, and
+  rule-based mechanical checks on Writing Task responses. Every endpoint is
+  free of charge,
   requires no authentication, returns a uniform JSON envelope with a stable
   ETag, and is covered by a test suite with 100% statement, branch, function
   and line coverage. The API is designed for reproducible second-language
@@ -23,6 +27,10 @@ keywords:
   - vocabulary
   - band descriptors
   - score concordance
+  - readability
+  - lexical diversity
+  - automated writing evaluation
+  - text analysis
   - open data
   - REST API
   - TypeScript

@@ -135,6 +135,20 @@ export function findWord(word: string): VocabularyEntry | undefined {
   return allEntries().find((entry) => entry.word.toLowerCase() === needle);
 }
 
+let headwordCache: ReadonlySet<string> | undefined;
+
+/**
+ * The Cambridge IELTS 1-22 headwords as a lower-cased lookup set.
+ *
+ * Built once and memoised: the text-analysis endpoints test every token of a
+ * submitted text against it, so a linear scan of the entry list would make
+ * analysis quadratic in the size of the dataset.
+ */
+export function headwordSet(): ReadonlySet<string> {
+  headwordCache ??= new Set(allEntries().map((entry) => entry.word.toLowerCase()));
+  return headwordCache;
+}
+
 /**
  * Deterministically choose a page of random entries for a seed.
  *

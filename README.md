@@ -72,31 +72,94 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
 same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 
-| Method | Path                    | Description                                                                                       |
-| ------ | ----------------------- | ------------------------------------------------------------------------------------------------- |
-| GET    | `/`                     | Service index, dataset sizes, citation links                                                      |
-| GET    | `/v1`                   | List every versioned endpoint                                                                     |
-| GET    | `/health`               | Liveness and dataset availability                                                                 |
-| GET    | `/docs`                 | Human-readable documentation                                                                      |
-| GET    | `/openapi.json`         | OpenAPI 3.1 document generated from the live route table                                          |
-| GET    | `/v1/vocabulary`        | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
-| GET    | `/v1/vocabulary/stats`  | Dataset statistics                                                                                |
-| GET    | `/v1/vocabulary/random` | Seeded random sample (`count`, `seed`)                                                            |
-| GET    | `/v1/vocabulary/daily`  | Deterministic entry for a date (`date`, `count`)                                                  |
-| GET    | `/v1/vocabulary/:word`  | Look up one headword                                                                              |
-| GET    | `/v1/bands`             | The band scale with indicative CEFR levels                                                        |
-| GET    | `/v1/bands/descriptors` | Band descriptors (`set`, `criterion`, `band`)                                                     |
-| GET    | `/v1/bands/:band`       | One band, with the descriptors that bracket it                                                    |
-| GET    | `/v1/scores/overall`    | Overall band from the four components                                                             |
-| GET    | `/v1/scores/convert`    | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
-| GET    | `/v1/scores/interpret`  | Another scale back to an indicative IELTS band                                                    |
-| GET    | `/v1/topics/writing`    | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
-| GET    | `/v1/topics/speaking`   | Speaking Parts 1-3 (`part`, `q`)                                                                  |
-| GET    | `/v1/tasks/writing`     | Writing Task 1 families (`module`)                                                                |
-| GET    | `/v1/corpus`            | Corpus metadata, statistics and facets                                                            |
-| GET    | `/v1/corpus/stats`      | Corpus statistics                                                                                 |
-| GET    | `/v1/corpus/items`      | Search the corpus index                                                                           |
-| GET    | `/v1/resources`         | Free preparation resources (`type`, `q`)                                                          |
+| Method | Path                       | Description                                                                                       |
+| ------ | -------------------------- | ------------------------------------------------------------------------------------------------- |
+| GET    | `/`                        | Service index, dataset sizes, citation links                                                      |
+| GET    | `/v1`                      | List every versioned endpoint                                                                     |
+| GET    | `/health`                  | Liveness and dataset availability                                                                 |
+| GET    | `/docs`                    | Human-readable documentation                                                                      |
+| GET    | `/openapi.json`            | OpenAPI 3.1 document generated from the live route table                                          |
+| GET    | `/v1/vocabulary`           | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
+| GET    | `/v1/vocabulary/stats`     | Dataset statistics                                                                                |
+| GET    | `/v1/vocabulary/random`    | Seeded random sample (`count`, `seed`)                                                            |
+| GET    | `/v1/vocabulary/daily`     | Deterministic entry for a date (`date`, `count`)                                                  |
+| GET    | `/v1/vocabulary/:word`     | Look up one headword                                                                              |
+| GET    | `/v1/bands`                | The band scale with indicative CEFR levels                                                        |
+| GET    | `/v1/bands/descriptors`    | Band descriptors (`set`, `criterion`, `band`)                                                     |
+| GET    | `/v1/bands/:band`          | One band, with the descriptors that bracket it                                                    |
+| GET    | `/v1/scores/overall`       | Overall band from the four components                                                             |
+| GET    | `/v1/scores/convert`       | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
+| GET    | `/v1/scores/interpret`     | Another scale back to an indicative IELTS band                                                    |
+| GET    | `/v1/topics/writing`       | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
+| GET    | `/v1/topics/speaking`      | Speaking Parts 1-3 (`part`, `q`)                                                                  |
+| GET    | `/v1/tasks/writing`        | Writing Task 1 families (`module`)                                                                |
+| GET    | `/v1/corpus`               | Corpus metadata, statistics and facets                                                            |
+| GET    | `/v1/corpus/stats`         | Corpus statistics                                                                                 |
+| GET    | `/v1/corpus/items`         | Search the corpus index                                                                           |
+| GET    | `/v1/resources`            | Free preparation resources (`type`, `q`)                                                          |
+| GET    | `/v1/analysis/readability` | Six readability formulas for a text (`text`)                                                      |
+| GET    | `/v1/analysis/lexical`     | Lexical diversity and Cambridge coverage (`text`, `top`)                                          |
+| GET    | `/v1/analysis/essay`       | Mechanical checks on a Writing response (`text`, `task`)                                          |
+
+### Text analysis
+
+The analysis endpoints turn a submitted text into reproducible measurements. They are pure
+functions of their input: the same text always yields the same numbers for a given API version,
+so a URL in a paper resolves to exactly the result the author saw.
+
+**Readability.** Six classical formulas are reported rather than one, because each was calibrated
+on a different population and the spread between them is itself informative.
+
+```jsonc
+GET /v1/analysis/readability?text=The%20environment%20is%20changing%20rapidly.
+{
+  "status": 200,
+  "data": {
+    "stats": { "sentences": 1, "words": 5, "syllables": 11, "complexWords": 2, "wordsPerSentence": 5 },
+    "scores": [
+      { "id": "flesch-reading-ease", "value": 15.64, "unit": "ease-0-100",
+        "interpretation": "Very difficult; dense academic or legal register.",
+        "reference": "Flesch (1948)" },
+      { "id": "flesch-kincaid-grade", "value": 12.32, "unit": "grade-level",
+        "reference": "Kincaid et al. (1975)" }
+    ],
+    "consensusGrade": 13.31,
+    "consensus": "Difficult: undergraduate level."
+  }
+}
+```
+
+Every formula names the publication it implements, and all six share one documented segmentation
+(`src/lib/text.ts`), which is what makes the numbers comparable and recomputable by hand.
+
+Readability formulas are ratios over sentence and syllable counts, so they are unstable on very
+short input — the single five-word sentence above scores as "undergraduate" purely because two of
+its five words are polysyllabic. Treat scores below roughly 100 words as indicative only; this is a
+property of the formulas, not of this implementation.
+
+**Lexical resource.** Raw type-token ratio falls as a text lengthens, so length-corrected variants
+are reported alongside it; use `movingAverageTypeTokenRatio` to compare texts of different lengths.
+`cambridgeCoverage` grounds the measure in the same Cambridge IELTS 1-22 headword list the rest of
+the API publishes.
+
+```bash
+curl -s "http://localhost:3000/v1/analysis/lexical?text=Sustainable+development+requires+collective+action&top=5"
+```
+
+**Writing response checks.** `/v1/analysis/essay` reports objective, checkable facts against the
+published task requirements — word count against the 150/250 minimum, paragraphing, sentence
+variety, cohesive-device use and lexical repetition — each labelled `pass`, `warning` or `fail`
+and each stating the rule applied.
+
+```bash
+curl -s --get "http://localhost:3000/v1/analysis/essay" \
+  --data-urlencode "task=task-2" --data-urlencode "text=$(cat essay.txt)"
+```
+
+> **This is not a band score.** Task response, accuracy and content cannot be assessed
+> mechanically. `indicativeBand` is a conservative _floor_ implied by the mechanical checks alone,
+> never a prediction of what an examiner would award. The caveat is repeated in the `disclaimer`
+> field of every response.
 
 ### Worked examples
 

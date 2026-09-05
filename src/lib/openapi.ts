@@ -10,6 +10,8 @@ import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
+import { MAX_TEXT_LENGTH } from './text.js';
+import { WRITING_TASKS } from '../routes/analysis.js';
 
 import type { RouteDefinition } from './route.js';
 import type { JsonValue } from '../types.js';
@@ -26,6 +28,13 @@ const OFFSET = {
   in: 'query',
   description: 'Zero-based offset.',
   schema: { type: 'integer', minimum: 0, default: 0 },
+};
+const TEXT = {
+  name: 'text',
+  in: 'query',
+  required: true,
+  description: `Text to analyse (1-${MAX_TEXT_LENGTH} characters).`,
+  schema: { type: 'string', maxLength: MAX_TEXT_LENGTH },
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
 
@@ -150,6 +159,25 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
     LIMIT,
     OFFSET,
+  ],
+  '/v1/analysis/readability': [TEXT],
+  '/v1/analysis/lexical': [
+    TEXT,
+    {
+      name: 'top',
+      in: 'query',
+      description: 'How many frequent content words to return (1-50).',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+  ],
+  '/v1/analysis/essay': [
+    TEXT,
+    {
+      name: 'task',
+      in: 'query',
+      description: 'Which Writing task to check against.',
+      schema: { type: 'string', enum: [...WRITING_TASKS], default: 'task-2' },
+    },
   ],
   '/v1/resources': [
     QUERY,

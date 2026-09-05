@@ -17,7 +17,11 @@
     "band descriptors",
     "score concordance",
     "open data",
-    "REST API"
+    "REST API",
+    "readability",
+    "lexical diversity",
+    "text analysis",
+    "automated writing evaluation"
   ],
   "license": "other-open",
   "related_identifiers": [

@@ -6,6 +6,30 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **Text analysis** — three endpoints that turn a submitted text into reproducible measurements,
+  all pure functions of their input:
+  - `/v1/analysis/readability`: six classical readability formulas (Flesch Reading Ease,
+    Flesch-Kincaid, Gunning Fog, SMOG, Coleman-Liau, Automated Readability Index), each citing the
+    publication it implements, plus a grade-level consensus.
+  - `/v1/analysis/lexical`: type-token ratio with its length-corrected variants (root, corrected and
+    moving-average TTR), content-word ratio, word repetition, and coverage against the Cambridge
+    IELTS 1-22 headword list.
+  - `/v1/analysis/essay`: mechanical checks on a Writing Task response against published
+    requirements — word count, paragraphing, sentence length and variety, cohesive devices and
+    lexical repetition — each labelled `pass`/`warning`/`fail` with the rule it applies. Explicitly
+    not a band score; every response carries a `disclaimer`.
+- A single documented text segmentation (`src/lib/text.ts`) shared by every metric, so results are
+  recomputable by hand and stable across releases.
+- `headwordSet()` — memoised lower-cased Cambridge headword lookup, keeping analysis linear in the
+  length of the submitted text.
+
+### Changed
+
+- Requests to the analysis endpoints are capped at 5,000 characters and rejected with `422` rather
+  than truncated, so a caller is never given a score for only part of their text.
+
 ## [1.0.0] - 2026-09-04
 
 First citable release.

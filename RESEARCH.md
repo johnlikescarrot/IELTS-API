@@ -145,7 +145,52 @@ The value added by this project is therefore in the _derived_ layer, all of it o
   lookup, not for official scoring.
 - **Concordances are indicative.** Providers revise their tables, and institutions apply their own.
 
-## 6. Reproducing this analysis
+## 6. Text analysis: why six formulas and no band prediction
+
+The analysis endpoints added after 1.0.0 raise two methodological questions worth stating plainly.
+
+**Why report six readability formulas instead of one?** Because they disagree, and the disagreement
+is information. Each formula was regression-fitted to a different population — Flesch-Kincaid to US
+Navy trainees, SMOG to health materials, Coleman-Liau to machine-scored text — and none is a
+measurement of difficulty in the way a length is a measurement of distance. Publishing a single
+number would imply a precision the underlying research does not support. The API therefore reports
+all six, names the publication each implements, and gives the mean of the five grade-level formulas
+as an explicitly labelled _consensus_.
+
+A second, more practical reproducibility problem is that implementations of the _same_ formula
+disagree, because they segment text differently: whether `state-of-the-art` is one word or four, or
+whether `walked` has one syllable or two, changes every downstream ratio. Published readability
+scores are therefore rarely comparable between tools. This API fixes one segmentation, documents it
+in `src/lib/text.ts`, exposes the raw counts in the `stats` field of every response, and treats it
+as part of the versioned contract.
+
+**Why no automated band score?** Automated essay scoring that claims to replicate examiner
+judgements requires a corpus of rated scripts and a validated rubric. No such corpus is openly
+available for IELTS, and none exists in the upstream corpus analysed above. A model trained without
+one would be unreproducible and, for a candidate deciding whether to sit the test, actively
+misleading. `/v1/analysis/essay` therefore reports only _checkable facts_ against published
+requirements — the 150/250-word minima, paragraphing, cohesive-device density, lexical repetition —
+and labels each one with the rule applied, so a candidate can verify it by hand and a reviewer can
+audit it. The `indicativeBand` field is a conservative floor derived from those mechanical checks
+alone, capped at 7.0 because mechanical evidence cannot support a higher claim, and every response
+repeats the caveat in a `disclaimer` field.
+
+### Threats to validity of the analysis endpoints
+
+- **Syllable counting is heuristic.** The vowel-group rule misparses some words (`business`,
+  `create`); no dictionary-free method is exact. It is deterministic and documented, which is what
+  reproducibility requires, but it is not ground truth.
+- **The formulas are unstable on short input.** Below roughly 100 words a single polysyllabic word
+  moves the grade level by several years. This is a property of the formulas, not of the
+  implementation, and is flagged in the README.
+- **Coverage is measured against one word list.** `cambridgeCoverage` reports overlap with the
+  Cambridge IELTS 1-22 headwords, which is a vocabulary list, not a frequency-banded reference
+  corpus such as the BNC or COCA. It indicates topical overlap with IELTS material, not lexical
+  sophistication in the general sense.
+- **Cohesive devices are matched by string, not by function.** A connective used inaccurately still
+  counts, so a high device count does not evidence coherent argumentation.
+
+## 7. Reproducing this analysis
 
 ```bash
 curl -sL "https://api.github.com/repos/zhengyishiming/IELTS/git/trees/main?recursive=1" -o tree.json
