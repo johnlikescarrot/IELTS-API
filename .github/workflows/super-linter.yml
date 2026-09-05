@@ -52,7 +52,9 @@ jobs:
           FILTER_REGEX_EXCLUDE: '(^|/)(node_modules|coverage|dist|super-linter-output)/|^(/github/workspace/)?data/'
           MULTI_STATUS: false
           ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
-          ENABLE_SUPER_LINTER_OUTPUT: true
+          CREATE_LOG_FILE: true
+          SAVE_SUPER_LINTER_OUTPUT: true
+          SAVE_SUPER_LINTER_SUMMARY: true
           # Languages enabled for this repository.
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_TYPESCRIPT_ES: true
