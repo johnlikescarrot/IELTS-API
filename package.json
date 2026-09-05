@@ -1,25 +1,23 @@
 {
   "name": "ielts-api",
   "version": "1.4.0",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, validated raw-score to band conversion tables, and a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and marked learner essays.",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, validated raw-score to band conversion tables, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and marked learner essays, and a mock-exam test-centre index of an operational IELTS online test centre.",
   "keywords": [
-    "ielts",
     "api",
-    "education",
-    "nlp",
-    "vocabulary",
     "assessment",
-    "second-language-acquisition",
-    "open-data",
-    "typescript",
-    "readability",
-    "question-types",
+    "education",
+    "exam-taxonomy",
+    "grey-literature",
+    "ielts",
     "language-testing",
     "learner-corpus",
     "grey-literature",
     "listening-comprehension",
     "score-conversion",
-    "psychometrics"
+    "psychometrics",
+    "mock-exam",
+    "test-center",
+    "score-calibration"
   ],
   "license": "MIT",
   "type": "module",
@@ -54,7 +52,8 @@
     "data:corpus": "python3 scripts/extract_corpus.py",
     "data:practice-tests": "python3 scripts/extract_practice_tests.py",
     "data:materials": "python3 scripts/extract_materials.py",
-    "data:archive": "python3 scripts/extract_archive.py"
+    "data:archive": "python3 scripts/extract_archive.py",
+    "data:testcenter": "python3 scripts/extract_testcenter.py"
   },
   "dependencies": {},
   "devDependencies": {

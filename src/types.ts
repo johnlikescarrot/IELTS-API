@@ -1007,6 +1007,197 @@ export type ResponseFramework = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Mock-exam test centre                                                      */
+/* -------------------------------------------------------------------------- */
+
+/** The papers the test centre hosts, coarse enough for one filter facet. */
+export type TestcenterPaper = 'listening' | 'reading' | 'writing' | 'full-mock' | 'vocabulary' | 'drill';
+
+/** Difficulty judgement used by the test centre's hand-curated taxonomies. */
+export type TestcenterDifficulty = 'easy' | 'medium' | 'hard';
+
+/** One self-marking paper in the test centre's catalogue. */
+export type TestcenterCatalogItem = {
+  /** Slugified identifier (URL-safe form of `upstreamId`). */
+  id: string;
+  /** The platform's own identifier, verbatim. */
+  upstreamId: string;
+  /** Original title, as published by the platform. */
+  title: string;
+  /** Deterministic English title, when the id structure names the paper. */
+  titleEn: string | null;
+  /** Platform zone (`mock`, `practice`, `study`). */
+  zone: string;
+  /** Platform subject (`cambridge-listening`, `vocab-cet4`, ...). */
+  subject: string;
+  /** Canonical paper facet. */
+  paper: TestcenterPaper;
+  /** The platform's exam-shell time budget in minutes (0 for untimed lists). */
+  durationMinutes: number;
+  /** Cambridge IELTS volume, when the id encodes one (3-21). */
+  volume: number | null;
+  /** Cambridge test number, when the id encodes one (1-4). */
+  test: number | null;
+  /** ISO date the platform added the paper. */
+  added: string;
+  /** Hand-tagged question groups attached to this paper. */
+  taggedGroups: number;
+  /** Path inside the upstream repository. */
+  sourcePath: string;
+  /** Git blob SHA-1 of the paper's HTML file. */
+  sha1: string | null;
+  /** Size of the paper's HTML file in bytes. */
+  sizeBytes: number;
+  /** Public URL of the paper at the indexed commit. */
+  sourceUrl: string;
+};
+
+/** One row of the Cambridge holdings matrix. */
+export type TestcenterVolumeRow = {
+  /** Cambridge IELTS volume number. */
+  volume: number;
+  /** Hosted listening papers and their test numbers. */
+  listening: { papers: number; tests: number[] };
+  /** Hosted reading papers and their test numbers. */
+  reading: { papers: number; tests: number[] };
+  /** Hosted writing papers and their test numbers. */
+  writing: { papers: number; tests: number[] };
+  /** Total hosted papers across the three papers. */
+  papersTotal: number;
+  /** Hand-tagged question groups for the volume's tagged papers. */
+  taggedGroups: number;
+  /** Questions covered by the volume's tagged groups. */
+  taggedQuestions: number;
+  /** Whether all three papers host complete four-test sets. */
+  complete: boolean;
+};
+
+/** One hand-tagged question group of the Cambridge taxonomies. */
+export type TestcenterGroup = {
+  /** The platform's group identifier, verbatim. */
+  id: string;
+  /** Identifier of the exam the group belongs to. */
+  parentId: string;
+  /** Which tagged paper the group belongs to. */
+  paper: 'listening' | 'reading';
+  /** Cambridge IELTS volume (5-21). */
+  volume: number;
+  /** Cambridge test number (1-4). */
+  test: number;
+  /** Listening section (1-4) or reading passage (1-3). */
+  part: number;
+  /** First question number of the group. */
+  qFrom: number;
+  /** Last question number of the group. */
+  qTo: number;
+  /** Number of questions the group covers. */
+  questions: number;
+  /** Canonical question type from the `/v1/question-types` taxonomy. */
+  type: QuestionTypeId;
+  /** The platform's original label, verbatim (Chinese). */
+  rawType: string;
+  /** Teaching scene slug, or `null` when the group carries none. */
+  scene: string | null;
+  /** English name of the teaching scene. */
+  sceneLabel: string | null;
+  /** The platform's original scene label, verbatim (Chinese). */
+  sceneRaw: string | null;
+  /** Difficulty judgement, or `null` when the group carries none. */
+  difficulty: TestcenterDifficulty | null;
+  /** Public URL of the exam page the group belongs to. */
+  sourceUrl: string;
+  /** Git blob SHA-1 of the exam page's HTML file. */
+  sha1: string | null;
+};
+
+/** One teaching scene of the test centre's scene vocabulary. */
+export type TestcenterScene = {
+  /** Slug identifier. */
+  id: string;
+  /** Original Chinese label. */
+  zh: string;
+  /** English gloss. */
+  en: string;
+  /** Nearest theme group of `/v1/topics/themes`. */
+  themeGroup: string;
+  /** Tagged groups carrying the scene. */
+  groups: number;
+  /** Questions covered by those groups. */
+  questions: number;
+};
+
+/** One row of a production raw-score-to-band calibration table. */
+export type TestcenterScoringRow = {
+  /** First raw score (inclusive) the row covers. */
+  rawFrom: number;
+  /** Last raw score (inclusive) the row covers. */
+  rawTo: number;
+  /** Band awarded for the row's raw-score range. */
+  band: number;
+  /** The platform's level label for the row's band. */
+  level: string;
+};
+
+/** One band-level label of a calibration table. */
+export type TestcenterLevelRow = {
+  /** Lowest band the label applies to. */
+  minBand: number;
+  /** The platform's level label. */
+  label: string;
+};
+
+/** One paper's production score calibration. */
+export type TestcenterScoringTable = {
+  /** Human-readable name. */
+  name: string;
+  /** Maximum raw score of the table. */
+  max: number;
+  /** Raw-score ranges in descending band order. */
+  rows: TestcenterScoringRow[];
+  /** Band-level labels in descending band order. */
+  levels: TestcenterLevelRow[];
+};
+
+/** Aggregated statistics about the test-centre index. */
+export type TestcenterStats = {
+  catalog: {
+    items: number;
+    manifestCount: number;
+    byZone: Record<string, number>;
+    byPaper: Record<string, number>;
+    bySubject: Record<string, number>;
+    cambridgePapers: number;
+    cambridgeVolumes: { listening: number[]; reading: number[]; writing: number[] };
+    vocabBooks: number;
+    addedRange: { first: string; last: string } | null;
+  };
+  taxonomy: Record<
+    'listening' | 'reading',
+    {
+      groups: number;
+      parentExams: number;
+      sectionsTagged: number;
+      questions: number;
+      byType: Record<string, number>;
+      byScene: Record<string, number>;
+      byDifficulty: Record<string, number>;
+      noDifficulty: number;
+      noScene: number;
+      overlappingRanges: number;
+      firstVolume: number;
+      lastVolume: number;
+      upstreamGroups: number;
+    }
+  >;
+  rawTypeLabels: readonly {
+    raw: string;
+    paper: string;
+    canonical: QuestionTypeId;
+    occurrences: number;
+  }[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

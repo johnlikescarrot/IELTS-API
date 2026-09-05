@@ -18,7 +18,13 @@ abstract: >-
   corpus, and a grey-literature archive index: the Cambridge IELTS 1-18
   listening audio catalogued by naming era, media archaeology and completeness,
   the twelve official sample tasks measured for readability, and 24 marked
-  learner essays summarised as derived statistics. Deterministic analysis tools profile any text for Flesch readability,
+  learner essays summarised as derived statistics, and a mock-exam test-centre
+  index of an operational IELTS online test centre: 377 self-marking papers
+  around an unbroken Cambridge IELTS 4-21 across listening, reading and
+  writing, a Cambridge holdings matrix, 1,099 hand-tagged question groups
+  carrying
+  canonical question type, teaching scene and difficulty for 5,408 questions,
+  and the centre's production raw-score-to-band calibration. Deterministic analysis tools profile any text for Flesch readability,
   lexical diversity and Cambridge-headword coverage, and compose the datasets
   into a week-by-week study plan towards a target band. Every endpoint is free
   of charge,
@@ -42,6 +48,9 @@ keywords:
   - learner corpus
   - grey literature
   - listening comprehension
+  - mock exam
+  - test center
+  - score calibration
   - CEFR
   - open data
   - REST API

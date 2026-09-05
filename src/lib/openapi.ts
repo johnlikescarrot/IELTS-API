@@ -10,6 +10,13 @@ import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
+import {
+  TESTCENTER_DIFFICULTIES,
+  TESTCENTER_PAPERS,
+  TESTCENTER_TAGGED_PAPERS,
+  testcenterCatalogFacets,
+  testcenterGroupFacets,
+} from '../data/testcenter.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
@@ -278,6 +285,129 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/testcenter/catalog': [
+    QUERY,
+    { name: 'zone', in: 'query', schema: { type: 'string', enum: testcenterCatalogFacets('zone') } },
+    {
+      name: 'subject',
+      in: 'query',
+      schema: { type: 'string', enum: testcenterCatalogFacets('subject') },
+    },
+    { name: 'paper', in: 'query', schema: { type: 'string', enum: [...TESTCENTER_PAPERS] } },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Restrict to one Cambridge IELTS volume (3-21).',
+      schema: { type: 'integer', minimum: 3, maximum: 21 },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['title', 'subject', 'duration', 'added'], default: 'title' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/testcenter/groups': [
+    QUERY,
+    {
+      name: 'paper',
+      in: 'query',
+      schema: { type: 'string', enum: [...TESTCENTER_TAGGED_PAPERS] },
+    },
+    { name: 'type', in: 'query', schema: { type: 'string', enum: [...QUESTION_TYPE_IDS] } },
+    {
+      name: 'scene',
+      in: 'query',
+      description: 'Teaching-scene slug from `/v1/testcenter/scenes`.',
+      schema: { type: 'string', enum: testcenterGroupFacets('scene') },
+    },
+    {
+      name: 'difficulty',
+      in: 'query',
+      schema: { type: 'string', enum: [...TESTCENTER_DIFFICULTIES] },
+    },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Restrict to one Cambridge IELTS volume (3-21).',
+      schema: { type: 'integer', minimum: 3, maximum: 21 },
+    },
+    {
+      name: 'test',
+      in: 'query',
+      description: 'Restrict to one Cambridge test number (1-4).',
+      schema: { type: 'integer', minimum: 1, maximum: 4 },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['volume', 'questions', 'type', 'scene'], default: 'volume' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/testcenter/scoring': [
+    {
+      name: 'paper',
+      in: 'query',
+      description: 'Tagged paper whose calibration to return; required with `raw`.',
+      schema: { type: 'string', enum: [...TESTCENTER_TAGGED_PAPERS] },
+    },
+    {
+      name: 'raw',
+      in: 'query',
+      description: 'Raw score (any integer); with `paper`, looks the band up.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+  ],
+  '/v1/testcenter/drill': [
+    {
+      name: 'paper',
+      in: 'query',
+      required: true,
+      description: 'Tagged paper to compose the drill from.',
+      schema: { type: 'string', enum: [...TESTCENTER_TAGGED_PAPERS] },
+    },
+    { name: 'type', in: 'query', schema: { type: 'string', enum: [...QUESTION_TYPE_IDS] } },
+    {
+      name: 'scene',
+      in: 'query',
+      description: 'Teaching-scene slug from `/v1/testcenter/scenes`.',
+      schema: { type: 'string', enum: testcenterGroupFacets('scene') },
+    },
+    {
+      name: 'difficulty',
+      in: 'query',
+      schema: { type: 'string', enum: [...TESTCENTER_DIFFICULTIES] },
+    },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Restrict the selection to one Cambridge volume (3-21).',
+      schema: { type: 'integer', minimum: 3, maximum: 21 },
+    },
+    {
+      name: 'test',
+      in: 'query',
+      description: 'Restrict the selection to one Cambridge test number (1-4).',
+      schema: { type: 'integer', minimum: 1, maximum: 4 },
+    },
+    {
+      name: 'questions',
+      in: 'query',
+      description: 'Question budget to fill; the last group may overshoot.',
+      schema: { type: 'integer', minimum: 1, maximum: 40, default: 10 },
+    },
+    {
+      name: 'minutes',
+      in: 'query',
+      description: 'Explicit time budget in minutes (1-180); defaults to the pacing estimate.',
+      schema: { type: 'integer', minimum: 1, maximum: 180 },
+    },
+  ],
   '/v1/tools/readability': [
     {
       name: 'text',
@@ -453,8 +583,10 @@ export function openApiDocument(
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
-        'an index of the open IELTS research corpus, and an index of a 2,385-file',
-        'self-study materials collection. The toolkit additionally scores any text',
+        'an index of the open IELTS research corpus, an index of a 2,385-file',
+        'self-study materials collection, and a mock-exam test-centre index with the',
+        'Cambridge 4-21 holdings, 1,099 hand-tagged question groups and a production',
+        'raw-score-to-band calibration. The toolkit additionally scores any text',
         '(readability and essay profile) and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
