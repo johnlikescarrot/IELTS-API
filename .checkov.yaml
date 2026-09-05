@@ -1,0 +1,17 @@
+---
+# Checkov configuration used by super-linter.
+#
+# CKV_OPENAPI_4 and CKV_OPENAPI_5 require an OpenAPI document to declare a
+# global `security` field and non-empty security requirements. This API is
+# deliberately, and as its central design claim, free of authentication: it has
+# no API key, no registration and no bearer token, so there is no security
+# scheme to declare. Declaring an empty or fictitious one to satisfy the check
+# would misdescribe the contract. The absence of authentication is documented
+# in README.md, on `/docs`, and in the `authentication: "none"` field that the
+# service index returns.
+skip-check:
+  - CKV_OPENAPI_4
+  - CKV_OPENAPI_5
+
+quiet: true
+compact: true

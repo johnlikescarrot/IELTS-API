@@ -78,6 +78,7 @@ jobs:
           # Linter configuration files (paths are relative to the workspace).
           LINTER_RULES_PATH: /
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
+          CHECKOV_FILE_NAME: .checkov.yaml
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
