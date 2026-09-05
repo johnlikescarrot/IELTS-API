@@ -3,8 +3,8 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, and an indexed open research corpus.",
-  "version": "1.1.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, a metadata index of the Oxidaner/ielts collection, and a self-citation subsystem that serves the software's own BibTeX, RIS, CodeMeta, CFF and human-readable citations.",
+  "version": "1.2.0",
   "dateCreated": "2026-09-04",
   "datePublished": "2026-09-05",
   "programmingLanguage": [
@@ -32,7 +32,9 @@
     "CEFR",
     "open data",
     "REST API",
-    "TypeScript"
+    "TypeScript",
+    "software citation",
+    "bibliometrics"
   ],
   "author": [
     {
@@ -61,6 +63,15 @@
       "creator": {
         "@type": "Person",
         "name": "zhengyishiming"
+      }
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "ielts: a personal collection of IELTS self-study material",
+      "url": "https://github.com/Oxidaner/ielts",
+      "creator": {
+        "@type": "Person",
+        "name": "Oxidaner"
       }
     }
   ]

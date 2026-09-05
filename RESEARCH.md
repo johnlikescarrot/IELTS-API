@@ -3,14 +3,15 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Three independent upstream collections are analysed:
 
-| Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
-| [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| Part                                                | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)              | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
+| [Part II](#part-ii--the-practice-test-collection)   | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| [Part III](#part-iii--the-oxidanerielts-collection) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the self-study collection index                                                  |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+No collection is redistributed. Each is indexed, measured and cited.
 
 ## Part I — the research corpus
 
@@ -328,3 +329,71 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 
 The script is standard library only and deterministic: the same tree and the same files always
 produce byte-identical output.
+
+## Part III — the Oxidaner/ielts collection
+
+**Collection snapshot:** commit `738c60828118f8f9d720e548b73245dd0fe70a30` (20 November 2025,
+"更新"), 72 commits, single branch `main`, 2,385 blobs, no tags, no licence file.
+
+### 1. What the collection actually contains
+
+Unlike the flat dumps in Parts I and II, this collection is organised by its author into five
+top-level folders named for the IELTS skill they serve, plus a few root files. Fetching the tree
+through the GitHub API and classifying by folder and extension gives:
+
+| Folder (skill)      | Meaning    | Files |     | Format  | Files |
+| ------------------- | ---------- | ----: | --- | ------- | ----: |
+| `阅读` (reading)    | Reading    | 1,623 |     | `.pdf`  | 1,282 |
+| `听力` (listening)  | Listening  |   722 |     | `.mp3`  |   370 |
+| `作文` (writing)    | Writing    |    27 |     | `.html` |   336 |
+| `口语` (speaking)   | Speaking   |     8 |     | `.jpg`  |   159 |
+| `经验` (experience) | Experience |     2 |     | `.docx` |   108 |
+| root files          | meta       |     3 |     | other   |   130 |
+
+The collection totals roughly **5.09 GB**, of which the listening folder alone accounts for 3.6 GB
+(audio recordings) and the reading folder for 1.2 GB (mostly scanned workbooks and web archives).
+
+### 2. Findings that shaped the index
+
+- **Reading and listening dominate; writing and speaking are thin.** Two skills hold 98% of the
+  files. A preparation resource built from this collection would over-weight receptive skills, so
+  the index records the skew rather than hiding it (`stats.bySkill`, `stats.bytesBySkill`).
+- **Almost nothing is machine-readable.** Only 21 of 2,385 files are in a structured format
+  (`xlsx`, `md`, `txt`, `json`); the rest are PDFs, audio and images. There is no equivalent of
+  Part I's `1-22yas.xlsx` to extract a clean dataset from, and the files are third-party
+  copyrighted material (scanned commercial workbooks and commercial listening recordings). They are
+  therefore indexed (metadata only) and never redistributed.
+- **The value is in the structure, not the bytes.** The author's own skill-folder taxonomy and the
+  per-file sizes are a genuine signal about how self-study material is actually organised; that is
+  what `/v1/collections/oxidaner` publishes.
+
+### 3. What the API publishes from Part III
+
+- `/v1/collections/oxidaner` — provenance, statistics and facets for the collection.
+- `/v1/collections/oxidaner/stats` — file counts and byte totals per skill, format and category.
+- `/v1/collections/oxidaner/items` — all 2,385 items (path, title, skill, content category,
+  format, size, blob SHA-1 and permalink), searchable and sortable.
+
+### 4. Threats to validity (Part III)
+
+- **Skill labels are the author's, not an examination board's.** The five folders are a personal
+  study taxonomy; "experience" (考试经验) has no official counterpart and only two files.
+- **File-name classification is coarse.** A file's skill is taken from its top-level folder and its
+  category from its extension, which mis-files the occasional cross-skill document. Every item keeps
+  its raw path so a reviewer can reclassify.
+- **The snapshot is mutable.** The collection has no tags and is actively edited; the commit SHA and
+  per-file blob SHA-1s recorded in `data/oxidaner.json` are what pin the analysis.
+- **Off-topic material.** The root also contains `ai_dev_roadmap.md`, a Java-to-AI career roadmap
+  unrelated to IELTS; it is indexed under `skill: meta` rather than silently dropped.
+
+### 5. Reproducing Part III
+
+```bash
+curl -sL "https://api.github.com/repos/Oxidaner/ielts/git/trees/738c60828118f8f9d720e548b73245dd0fe70a30?recursive=1" \
+  -o oxidaner-tree.json
+
+python3 scripts/extract_oxidaner.py oxidaner-tree.json data/oxidaner.json
+```
+
+The script is standard library only and deterministic: the same tree always produces byte-identical
+output, and it reads only the tree listing — no upstream file content is fetched.

@@ -124,7 +124,22 @@ jobs:
 
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); print('datasets are valid JSON')"
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); json.load(open('data/oxidaner.json')); print('datasets are valid JSON')"
+
+      - name: Re-derive the Oxidaner/ielts collection index from the upstream tree
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/Oxidaner/ielts/git/trees/738c60828118f8f9d720e548b73245dd0fe70a30?recursive=1" \
+            -o /tmp/oxidaner-tree.json
+          python3 scripts/extract_oxidaner.py /tmp/oxidaner-tree.json /tmp/oxidaner.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/oxidaner.json'))
+          regenerated = json.load(open('/tmp/oxidaner.json'))
+          assert committed == regenerated, 'data/oxidaner.json is out of date'
+          print(f"collection reproducible: {regenerated['stats']['filesInRepository']} files")
+          PY
 
       - name: Check the practice-test index for internal consistency
         run: |

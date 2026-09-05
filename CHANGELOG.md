@@ -6,6 +6,41 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+Two new subsystems: the API becomes **maximally citable**, and a third upstream
+collection — [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) — is researched
+and indexed. As before, only metadata is published; no upstream file is redistributed.
+
+### Added
+
+- **Self-citation subsystem** (`/v1/citations`): every citation of the API is rendered
+  from one source of truth derived from the build-time constants. Machine-readable
+  exports at `/v1/citations/formats/:format` (BibTeX, RIS, CodeMeta, CFF); six
+  human-readable styles at `/v1/citations/styles/:style` (APA, MLA, Chicago, IEEE,
+  Vancouver, Harvard); and a discoverability scorecard at `/v1/citations/scorecard`
+  reporting which metadata channels (CITATION.cff, codemeta.json, Zenodo, DOI, paper,
+  OpenAPI, licences) feed Google Scholar, OpenAlex and the repository harvesters.
+- **Oxidaner/ielts collection index** (`data/oxidaner.json`, 2,385 files, 5.09 GB):
+  path, title, skill, content category, format, size, blob SHA-1 and permalink for a
+  personal IELTS self-study dump organised by skill (1,623 reading, 722 listening,
+  27 writing, 8 speaking, 2 experience files). Endpoints:
+  `/v1/collections/oxidaner`, `/v1/collections/oxidaner/stats`,
+  `/v1/collections/oxidaner/items`.
+- `scripts/extract_oxidaner.py`: standard-library-only, deterministic extraction of the
+  collection index from a GitHub git-tree listing.
+- `RESEARCH.md` Part III: the Oxidaner/ielts collection analysis and the rationale for
+  a metadata-only index.
+
+### Changed
+
+- `/` and `/health` report the collection size and advertise the citation endpoints.
+- The OpenAPI document and README endpoint/dataset tables cover the new routes.
+- `CITATION.cff`, `codemeta.json` and `.zenodo.json` reference the new collection and
+  add software-citation keywords.
+- Test suite grown to 388 tests, still at 100% statement, branch, function and line
+  coverage per file.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection

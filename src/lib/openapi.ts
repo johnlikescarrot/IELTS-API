@@ -217,6 +217,20 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/collections/oxidaner/items': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string' } },
+    { name: 'category', in: 'query', schema: { type: 'string' } },
+    { name: 'format', in: 'query', schema: { type: 'string' } },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['title', 'skill', 'category', 'size'], default: 'title' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },

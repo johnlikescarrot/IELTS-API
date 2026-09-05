@@ -10,6 +10,8 @@
 export { createApiServer, startApiServer } from './server.js';
 export { createRequestHandler } from './app.js';
 export { DOMAIN_ROUTES, ROUTES } from './routes/index.js';
+export { citationRoutes } from './routes/citations.js';
+export { collectionRoutes } from './routes/collections.js';
 export { createMetaRoutes } from './routes/meta.js';
 export { openApiDocument } from './lib/openapi.js';
 export { escapeHtml, renderDocs } from './lib/docs.js';
@@ -24,6 +26,8 @@ export * from './lib/rng.js';
 export * from './lib/route.js';
 export * from './lib/search.js';
 export * from './data/bands.js';
+export * from './data/citations.js';
+export * from './data/collections.js';
 export * from './data/conversions.js';
 export * from './data/corpus.js';
 export * from './data/practiceTests.js';

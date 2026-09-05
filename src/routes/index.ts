@@ -6,6 +6,8 @@
  */
 
 import { bandRoutes } from './bands.js';
+import { citationRoutes } from './citations.js';
+import { collectionRoutes } from './collections.js';
 import { corpusRoutes } from './corpus.js';
 import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
@@ -26,6 +28,8 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...questionTypeRoutes,
   ...testRoutes,
   ...corpusRoutes,
+  ...collectionRoutes,
+  ...citationRoutes,
   ...resourceRoutes,
 ];
 

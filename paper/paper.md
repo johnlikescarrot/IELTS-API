@@ -31,8 +31,10 @@ original Writing and Speaking task banks built on the question families and word
 IELTS preparation material [@coxhead2000]; a canonical taxonomy of the thirteen IELTS Reading and
 Listening question types, onto which 65 free-text annotation labels are normalised, carrying the
 frequency of each family observed in 27,225 practice questions; a structure and readability index of
-1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of two open IELTS collections.
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; curated metadata
+indexes of three open IELTS collections; and a self-citation subsystem that serves the software's own
+bibliography — BibTeX, RIS, CodeMeta, Citation File Format and six human-readable styles — together
+with a discoverability scorecard of the channels that feed scholarly harvesters.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -56,6 +58,10 @@ The API addresses three concrete needs:
 
 1. **A citable target.** Datasets and code are released with `CITATION.cff`, `codemeta.json` and a
    Zenodo-ready metadata file, so a paper can cite a _version_ rather than a URL that may vanish.
+   The API goes further and serves its own citation — in every common exchange format and in six
+   human-readable styles — at `/v1/citations`, plus a scorecard of the metadata channels that feed
+   Google Scholar, OpenAlex and the repository harvesters, so the act of citing it is a single
+   `curl` away and can never drift from the version actually deployed.
 2. **A reusable data layer.** The vocabulary dataset carries phonetics, part-of-speech-tagged senses
    and Cambridge volume provenance, so it can be used for lexical coverage studies, item difficulty
    modelling or material generation without re-deriving it.
@@ -95,6 +101,22 @@ structure and timing guidance.
 for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file repository. No
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
 is a descriptive act over metadata.
+
+**Self-study collection index.** A third upstream collection [@oxidanerielts] is a personal dump of
+IELTS self-study material organised by the author into skill folders — 1,623 reading, 722 listening,
+27 writing, 8 speaking and 2 experience files, 2,385 files and 5.09 GB in total, dominated by PDFs
+(1,282) and listening audio (370). Only 21 files are machine-readable, so, as with the corpus index,
+the API publishes metadata only — path, title, skill, content category, format, size, blob SHA-1 and
+permalink — and never redistributes a file. The index makes the collection's skew visible: two
+receptive skills hold 98% of the material, a signal for anyone building balanced preparation data.
+
+**Self-citation subsystem.** Every citation of the API is rendered from one source of truth derived
+from the build-time constants, so the BibTeX, RIS, CodeMeta, Citation File Format and the APA, MLA,
+Chicago, IEEE, Vancouver and Harvard renderings can never drift from the deployed version. A
+discoverability scorecard reports which of the citability channels (`CITATION.cff`, `codemeta.json`,
+the Zenodo archive, a DOI, the paper, the OpenAPI contract and open licences) are present and which
+harvesters — Google Scholar, OpenAlex, Crossref, DataCite, Software Heritage — each one feeds,
+turning the project's own citation hygiene into an inspectable, testable API endpoint.
 
 **Question-type taxonomy and practice-test index.** A second upstream collection
 [@ieltspractice] publishes 315 full reading tests, 204 full listening tests and 1,232 CEFR-graded

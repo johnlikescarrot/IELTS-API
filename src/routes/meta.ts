@@ -3,6 +3,7 @@
  */
 
 import { corpusStats } from '../data/corpus.js';
+import { oxidanerStats } from '../data/collections.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
@@ -17,6 +18,7 @@ function datasetSummary(): Record<string, number> {
   const words = vocabularyStats();
   const corpus = corpusStats();
   const practice = practiceStats();
+  const collection = oxidanerStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -25,6 +27,7 @@ function datasetSummary(): Record<string, number> {
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
     practiceItems: practice.indexedItems,
     practiceQuestions: practice.questions,
+    collectionFiles: collection.filesInRepository,
   };
 }
 
@@ -61,7 +64,13 @@ export function createMetaRoutes(
         datasets: datasetSummary(),
         citation: {
           cff: `${REPOSITORY_URL}/blob/main/CITATION.cff`,
-          note: 'Please cite this API when you use it in research.',
+          endpoints: {
+            all: '/v1/citations',
+            formats: '/v1/citations/formats/:format',
+            styles: '/v1/citations/styles/:style',
+            scorecard: '/v1/citations/scorecard',
+          },
+          note: 'Please cite this API when you use it in research; every format is served at /v1/citations.',
         },
       },
       meta: { count: routes.length },
@@ -89,7 +98,9 @@ export function createMetaRoutes(
         uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
         datasets: datasetSummary(),
       },
-      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index'] },
+      meta: {
+        checks: ['process', 'vocabulary-dataset', 'corpus-index', 'collection-index', 'practice-test-index'],
+      },
     };
   }
 

@@ -424,6 +424,122 @@ export type ExamTheme = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Citations and scholarly impact                                             */
+/* -------------------------------------------------------------------------- */
+
+/** Human-readable citation styles the API can render. */
+export type CitationStyle = 'apa' | 'mla' | 'chicago' | 'ieee' | 'vancouver' | 'harvard';
+
+/** Machine-readable citation formats the API can export. */
+export type CitationFormat = 'bibtex' | 'ris' | 'codemeta' | 'cff';
+
+/** The single source of truth from which every citation is rendered. */
+export type CitationRecord = {
+  /** Work title. */
+  title: string;
+  /** Software version cited. */
+  version: string;
+  /** Release year. */
+  year: number;
+  /** Release date (ISO 8601). */
+  dateReleased: string;
+  /** Author string. */
+  authors: string;
+  /** Publisher / hosting organisation. */
+  publisher: string;
+  /** Source repository URL. */
+  repositoryUrl: string;
+  /** Concept DOI for the archived software (Zenodo). */
+  doi: string;
+  /** Whether the DOI has been minted for an archived release yet. */
+  doiMinted: boolean;
+  /** Code licence. */
+  codeLicense: string;
+  /** Data licence. */
+  dataLicense: string;
+  /** Discovery keywords. */
+  keywords: readonly string[];
+  /** Short abstract. */
+  abstract: string;
+};
+
+/** One discoverability channel reported by the harvestability scorecard. */
+export type HarvestabilityChannel = {
+  /** Stable channel identifier. */
+  id: string;
+  /** Human-readable channel name. */
+  label: string;
+  /** The artefact that feeds the channel. */
+  artefact: string;
+  /** Whether the artefact is present in this release. */
+  present: boolean;
+  /** Which harvesters pick the artefact up. */
+  harvestedBy: readonly string[];
+  /** What the channel contributes to citation discovery. */
+  purpose: string;
+};
+
+/** The citation-discoverability scorecard for the current release. */
+export type HarvestabilityScorecard = {
+  /** Channels inspected. */
+  channels: HarvestabilityChannel[];
+  /** Number of channels present. */
+  present: number;
+  /** Total number of channels inspected. */
+  total: number;
+  /** Fraction of channels present (0-1). */
+  coverage: number;
+  /** Ordered recommendations for improving discoverability. */
+  recommendations: string[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Oxidaner/ielts collection                                                  */
+/* -------------------------------------------------------------------------- */
+
+/** One file of the Oxidaner/ielts upstream collection. */
+export type OxidanerItem = {
+  /** Stable identifier (`ox-00001`). */
+  id: string;
+  /** Path inside the upstream repository. */
+  path: string;
+  /** Human-readable title (file stem). */
+  title: string;
+  /** Skill folder the file belongs to. */
+  skill: string;
+  /** Content category (document, audio, image, web, archive, other). */
+  category: string;
+  /** File extension without the dot. */
+  format: string;
+  /** Size in bytes. */
+  sizeBytes: number;
+  /** Git blob SHA-1. */
+  sha1: string | null;
+  /** Public URL of the file in the upstream repository. */
+  sourceUrl: string;
+};
+
+/** Aggregated statistics about the Oxidaner/ielts collection. */
+export type OxidanerStats = {
+  /** Files present in the upstream repository. */
+  filesInRepository: number;
+  /** Total size of the upstream files in bytes. */
+  totalBytes: number;
+  /** Files in a machine-readable format. */
+  machineReadableFiles: number;
+  /** Audio recordings shipped upstream. */
+  audioFiles: number;
+  /** File count per skill. */
+  bySkill: Record<string, number>;
+  /** Byte count per skill. */
+  bytesBySkill: Record<string, number>;
+  /** File count per format. */
+  byFormat: Record<string, number>;
+  /** File count per content category. */
+  byCategory: Record<string, number>;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

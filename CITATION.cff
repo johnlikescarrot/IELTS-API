@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.1.0
+version: 1.2.0
 date-released: '2026-09-05'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
@@ -34,6 +34,8 @@ keywords:
   - open data
   - REST API
   - TypeScript
+  - software citation
+  - bibliometrics
 license:
   - MIT
   - CC-BY-4.0
@@ -71,6 +73,12 @@ references:
     title: 'UPGRADE YOUR IELTS SKILLS: a practice-test collection'
     url: 'https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS'
     year: 2026
+  - type: dataset
+    authors:
+      - name: 'Oxidaner'
+    title: 'ielts: a personal collection of IELTS self-study material'
+    url: 'https://github.com/Oxidaner/ielts'
+    year: 2025
   - type: article
     authors:
       - family-names: 'Flesch'
@@ -109,7 +117,7 @@ preferred-citation:
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.1.0
+  version: 1.2.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:
