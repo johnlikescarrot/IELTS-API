@@ -77,14 +77,17 @@ jobs:
           status=0
           docker run --rm \
             --volume "$GITHUB_WORKSPACE:/tmp/lint" \
+            --volume "$GITHUB_EVENT_PATH:/github/event.json:ro" \
             --env-file /tmp/super-linter.env \
             -e "GITHUB_TOKEN=$GITHUB_TOKEN" \
             -e "GITHUB_REPOSITORY=$GITHUB_REPOSITORY" \
+            -e "GITHUB_REPOSITORY_OWNER=$GITHUB_REPOSITORY_OWNER" \
             -e "GITHUB_API_URL=$GITHUB_API_URL" \
             -e "GITHUB_SERVER_URL=$GITHUB_SERVER_URL" \
             -e "GITHUB_SHA=$GITHUB_SHA" \
             -e "GITHUB_REF=$GITHUB_REF" \
             -e "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+            -e "GITHUB_EVENT_PATH=/github/event.json" \
             "$SUPER_LINTER_IMAGE" \
             > /tmp/super-linter.log 2>&1 || status=1
           grep -qE "Failed linting|failed validation" /tmp/super-linter.log && status=1
