@@ -88,16 +88,16 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SHA: ${{ github.sha }}
         run: |
-          if [ -f super-linter.log ]; then
-            {
-              echo 'super-linter failed. Tail of super-linter.log:'
-              echo
-              echo '```'
-              tail -c 40000 super-linter.log
-              echo '```'
-            } > /tmp/super-linter-comment.md
+          sudo chmod -R a+rX . || true
+          log_file="$(find . /tmp -maxdepth 3 -name 'super-linter.log' -print -quit 2>/dev/null || true)"
+          if [ -n "${log_file}" ]; then
+            tail -c 30000 "${log_file}" > /tmp/super-linter-tail.txt
           else
-            echo 'super-linter failed and produced no log file.' > /tmp/super-linter-comment.md
+            {
+              echo 'No super-linter.log was produced. Workspace listing:'
+              ls -la
+            } > /tmp/super-linter-tail.txt
           fi
+          jq -Rs '{body: ("```text\n" + . + "\n```")}' /tmp/super-linter-tail.txt > /tmp/super-linter-comment.json
           gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}/comments" \
-            -f "body=@/tmp/super-linter-comment.md" > /dev/null
+            --input /tmp/super-linter-comment.json > /dev/null
