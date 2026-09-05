@@ -124,7 +124,22 @@ jobs:
 
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); print('datasets are valid JSON')"
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); json.load(open('data/materials.json')); print('datasets are valid JSON')"
+
+      - name: Re-derive the study-materials index from the upstream tree
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/Oxidaner/ielts/git/trees/main?recursive=1" \
+            -o /tmp/materials-tree.json
+          python3 scripts/extract_materials.py /tmp/materials-tree.json /tmp/materials.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/materials.json'))
+          regenerated = json.load(open('/tmp/materials.json'))
+          assert committed == regenerated, 'data/materials.json is out of date'
+          print(f"materials index reproducible: {regenerated['stats']['indexedFiles']} files")
+          PY
 
       - name: Check the practice-test index for internal consistency
         run: |

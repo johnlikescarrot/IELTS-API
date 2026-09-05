@@ -47,7 +47,8 @@
     "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test",
     "data:vocabulary": "python3 scripts/extract_vocabulary.py",
     "data:corpus": "python3 scripts/extract_corpus.py",
-    "data:practice-tests": "python3 scripts/extract_practice_tests.py"
+    "data:practice-tests": "python3 scripts/extract_practice_tests.py",
+    "data:materials": "python3 scripts/extract_materials.py"
   },
   "dependencies": {},
   "devDependencies": {

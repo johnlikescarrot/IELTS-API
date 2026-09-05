@@ -657,6 +657,88 @@ export type StudyPlan = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Study-materials index                                                      */
+/* -------------------------------------------------------------------------- */
+
+/** One file in the indexed study-materials collection. */
+export type MaterialsItem = {
+  /** Slugified identifier. */
+  id: string;
+  /** Path inside the upstream repository. */
+  path: string;
+  /** Human-readable title. */
+  title: string;
+  /** Material category assigned by the classification rules. */
+  category: string;
+  /** IELTS skill the material supports. */
+  skill: string;
+  /** File extension without the dot. */
+  format: string;
+  /** Size in bytes. */
+  sizeBytes: number;
+  /** Git blob SHA-1. */
+  sha1: string | null;
+  /** Public URL of the file in the upstream repository. */
+  sourceUrl: string;
+};
+
+/** Aggregated statistics about the study-materials collection. */
+export type MaterialsStats = {
+  filesInRepository: number;
+  excludedFiles: number;
+  indexedFiles: number;
+  indexedBytes: number;
+  byCategory: Record<string, number>;
+  bySkill: Record<string, number>;
+  byFormat: Record<string, number>;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Response frameworks                                                        */
+/* -------------------------------------------------------------------------- */
+
+/** The response formats covered by the framework taxonomy. */
+export type FrameworkSection = 'writing-task-2' | 'speaking-part-2' | 'speaking-part-3';
+
+/** One stage of a response framework. */
+export type FrameworkStage = {
+  /** Where the stage sits in the response (e.g. `Introduction`). */
+  position: string;
+  /** What the stage must achieve. */
+  purpose: string;
+  /** Concrete moves the candidate makes, in order. */
+  moves: string[];
+  /** Exemplar cue language for the stage (original to this project). */
+  language: string[];
+};
+
+/** A reusable response framework for a productive task. */
+export type ResponseFramework = {
+  /** Stable identifier (`w2-concession-rebuttal`). */
+  id: string;
+  /** Response format the framework addresses. */
+  section: FrameworkSection;
+  /** Skill the framework belongs to. */
+  skill: 'writing' | 'speaking';
+  /** Short name. */
+  name: string;
+  /** One-paragraph description of the framework's logic. */
+  summary: string;
+  /** Essay question families the framework fits (`type` in `/v1/topics/writing`). */
+  questionTypes: EssayQuestionType[];
+  /** Speaking parts the framework fits (1-3). */
+  speakingParts: number[];
+  /** Ordered stages of the response. */
+  stages: FrameworkStage[];
+  /** Recurring ways candidates lose marks when applying the framework. */
+  pitfalls: string[];
+  /** Suggested time budget in minutes, when the format fixes one. */
+  suggestedMinutes: number | null;
+  /** Suggested length in words, when the format fixes one. */
+  suggestedWords: number | null;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

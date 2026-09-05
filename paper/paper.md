@@ -24,15 +24,17 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships seven kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
 IELTS preparation material [@coxhead2000]; a canonical taxonomy of the thirteen IELTS Reading and
 Listening question types, onto which 65 free-text annotation labels are normalised, carrying the
-frequency of each family observed in 27,225 practice questions; a structure and readability index of
+frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
+response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
+cross-linked to the task banks; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of two open IELTS collections.
+metadata indexes of three open IELTS collections.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -150,11 +152,12 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (437 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (469 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
-integration re-derives the vocabulary dataset from the upstream workbook, and revalidates the
+integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
+study-materials index from the upstream tree, and revalidates the
 internal consistency of the practice-test index (question counts, type normalisation and provenance),
 failing if the committed data has drifted — which guards against silent data rot.
 

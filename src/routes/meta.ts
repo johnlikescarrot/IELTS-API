@@ -3,6 +3,7 @@
  */
 
 import { corpusStats } from '../data/corpus.js';
+import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
@@ -17,6 +18,7 @@ function datasetSummary(): Record<string, number> {
   const words = vocabularyStats();
   const corpus = corpusStats();
   const practice = practiceStats();
+  const materials = materialsStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -25,6 +27,8 @@ function datasetSummary(): Record<string, number> {
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
     practiceItems: practice.indexedItems,
     practiceQuestions: practice.questions,
+    materialsFiles: materials.filesInRepository,
+    materialsIndexedFiles: materials.indexedFiles,
   };
 }
 

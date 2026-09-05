@@ -7,6 +7,8 @@
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
+import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
@@ -154,6 +156,23 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
     { name: 'family', in: 'query', schema: { type: 'string', enum: [...QUESTION_TYPE_FAMILIES] } },
   ],
+  '/v1/frameworks': [
+    QUERY,
+    { name: 'section', in: 'query', schema: { type: 'string', enum: [...FRAMEWORK_SECTIONS] } },
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: ['writing', 'speaking'] } },
+    {
+      name: 'type',
+      in: 'query',
+      description: 'Essay question family.',
+      schema: { type: 'string', enum: [...ESSAY_QUESTION_TYPES] },
+    },
+    {
+      name: 'part',
+      in: 'query',
+      description: 'Speaking part.',
+      schema: { type: 'integer', enum: [1, 2, 3] },
+    },
+  ],
   '/v1/tests/items': [
     QUERY,
     {
@@ -208,6 +227,20 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'category', in: 'query', schema: { type: 'string' } },
     { name: 'skill', in: 'query', schema: { type: 'string' } },
     { name: 'format', in: 'query', schema: { type: 'string' } },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['title', 'category', 'skill', 'size'], default: 'title' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/materials/items': [
+    QUERY,
+    { name: 'category', in: 'query', schema: { type: 'string', enum: materialsFacets('category') } },
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: materialsFacets('skill') } },
+    { name: 'format', in: 'query', schema: { type: 'string', enum: materialsFacets('format') } },
     {
       name: 'sort',
       in: 'query',
@@ -396,8 +429,11 @@ export function openApiDocument(
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
-        'question-type taxonomy with observed frequencies, a structure and readability',
-        'index of 1,702 practice tests, and an index of the open IELTS research corpus.',
+        'question-type taxonomy with observed frequencies, response frameworks for the',
+        'productive papers, a structure and readability index of 1,702 practice tests,',
+        'an index of the open IELTS research corpus, and an index of a 2,385-file',
+        'self-study materials collection. The toolkit additionally scores any text',
+        '(readability and essay profile) and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
