@@ -10,6 +10,11 @@ indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+# Prettier is the formatting authority for Markdown, and it aligns
+# ordered-list continuations with the marker text — a 3-space pad under
+# `1. `, which no multiple-of-2 indent rule can accept. The editorconfig
+# check would demand exactly what prettier undoes, so it is unset here.
+indent_size = unset
 
 [data/**.json]
 insert_final_newline = true

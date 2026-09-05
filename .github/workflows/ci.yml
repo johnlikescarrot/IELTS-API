@@ -85,7 +85,7 @@ jobs:
           node dist/cli.js --help
           node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
           SERVER_PID=$!
-          for attempt in $(seq 1 20); do
+          for _attempt in $(seq 1 20); do
             if curl -fsS "http://127.0.0.1:4010/health" > /tmp/health.json; then break; fi
             sleep 0.5
           done

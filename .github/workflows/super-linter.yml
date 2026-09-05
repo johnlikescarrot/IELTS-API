@@ -116,8 +116,9 @@ jobs:
             echo '<details><summary>artefacts produced by the run</summary>'
             echo
             echo '```text'
-            ls -laR super-linter-output 2>&1 | head -100
-            ls -la super-linter.log 2>&1
+            find super-linter-output -maxdepth 3 -type f -printf '%M %10s  %p\n' 2>&1 \
+              | sort -k3 | head -100
+            [ -f super-linter.log ] && wc -c super-linter.log || echo 'no super-linter.log'
             echo '```'
             echo
             echo '</details>'
