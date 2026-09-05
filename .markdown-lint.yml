@@ -7,3 +7,7 @@ MD041: false
 MD040: false
 MD033: false
 MD024: false
+# JOSS papers carry their title in the YAML front matter and use a top-level
+# heading for each section (Summary, Statement of need, References, ...), so
+# `paper/paper.md` legitimately has several H1s.
+MD025: false
