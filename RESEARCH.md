@@ -3,15 +3,16 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Six parts, five upstream collections:
 
-| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                        |
-| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                   |
-| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
-| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
-| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                                              |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                                                 |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                                            |
+| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                                          |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                                               |
+| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays                          |
+| [Part VI](#part-vi--the-operating-platform)                                     | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea3`, 3,566 blobs  | the operating-platform index: 377-page manifest, 530-section listening taxonomy, 36 vocab themes, 95 speaking topics and 852 A-Level papers |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -681,3 +682,178 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the operating platform
+
+_Upstream: [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter), commit `0956ea375405e30b31bd554822726e4245bf077a` (2 September 2026, 3,566 blobs, the tip of `main`), the live codebase of the YouYiSiDa (优益思达) IELTS mock-exam platform at youyisida.com. The dataset is `data/platform.json`; the endpoints are `/v1/platform` (`/manifest`, `/vocab-themes`, `/speaking`, `/alevel`, `/schedules`) and `/v1/listening` (`/types`, `/scenes`, `/diffs`, `/groups`)._
+
+### 29. What the platform actually contains
+
+Where Parts I, II, IV and V index dumps — a corpus, a practice collection, a self-study folder, a grey archive — Part VI indexes an _operating product_. The repository is the test centre itself: a library of computer-delivered mock pages, a vocabulary study system, a speaking-recall bank, an A-Level past-paper catalogue and the scheduler that spaces review. At the pinned commit the tree holds 3,566 files:
+
+| Path prefix                               |  Files | Content                                                                                                              |
+| ----------------------------------------- | -----: | -------------------------------------------------------------------------------------------------------------------- |
+| `library/mock/`                           |    226 | Cambridge 10-21 full mocks (listening/reading/writing per test) + 4 IELTS mocks                                      |
+| `library/practice/`                       |     10 | Micro-drills: changnanju (long-sentence) breakdowns, jingting (intensive listening), shuzi-tingxie (digit dictation) |
+| `library/study/`                          |    141 | Vocabulary study routes: generic vocab, CET-4/6 wordlists, listening/reading/writing special vocab, grammar          |
+| `library/listening-taxonomy.json`         |      1 | Per-section listening annotation (volume / test / part / question range / type / scene / difficulty)                 |
+| `library/study/vocab-themes/`             |     37 | 36-theme browse library + `themes.json` catalogue with word counts                                                   |
+| `library/alevel-catalog.json`             |      1 | A-Level catalogue: 3 boards × 20 subjects × 852 papers                                                               |
+| `data/speaking/jiijing-banks/`            |      1 | Quarterly speaking recall bank (2026-Q2)                                                                             |
+| `server/schedules/`                       |      2 | Ebbinghaus spaced-repetition schedules (cet4-lite, gaozhong)                                                         |
+| `_next/`, `node_modules/`, `public/` etc. | ~3,200 | Build artefacts, audio, images, static assets — not indexed                                                          |
+
+The structure is what distinguishes this source from every other. Parts I-V describe material _about_ IELTS; this repository _runs_ IELTS preparation. Its manifest (`library/manifest.json`) enumerates 377 content pages, each with a zone (`mock`/`study`/`practice`), a subject, a duration and an addition date; its listening taxonomy annotates 530 sections across Cambridge volumes 5-21 with a closed vocabulary of question type, scene and difficulty; its theme catalogue organises 76,970 word occurrences into 36 browse pages. None of this is a transcription of an exam — it is the annotation layer an operating platform builds on top of its content to schedule, filter and explain it.
+
+As with every other part, no HTML exam page, audio file, dictionary gloss or college essay is redistributed. The index publishes **derived, non-substitutive metadata only** — identifiers, counts, bilingual labels and statistics — so the shape of an operating platform can be studied without mirroring the platform.
+
+### 30. The manifest (377 pages)
+
+`library/manifest.json` is the platform's own routing table: id, file, title, zone, subject, duration, description and addition date per page. The extractor groups the 377 items:
+
+| Zone       | Items | Subjects (examples)                                                                    | Mean duration |
+| ---------- | ----: | -------------------------------------------------------------------------------------- | ------------: |
+| `mock`     |   226 | `cambridge-listening` 72 · `cambridge-reading` 76 · `cambridge-writing` 74 · `ielts` 4 |      48.1 min |
+| `study`    |   141 | `vocab` 43 · `vocab-cet4` 35 · `vocab-cet4-lite` 30 · `vocab-special-listening` 8      |       7.2 min |
+| `practice` |    10 | `changnanju` 7 · `jingting` 1 · `shuzi-tingxie` 1 · `ielts` 1                          |       2.0 min |
+
+Overall mean duration is 31.7 min; practice drills are untimed (duration 0) by design. The identifier vocabulary is stable — `cambridge-10-test-1`, `cet4-lite-list-07` etc. — and is the key that joins the manifest to the taxonomy, the theme pages and the schedules.
+
+The manifest is the only place the platform declares its own provenance: the `generated` timestamp (`2026-09-02T03:20:00Z`) and the `avgDuration` aggregate, both published by the API.
+
+### 31. The listening taxonomy (530 sections, 2,720 questions)
+
+`library/listening-taxonomy.json` is the most structured artefact in the repository. Each of the 530 groups is identified as `cambridge-{volume}-test-{test}-s{part}-q{from}-{to}` and carries:
+
+- **position**: `volume` 5-21, `test` 1-4, `part` 1-4, `qFrom`/`qTo` (the question range), `questions`;
+- **pedagogy**: `qType` + `scene` + `diff` — each as an English identifier, a Chinese label and, for the taxonomy endpoints, a description and an occurrence count.
+
+The three vocabularies are closed and bilingual. The extractor normalises them to English identifiers for queryability while retaining the Chinese originals for provenance:
+
+| Question type (`qType`)    | Chinese | Sections | Share |
+| -------------------------- | ------- | -------: | ----: |
+| `gap-fill`                 | 填空题  |      211 | 39.8% |
+| `multiple-choice-multiple` | 多选题  |      109 | 20.6% |
+| `multiple-choice-single`   | 单选题  |      106 | 20.0% |
+| `matching`                 | 配对题  |       70 | 13.2% |
+| `map-labelling`            | 地图题  |       20 |  3.8% |
+| `diagram-labelling`        | 流程题  |        9 |  1.7% |
+| `short-answer`             | 简答题  |        5 |  0.9% |
+
+| Scene                                                                                                                 | Chinese      | Sections |
+| --------------------------------------------------------------------------------------------------------------------- | ------------ | -------: |
+| `travel`                                                                                                              | 旅游场景     |       82 |
+| `assignment-discussion`                                                                                               | 作业讨论场景 |       76 |
+| `business-management`                                                                                                 | 商业管理场景 |       63 |
+| `research-project`                                                                                                    | 学术研究场景 |       63 |
+| `daily-life`                                                                                                          | 日常生活场景 |       58 |
+| `humanities-social-sciences`                                                                                          | 人文社科场景 |       28 |
+| `job-application`                                                                                                     | 求职场景     |       22 |
+| `built-environment`                                                                                                   | 建筑环境场景 |       22 |
+| remaining 8 (accommodation, sports, orientation, biology, library, health-medicine, geography, insurance, unassigned) | —            |      116 |
+
+| Difficulty (`diff`) | Chinese | Sections |
+| ------------------- | ------- | -------: |
+| `medium`            | 中      |      191 |
+| `hard`              | 难      |      170 |
+| `easy`              | 易      |      137 |
+| `unrated`           | —       |       32 |
+
+Volumes 5-21 each contribute 27-38 sections (mean 31.2); Part 2 carries the largest single share (180 sections), Part 1 the smallest (98), and the average group contains 5.1 questions. The taxonomy complements `/v1/question-types` — which is reading-heavy and 13-family — with a listening-first, seven-family lens that is directly actionable for per-section drill selection: a learner can ask for `volume=10&part=3&qType=gap-fill&diff=hard` and receive precisely the hard gap-fill sections of that paper.
+
+The taxonomy is published at `/v1/listening`: `/types` and `/scenes` publish the bilingual vocabularies with descriptions and occurrence counts, `/diffs` the tiers, and `/groups` the 530 groups with full filtering (`volume`, `part`, `qType`, `scene`, `diff`, `q`), sorting (`id`, `volume`, `part`, `questions`) and pagination.
+
+### 32. The vocabulary-theme catalogue (36 themes, 76,970 words)
+
+`library/study/vocab-themes/themes.json` organises the platform's vocabulary study into a browse library orthogonal to the Cambridge-volume organisation of Part I. Each of the 36 themes carries a bilingual title, a category, a description, `count` (total headwords), `defined` (headwords with a gloss), a 12-word preview and a `dataFile` pointer. The catalogue totals 76,970 word occurrences (76,503 defined, 99.4%), mean 2,138 words per theme:
+
+| Category (`category`) | Themes | Total words |
+| --------------------- | -----: | ----------: |
+| `abroad` (出国留学)   |      7 |      18,412 |
+| `exam` (英语考试)     |      5 |      14,203 |
+| `life` (生活日常)     |      6 |      11,905 |
+| `subject` (学科分类)  |      4 |       8,744 |
+| `learning` (英语学习) |      4 |       7,201 |
+| `k12` (中小学)        |      3 |       6,883 |
+| `arts` (艺术文体)     |      3 |       3,401 |
+| `nature` (动植物)     |      2 |         638 |
+| `media` (影音视听)    |      2 |       3,583 |
+
+Categories are published at `/v1/platform/vocab-themes` with statistics; the 36 themes at `/v1/platform/vocab-themes/items` with filtering by `category`, free-text search over title and description, and sorting by `id`, `title` or `count`. The `dataFile` field is retained so a reviewer can locate the underlying word list without the API ever serving the gloss — the catalogue is an index, not a dictionary mirror.
+
+### 33. The speaking recall bank (2026-Q2)
+
+`data/speaking/jiijing-banks/2026-q2.json` is the quarterly 考题回忆 (recall) bank that Chinese IELTS preparation platforms share each exam season. At 2026-Q2 it holds:
+
+- **41 Part 1 topics** — 210 questions, mean 5.1 per topic (e.g. `Study` 21, `Hometown` 12);
+- **54 Part 2 cue cards** — 216 bullets (mean 4.0 per cue), each with a title and a 4-item prompt set, plus 218 Part 3 follow-up questions (mean 4.0 per cue).
+
+The API aggregates the 95 topics and 482 questions — counts, means and per-topic question/bullet tallies — at `/v1/platform/speaking`. No recall wording is redistributed beyond aggregated statistics and cue titles: the bank is evidence about which topics recur, not a substitute for the recall.
+
+### 34. The A-Level catalogue and the schedules
+
+`library/alevel-catalog.json` maps a second curriculum the platform serves — A-Level past papers — to the same key space:
+
+| Board        |                   Label | Subjects | Papers |
+| ------------ | ----------------------: | -------: | -----: |
+| `caie`       | CAIE (剑桥国际 A-Level) |        7 |    726 |
+| `edexcel`    |         Edexcel A Level |        7 |     70 |
+| `oxford-aqa` |      Oxford AQA A Level |        6 |     56 |
+| **total**    |                       — |       20 |    852 |
+
+The catalogue is served at `/v1/platform/alevel` and `/v1/platform/alevel/:id` — board, subject count and paper count only.
+
+`server/schedules/cet4-lite-ebbinghaus-schedule.json` and `gaozhong-ebbinghaus-schedule.json` publish the platform's spaced-repetition schedules: 65 days / 30 lists and 78 days / 40 lists respectively, each as a day-by-day Ebbinghaus curve. The index records the schedule summary (book, total days, total lists) at `/v1/platform/schedules` — the schedule, not the word list it paces.
+
+### 35. What the API publishes from Part VI
+
+- `/v1/platform`, `/v1/platform/stats`, `/v1/platform/manifest`, `/v1/platform/manifest/items`, `/v1/platform/manifest/:id` — 377 manifest pages with provenance, zone/subject facets and free-text search;
+- `/v1/platform/vocab-themes`, `/v1/platform/vocab-themes/items`, `/v1/platform/vocab-themes/:id` — 36-theme catalogue with category facets, search and sorting by headword count;
+- `/v1/platform/speaking` — quarterly recall bank: 41 Part 1 topics, 54 Part 2 cues, 482 questions aggregated;
+- `/v1/platform/alevel`, `/v1/platform/alevel/:id` — A-Level board catalogue;
+- `/v1/platform/schedules` — Ebbinghaus schedules;
+- `/v1/listening`, `/v1/listening/stats`, `/v1/listening/types`, `/v1/listening/types/:id`, `/v1/listening/scenes`, `/v1/listening/scenes/:id`, `/v1/listening/diffs`, `/v1/listening/groups`, `/v1/listening/groups/:id` — the full listening taxonomy with bilingual vocabularies and the 530-section searchable index.
+
+Every response carries `meta` provenance: the upstream commit (`0956ea3`), per-collection blob SHAs, the `generated` timestamp and the non-substitutive note that no exam page, audio file, dictionary gloss or college essay is redistributed.
+
+### 36. Threats to validity (Part VI)
+
+- **One platform, one snapshot.** The manifest, taxonomy and theme catalogue describe one live product at one commit. They are a case study of how a platform annotates IELTS material, not a census of platforms.
+- **Bilingual normalisation is interpretive.** Chinese labels (填空题, 旅游场景, 易/中/难) are mapped to English identifiers (`gap-fill`, `travel`, `easy` etc.) for queryability; the mapping follows the platform's own glosses and nearby documentation, but any alternative mapping can be rebuilt from the retained Chinese originals.
+- **Taxonomy annotation is not authoritative.** Type, scene and difficulty are the platform's own judgements, not an examining board's. Frequencies describe _this_ platform's allocation of difficulty across 2,720 questions, not the live examination.
+- **Duration is authored, not measured.** `duration` in the manifest is the page's suggested time budget, not a timing of candidate performance.
+- **Recall banks are grey, seasonal and aggregated.** Quarterly 考题回忆 is collected informally after sittings; the counts (41 topics, 210 questions etc.) describe what the platform chose to publish for 2026-Q2, not a verified sample of the quarter's items. Aggregation to counts prevents substituting the recall.
+- **The snapshot is mutable.** The upstream repository is unlicensed and force-pushes are possible; the commit SHA and per-blob SHA-1s in `data/platform.json:meta.blobs` pin the analysis. The index would need re-deriving after upstream changes.
+
+### 37. Reproducing Part VI
+
+```bash
+curl -sL "https://api.github.com/repos/wanli4473/yysd-testcenter/git/trees/0956ea375405e30b31bd554822726e4245bf077a?recursive=1" -o tree.json
+
+# The derivation needs only the 7 committed blobs — no clone, no HTML, no audio:
+python3 - <<'FETCH'
+import base64, json, urllib.request, pathlib
+blobs = {
+    "library/manifest.json": "b2657e3a0683cc1d23dda8b7c764fc49e5d5153f",
+    "library/listening-taxonomy.json": "f8625aa0491ddbac61b5a73cd15161bee058d111",
+    "library/study/vocab-themes/themes.json": "01626df2b1ff6c5345bccf8edd6ab2fec9c2c071",
+    "library/alevel-catalog.json": "038a1fb1a88cd03451d3a6f65f2c0a034bfe7b46",
+    "data/speaking/jiijing-banks/2026-q2.json": "9ba3654e483075bc687930afb1b419dece7a0aa1",
+    "server/schedules/cet4-lite-ebbinghaus-schedule.json": "7c212ef10b1f53bc85358af1f070c50a5f252028",
+    "server/schedules/gaozhong-ebbinghaus-schedule.json": "b8b3dd580629579bbf449316a68b7e662da9b77b",
+}
+tree = json.load(open("tree.json"))["tree"]
+by_path = {n["path"]: n for n in tree}
+for path, sha in blobs.items():
+    node = by_path[path]
+    with urllib.request.urlopen(node["url"]) as r:
+        blob = json.load(r)
+    target = pathlib.Path("upstream") / path
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(base64.b64decode(blob["content"]))
+FETCH
+
+python3 scripts/extract_platform.py tree.json upstream data/platform.json
+```
+
+`scripts/extract_platform.py` is standard library only and deterministic: the same tree and 7 blobs always produce byte-identical `data/platform.json`. Continuous integration fetches the blobs by SHA, re-derives the index and fails if the committed file disagrees. The listening taxonomy's English normalisation table (`TYPE_MAP`, `SCENE_MAP`, `DIFF_MAP`) lives in the extractor so its decisions are versioned alongside the data.

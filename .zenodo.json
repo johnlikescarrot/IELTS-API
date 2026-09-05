@@ -27,7 +27,13 @@
     "study planning",
     "learner corpus",
     "grey literature",
-    "listening comprehension"
+    "listening comprehension",
+    "operating platform",
+    "listening taxonomy",
+    "spaced repetition",
+    "Ebbinghaus",
+    "A-Level",
+    "speaking recall"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -42,12 +48,22 @@
       "scheme": "url"
     },
     {
+      "identifier": "https://github.com/Oxidaner/ielts",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
       "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
       "relation": "isDerivedFrom",
       "scheme": "url"
     },
     {
       "identifier": "https://github.com/msneloy/IELTS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/wanli4473/yysd-testcenter",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }

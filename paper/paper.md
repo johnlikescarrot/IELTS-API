@@ -24,7 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -33,11 +33,16 @@ Listening question types, onto which 65 free-text annotation labels are normalis
 frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
-1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; curated
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; and an operating-platform index that makes the annotation layer of a live mock-exam
+product queryable — a 377-page content manifest, a 530-section bilingual listening taxonomy
+(seven types, sixteen scenes, three difficulties, 2,720 questions across Cambridge volumes 5-21),
+a 36-theme vocabulary catalogue (76,970 words), a 95-topic quarterly speaking-recall bank and an
+852-paper A-Level catalogue with two Ebbinghaus schedules — without redistributing a single exam
+page or audio file.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -149,6 +154,19 @@ mean 43.5), confirming that the official exemplars are extracts of real tests ra
 demonstrations. The 24 marked essays (four learners, eight task types, August 2022) are published as
 eleven derived statistics per file — never as text, which the non-substitutive design forbids.
 
+**Operating-platform index.** A fifth open collection — the live codebase of the YouYiSiDa
+(优益思达) IELTS mock-exam platform at youyisida.com — is operating material rather than a dump.
+Its 3,566 files include a 377-page manifest that routes the site (`mock` 226, `study` 141,
+`practice` 10), a per-section listening annotation (`listening-taxonomy.json`) that tiles 530
+sections across Cambridge volumes 5-21 into seven question types, sixteen scenes and three difficulty
+tiers (gap-fill 211, matching 70, travel 82, assignment-discussion 76, medium 191, hard 170),
+a 36-theme vocabulary browse library (76,970 words, 99.4% glossed), a quarterly speaking-recall bank
+(2026-Q2: 41 Part 1 topics / 210 questions, 54 Part 2 cues / 216 bullets), an A-Level catalogue
+(CAIE 726, Edexcel 70, Oxford AQA 56 — 852 papers) and two Ebbinghaus schedules. Only metadata and
+counts are published — the bilingual taxonomy retains the Chinese originals alongside the English
+identifiers it normalises to (`填空题` → `gap-fill`, `旅游场景` → `travel`, `易` → `easy`) so any
+decision can be rebuilt, and no HTML page or audio file is mirrored.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -178,15 +196,15 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (577 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
-study-materials index and the grey-literature archive index from the upstream tree (the archive
-derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit), and
+study-materials index, the grey-literature archive index and the operating-platform index from the upstream trees (the archive
+derivation downloads the 38 document blobs it needs by blob SHA and the platform derivation its 7 committed blobs, both pinned to the indexed commit), and
 revalidates the internal consistency of the practice-test index (question counts, type normalisation
-and provenance) and of the archive index (facet totals, volume arithmetic, per-essay statistics),
+and provenance) and of the archive and platform indexes (facet totals, volume arithmetic, per-essay and per-theme statistics),
 failing if the committed data has drifted — which guards against silent data rot.
 
 # Availability
@@ -199,8 +217,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
-assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, on the
+grey-literature archive assembled by `msneloy`, and on the operating IELTS platform built by
+`wanli4473`; all are cited in `CITATION.cff` and in every
 response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.

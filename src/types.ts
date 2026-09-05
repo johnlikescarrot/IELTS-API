@@ -823,6 +823,246 @@ export type ArchiveStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Operating platform (wanli4473/yysd-testcenter)                             */
+/* -------------------------------------------------------------------------- */
+
+/** One content page in the platform manifest. */
+export type PlatformManifestItem = {
+  /** Stable identifier (e.g. `cambridge-10-test-1`). */
+  id: string;
+  /** File path inside `library/` (e.g. `mock/cambridge-listening/cambridge-10-test-1.html`). */
+  file: string;
+  /** Human-readable title. */
+  title: string;
+  /** Content zone (`mock`, `study`, `practice`). */
+  zone: string;
+  /** Subject within the zone (`cambridge-listening`, `vocab`, ...). */
+  subject: string;
+  /** Suggested duration in minutes (0 when untimed). */
+  duration: number;
+  /** Short description of the page. */
+  description: string;
+  /** ISO date the page was added (`YYYY-MM-DD`). */
+  added: string;
+  /** Full repository path. */
+  sourcePath: string;
+};
+
+/** Listening question-type in the platform taxonomy (7 types, Chinese → English). */
+export type ListeningType = {
+  /** English identifier (`gap-fill`, `matching`, `map-labelling`, ...). */
+  id: string;
+  /** Original Chinese label. */
+  chinese: string;
+  /** English name. */
+  name: string;
+  /** One-line description. */
+  description: string;
+  /** Sections annotated with this type. */
+  occurrences: number;
+};
+
+/** Listening scene / topical context (16 scenes). */
+export type ListeningScene = {
+  /** English identifier (`travel`, `daily-life`, ...). */
+  id: string;
+  /** Original Chinese label. */
+  chinese: string;
+  /** English name. */
+  name: string;
+  /** One-line description. */
+  description: string;
+  /** Sections annotated with this scene. */
+  occurrences: number;
+};
+
+/** Difficulty tier for a listening section. */
+export type ListeningDifficulty = {
+  /** English identifier (`easy`, `medium`, `hard`, `unrated`). */
+  id: string;
+  /** Original Chinese label (empty string for unrated). */
+  chinese: string;
+  /** English name. */
+  name: string;
+  /** Sections at this tier. */
+  occurrences: number;
+};
+
+/** One annotated listening section group (volume / test / part / question range). */
+export type ListeningGroup = {
+  /** Stable identifier (`cambridge-21-test-1-s1-q1-6`). */
+  id: string;
+  /** Parent content-page identifier (`cambridge-21-test-1`). */
+  parentId: string;
+  /** Cambridge volume (`5` … `21`). */
+  volume: string;
+  /** Test number inside the volume (`1` … `4`). */
+  test: string;
+  /** Listening part (1-4). */
+  part: number;
+  /** First question number in the group. */
+  qFrom: number;
+  /** Last question number in the group. */
+  qTo: number;
+  /** Questions in the group. */
+  questions: number;
+  /** English question-type identifier. */
+  qType: string;
+  /** Original Chinese question-type label. */
+  qTypeChinese: string;
+  /** English scene identifier. */
+  scene: string;
+  /** Original Chinese scene label (empty when unassigned). */
+  sceneChinese: string;
+  /** English difficulty identifier. */
+  diff: string;
+  /** Original Chinese difficulty label (empty for unrated). */
+  diffChinese: string;
+};
+
+/** Aggregate statistics for the listening taxonomy. */
+export type ListeningStats = {
+  groups: number;
+  questions: number;
+  volumes: string[];
+  byVolume: Record<string, number>;
+  byPart: Record<string, number>;
+  byType: Record<string, number>;
+  byScene: Record<string, number>;
+  byDiff: Record<string, number>;
+  types: number;
+  scenes: number;
+  diffs: number;
+  avgQuestionsPerGroup: number;
+};
+
+/** A vocabulary-theme category. */
+export type VocabThemeCategory = {
+  id: string;
+  label: string;
+};
+
+/** One vocabulary theme in the thematic browse library. */
+export type VocabTheme = {
+  /** Stable identifier (`cet4`, `ielts`, ...). */
+  id: string;
+  /** Display title (often bilingual). */
+  title: string;
+  /** Category identifier. */
+  category: string;
+  /** Description with word counts. */
+  desc: string;
+  /** Total headwords in the theme. */
+  count: number;
+  /** Headwords with a gloss. */
+  defined: number;
+  /** Preview headwords. */
+  preview: string[];
+  /** Data file that holds the full word list. */
+  dataFile: string;
+};
+
+/** A Part 1 speaking recall topic (aggregated). */
+export type SpeakingP1Topic = {
+  id: string;
+  topic: string;
+  questions: number;
+};
+
+/** A Part 2 speaking recall cue card (aggregated). */
+export type SpeakingP2Cue = {
+  id: string;
+  title: string;
+  bullets: number;
+  part3Questions: number;
+};
+
+/** A-Level board summary. */
+export type ALevelBoard = {
+  id: string;
+  label: string;
+  labelZh: string;
+  subjects: number;
+  paperCount: number;
+};
+
+/** Ebbinghaus schedule summary. */
+export type EbbinghausSchedule = {
+  bookId: string;
+  totalDays: number;
+  totalLists: number;
+  days: number;
+};
+
+/** Aggregate platform statistics. */
+export type PlatformStats = {
+  filesInRepository: number;
+  manifestItems: number;
+  listeningGroups: number;
+  listeningQuestions: number;
+  vocabThemes: number;
+  vocabCategories: number;
+  speakingTopics: number;
+  speakingQuestions: number;
+  alevelBoards: number;
+  alevelSubjects: number;
+  alevelPapers: number;
+  schedules: number;
+  listening: ListeningStats;
+  manifest: {
+    totalItems: number;
+    generated: string;
+    byZone: Record<string, number>;
+    bySubject: Record<string, number>;
+    avgDuration: number;
+    zones: string[];
+    subjects: string[];
+  };
+  vocabThemesStats: {
+    categories: number;
+    themes: number;
+    totalWords: number;
+    totalDefined: number;
+    byCategory: Record<string, number>;
+    avgWordsPerTheme: number;
+  };
+  speaking: {
+    bankId: string;
+    bankTitle: string;
+    source: string;
+    part1Topics: number;
+    part1Questions: number;
+    part2Cues: number;
+    part2Bullets: number;
+    part3Questions: number;
+    totalQuestions: number;
+    totalTopics: number;
+    avgQuestionsPerP1Topic: number;
+    avgBulletsPerCue: number;
+  };
+  alevel: {
+    boards: number;
+    subjects: number;
+    papers: number;
+    byBoard: Record<string, number>;
+  };
+};
+
+/** Provenance for the platform dataset. */
+export type PlatformMeta = {
+  name: string;
+  repository: string;
+  commit: string;
+  license: string;
+  attribution: string;
+  note: string;
+  generated: string;
+  upstreamFiles: number;
+  blobs: Record<string, string | null>;
+  collections: Record<string, string>;
+};
+
+/* -------------------------------------------------------------------------- */
 /* Response frameworks                                                        */
 /* -------------------------------------------------------------------------- */
 
