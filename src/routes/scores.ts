@@ -4,9 +4,10 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
+import { RAW_SCORE_NOTE, RAW_SCORE_TABLE_IDS, listRawScoreTable, rawMarkToBand } from '../data/raw-scores.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getInt, getNumber, getString, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -107,6 +108,32 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Convert raw marks (out of 40) to an indicative band, or list a whole table. */
+function rawScores(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const table = getEnum(params, 'table', RAW_SCORE_TABLE_IDS) ?? 'listening';
+  if (getString(params, 'raw') === undefined) {
+    const tableDefinition = listRawScoreTable(table);
+    return {
+      data: tableDefinition.rows,
+      meta: { table, count: tableDefinition.rows.length, note: RAW_SCORE_NOTE },
+    };
+  }
+  const raw = getInt(params, 'raw', 0, 40, 0);
+  const { table: matched, row } = rawMarkToBand(table, raw);
+  return {
+    data: {
+      table: matched.id,
+      raw,
+      correct: raw,
+      totalQuestions: 40,
+      band: row.band,
+      rawRange: { min: row.min, max: row.max },
+    },
+    meta: { note: RAW_SCORE_NOTE, scope: matched.scope },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -129,5 +156,12 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Map a score on another scale back to an indicative IELTS band.',
     handler: interpret,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw',
+    versioned: true,
+    summary: 'Convert 0-40 raw marks to an indicative band, or fetch a whole conversion table.',
+    handler: rawScores,
   },
 ];

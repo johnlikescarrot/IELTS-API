@@ -2,7 +2,11 @@
  * Service routes: discovery, health, OpenAPI document and documentation.
  */
 
+import { catalogTotals } from '../data/catalog.js';
 import { corpusStats } from '../data/corpus.js';
+import { QUESTION_TYPES } from '../data/question-types.js';
+import { READING_TOPICS } from '../data/reading-topics.js';
+import { SKILL_FORMATS } from '../data/skills.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
@@ -15,12 +19,18 @@ import type { RouteDefinition } from '../lib/route.js';
 function datasetSummary(): Record<string, number> {
   const words = vocabularyStats();
   const corpus = corpusStats();
+  const catalog = catalogTotals();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
     cambridgeVolumes: words.volumes,
     corpusFiles: corpus.filesInRepository,
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
+    skills: SKILL_FORMATS.length,
+    questionTypes: QUESTION_TYPES.length,
+    readingTopics: READING_TOPICS.length,
+    catalogEntries: catalog.entries,
+    catalogFilesAvailable: catalog.availableFiles,
   };
 }
 

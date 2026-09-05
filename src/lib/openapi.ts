@@ -6,6 +6,9 @@
  */
 
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { QUESTION_RESPONSE_FORMATS, QUESTION_TYPE_SKILLS } from '../data/question-types.js';
+import { RAW_SCORE_TABLE_IDS } from '../data/raw-scores.js';
+import { READING_TOPIC_GROUPS } from '../data/reading-topics.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
@@ -157,6 +160,32 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/question-types': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...QUESTION_TYPE_SKILLS] } },
+    { name: 'format', in: 'query', schema: { type: 'string', enum: [...QUESTION_RESPONSE_FORMATS] } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/topics/reading': [
+    QUERY,
+    { name: 'group', in: 'query', schema: { type: 'string', enum: [...READING_TOPIC_GROUPS] } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/scores/raw': [
+    {
+      name: 'table',
+      in: 'query',
+      schema: { type: 'string', enum: [...RAW_SCORE_TABLE_IDS], default: 'listening' },
+    },
+    {
+      name: 'raw',
+      in: 'query',
+      description: 'Raw marks out of 40. Omit to receive the whole table.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+  ],
 };
 
 /** The shared JSON envelope schema. */
@@ -253,8 +282,10 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'descriptors, score concordances, raw-mark to band tables, a machine-readable',
+        'Listening/Reading question-type taxonomy with strategy playbooks, task and',
+        'topic banks for all four skills, and metadata indexes of two open community',
+        'practice estates (40,000+ upstream files catalogued and validated).',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

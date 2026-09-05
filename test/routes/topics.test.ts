@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestServer } from '../helpers/server.js';
 
 import type { TestServer } from '../helpers/server.js';
-import type { SpeakingTopic, TaskType, WritingTopic } from '../../src/types.js';
+import type { ReadingTopic, SpeakingTopic, TaskType, WritingTopic } from '../../src/types.js';
 
 let server: TestServer;
 
@@ -87,5 +87,45 @@ describe('GET /v1/tasks/writing', () => {
 
   it('rejects unknown modules', async () => {
     expect((await server.json('/v1/tasks/writing?module=academic-writing')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/topics/reading', () => {
+  it('returns the 50-topic bank with group facets', async () => {
+    const response = await server.json<ReadingTopic[]>('/v1/topics/reading?limit=100');
+    expect(response.status).toBe(200);
+    expect(response.meta.total).toBe(50);
+    expect((response.meta.groups as string[]).length).toBe(11);
+    const stats = response.meta.stats as Record<string, number>;
+    expect(stats.topics).toBe(50);
+  });
+
+  it('filters by group', async () => {
+    const response = await server.json<ReadingTopic[]>('/v1/topics/reading?group=transport&limit=10');
+    expect(response.data).toHaveLength(4);
+    expect(response.meta.group).toBe('transport');
+  });
+
+  it('searches collocations', async () => {
+    const response = await server.json<ReadingTopic[]>('/v1/topics/reading?q=carbon%20budget&limit=10');
+    expect(response.data.map((topic) => topic.id)).toContain('climate-change-global-warming');
+  });
+
+  it('rejects unknown groups and paging', async () => {
+    expect((await server.json('/v1/topics/reading?group=astrology')).status).toBe(400);
+    expect((await server.json('/v1/topics/reading?limit=500')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/topics/reading/:topicId', () => {
+  it('returns one topic', async () => {
+    const response = await server.json<ReadingTopic>('/v1/topics/reading/nuclear-energy');
+    expect(response.status).toBe(200);
+    expect(response.data.collocations).toHaveLength(5);
+    expect(response.meta.group).toBe('science');
+  });
+
+  it('404s on unknown topics', async () => {
+    expect((await server.json('/v1/topics/reading/bee-keeping')).status).toBe(404);
   });
 });

@@ -132,3 +132,38 @@ describe('GET /v1/scores/interpret', () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
   });
 });
+
+describe('GET /v1/scores/raw', () => {
+  it('converts a raw mark with the default table', async () => {
+    const response = await server.json<{ raw: number; band: number; rawRange: { min: number; max: number } }>(
+      '/v1/scores/raw?raw=31',
+    );
+    expect(response.status).toBe(200);
+    expect(response.data.band).toBe(7);
+    expect(response.data.rawRange).toEqual({ min: 30, max: 31 });
+    expect(String(response.meta.note)).toContain('Indicative');
+  });
+
+  it('honours the module-specific tables', async () => {
+    const academic = await server.json<{ band: number }>('/v1/scores/raw?table=reading-academic&raw=27');
+    expect(academic.data.band).toBe(6.5);
+    const general = await server.json<{ band: number }>(
+      '/v1/scores/raw?table=reading-general-training&raw=34',
+    );
+    expect(general.data.band).toBe(8);
+    expect(general.status).toBe(200);
+  });
+
+  it('lists a whole table when raw is omitted', async () => {
+    const response = await server.json<{ min: number }[]>('/v1/scores/raw?table=listening');
+    expect(response.status).toBe(200);
+    expect(response.data).toHaveLength(17);
+    expect(response.meta.count).toBe(17);
+  });
+
+  it('validates inputs', async () => {
+    expect((await server.json('/v1/scores/raw?raw=41')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?raw=many')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?table=writing')).status).toBe(400);
+  });
+});

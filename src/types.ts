@@ -189,6 +189,224 @@ export type Resource = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Skills, question types and strategies                                      */
+/* -------------------------------------------------------------------------- */
+
+/** One part of a skill's test (section, passage, task or speaking part). */
+export type SkillPartFormat = {
+  /** Human-readable part name. */
+  name: string;
+  /** What candidates are asked to do in this part. */
+  focus: string;
+  /** Approximate minutes spent on the part, when fixed. */
+  minutes: number | null;
+  /** Number of questions in the part, when the part is question-based. */
+  questionCount: number | null;
+};
+
+/** The published format of one IELTS skill. */
+export type SkillFormat = {
+  /** Skill identifier. */
+  id: Skill;
+  /** Display name. */
+  name: string;
+  /** One-sentence overview. */
+  summary: string;
+  /** IELTS modules the format applies to. */
+  modules: Array<'academic' | 'general-training'>;
+  /** Approximate total time in minutes (audio time, not transfer time). */
+  minutes: number;
+  /** Number of questions, or `null` for non-standardised skills. */
+  questionCount: number | null;
+  /** Constituent parts. */
+  parts: SkillPartFormat[];
+  /** Additional facts about timing, delivery and marking. */
+  notes: string[];
+  /** How the skill is scored. */
+  scoringNote: string;
+};
+
+/** How a question is answered. */
+export type QuestionResponseFormat = 'selection' | 'written';
+
+/** The three-phase playbook attached to every question type. */
+export type QuestionTypePlaybook = {
+  /** What to do in the reading/preview time before the text or recording. */
+  anticipate: string[];
+  /** What to do while listening or reading. */
+  during: string[];
+  /** What to do in the checking time afterwards. */
+  check: string[];
+};
+
+/** A machine-readable IELTS Listening/Reading question type. */
+export type QuestionTypeData = {
+  /** Stable slug identifier. */
+  id: string;
+  /** Official-style name. */
+  name: string;
+  /** Alternative names printed in past papers. */
+  alsoCalledAs: string[];
+  /** Skills in which the type appears. */
+  skills: Array<'listening' | 'reading'>;
+  /** Selection (choose from given options) versus written response. */
+  responseFormat: QuestionResponseFormat;
+  /** Rules governing the answer sheet response. */
+  answerRules: string[];
+  /** Phase-by-phase strategy playbook. */
+  playbook: QuestionTypePlaybook;
+  /** Typical distractor mechanisms for this type. */
+  distractorPatterns: string[];
+  /** Frequent candidate errors. */
+  pitfalls: string[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Reading topics                                                             */
+/* -------------------------------------------------------------------------- */
+
+/** Skills and tasks a recurring IELTS topic is commonly tested in. */
+export type TopicSurface = 'reading' | 'listening' | 'writing-task-2' | 'speaking-part-2' | 'speaking-part-3';
+
+/** A high-frequency IELTS topic with an original collocation bank. */
+export type ReadingTopic = {
+  /** Stable slug identifier. */
+  id: string;
+  /** Position in the frequency ranking (1 is most frequent). */
+  rank: number;
+  /** Thematic group. */
+  group: string;
+  /** Topic title. */
+  title: string;
+  /** Lexical chunks with short glosses. */
+  collocations: string[];
+  /** A discussion or cue-card prompt built around the topic. */
+  studyPrompt: string;
+  /** Where the topic is commonly encountered. */
+  commonIn: TopicSurface[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Raw-score conversion                                                       */
+/* -------------------------------------------------------------------------- */
+
+/** Identifiers of the raw-mark tables. */
+export type RawScoreTableId = 'listening' | 'reading-academic' | 'reading-general-training';
+
+/** One row of a raw-mark to band table. */
+export type RawBandRow = {
+  /** Lowest raw mark in the row. */
+  min: number;
+  /** Highest raw mark in the row. */
+  max: number;
+  /** Indicative band score. */
+  band: number;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Open practice content catalog                                              */
+/* -------------------------------------------------------------------------- */
+
+/** Whether a collection contains graded lessons or whole tests. */
+export type CatalogTier = 'basic' | 'full-test';
+
+/** Kind of upstream file an artifact points at. */
+export type CatalogArtifactKind =
+  | 'questions-json'
+  | 'strategies-json'
+  | 'processed-json'
+  | 'player-html'
+  | 'player-index'
+  | 'audio'
+  | 'lesson-data-js'
+  | 'lesson-data-json'
+  | 'source-docx';
+
+/** One artifact (file) that may exist for a catalog entry. */
+export type CatalogArtifactSpec = {
+  /** Stable name, e.g. `questionsJson`. */
+  name: string;
+  /** File kind. */
+  kind: CatalogArtifactKind;
+  /** Repository-relative path with `{level}`, `{lesson}`, `{pad}` or `{test}` placeholders. */
+  pathTemplate: string;
+  /** Human-readable description of the artifact. */
+  description: string;
+  /** Short `[min, max]` global-entry ranges in which the artifact exists upstream. */
+  present: Array<[number, number]>;
+};
+
+/** Size of one level of a basic collection. */
+export type CatalogLevel = {
+  /** Level name as used upstream (e.g. `A1-A2`). */
+  name: string;
+  /** Number of lessons at this level. */
+  count: number;
+};
+
+/** One indexed collection of the upstream open practice repository. */
+export type CatalogCollection = {
+  /** Stable identifier. */
+  id: string;
+  /** Skill the collection practises. */
+  skill: 'listening' | 'reading';
+  /** Lessons or whole tests. */
+  tier: CatalogTier;
+  /** Display title. */
+  title: string;
+  /** What the collection contains. */
+  description: string;
+  /** Repository-relative root directory. */
+  basePath: string;
+  /** Directory per entry, or `null` when entries are plain files. */
+  entryDirectory: string | null;
+  /** Levels of a basic collection; empty for full tests. */
+  levels: CatalogLevel[];
+  /** Total entries in the collection (lessons or test numbers). */
+  totalEntries: number;
+  /** Files that may exist per entry. */
+  artifacts: CatalogArtifactSpec[];
+};
+
+/** A resolved artifact with concrete upstream URLs. */
+export type CatalogEntryArtifact = {
+  /** Stable artifact name. */
+  name: string;
+  /** File kind. */
+  kind: CatalogArtifactKind;
+  /** Whether the file exists for this entry. */
+  available: boolean;
+  /** Repository-relative path, or `null` when unavailable. */
+  path: string | null;
+  /** Raw download URL, or `null` when unavailable. */
+  rawUrl: string | null;
+  /** GitHub blob URL, or `null` when unavailable. */
+  blobUrl: string | null;
+};
+
+/** One fully resolved lesson or test of a catalog collection. */
+export type CatalogEntry = {
+  /** Stable identifier, e.g. `listening-204-full-test-0057`. */
+  id: string;
+  /** Owning collection identifier. */
+  collection: string;
+  /** Global position within the collection (1-based). */
+  index: number;
+  /** Level name for basic collections, `null` for full tests. */
+  level: string | null;
+  /** Position within the level, `null` for full tests. */
+  indexWithinLevel: number | null;
+  /** Upstream test number or lesson number. */
+  number: number;
+  /** Repository-relative directory of the entry. */
+  directory: string;
+  /** GitHub tree URL for the entry directory (repository root when flat). */
+  treeUrl: string;
+  /** Files that may exist for this entry. */
+  artifacts: CatalogEntryArtifact[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* Research corpus                                                            */
 /* -------------------------------------------------------------------------- */
 

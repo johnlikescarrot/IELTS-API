@@ -6,6 +6,37 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-05
+
+The skills & strategies release, researched against the community practice repository
+[`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][upgrade].
+
+### Added
+
+- **Skills & exam-format reference**: published part counts, timings, question counts, delivery rules
+  and scoring notes for Listening, Reading, Writing and Speaking (`/v1/skills`, `/v1/skills/:skillId`).
+- **Question-type taxonomy**: 16 machine-readable Listening/Reading question types, each with answer
+  rules, a three-phase strategy playbook (anticipate / during / check), distractor patterns and common
+  pitfalls (`/v1/question-types`, `/v1/question-types/:typeId`). The metadata block documents field-name
+  interop with the `strategies.json` files published upstream.
+- **Raw-mark to band conversion**: indicative 0-40 conversion tables for listening, academic reading and
+  general training reading (`/v1/scores/raw`).
+- **High-frequency topic bank**: the 50 topics that recur in recent IELTS cycles with 250 original
+  collocation chunks and study prompts (`/v1/topics/reading`, `/v1/topics/reading/:topicId`).
+- **Open practice content catalog**: verified structural metadata for 1,853 community lessons and full
+  tests (102 + 204 listening, 1,232 + 315 reading), including per-artifact availability ranges checked
+  against the upstream git tree (missing audio, missing JSON, strategies for tests 1-20 only, reading
+  test 105 absent) and resolved raw/blob URLs (`/v1/catalog`, `/v1/catalog/:collectionId`,
+  `/v1/catalog/:collectionId/entries/:index`). No copyrighted upstream content is redistributed.
+- `UPGRADE-YOUR-IELTS-SKILLS` added to the resource catalogue.
+
+### Changed
+
+- Test suite grew to 368 tests with the 100%-per-file coverage gate maintained; OpenAPI, `/docs`,
+  `/health` and the service index now report the new datasets.
+
+[upgrade]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
+
 ## [1.0.0] - 2026-09-04
 
 First citable release.

@@ -7,3 +7,6 @@ MD041: false
 MD040: false
 MD033: false
 MD024: false
+# JOSS papers (paper/paper.md) use one top-level heading per required section
+# (Summary, Statement of need, ...) by design; the paper format is fixed.
+MD025: false

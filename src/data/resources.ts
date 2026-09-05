@@ -11,6 +11,17 @@ import type { Resource } from '../types.js';
 /** Freely accessible IELTS preparation resources. */
 export const RESOURCES: readonly Resource[] = [
   {
+    id: 'upgrade-ielts-skills-community',
+    name: 'UPGRADE-YOUR-IELTS-SKILLS (community practice estate)',
+    url: 'https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS',
+    provider: 'ngoclong1209 (community)',
+    type: 'practice-material',
+    free: true,
+    license: 'Third-party Cambridge materials hosted upstream; repository itself is open',
+    description:
+      'Open IELTS practice estate: 102 basic listening lessons, 204 listening full tests, 1,232 CEFR-graded reading lessons and 315 reading tests in a stable JSON schema. Indexed by this API at /v1/catalog.',
+  },
+  {
     id: 'ielts-official',
     name: 'IELTS official site',
     url: 'https://www.ielts.org/',

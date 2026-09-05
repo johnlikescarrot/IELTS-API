@@ -6,6 +6,7 @@
  * citation-manager preview.
  */
 
+import { catalogTotals } from '../data/catalog.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 
@@ -48,6 +49,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const catalog = catalogTotals();
 
   return `<!doctype html>
 <html lang="en">
@@ -95,6 +97,10 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
+  <li><strong>Exam-format reference</strong> for all four skills, raw-mark to band conversion tables, a machine-readable
+      <strong>question-type taxonomy</strong> with strategy playbooks, and <strong>50 high-frequency topics</strong>
+      with original collocation banks.</li>
+  <li><strong>Open practice content catalog</strong>: ${catalog.entries.toLocaleString('en-US')} community lessons and full tests (validated against ${catalog.questionSets} downloadable question sets and ${catalog.strategySets} strategy files upstream); only metadata and URLs are published.</li>
 </ul>
 
 <h2>Versioned endpoints</h2>

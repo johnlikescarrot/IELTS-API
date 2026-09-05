@@ -22,11 +22,16 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships five kinds of data: a 4,174-headword vocabulary dataset derived from
+JSON envelope. The service ships eight kinds of data: a 4,174-headword vocabulary dataset derived from
 the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking and
 Writing across bands 0-9; indicative score concordances between IELTS and five other scales; original
 Writing and Speaking task banks built on the question families and word lists that recur in IELTS
-preparation material [@coxhead2000]; and a curated metadata index of an open IELTS research corpus.
+preparation material [@coxhead2000]; a metadata index of an open IELTS research corpus; the published
+exam formats of the four skills; a machine-readable taxonomy of sixteen Listening/Reading question
+types with strategy playbooks; indicative raw-mark to band conversion tables; and a 50-topic
+high-frequency bank with an original collocation inventory. A catalog endpoint resolves the verified
+structure of a community practice estate of 1,853 lessons and full tests [@upgraderepo], so that
+deployed practice applications can consume their own content through a stable, citable API.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -46,7 +51,7 @@ material) contains, alongside its IELTS content, a larger volume of semiconducto
 pop music and cryptocurrency books. Only 76 of the 404 files (18.8%) are IELTS or English-learning
 material — an unfiltered crawler treats a lithography textbook as IELTS training data. [@ieltscorpus]
 
-The API addresses three concrete needs:
+The API addresses four concrete needs:
 
 1. **A citable target.** Datasets and code are released with `CITATION.cff`, `codemeta.json` and a
    Zenodo-ready metadata file, so a paper can cite a _version_ rather than a URL that may vanish.
@@ -56,6 +61,10 @@ The API addresses three concrete needs:
 3. **A service that does not gate access.** No API key, no registration, no per-key rate limiting and
    no CORS restrictions, so the API is usable from a browser, a notebook or an offline archive
    snapshot.
+4. **A procedural layer for item and strategy research.** Beyond lexicography, researchers studying
+   item types, distractor behaviour and test-taking strategy need machine-readable question-type
+   descriptions; practice-app developers need a validated index of where open practice data lives. The
+   question-type taxonomy, exam formats and content catalog serve both.
 
 # Datasets
 
@@ -90,6 +99,18 @@ for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
 is a descriptive act over metadata.
 
+**Skills, strategies and catalog.** The exam-format reference records the published structure of each
+skill; the question-type taxonomy attaches to each of the sixteen Listening/Reading types an answer-rule
+specification, a three-phase playbook (anticipate, during, check), distractor patterns and pitfall lists —
+all original prose. Its metadata declares field-name interop with the `type_tip`, `scan_target` and
+`analysis_logic` keys of the per-question strategy files published in the community repository
+[@upgraderepo], so item-level strategies and type-level playbooks join on the question type. The catalog
+indexes that repository's 102 basic listening lessons, 204 listening tests, 1,232 CEFR-graded reading
+lessons and 315 reading tests: entry counts, file-layout templates and per-artifact availability ranges
+verified against the upstream git tree (for example, listening tests 3, 34 and 51 lack question JSON, and
+reading test 105 is absent entirely). Only structural metadata is published; the third-party test content
+stays upstream.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
@@ -105,7 +126,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (295 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (368 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -121,8 +142,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 # Acknowledgements
 
-This work builds on the open corpus assembled by `zhengyishiming`; the author of that corpus is cited
-in `CITATION.cff` and in every response that draws on it. IELTS is a jointly owned trademark of the
+This work builds on the open corpus assembled by `zhengyishiming` and on the practice estate assembled
+by `ngoclong1209`; both authors are cited in `CITATION.cff` and in every response that draws on their
+material. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

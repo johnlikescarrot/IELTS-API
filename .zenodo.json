@@ -1,6 +1,6 @@
 {
   "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
+  "description": "Archived release (v1.1.0) of the IELTS API source code and datasets: Cambridge IELTS 1-22 vocabulary, band descriptors and score concordances, exam formats for the four skills, a machine-readable question-type taxonomy with strategy playbooks, raw-mark to band conversion tables, a 50-topic bank with collocation inventories, and a verified structural catalog of an open community practice estate. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
@@ -16,6 +16,9 @@
     "vocabulary",
     "band descriptors",
     "score concordance",
+    "question types",
+    "test-taking strategy",
+    "exam format",
     "open data",
     "REST API"
   ],
@@ -29,6 +32,11 @@
     {
       "identifier": "https://github.com/zhengyishiming/IELTS",
       "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+      "relation": "linksTo",
       "scheme": "url"
     }
   ]
