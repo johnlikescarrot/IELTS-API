@@ -1,0 +1,8 @@
+# Checkov walks the workspace itself and does not honour Super-Linter filters.
+# Exclude installed dependencies and generated artefacts, never project rules.
+quiet: true
+skip-path:
+  - node_modules
+  - dist
+  - coverage
+  - super-linter-output

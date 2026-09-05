@@ -1,0 +1,3 @@
+# Generated snapshots are reviewed via their extractors, tests and CI drift gates.
+data/*.json linguist-generated=true
+docs/openapi.json linguist-generated=true

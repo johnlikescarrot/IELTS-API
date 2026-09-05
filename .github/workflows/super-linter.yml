@@ -45,10 +45,10 @@ jobs:
         uses: super-linter/super-linter/slim@47984f49b4e87383eed97890fe2dca6063bbd9c3 # v8.3.1
         env:
           DEFAULT_BRANCH: main
-          DEFAULT_WORKSPACE: ${{ github.workspace }}
           VALIDATE_ALL_CODEBASE: true
           # The generated datasets are machine-written: never lint them.
-          FILTER_REGEX_EXCLUDE: ^${{ github.workspace }}/(data|coverage|dist|node_modules|super-linter-output)/
+          FILTER_REGEX_EXCLUDE: '(^|/)(node_modules|coverage|dist|super-linter-output)/|(^|/)data/(corpus|vocabulary|practice)\.json$'
+          IGNORE_GITIGNORED_FILES: true
           # Languages enabled for this repository.
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_TYPESCRIPT_ES: true
@@ -77,16 +77,29 @@ jobs:
           MULTI_STATUS: false
           SAVE_SUPER_LINTER_OUTPUT: true
           SAVE_SUPER_LINTER_SUMMARY: true
+          REMOVE_ANSI_COLOR_CODES_FROM_OUTPUT: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Report failed linter summary
+      - name: Report failed linter diagnostics
         if: failure()
         run: |
-          if test -f super-linter-output/super-linter-summary.md; then
-            while IFS= read -r line; do
-              printf '::error::%s\n' "${line}"
-            done < super-linter-output/super-linter-summary.md
-          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          root = Path('super-linter-output/super-linter')
+          prefix = 'super-linter-parallel-command-exit-code-'
+          for result in sorted(root.glob(prefix + '*')):
+              if result.read_text().strip() == '0':
+                  continue
+              language = result.name.removeprefix(prefix)
+              messages = []
+              for stream in ('stdout', 'stderr'):
+                  path = root / f'super-linter-parallel-{stream}-{language}'
+                  if path.exists():
+                      messages.append(path.read_text(errors='replace'))
+              message = ''.join(messages)[:6000] or 'See the Super-Linter report artefact.'
+              message = message.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::error title=Super-Linter {language}::{message}')
+          PY
 
       - name: Upload Super-Linter reports
         if: always()
