@@ -81,7 +81,17 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Keep the linter log when the job fails: it is the only place that
-      # records which linter complained and why.
+      # records which linter complained and why. The annotations below
+      # surface the finding even when the log artifact cannot be uploaded
+      # (a runner-side zip failure would otherwise mask the real errors).
+      - name: Surface super-linter errors as annotations
+        if: failure()
+        run: |
+          grep -F '[ERROR]' super-linter.log 2>/dev/null | head -10 | while IFS= read -r line; do
+            message=$(printf '%s' "$line" | cut -c1-500)
+            echo "::error title=super-linter::${message}"
+          done || true
+
       - name: Upload the super-linter log
         if: failure()
         uses: actions/upload-artifact@v4
