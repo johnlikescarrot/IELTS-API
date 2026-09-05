@@ -6,6 +6,9 @@
  */
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
+import { COHESION_RELATIONS } from '../data/lexicon.js';
+import { WRITING_TASKS } from './analysis.js';
+import { ACCEPTED_MEDIA_TYPES } from './body.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
@@ -31,6 +34,34 @@ const OFFSET = {
   schema: { type: 'integer', minimum: 0, default: 0 },
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
+const TEXT = {
+  name: 'text',
+  in: 'query',
+  description:
+    'The text to analyse (at most 50,000 characters). Send it as a POST body instead when it is long.',
+  schema: { type: 'string', maxLength: 50000 },
+};
+const SAMPLE = {
+  name: 'sample',
+  in: 'query',
+  description: 'How many matched and off-list word forms to return.',
+  schema: { type: 'integer', minimum: 0, maximum: 200, default: 25 },
+};
+
+/** Request body accepted by the text-analysis endpoints. */
+const ANALYSIS_BODY = {
+  required: true,
+  description: 'The text to analyse. Sent as a body so that long passages stay out of the request line.',
+  content: {
+    'text/plain': { schema: { type: 'string' } },
+    'application/json': {
+      schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' } } },
+    },
+    'application/x-www-form-urlencoded': {
+      schema: { type: 'object', required: ['text'], properties: { text: { type: 'string' } } },
+    },
+  },
+};
 
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
@@ -217,6 +248,23 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/analyze/readability': [TEXT],
+  '/v1/analyze/vocabulary': [TEXT, SAMPLE],
+  '/v1/analyze/cohesion': [TEXT],
+  '/v1/analyze/writing': [
+    TEXT,
+    SAMPLE,
+    {
+      name: 'task',
+      in: 'query',
+      description: 'Which Writing task the response answers.',
+      schema: { type: 'string', enum: [...WRITING_TASKS], default: 'task-2' },
+    },
+  ],
+  '/v1/analyze/devices': [
+    { name: 'relation', in: 'query', schema: { type: 'string', enum: [...COHESION_RELATIONS] } },
+    { name: 'register', in: 'query', schema: { type: 'string', enum: ['basic', 'academic'] } },
+  ],
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },
@@ -284,29 +332,51 @@ export function openApiDocument(
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
-      get: {
-        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
-        summary: route.summary,
-        tags: route.versioned ? ['v1'] : ['service'],
-        parameters,
+    const operationId = route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '');
+    const responses: Record<string, JsonValue> = {
+      '200': {
+        description: 'Successful response.',
+        content: { 'application/json': { schema: ENVELOPE } },
+      },
+      '304': { description: 'Not modified (ETag matched).' },
+      '400': {
+        description: 'Invalid parameters.',
+        content: { 'application/json': { schema: ERROR } },
+      },
+      '404': {
+        description: 'Not found.',
+        content: { 'application/json': { schema: ERROR } },
+      },
+    };
+    const tags = route.versioned ? ['v1'] : ['service'];
+    const operations: Record<string, JsonValue> = {
+      get: { operationId, summary: route.summary, tags, parameters, responses },
+    };
+    if (route.acceptsBody === true) {
+      operations.post = {
+        operationId: `${operationId}_post`,
+        summary: `${route.summary} The text is supplied as a request body (${ACCEPTED_MEDIA_TYPES.join(', ')}).`,
+        tags,
+        parameters: parameters.filter((parameter) => (parameter as { name?: string }).name !== 'text'),
+        requestBody: ANALYSIS_BODY,
         responses: {
-          '200': {
-            description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
-          },
-          '304': { description: 'Not modified (ETag matched).' },
-          '400': {
-            description: 'Invalid parameters.',
+          ...responses,
+          '413': {
+            description: 'The request body exceeds the size limit.',
             content: { 'application/json': { schema: ERROR } },
           },
-          '404': {
-            description: 'Not found.',
+          '415': {
+            description: 'Unsupported content type.',
+            content: { 'application/json': { schema: ERROR } },
+          },
+          '422': {
+            description: 'The text contains nothing measurable.',
             content: { 'application/json': { schema: ERROR } },
           },
         },
-      },
-    };
+      };
+    }
+    paths[route.path] = operations;
   }
 
   return {

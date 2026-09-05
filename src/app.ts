@@ -7,6 +7,7 @@
  */
 
 import { HttpError, methodNotAllowed, notFound } from './lib/errors.js';
+import { MAX_BODY_BYTES, readBody } from './lib/body.js';
 import { acceptsGzip, sendJson, writeResponse } from './lib/http.js';
 import { isRawResult, matchRoute, splitPath } from './lib/route.js';
 import { ROUTES } from './routes/index.js';
@@ -28,6 +29,8 @@ export interface AppOptions {
   log?: boolean;
   /** Version reported in response metadata. */
   version?: string;
+  /** Largest request body accepted on body-bearing routes, in bytes. */
+  maxBodyBytes?: number;
 }
 
 /**
@@ -41,8 +44,19 @@ export function createRequestHandler(
   const routes = options.routes ?? ROUTES;
   const version = options.version ?? API_VERSION;
   const log = options.log ?? false;
+  const maxBodyBytes = options.maxBodyBytes ?? MAX_BODY_BYTES;
 
   return (req, res) => {
+    void handle(req, res);
+  };
+
+  /**
+   * Handle one request.
+   *
+   * @param req - Incoming request.
+   * @param res - Server response.
+   */
+  async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const started = process.hrtime.bigint();
     const method = (req.method ?? 'GET').toUpperCase();
     const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
@@ -54,11 +68,12 @@ export function createRequestHandler(
       if (method === 'OPTIONS') {
         res.writeHead(204, {
           'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, HEAD, OPTIONS',
+          'access-control-allow-methods': 'GET, HEAD, POST, OPTIONS',
+          'access-control-allow-headers': 'accept, accept-encoding, content-type, if-none-match',
           'access-control-max-age': '86400',
         });
         res.end();
-      } else if (method !== 'GET' && method !== 'HEAD') {
+      } else if (method !== 'GET' && method !== 'HEAD' && method !== 'POST') {
         throw methodNotAllowed();
       } else {
         const match = matchRoute(routes, splitPath(url.pathname));
@@ -68,7 +83,16 @@ export function createRequestHandler(
             documentation: '/docs',
           });
         }
-        const result = match.route.handler({ url, params: match.params });
+        if (method === 'POST' && match.route.acceptsBody !== true) {
+          throw methodNotAllowed(`${url.pathname} accepts GET and HEAD only.`);
+        }
+        const body = method === 'POST' ? await readBody(req, maxBodyBytes) : '';
+        const result = match.route.handler({
+          url,
+          params: match.params,
+          body,
+          contentType: req.headers['content-type'],
+        });
         if (isRawResult(result)) {
           writeResponse(res, {
             status: 200,
@@ -89,6 +113,8 @@ export function createRequestHandler(
             gzipAllowed,
             ifNoneMatch,
             headOnly: method === 'HEAD',
+            // A POST carries user-submitted text: never let it be cached.
+            ...(method === 'POST' ? { cacheControl: 'no-store' } : {}),
             headers: { 'x-endpoint': match.route.path },
           });
         }
@@ -134,5 +160,5 @@ export function createRequestHandler(
       const safeSearch = sanitizeForLog(url.search);
       console.log(`${method} ${safePathname}${safeSearch} ${status} ${elapsed.toFixed(2)}ms`);
     }
-  };
+  }
 }

@@ -328,3 +328,102 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 
 The script is standard library only and deterministic: the same tree and the same files always
 produce byte-identical output.
+
+---
+
+## Part III — measuring submitted text
+
+Parts I and II describe data the API _publishes_. Part III describes the one thing it _computes_:
+the `/v1/analyze/*` endpoints measure a passage a user supplies. This part sets out what those
+measurements are, why they are comparable with Part II, and — at greater length — what they are not.
+
+### 13. Why the pipeline is shared, not merely similar
+
+The readability index in `data/practice-tests.json` was produced by `scripts/extract_practice_tests.py`.
+`src/lib/text.ts` is a deliberate line-by-line port of that script's `strip_markup`, `count_syllables`
+and `readability` functions: the same word regex (`[A-Za-z][A-Za-z'’-]*`), the same sentence
+terminator rule, the same vowel-group syllable heuristic with the silent-final-`e` correction, the
+same rounding to three or two decimal places.
+
+This matters more than it looks. Readability formulae are extremely sensitive to tokenisation: two
+implementations of Flesch Reading Ease that differ only in whether they count hyphenated forms as one
+word or two will disagree by several points on the same passage. A researcher who measures their own
+passage with an off-the-shelf library and compares the result with the corpus mean published by
+`/v1/tests` is comparing two different instruments. Measuring both with `/v1/analyze/readability`
+removes that confound, which is the entire reason the endpoint exists.
+
+`/v1/analyze/readability` therefore returns the eight Part II measures _plus_ four further formulae
+(Gunning Fog, SMOG, Coleman-Liau, ARI) and their mean. Only the first eight are corpus-comparable;
+the extra four are reported because grade-level formulae disagree with each other systematically and
+a single one is easy to over-read.
+
+### 14. Lexical profiling and its known failure mode
+
+`/v1/analyze/vocabulary` matches the submitted text against the 4,174 Cambridge headwords of Part I
+by exact surface form. It does not lemmatise. `developed`, `develops` and `developing` are all
+reported as off-list even though `develop` is a headword.
+
+This is a real limitation and it is stated in the response payload rather than in a footnote. It is
+also a deliberate one: lemmatisation requires either a large morphological dictionary (which would
+end the project's zero-runtime-dependency guarantee) or a rule-based stemmer (whose errors would be
+silent, unversioned and impossible for a reader to audit). An exact-match figure that is
+systematically _conservative_ in a documented direction is more useful in a citation than a fuzzy
+figure whose error distribution nobody can characterise. Coverage numbers from this endpoint should
+be read as a lower bound.
+
+Lexical density follows Ure's definition — content tokens over all tokens — using the closed-class
+function-word list in `src/data/lexicon.ts`. Academic prose typically sits above 50%; conversational
+English sits nearer 40%.
+
+### 15. The cohesion inventory
+
+`/v1/analyze/cohesion` scans for 125 discourse markers grouped into eleven functional relations
+(addition, contrast, cause, result, exemplification, comparison, sequence, concession, condition,
+summary, emphasis) and two register bands. Scanning is longest-match-first with span consumption, so
+`in addition to this` is counted once as itself rather than three times as itself, `in addition` and
+`also`; word-boundary lookarounds stop `and` matching inside `Android`.
+
+Two caveats bound every figure it returns. First, presence is not accuracy: the scanner sees that
+`however` occurs, not whether the contrast it signals is real. The descriptors reward accurate and
+appropriate cohesion, and no string match can observe that. Second, the basic/academic split
+describes frequency in academic prose, not correctness — a band 9 response may use `but`.
+
+The inventory is published in full at `/v1/analyze/devices` precisely so that the classification
+behind any cited figure is auditable rather than a black box.
+
+### 16. Why there is no band predictor
+
+The obvious next endpoint — `POST an essay, receive a predicted band` — is deliberately absent.
+
+Automated scoring systems that correlate respectably with examiner judgements are trained on large,
+licensed corpora of rated scripts. This project has none: publishing a predictor fitted to surface
+features and calling the output a band would produce a number with no validity evidence behind it,
+which users would nonetheless act on. The failure mode is asymmetric — a candidate told they are at
+band 6.5 when no evidence supports that estimate makes worse decisions than a candidate told nothing.
+
+`/v1/analyze/writing` therefore returns _observations_: each one names the analytic criterion it
+bears on, states what was measured, and carries a polarity rather than a score. `paragraphs < 3`
+becomes a coherence observation because the descriptors talk about paragraphed progression; it does
+not become a fraction of a band.
+
+### 17. Threats to validity (Part III)
+
+1. **Syllable counting is heuristic.** The vowel-group rule mis-counts a measurable minority of
+   English words. The error is shared with the corpus index, so _comparisons_ are sound even where
+   absolute values drift.
+2. **Formulae were calibrated on other genres.** Flesch and Flesch-Kincaid were validated on
+   general-purpose and military training prose respectively, not on IELTS passages or on L2 writing.
+3. **CEFR labels are inferred, not aligned.** The mapping from Reading Ease to a CEFR range derives
+   from the distribution of the graded lessons in Part II — a collection Part II itself shows to be
+   calibrated too hard — and is not an official alignment.
+4. **Short samples are unstable.** Under 20 words the formulae are noise; the endpoint reports
+   `reliable: false` and says so in the caveats rather than refusing to answer.
+5. **Nothing here observes accuracy.** Not grammatical accuracy, not task fulfilment, not relevance,
+   not the quality of an argument — which is most of what the descriptors actually reward.
+
+### 18. Privacy
+
+Submitted text is measured in process and discarded. It is not written to disk, not added to any
+dataset, and not transmitted anywhere. The request logger records method, path, status and duration,
+and the query string — which is precisely why the endpoints accept a request body, and why `POST`
+responses are returned `cache-control: no-store`.

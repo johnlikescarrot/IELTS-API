@@ -6,6 +6,57 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+The API stops being read-only in one carefully bounded way: it will now measure **your** text, not
+just serve its own. The five `/v1/analyze/*` endpoints run the passage you supply through the same
+measurement pipeline that produced the published readability index, so a passage you submit and a
+passage in the corpus are directly comparable numbers rather than two different tools' outputs.
+
+Nothing here predicts a band score, and that is a design decision rather than an omission. IELTS
+bands are awarded by trained examiners against the analytic descriptors; a surface-feature model
+that guessed at one would be unciteable and, worse, would be believed. Every response is a
+measurement with its caveats attached.
+
+### Added
+
+- **`GET|POST /v1/analyze/readability`** — six classical readability formulae (Flesch Reading Ease,
+  Flesch-Kincaid, Gunning Fog, SMOG, Coleman-Liau, ARI) with a bibliographic citation for each, plus
+  the passage's position against every measured group of the practice-test index.
+- **`GET|POST /v1/analyze/vocabulary`** — lexical profile against the Cambridge IELTS 1-22 headword
+  list: coverage, lexical density, type-token ratio over content words, hapax ratio, sophistication,
+  and the matched and off-list forms.
+- **`GET|POST /v1/analyze/cohesion`** — an inventory of the cohesive devices in a text, classified by
+  the discourse relation they signal (eleven relations) and by register, with over-repetition and
+  unsignalled relations called out. Longest-match-first scanning means `in addition to this` is never
+  also counted as `in addition`.
+- **`GET|POST /v1/analyze/writing`** — descriptor-aligned diagnostics for a Writing Task 1 or Task 2
+  response: official minimum length, paragraphing, cohesion range, lexical density, Cambridge
+  coverage and sentence-length variation, each mapped to the analytic criterion it bears on.
+- **`GET /v1/analyze/devices`** — the cohesive-device inventory itself, browsable and filterable, so
+  the classification behind the cohesion analysis is auditable rather than a black box.
+- **`POST` body support** on the four text-bearing endpoints: `text/plain`, `application/json` with a
+  `text` property, or a form-encoded `text` field, up to 256 KiB. A passage is routinely longer than
+  a URL may safely be, and query strings end up in proxy and server logs; a body keeps the text out
+  of the request line. `POST` responses are `cache-control: no-store`.
+- `src/lib/text.ts`, a TypeScript port of the Python measurement pipeline, so the API and the data
+  extraction scripts can never drift apart.
+
+### Changed
+
+- `RouteInfo` gained an optional `acceptsBody` flag; the OpenAPI document generates a matching `post`
+  operation (with `413`, `415` and `422` responses) for every route that declares it, and `/docs`
+  shows the accepted methods per route.
+- CORS preflight and the common response headers now advertise `POST` and the `content-type` header.
+- `405` responses report `allow: GET, HEAD, POST`; a `POST` to a route that does not accept a body
+  still returns `405`.
+- Test suite grown to 449 tests, still at 100% statement, branch, function and line coverage per file.
+
+### Privacy
+
+- Submitted text is analysed in process and is never stored, logged or transmitted. The request
+  logger records the method, path and query string only, which is why long text belongs in a body.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection
@@ -77,6 +128,7 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

@@ -454,4 +454,12 @@ export type RouteInfo = {
   summary: string;
   /** Whether the route is part of the versioned `/v1` contract. */
   versioned: boolean;
+  /**
+   * Whether the route also accepts `POST` with a request body.
+   *
+   * Only the text-analysis endpoints do: a passage is often longer than a URL
+   * may safely be, so it can be sent as `text/plain` or as a JSON object with
+   * a `text` property instead of as a query parameter.
+   */
+  acceptsBody?: boolean;
 };

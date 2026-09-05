@@ -10,6 +10,15 @@ export interface RouteContext {
   url: URL;
   /** Path parameters extracted by the router. */
   params: Record<string, string>;
+  /**
+   * Decoded request body, empty for `GET` and `HEAD`.
+   *
+   * Only routes declaring {@link RouteDefinition.acceptsBody} ever see a
+   * non-empty value.
+   */
+  body: string;
+  /** Raw `content-type` header of the request, when one was sent. */
+  contentType: string | undefined;
 }
 
 /** A handler result rendered as a JSON envelope. */

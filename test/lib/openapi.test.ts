@@ -9,7 +9,18 @@ const document = openApiDocument(ROUTES, 'http://localhost:3000/', '1.0.0') as {
   openapi: string;
   info: { title: string; version: string };
   servers: { url: string }[];
-  paths: Record<string, { get: { summary: string; parameters?: { name: string }[] } }>;
+  paths: Record<
+    string,
+    {
+      get: { summary: string; parameters?: { name: string }[] };
+      post?: {
+        operationId: string;
+        parameters: { name: string }[];
+        requestBody: unknown;
+        responses: Record<string, unknown>;
+      };
+    }
+  >;
   components: { schemas: Record<string, unknown> };
 };
 
@@ -43,6 +54,20 @@ describe('openApiDocument', () => {
   it('declares path parameters for parameterised routes', () => {
     const parameters = document.paths['/v1/vocabulary/:word']?.get.parameters ?? [];
     expect(parameters).toEqual([{ name: 'word', in: 'path', required: true, schema: { type: 'string' } }]);
+  });
+
+  it('adds a POST operation to the body-bearing analysis endpoints', () => {
+    const path = document.paths['/v1/analyze/readability'];
+    expect(path?.post?.operationId).toBe('v1_analyze_readability_post');
+    expect(path?.post?.requestBody).toBeDefined();
+    expect(path?.post?.parameters.map((parameter) => parameter.name)).not.toContain('text');
+    expect(path?.get.parameters?.map((parameter) => parameter.name)).toContain('text');
+    expect(Object.keys(path?.post?.responses ?? {})).toEqual(expect.arrayContaining(['413', '415', '422']));
+  });
+
+  it('leaves GET-only endpoints without a POST operation', () => {
+    expect(document.paths['/v1/analyze/devices']?.post).toBeUndefined();
+    expect(document.paths['/v1/vocabulary']?.post).toBeUndefined();
   });
 
   it('accepts an empty route table', () => {

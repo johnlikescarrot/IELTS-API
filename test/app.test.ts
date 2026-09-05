@@ -52,6 +52,29 @@ describe('request handling', () => {
     }
   });
 
+  it('advertises POST in the preflight response', async () => {
+    const response = await server.request('/v1/analyze/readability', { method: 'OPTIONS' });
+    expect(response.status).toBe(204);
+    expect(response.headers.get('access-control-allow-methods')).toContain('POST');
+    expect(response.headers.get('access-control-allow-headers')).toContain('content-type');
+  });
+
+  it('enforces the request-body size limit', async () => {
+    const small = await startTestServer({ maxBodyBytes: 16 });
+    try {
+      const response = await small.request('/v1/analyze/readability', {
+        method: 'POST',
+        headers: { 'content-type': 'text/plain' },
+        body: 'x'.repeat(4096),
+      });
+      expect(response.status).toBe(413);
+      const body = (await response.json()) as { meta: { error: { code: string } } };
+      expect(body.meta.error.code).toBe('payload_too_large');
+    } finally {
+      await small.close();
+    }
+  });
+
   it('returns 404 with a pointer to the documentation', async () => {
     const response = await server.json('/does/not/exist');
     expect(response.status).toBe(404);

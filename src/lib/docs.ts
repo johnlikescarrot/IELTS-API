@@ -28,9 +28,10 @@ export function escapeHtml(value: string): string {
 
 /** One row of the endpoint table. */
 function routeRow(route: RouteDefinition): string {
+  const methods = route.acceptsBody === true ? `${route.method} POST` : route.method;
   return [
     '    <tr>',
-    `      <td><span class="badge">${escapeHtml(route.method)}</span></td>`,
+    `      <td><span class="badge">${escapeHtml(methods)}</span></td>`,
     `      <td><a class="path" href="${escapeHtml(route.path)}">${escapeHtml(route.path)}</a></td>`,
     `      <td>${escapeHtml(route.summary)}</td>`,
     '    </tr>',
@@ -116,6 +117,21 @@ ${versioned.map(routeRow).join('\n')}
 ${service.map(routeRow).join('\n')}
   </tbody>
 </table>
+
+<h2>Analysing your own text</h2>
+<p>The <code>/v1/analyze/*</code> endpoints measure a passage you supply, using the same pipeline that
+produced the readability index published by <code>/v1/tests</code> &mdash; so your passage and any indexed
+passage are directly comparable. Send short text as a <code>text</code> query parameter, and longer text as a
+request body, which keeps it out of proxy and server logs. Submitted text is analysed in-process and is never
+stored, logged or transmitted.</p>
+<pre><code>curl -s --data-binary @essay.txt -H "content-type: text/plain" \
+  "https://ielts-api.example/v1/analyze/writing?task=task-2"
+
+curl -s -H "content-type: application/json" \
+  -d '{"text":"However, the evidence is mixed."}' \
+  "https://ielts-api.example/v1/analyze/cohesion"</code></pre>
+<p>None of these endpoints returns a band score. IELTS bands are awarded by trained examiners against the
+analytic descriptors, and no surface-feature measurement can substitute for that judgement.</p>
 
 <h2>Response envelope</h2>
 <p>Every JSON response uses the same envelope, so clients can parse any endpoint uniformly:</p>
