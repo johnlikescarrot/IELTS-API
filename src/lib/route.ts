@@ -52,6 +52,8 @@ export interface RouteDefinition extends RouteInfo {
   path: string;
   /** Handler invoked when the route matches. */
   handler: Handler;
+  /** Complete success representation for OpenAPI (JSON envelope or raw document). */
+  response?: { contentType: string; schema: JsonValue };
 }
 
 /**

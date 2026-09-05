@@ -151,3 +151,25 @@ export function toParams(url: URL): QueryParams {
   }
   return params;
 }
+
+/**
+ * Parse only declared query controls. Examine raw keys first so prototype-like
+ * names cannot disappear when URLSearchParams is converted to an object.
+ */
+export function strictParams(url: URL, allowed: readonly string[]): QueryParams {
+  for (const key of url.searchParams.keys()) {
+    if (!allowed.includes(key)) {
+      throw badRequest(`Unknown parameter "${key}".`, { parameter: key, allowed: allowed.join(',') });
+    }
+  }
+  return toParams(url);
+}
+
+/** Read optional text while bounding work and keeping duplicate-value validation. */
+export function getBoundedString(params: QueryParams, key: string, maximum: number): string | undefined {
+  const value = getString(params, key);
+  if (value !== undefined && value.length > maximum) {
+    throw badRequest(`Parameter "${key}" must not exceed ${maximum} characters.`, { parameter: key });
+  }
+  return value;
+}

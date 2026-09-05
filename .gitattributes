@@ -1,0 +1,5 @@
+# Generated metadata is reviewed through the compiler, integrity tests and CI regeneration.
+data/practice.json linguist-generated=true
+docs/openapi.json linguist-generated=true
+docs/citation.bib linguist-generated=true
+paper/practice-metadata.md linguist-generated=true

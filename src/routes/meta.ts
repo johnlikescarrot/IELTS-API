@@ -2,13 +2,15 @@
  * Service routes: discovery, health, OpenAPI document and documentation.
  */
 
+import { practiceIndex } from '../data/practice.js';
 import { corpusStats } from '../data/corpus.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
+import { renderCitationBibtex, renderResearchReport } from '../lib/research.js';
 import { openApiDocument } from '../lib/openapi.js';
 import { CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME, API_VERSION } from '../version.js';
 
-import type { RouteContext, HandlerResult } from '../lib/route.js';
+import type { HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
 
 /** Summary of the datasets behind the API. */
@@ -16,6 +18,8 @@ function datasetSummary(): Record<string, number> {
   const words = vocabularyStats();
   const corpus = corpusStats();
   return {
+    practiceUnits: practiceIndex().stats.units,
+    practiceAssetRecords: practiceIndex().stats.assets,
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
     cambridgeVolumes: words.volumes,
@@ -57,6 +61,8 @@ export function createMetaRoutes(
         datasets: datasetSummary(),
         citation: {
           cff: `${REPOSITORY_URL}/blob/main/CITATION.cff`,
+          bibtex: '/citation.bib',
+          report: '/research',
           note: 'Please cite this API when you use it in research.',
         },
       },
@@ -85,17 +91,16 @@ export function createMetaRoutes(
         uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
         datasets: datasetSummary(),
       },
-      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index'] },
+      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-index'] },
     };
   }
 
   /** The OpenAPI 3.1 document, served without the response envelope. */
-  function openapi(context: RouteContext): HandlerResult {
-    const base = `${context.url.origin}/`;
+  function openapi(): HandlerResult {
     return {
       raw: {
         contentType: 'application/json; charset=utf-8',
-        body: `${JSON.stringify(openApiDocument(routes, base, API_VERSION), null, 2)}\n`,
+        body: `${JSON.stringify(openApiDocument([...routes, ...serviceRoutes], '/', API_VERSION), null, 2)}\n`,
       },
     };
   }
@@ -111,6 +116,24 @@ export function createMetaRoutes(
   }
 
   const definitions: RouteDefinition[] = [
+    {
+      method: 'GET',
+      path: '/research',
+      versioned: false,
+      summary: 'Full, freely readable technical-report draft with bibliographic metadata.',
+      response: { contentType: 'text/html', schema: { type: 'string' } },
+      handler: () => ({ raw: { contentType: 'text/html; charset=utf-8', body: renderResearchReport() } }),
+    },
+    {
+      method: 'GET',
+      path: '/citation.bib',
+      versioned: false,
+      summary: 'Software citation as BibTeX; no unverified DOI is asserted.',
+      response: { contentType: 'application/x-bibtex', schema: { type: 'string' } },
+      handler: () => ({
+        raw: { contentType: 'application/x-bibtex; charset=utf-8', body: renderCitationBibtex() },
+      }),
+    },
     {
       method: 'GET',
       path: '/',

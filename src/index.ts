@@ -32,3 +32,17 @@ export * from './data/topics.js';
 export * from './data/vocabulary.js';
 export { API_VERSION, CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME } from './version.js';
 export type * from './types.js';
+
+export * from './data/practice-source.js';
+export * from './data/practice.js';
+export { buildPracticeIndex } from './lib/practice-index.js';
+
+export * from './data/receptive-tasks.js';
+
+export {
+  RESEARCH_REPORT,
+  SOFTWARE_CITATION_TITLE,
+  renderCitationBibtex,
+  renderResearchReport,
+  renderResearchMarkdown,
+} from './lib/research.js';

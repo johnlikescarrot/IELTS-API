@@ -56,3 +56,24 @@ table.
 
 The source code of this project is licensed separately under the MIT licence —
 see LICENSE.
+
+Reading/Listening extension
+---------------------------
+
+The compilation in data/practice.json contains only selected Git tree metadata.
+Its original schema, selection and annotations are CC BY 4.0. The indexed source,
+https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS, had no identified content
+licence at commit ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c. Each response preserves
+that unknown upstream licence as null. Exercise text, answer keys, audio,
+documents, upstream code and learner data are NOT included. Our metadata licence
+does not license or authorise redistribution of any indexed upstream file.
+
+The independently written task-family guidance in src/data/receptive-tasks.ts is
+also CC BY 4.0. It is not official IELTS wording, an official marking rubric, or
+a promise of a particular score. Authoritative format references accompany the
+guidance.
+
+For the legacy vocabulary dataset, the provenance and rights of dictionary-style
+glosses remain unresolved (see RESEARCH.md). Attribution and format conversion do
+not themselves clear third-party rights. Do not interpret this licence as a
+blanket permission for upstream content.

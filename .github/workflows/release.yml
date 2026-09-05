@@ -1,8 +1,8 @@
 name: release
 
-# Cutting a tag publishes a citable, archived release. Zenodo mints a DOI for
-# every tag once the repository is enabled there; the CITATION.cff identifier
-# is updated automatically by the Zenodo integration.
+# A maintainer-created tag can publish a GitHub release after verification.
+# Zenodo archiving requires a separately configured integration and a confirmed
+# record. This workflow does not mint a DOI or modify CITATION.cff automatically.
 
 on:
   push:
@@ -36,6 +36,9 @@ jobs:
       - name: Verify the release
         run: npm run validate
 
+      - name: Verify generated artifacts
+        run: npm run docs:check
+
       - name: Build
         run: npm run build
 
@@ -48,16 +51,5 @@ jobs:
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
             --verify-tag \
-            README.md CITATION.cff codemeta.json .zenodo.json
-
-      - name: Refresh the archived OpenAPI snapshot
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
-          SERVER_PID=$!
-          for attempt in $(seq 1 20); do
-            if curl -fsS "http://127.0.0.1:4010/openapi.json" -o docs/openapi.json; then break; fi
-            sleep 0.5
-          done
-          kill "${SERVER_PID}"
-          test -s docs/openapi.json
+            README.md CITATION.cff codemeta.json .zenodo.json DATA-LICENSE \
+            docs/openapi.json docs/citation.bib paper/practice-metadata.md

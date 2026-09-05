@@ -257,3 +257,93 @@ export type RouteInfo = {
   /** Whether the route is part of the versioned `/v1` contract. */
   versioned: boolean;
 };
+
+/* -------------------------------------------------------------------------- */
+/* Reading and Listening practice metadata                                     */
+/* -------------------------------------------------------------------------- */
+
+/** Receptive skills indexed by the practice catalogue. */
+export type ReceptiveSkill = 'reading' | 'listening';
+
+/** Upstream collection structure, not a claim about test validity. */
+export type PracticeMode = 'basic' | 'full-test';
+
+/** Directory labels only; Listening labels are not mapped to CEFR or bands. */
+export type PracticeLevel =
+  'a1-a2' | 'b1-b2' | 'c1-c2' | 'basic' | 'intermediate' | 'advanced' | 'unspecified';
+
+/** File roles recognised by the metadata compiler. No file contents are served. */
+export type PracticeAssetKind =
+  'json' | 'javascript' | 'html' | 'audio' | 'document' | 'processed-json' | 'strategy';
+
+/** One allowlisted file's Git metadata, never its contents. */
+export type PracticeAsset = {
+  kind: PracticeAssetKind;
+  path: string;
+  /** Git blob object ID (not a SHA-1 of the bare file contents). */
+  gitBlobSha: string;
+  sizeBytes: number;
+};
+
+/** One independently identified practice unit, deduplicated across formats. */
+export type PracticeUnit = {
+  id: string;
+  title: string;
+  collection: string;
+  skill: ReceptiveSkill;
+  mode: PracticeMode;
+  level: PracticeLevel;
+  /** Original unit number within its collection; gaps are preserved. */
+  sequence: number;
+  /** Pinned GitHub directory reference, not a hosted exercise or download. */
+  sourceUrl: string;
+  assets: PracticeAsset[];
+};
+
+/** Auditable counts derived solely from the allowlisted tree entries. */
+export type PracticeStats = {
+  units: number;
+  assets: number;
+  bySkill: Record<ReceptiveSkill, number>;
+  byMode: Record<PracticeMode, number>;
+  byLevel: Record<PracticeLevel, number>;
+  /** Number of units with at least one file of each kind. */
+  unitsByAsset: Record<PracticeAssetKind, number>;
+  collections: {
+    id: string;
+    declaredUnits: number;
+    indexedUnits: number;
+    missingSequences: number[];
+  }[];
+  /** Listening unit IDs without an allowlisted audio file in this snapshot. */
+  listeningWithoutAudio: string[];
+};
+
+/** Versioned, deterministic practice inventory stored in data/practice.json. */
+export type PracticeIndex = {
+  schemaVersion: 1;
+  source: {
+    repository: string;
+    commit: string;
+    /** Unknown upstream rights must never inherit the metadata licence. */
+    license: null;
+    contentIncluded: false;
+  };
+  metadataLicense: 'CC-BY-4.0';
+  /** SHA-256 of UTF-8 JSON.stringify(items), without a trailing newline. */
+  itemsSha256: string;
+  stats: PracticeStats;
+  items: PracticeUnit[];
+};
+
+/** An original guide to an officially documented Reading or Listening task family. */
+export type ReceptiveTask = {
+  id: string;
+  skill: ReceptiveSkill;
+  title: string;
+  responseMode: 'selection' | 'text' | 'mixed';
+  focus: string;
+  strategy: string[];
+  pitfall: string;
+  sourceUrl: string;
+};

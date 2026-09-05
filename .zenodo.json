@@ -1,12 +1,11 @@
 {
-  "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
+  "title": "IELTS API: a free, no-authentication TypeScript API for IELTS preparation research",
+  "description": "Metadata prepared for a future maintainer-created archive of IELTS API code and original metadata. No DOI or completed archive is asserted. Code is MIT; original metadata and guidance are CC BY 4.0. Upstream content rights are separate; consult DATA-LICENSE and the provenance documentation before redistribution.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
     {
-      "name": "The IELTS API contributors",
-      "affiliation": "johnlikescarrot/IELTS-API"
+      "name": "The IELTS API contributors"
     }
   ],
   "keywords": [
@@ -29,6 +28,11 @@
     {
       "identifier": "https://github.com/zhengyishiming/IELTS",
       "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/tree/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c",
+      "relation": "references",
       "scheme": "url"
     }
   ]

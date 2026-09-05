@@ -1,17 +1,26 @@
-# Dataset reference
+# Dataset and artifact reference
 
-This directory holds the archived artefacts of the API contract.
+| File                         | Purpose                                                                                             |
+| ---------------------------- | --------------------------------------------------------------------------------------------------- |
+| `data/vocabulary.json`       | Legacy workbook-derived vocabulary; see its unresolved gloss-provenance limits in RESEARCH.md       |
+| `data/corpus.json`           | Legacy research corpus file metadata, not source binaries                                           |
+| `data/practice.json`         | 1,852 Reading/Listening units, 4,606 file-metadata records, explicit source pin and rights boundary |
+| `docs/openapi.json`          | Validated OpenAPI 3.1 snapshot with brace parameters, typed practice schemas and raw media types    |
+| `docs/citation.bib`          | Generated software citation, also served at `/citation.bib`                                         |
+| `paper/practice-metadata.md` | Generated technical-report draft, served in full HTML at `/research`                                |
 
-| File           | What it is                                                                                                                                 |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `openapi.json` | The OpenAPI 3.1 document, regenerated on every release from the live route table. Always current at `/openapi.json` on a running instance. |
+The paths above are relative to the repository root. `npm run docs:update` regenerates the last
+three files; `npm run docs:check` fails on committed snapshot drift. The practice compiler is
+`npm run data:practice -- <pinned-tree.json> <output.json>` and is tested under the same per-file
+100% TypeScript coverage gate as the API.
 
-The datasets themselves live in [`data/`](../data) and are documented in
-[RESEARCH.md](../RESEARCH.md), which records the extraction methodology and the threats to validity
-that apply to each of them. Endpoint-level documentation is served by the API itself at `/docs`.
+See [the upstream audit](UPSTREAM-REVIEW.md), [reproduction protocol](REPRODUCIBILITY.md),
+[legacy provenance analysis](../RESEARCH.md), and [DATA-LICENSE](../DATA-LICENSE). Runtime API
+requests make no calls to the source repositories or to a database/model service.
 
-## Machine-readable citation
+## Citation metadata
 
-- [`CITATION.cff`](../CITATION.cff) — Citation File Format 1.2.0.
-- [`codemeta.json`](../codemeta.json) — CodeMeta 2.0.
-- [`.zenodo.json`](../.zenodo.json) — Zenodo release metadata (DOI minted on first release).
+- [`CITATION.cff`](../CITATION.cff) — schema-validated Citation File Format 1.2.0.
+- [`codemeta.json`](../codemeta.json) — CodeMeta software metadata.
+- [`.zenodo.json`](../.zenodo.json) — prepared archive metadata, not evidence of a minted DOI.
+- [Publication checklist](SCHOLARLY-PUBLICATION.md) — truthful authorship, hosting and archival steps.

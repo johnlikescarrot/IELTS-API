@@ -75,6 +75,7 @@ jobs:
           # Linter configuration files.
           LINTER_RULES_PATH: .
           JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          JSON_CONFIG_FILE: eslint.config.js
           TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml

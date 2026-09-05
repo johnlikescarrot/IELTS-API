@@ -1,0 +1,6 @@
+# This read-only public API intentionally has no authentication (OpenAPI security: []).
+# Only the two auth-required OpenAPI policies conflict with that product contract.
+# All other OpenAPI, workflow and Docker security policies remain enabled.
+skip-check:
+  - CKV_OPENAPI_4
+  - CKV_OPENAPI_5

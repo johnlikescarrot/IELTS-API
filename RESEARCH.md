@@ -1,6 +1,6 @@
-# Research notes: from an open file dump to a citable IELTS dataset
+# Research notes: from a public file dump to a citable IELTS dataset
 
-This document records how the datasets behind the IELTS API were derived from the open corpus
+This document records how the datasets behind the IELTS API were derived from the publicly accessible repository
 [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS). It is written so that a reviewer
 can reproduce, criticise or extend every step.
 
@@ -94,8 +94,8 @@ Extraction (`scripts/extract_vocabulary.py`, standard library only):
 5. **Normalise phonetics** to slash-delimited transcriptions (4,172 of 4,174 entries carry one).
 6. **Keep morpheme hints** where published — 164 entries carry pedagogical etymologies such as
    `hydro(water);gen(create)`, which are useful for morphology-aware NLP work.
-7. Emit stable identifiers (`w00001` … `w04174`) assigned after sorting by headword, so identifiers
-   never move between releases.
+7. Emit identifiers (`w00001` … `w04174`) assigned after sorting by headword. These are stable
+   within this snapshot; additions can change assignments, so pin the dataset for longitudinal work.
 
 | Property                                    |                        Value |
 | ------------------------------------------- | ---------------------------: |
@@ -148,7 +148,7 @@ The value added by this project is therefore in the _derived_ layer, all of it o
 ## 6. Reproducing this analysis
 
 ```bash
-curl -sL "https://api.github.com/repos/zhengyishiming/IELTS/git/trees/main?recursive=1" -o tree.json
+curl -sL "https://api.github.com/repos/zhengyishiming/IELTS/git/trees/a9e2d6c9a070eecea6ffaa6f15b2a00c1c7b938c?recursive=1" -o tree.json
 python3 scripts/extract_corpus.py tree.json data/corpus.json
 
 curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
@@ -159,3 +159,36 @@ python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 
 The commit SHA recorded in `data/corpus.json` identifies the exact snapshot; re-running against a
 different commit is expected to change the item count and the coverage ratio.
+
+## 7. Reading/Listening extension (2026-09-05)
+
+The earlier corpus is not the only source now studied. A separate, pinned review of
+`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS` is recorded in
+[docs/UPSTREAM-REVIEW.md](docs/UPSTREAM-REVIEW.md). Unlike the flat legacy corpus, that repository is
+a learning application with level-organised lessons, full tests, multiple representations per unit,
+and identity-gated learner/manager flows. None of its authentication or content is imported.
+
+The new, independently implemented TypeScript compiler derives **1,852 units and 4,606 asset-metadata
+records** from its complete Git tree. It preserves the missing Reading full-test 105 and the missing
+audio for Listening tests 83, 85 and 88. It does not infer individual CEFR levels, exact question
+counts, question types, content quality or permission to use source exercises from their filenames.
+Upstream licence is explicitly `null`; the original metadata compilation is CC BY 4.0.
+
+See the [reproduction protocol](docs/REPRODUCIBILITY.md) and the
+[technical-report draft](paper/practice-metadata.md), also available as full HTML at `/research`.
+Stable IDs, a canonical item checksum, bounded filters, seeded sampling and JSON Lines exports make
+metadata analyses reproducible. There is no learner-response dataset or claimed efficacy study.
+
+### Clarifications to the earlier analysis
+
+- Public GitHub visibility is not an open content licence. The vocabulary glosses' source rights
+  remain unresolved; attribution, splitting senses and normalisation do not clear those rights.
+- The legacy sorted `wNNNNN` IDs are stable for a fixed snapshot, not guaranteed to remain assigned
+  to the same words after adding earlier-sorting headwords. Pin the data and code for longitudinal
+  work. The new practice IDs instead retain their original collection/number identity.
+- An identical seed is insufficient if the population, filters or algorithm changes. Record all
+  controls and the inventory checksum, and archive responses; live health and unseeded endpoints
+  are not deterministic snapshots.
+- The working-tree citation metadata previously contained a placeholder Zenodo DOI and invalid
+  CFF fields. They have been corrected and CFF schema validation is now a CI gate. No DOI, journal
+  publication, Scholar indexing or citation count has been verified or is asserted.

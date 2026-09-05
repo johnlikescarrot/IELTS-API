@@ -12,7 +12,7 @@ describe('the package entry point', () => {
   it('exports the route table and the documentation builders', () => {
     expect(api.ROUTES.length).toBeGreaterThan(15);
     expect(api.DOMAIN_ROUTES.every((route) => route.versioned)).toBe(true);
-    expect(api.createMetaRoutes([])).toHaveLength(5);
+    expect(api.createMetaRoutes([])).toHaveLength(7);
     expect(typeof api.openApiDocument).toBe('function');
     expect(typeof api.renderDocs).toBe('function');
     expect(api.escapeHtml('<')).toBe('&lt;');
@@ -47,6 +47,15 @@ describe('the package entry point', () => {
     expect(api.CONVERSION_TARGETS).toContain('cefr');
     expect(api.allEntries().length).toBe(4174);
     expect(api.corpusStats().filesInRepository).toBe(404);
+    expect(api.practiceIndex().stats.units).toBe(1852);
+    expect(api.READING_TASKS).toHaveLength(11);
+    expect(api.LISTENING_TASKS).toHaveLength(6);
+    expect(typeof api.buildPracticeIndex).toBe('function');
+    expect(typeof api.samplePractice).toBe('function');
+    expect(typeof api.exportPractice).toBe('function');
+    expect(api.renderCitationBibtex()).toContain('@software{ielts_api');
+    expect(api.renderResearchReport()).toContain('citation_title');
+    expect(api.renderResearchMarkdown()).toContain(api.RESEARCH_REPORT.title);
   });
 
   it('exports the build constants', () => {

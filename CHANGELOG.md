@@ -6,9 +6,29 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Pinned Reading/Listening practice metadata: 1,852 units, 4,606 asset records, stable IDs,
+  completeness statistics, search, required-seed sampling, and JSON Lines export.
+- Independently authored guidance for 11 Academic Reading and 6 Listening question families.
+- A full HTML technical-report draft (`/research`), reusable BibTeX (`/citation.bib`), a detailed
+  upstream audit, and reproducibility/publication instructions.
+- Strict OpenAPI 3.1 and JSON Schema contract tests, an offline TypeScript metadata compiler,
+  regenerated artifact checks, CFF schema validation, and Node 24 CI coverage.
+
+### Fixed
+
+- OpenAPI path templates, raw representation media types, and error envelopes; include service
+  routes and advertise a relative server URL suitable for reverse-proxied instances.
+- Remove a placeholder DOI, invalid CFF fields/reference types, unverified archive/publication
+  claims, and an unverified npm quick-start command. Include DATA-LICENSE in package artifacts.
+- Repair Super-Linter workspace/configuration handling, JSON validation, diagnostic permissions,
+  and source-data filtering. Keep security checks enabled with two explicit no-auth policy
+  exceptions; align Markdown indentation checks with its syntax.
+
 ## [1.0.0] - 2026-09-04
 
-First citable release.
+Initial 1.0.0 code snapshot. A published release and archive DOI have not been verified.
 
 ### Added
 
@@ -35,5 +55,5 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/5b615ed55dffa9ae638a37bc82dc8661c4fd85d0...HEAD
+[1.0.0]: https://github.com/johnlikescarrot/IELTS-API/tree/5b615ed55dffa9ae638a37bc82dc8661c4fd85d0

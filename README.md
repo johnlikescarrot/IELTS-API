@@ -20,15 +20,21 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is built on an open corpus: [`zhengyishiming/IELTS`][corpus]. See
-[RESEARCH.md](RESEARCH.md) for the corpus analysis and the dataset construction methodology, and
-[paper/paper.md](paper/paper.md) for the short research paper.
+The existing vocabulary and corpus work is documented in [RESEARCH.md](RESEARCH.md). The new
+Reading/Listening extension follows a pinned, rights-aware review of
+[`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice-source]: see
+[the detailed audit](docs/UPSTREAM-REVIEW.md) and the [technical-report draft](paper/practice-metadata.md).
+Publicly accessible source material is **not necessarily openly licensed**; content rights remain separate.
 
 ## Quick start
 
 ```bash
-npx ielts-api                 # or: npm install -g ielts-api
-# ielts-api 1.0.0 listening on http://0.0.0.0:3000
+git clone https://github.com/johnlikescarrot/IELTS-API.git
+cd IELTS-API
+npm ci
+npm run build
+npm start
+# listening on http://0.0.0.0:3000
 ```
 
 ```bash
@@ -42,11 +48,13 @@ curl -s "http://localhost:3000/v1/scores/overall?listening=7&reading=6.5&writing
 curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
 ```
 
-Open <http://localhost:3000/docs> for the interactive documentation and
-`/openapi.json` for the OpenAPI 3.1 document.
+Use Node.js 22 or 24 for a supported runtime (compatibility is also tested on 20.19.0).
+Open <http://localhost:3000/docs> for documentation and examples, `/openapi.json` for the
+validated OpenAPI 3.1 contract, and `/research` for the freely readable technical-report draft.
+The source install is authoritative; an npm publication has not been verified.
 
 ```js
-import { startApiServer, searchVocabulary, calculateOverall } from 'ielts-api';
+import { startApiServer, searchVocabulary, calculateOverall } from './dist/index.js';
 
 const server = await startApiServer('0.0.0.0', 3000);
 // ...or use the library without a server:
@@ -67,10 +75,17 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Free resources                  |                                    27 resources | `/v1/resources`         | Original catalogue (free + no login only)                         |
 | Research corpus index           |                        76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                   |
 
+The practice extension adds **1,852 units / 4,606 file-metadata records** from eight collections,
+plus **11 Academic Reading and 6 Listening task-family guides**. This is a metadata inventory,
+not a mirrored or validated exercise bank. Reading full-test 105 and audio for Listening tests
+83, 85 and 88 are absent from the source snapshot. Its content licence is unknown.
+
 ## Endpoints
 
-All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
-same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
+All endpoints are `GET` (with `HEAD` and `OPTIONS` support), CORS-open and authentication-free.
+Domain JSON responses use `{ "status": 200, "data": ..., "meta": ... }`. Errors use that same
+envelope with `data: null` and `meta.error`. `/openapi.json`, HTML pages, JSON Lines exports and
+BibTeX are raw representations, not enveloped JSON.
 
 | Method | Path                    | Description                                                                                       |
 | ------ | ----------------------- | ------------------------------------------------------------------------------------------------- |
@@ -97,6 +112,40 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/corpus/stats`      | Corpus statistics                                                                                 |
 | GET    | `/v1/corpus/items`      | Search the corpus index                                                                           |
 | GET    | `/v1/resources`         | Free preparation resources (`type`, `q`)                                                          |
+
+### Reading/Listening and research endpoints
+
+| Path                  | Description                                                                    |
+| --------------------- | ------------------------------------------------------------------------------ |
+| `/v1/practice`        | Search metadata with `q`, `skill`, `mode`, `level`, `asset`, `limit`, `offset` |
+| `/v1/practice/stats`  | Measured counts, declared counts, missing sequences and audio availability     |
+| `/v1/practice/sample` | Sample without replacement; required `seed`, optional `count` and filters      |
+| `/v1/practice/export` | Export the entire filtered population as provenance-bearing JSON Lines         |
+| `/v1/practice/:id`    | Stable unit identity and allowlisted Git file metadata                         |
+| `/v1/tasks/reading`   | Original guidance for 11 Academic Reading families (`q`, `type`)               |
+| `/v1/tasks/listening` | Original guidance for 6 Listening families (`q`, `type`)                       |
+| `/research`           | Full HTML technical-report draft with abstract, references and citation tags   |
+| `/citation.bib`       | Consistent software citation, without an unverified DOI                        |
+
+```bash
+# Original metadata, not exercise text or audio
+curl -s "http://localhost:3000/v1/practice?skill=listening&mode=full-test&asset=audio&limit=3"
+
+# Reproduce a selection using the same checksum, filters, seed and count
+curl -s "http://localhost:3000/v1/practice/sample?level=a1-a2&seed=study-2026&count=5"
+
+# All matching records, not just the first page
+curl -s "http://localhost:3000/v1/practice/export?level=a1-a2" -o practice.jsonl
+
+# Independent guidance distinguishing contradiction from absence of evidence
+curl -s "http://localhost:3000/v1/tasks/reading?type=reading-identifying-information"
+```
+
+Practice filters use **AND semantics**. `q` is a case-insensitive substring over IDs, generated
+labels and file paths, not exercise contents. Levels are directory labels, not certified CEFR
+or IELTS equivalences. `seed` is required for sampling; a request for more units than exist returns
+all matches, in canonical ID order. Unknown or repeated controls are rejected rather than ignored.
+See [reproduction and parameter limits](docs/REPRODUCIBILITY.md).
 
 ### Worked examples
 
@@ -138,28 +187,44 @@ GET /v1/vocabulary?q=hydro&match=prefix&limit=2
 
 ## Reproducible data pipeline
 
-Both datasets are regenerated from source with standard-library-only Python:
+The legacy datasets are regenerated with standard-library-only Python:
 
 ```bash
 python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 python3 scripts/extract_corpus.py tree.json data/corpus.json
 ```
 
-CI re-derives `data/vocabulary.json` from the upstream workbook on every push and fails if the
-committed dataset has drifted.
+The new practice inventory is compiled in TypeScript from the **Git tree only**:
+
+```bash
+curl -fsSL "https://api.github.com/repos/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/git/trees/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c?recursive=1" -o /tmp/practice-tree.json
+npm run data:practice -- /tmp/practice-tree.json /tmp/practice.json
+cmp data/practice.json /tmp/practice.json
+npm run docs:check
+```
+
+CI re-derives the vocabulary and practice inventories, validates the actual CFF schema, and detects
+contract/report drift. Runtime requests are offline: no upstream scraping, database or model API is used.
 
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 295 tests, zero runtime dependencies.
-- **super-linter** runs on every push, every pull request, weekly, and on demand.
+  runner (`npm test` fails below 100%), including the new TypeScript metadata compiler and artifact
+  generators. Zero runtime dependencies; validation libraries are development-only.
+- **super-linter** runs on pushes, pull requests, weekly, and on demand. It lints TypeScript,
+  JavaScript, JSON, YAML, Markdown and infrastructure, with persisted diagnostics. Two Checkov
+  auth-required OpenAPI rules are explicitly inapplicable to this public no-auth API; other
+  security rules remain enabled. See [the scoped policy](.checkov.yaml).
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
-- **Deterministic responses** — ETags, conditional-request support and seeded sampling make every
-  response reproducible and archivable.
+- **Reproducible metadata** — pinned source commits, SHA-256 fingerprints, stable IDs, bounded
+  filters and required-seed practice sampling. Archive the code revision and index checksum as
+  well as request parameters; live health and unseeded vocabulary sampling are not immutable.
+- **Contract tests** — a real OpenAPI 3.1 validator and strict JSON Schema validation of live
+  success/error responses and every practice unit.
 
 ```bash
-npm install
+npm ci
 npm run validate   # typecheck + lint + format check + tests with coverage
 npm run dev        # hot-reloading server
 ```
@@ -175,23 +240,29 @@ Configuration: `--port` / `PORT`, `--host` / `HOST`, `--silent`, `--help`, `--ve
 
 ## Citing this project
 
-If you use the API or the datasets, please cite it — citations are what keep the project free.
+If you use the API or its original metadata, please cite the software and the upstream source
+whose metadata you analysed. Access is free regardless of whether you cite it. For unreleased
+work, also record the exact code commit.
 
 ```bibtex
 @software{ielts_api,
-  title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
+  title   = {IELTS API: a free, no-authentication TypeScript API for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
   version = {1.0.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
-  license = {MIT, CC-BY-4.0}
+  license = {MIT; CC-BY-4.0 for original metadata and guidance}
 }
 ```
 
 Machine-readable citation metadata: [`CITATION.cff`](CITATION.cff), [`codemeta.json`](codemeta.json),
-[`.zenodo.json`](.zenodo.json). Tagged releases are archived on Zenodo, which mints a versioned DOI.
+[`.zenodo.json`](.zenodo.json), and generated [`docs/citation.bib`](docs/citation.bib).
+**No Zenodo archive, DOI, peer review, Google Scholar inclusion or citation count is claimed.**
+The `/research` page serves the full report with bibliographic tags; publication on a stable public
+host and any archival deposit still require maintainer action. See the
+[scholarly publication checklist](docs/SCHOLARLY-PUBLICATION.md).
 
-Please also cite the upstream corpus the vocabulary dataset was derived from:
+For legacy vocabulary analyses, also cite the original source:
 
 ```bibtex
 @misc{ielts_open_corpus,
@@ -205,16 +276,20 @@ Please also cite the upstream corpus the vocabulary dataset was derived from:
 ## Licence and provenance
 
 - **Code:** [MIT](LICENSE).
-- **Data:** [CC BY 4.0](DATA-LICENSE) — attribution required, which is the point.
+- **Original metadata and guidance:** [CC BY 4.0](DATA-LICENSE), with attribution.
+- **Upstream content:** rights remain separate and may be unknown. In particular, the provenance
+  and rights of legacy vocabulary glosses are unresolved; transformation does not clear them.
 - **Band descriptors:** original condensed paraphrases, _not_ the official IELTS wording. Cite the
   published descriptors from <https://www.ielts.org/for-organisations/ielts-scoring-in-detail> when
   you need the authoritative text.
 - **Score concordances:** indicative values compiled from the providers' own published comparison
   tables. Receiving institutions apply their own rules.
-- **Upstream files:** never redistributed. `/v1/corpus` publishes metadata only.
+- **Indexed files:** `/v1/corpus` and `/v1/practice` publish metadata only, never upstream binaries.
+  The practice extension does not import exercise text, answer keys, recordings, source code or learner data.
 
 IELTS is a jointly owned trademark of the British Council, IDP: IELTS Australia and Cambridge
 Assessment English. This project is not affiliated with, endorsed by, or connected to the IELTS
 partners.
 
 [corpus]: https://github.com/zhengyishiming/IELTS
+[practice-source]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS

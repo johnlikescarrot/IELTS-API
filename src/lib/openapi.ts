@@ -10,6 +10,24 @@ import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
+import {
+  PRACTICE_ASSETS,
+  PRACTICE_LEVELS,
+  PRACTICE_MODES,
+  PRACTICE_SKILLS,
+} from '../data/practice-source.js';
+import { READING_TASKS, LISTENING_TASKS } from '../data/receptive-tasks.js';
+import {
+  ENVELOPE_SCHEMA,
+  ERROR_SCHEMA,
+  PRACTICE_SOURCE_SCHEMA,
+  PRACTICE_ASSET_SCHEMA,
+  PRACTICE_UNIT_SCHEMA,
+  PRACTICE_META_SCHEMA,
+  PRACTICE_STATS_SCHEMA,
+  PRACTICE_EXPORT_SCHEMA,
+  RECEPTIVE_TASK_SCHEMA,
+} from './schemas.js';
 
 import type { RouteDefinition } from './route.js';
 import type { JsonValue } from '../types.js';
@@ -29,8 +47,61 @@ const OFFSET = {
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
 
+/** The same validated filters apply to practice search, sampling and JSON Lines export. */
+const PRACTICE_FILTERS: JsonValue[] = [
+  {
+    ...QUERY,
+    description: 'Case-insensitive substring over IDs, generated labels and paths (not exercise contents).',
+    schema: { type: 'string', maxLength: 200 },
+  },
+  { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
+  { name: 'mode', in: 'query', schema: { type: 'string', enum: [...PRACTICE_MODES] } },
+  {
+    name: 'level',
+    in: 'query',
+    description: 'Upstream directory label, not a calibrated proficiency level.',
+    schema: { type: 'string', enum: [...PRACTICE_LEVELS] },
+  },
+  {
+    name: 'asset',
+    in: 'query',
+    description: 'Require at least one asset of this kind; no asset content is returned.',
+    schema: { type: 'string', enum: [...PRACTICE_ASSETS] },
+  },
+];
+
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
+  '/v1/practice': [
+    ...PRACTICE_FILTERS,
+    LIMIT,
+    { ...OFFSET, schema: { type: 'integer', minimum: 0, maximum: 1000000, default: 0 } },
+  ],
+  '/v1/practice/sample': [
+    ...PRACTICE_FILTERS,
+    {
+      name: 'seed',
+      in: 'query',
+      required: true,
+      description: 'Required trimmed seed; reproduce with the same index checksum, filters and count.',
+      schema: { type: 'string', minLength: 1, maxLength: 128 },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Sample size, capped by the matching population; returned in canonical ID order.',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 5 },
+    },
+  ],
+  '/v1/practice/export': PRACTICE_FILTERS,
+  '/v1/tasks/reading': [
+    { ...QUERY, schema: { type: 'string', maxLength: 200 } },
+    { name: 'type', in: 'query', schema: { type: 'string', enum: READING_TASKS.map((item) => item.id) } },
+  ],
+  '/v1/tasks/listening': [
+    { ...QUERY, schema: { type: 'string', maxLength: 200 } },
+    { name: 'type', in: 'query', schema: { type: 'string', enum: LISTENING_TASKS.map((item) => item.id) } },
+  ],
   '/v1/vocabulary': [
     QUERY,
     {
@@ -159,34 +230,6 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   ],
 };
 
-/** The shared JSON envelope schema. */
-const ENVELOPE = {
-  type: 'object',
-  required: ['status', 'data', 'meta'],
-  properties: {
-    status: { type: 'integer' },
-    data: { description: 'Response payload: an array for collections, an object for singletons.' },
-    meta: { type: 'object', additionalProperties: true },
-  },
-};
-
-const ERROR = {
-  type: 'object',
-  required: ['status', 'error'],
-  properties: {
-    status: { type: 'integer' },
-    error: {
-      type: 'object',
-      required: ['code', 'message'],
-      properties: {
-        code: { type: 'string' },
-        message: { type: 'string' },
-        details: { type: 'object', additionalProperties: { type: 'string' } },
-      },
-    },
-  },
-};
-
 /** Path parameters, e.g. `:word` in `/v1/vocabulary/:word`. */
 function pathParameters(path: string): JsonValue[] {
   return path
@@ -218,25 +261,35 @@ export function openApiDocument(
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
+    const path = route.path.replace(/:([^/]+)/g, '{$1}');
+    const representation = route.response ?? { contentType: 'application/json', schema: ENVELOPE_SCHEMA };
+    paths[path] = {
       get: {
-        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
+        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '') || 'root',
         summary: route.summary,
         tags: route.versioned ? ['v1'] : ['service'],
         parameters,
         responses: {
           '200': {
             description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
+            content: { [representation.contentType]: { schema: representation.schema } },
           },
           '304': { description: 'Not modified (ETag matched).' },
+          '405': {
+            description: 'Method not allowed.',
+            content: { 'application/json': { schema: ERROR_SCHEMA } },
+          },
+          '500': {
+            description: 'Unexpected server error.',
+            content: { 'application/json': { schema: ERROR_SCHEMA } },
+          },
           '400': {
             description: 'Invalid parameters.',
-            content: { 'application/json': { schema: ERROR } },
+            content: { 'application/json': { schema: ERROR_SCHEMA } },
           },
           '404': {
             description: 'Not found.',
-            content: { 'application/json': { schema: ERROR } },
+            content: { 'application/json': { schema: ERROR_SCHEMA } },
           },
         },
       },
@@ -253,8 +306,9 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'descriptors, score concordances, original task guidance for all four skills,',
+        'and pinned, metadata-only corpus and Reading/Listening practice inventories.',
+        'Metadata licensing does not grant rights to the indexed upstream contents.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
@@ -264,13 +318,24 @@ export function openApiDocument(
       },
     },
     servers: [{ url: serverUrl, description: 'This instance' }],
+    security: [],
     tags: [
       { name: 'v1', description: 'Versioned, stable endpoints.' },
       { name: 'service', description: 'Service discovery, health and documentation.' },
     ],
     paths,
     components: {
-      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR },
+      schemas: {
+        ApiResponse: ENVELOPE_SCHEMA,
+        ApiError: ERROR_SCHEMA,
+        PracticeSource: PRACTICE_SOURCE_SCHEMA,
+        PracticeAsset: PRACTICE_ASSET_SCHEMA,
+        PracticeUnit: PRACTICE_UNIT_SCHEMA,
+        PracticeMeta: PRACTICE_META_SCHEMA,
+        PracticeStats: PRACTICE_STATS_SCHEMA,
+        PracticeExportRecord: PRACTICE_EXPORT_SCHEMA,
+        ReceptiveTask: RECEPTIVE_TASK_SCHEMA,
+      },
     },
     externalDocs: {
       description: 'Source code, citation metadata and data provenance',
