@@ -4,6 +4,13 @@ This document records how the datasets behind the IELTS API were derived from th
 [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS). It is written so that a reviewer
 can reproduce, criticise or extend every step.
 
+The additional study of `ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS` is documented in
+[docs/PRACTICE.md](docs/PRACTICE.md), including a pinned commit/tree, the five documents/tools
+reviewed, canonical selection rules and measured availability. It adds **1,852 metadata-only
+Reading/Listening items** without changing the original corpus below. See
+[docs/RESEARCH-WORKFLOW.md](docs/RESEARCH-WORKFLOW.md) for experiment reporting and responsible
+citation/archival guidance.
+
 **Corpus snapshot:** commit `a9e2d6c9a070eecea6ffaa6f15b2a00c1c7b938c` (2 September 2024, "Add files
 via upload"), 78 commits, single branch `main`, 404 blobs, no tags, no licence file.
 
@@ -94,8 +101,8 @@ Extraction (`scripts/extract_vocabulary.py`, standard library only):
 5. **Normalise phonetics** to slash-delimited transcriptions (4,172 of 4,174 entries carry one).
 6. **Keep morpheme hints** where published — 164 entries carry pedagogical etymologies such as
    `hydro(water);gen(create)`, which are useful for morphology-aware NLP work.
-7. Emit stable identifiers (`w00001` … `w04174`) assigned after sorting by headword, so identifiers
-   never move between releases.
+7. Emit stable identifiers (`w00001` … `w04174`) assigned after sorting by headword. They are deterministic
+   for this frozen dataset, but insertions can renumber later entries; always cite the data revision.
 
 | Property                                    |                        Value |
 | ------------------------------------------- | ---------------------------: |
@@ -148,7 +155,7 @@ The value added by this project is therefore in the _derived_ layer, all of it o
 ## 6. Reproducing this analysis
 
 ```bash
-curl -sL "https://api.github.com/repos/zhengyishiming/IELTS/git/trees/main?recursive=1" -o tree.json
+curl -sL "https://api.github.com/repos/zhengyishiming/IELTS/git/trees/a9e2d6c9a070eecea6ffaa6f15b2a00c1c7b938c?recursive=1" -o tree.json
 python3 scripts/extract_corpus.py tree.json data/corpus.json
 
 curl -fsSL -H "Accept: application/vnd.github.v3.raw" \

@@ -1,7 +1,7 @@
 {
   "name": "ielts-api",
   "version": "1.0.0",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks.",
+  "description": "A free, no-authentication TypeScript REST API for IELTS preparation research: vocabulary, bands, scoring, task banks and reproducible Reading/Listening practice metadata.",
   "keywords": [
     "ielts",
     "api",
@@ -11,7 +11,10 @@
     "assessment",
     "second-language-acquisition",
     "open-data",
-    "typescript"
+    "typescript",
+    "reading",
+    "listening",
+    "reproducibility"
   ],
   "license": "MIT",
   "type": "module",
@@ -28,7 +31,13 @@
     "data",
     "README.md",
     "CITATION.cff",
-    "LICENSE"
+    "LICENSE",
+    "DATA-LICENSE",
+    "codemeta.json",
+    "RESEARCH.md",
+    "docs/openapi.json",
+    "docs/PRACTICE.md",
+    "docs/RESEARCH-WORKFLOW.md"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -43,15 +52,19 @@
     "format:check": "prettier --check .",
     "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test",
     "data:vocabulary": "python3 scripts/extract_vocabulary.py",
-    "data:corpus": "python3 scripts/extract_corpus.py"
+    "data:corpus": "python3 scripts/extract_corpus.py",
+    "data:practice": "tsx scripts/extract_practice.ts",
+    "openapi:generate": "tsx scripts/generate_openapi.ts"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.0.0",
     "@eslint/js": "^9.18.0",
     "@types/node": "^22.10.7",
     "@vitest/coverage-v8": "^5.0.0",
+    "ajv": "^8.20.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
+    "openapi-types": "^12.1.3",
     "prettier": "^3.4.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",

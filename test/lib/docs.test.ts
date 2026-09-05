@@ -30,6 +30,9 @@ describe('renderDocs', () => {
 
   it('advertises the datasets, the citation block and the licence', () => {
     expect(page).toContain('4,174');
+    expect(page).toContain('1,852');
+    expect(page).toContain('Upstream exercises are not redistributed');
+    expect(page).toContain('No Zenodo DOI has been verified');
     expect(page).toContain('@software{ielts_api');
     expect(page).toContain('https://github.com/johnlikescarrot/IELTS-API');
     expect(page).toContain('MIT');

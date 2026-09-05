@@ -226,6 +226,90 @@ export type CorpusStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Reading and listening practice metadata                                    */
+/* -------------------------------------------------------------------------- */
+
+/** Stable identifiers for the four upstream practice collections. */
+export type PracticeCollectionId = 'listening-basic' | 'listening-full' | 'reading-basic' | 'reading-full';
+
+/** Skills indexed by the metadata-only practice catalogue. */
+export type PracticeSkill = 'listening' | 'reading';
+
+/** Source packaging, not a claim that an item is an official IELTS test. */
+export type PracticeMode = 'exercise' | 'full-test';
+
+/** Directory labels only: these levels have not been independently calibrated. */
+export type PracticeLevel =
+  'basic' | 'intermediate' | 'advanced' | 'a1-a2' | 'b1-b2' | 'c1-c2' | 'unspecified';
+
+/** Presence of a canonical companion audio file in the Git tree, not playability. */
+export type PracticeAudioStatus = 'present' | 'missing' | 'not-applicable';
+
+/** An original metadata record; never an exercise, answer key or audio download. */
+export type PracticeItem = Readonly<{
+  /** Path-derived identifier, independent of the ordering of other items. */
+  id: string;
+  collection: PracticeCollectionId;
+  skill: PracticeSkill;
+  mode: PracticeMode;
+  level: PracticeLevel;
+  /** Lesson or test number within its collection and source level. */
+  number: number;
+  /** Generic title constructed from the path; no upstream prose is copied. */
+  title: string;
+  path: string;
+  format: 'html' | 'json';
+  sizeBytes: number;
+  sha1: string;
+  /** Commit-pinned GitHub provenance reference, not an exercise launch URL. */
+  sourceUrl: string;
+  audio: PracticeAudioStatus;
+}>;
+
+/** Counts distinguish the source's advertised size from observed canonical items. */
+export type PracticeCollection = Readonly<{
+  id: PracticeCollectionId;
+  title: string;
+  skill: PracticeSkill;
+  mode: PracticeMode;
+  sourceDirectory: string;
+  declaredItems: number;
+  indexedItems: number;
+  levels: readonly PracticeLevel[];
+}>;
+
+/** Auditable aggregate counts derived from a complete, pinned Git tree. */
+export type PracticeStats = Readonly<{
+  repositoryFiles: number;
+  indexedItems: number;
+  byCollection: Record<string, number>;
+  bySkill: Record<string, number>;
+  byLevel: Record<string, number>;
+  byAudio: Record<string, number>;
+}>;
+
+/** Provenance and integrity information for the practice metadata release. */
+export type PracticeManifest = Readonly<{
+  schemaVersion: 1;
+  source: {
+    repository: string;
+    commit: string;
+    treeSha: string;
+    reviewedOn: string;
+    contentLicense: 'not-specified';
+    access: 'may-require-login-or-payment';
+    note: string;
+  };
+  rights: { metadataLicense: 'CC-BY-4.0'; contentIncluded: false };
+  integrity: { algorithm: 'sha256'; scope: 'JSON.stringify(items)'; value: string };
+  stats: PracticeStats;
+  collections: readonly PracticeCollection[];
+}>;
+
+/** Generated practice index stored in `data/practice.json`. */
+export type PracticeIndex = PracticeManifest & { readonly items: readonly PracticeItem[] };
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

@@ -27,19 +27,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install the project ESLint configuration dependencies
+        run: npm ci
+
       - name: Run super-linter
-        uses: super-linter/super-linter/slim@v8.3.1
+        uses: super-linter/super-linter/slim@47984f49b4e87383eed97890fe2dca6063bbd9c3 # v8.3.1
         env:
           DEFAULT_BRANCH: main
           DEFAULT_WORKSPACE: ${{ github.workspace }}
           VALIDATE_ALL_CODEBASE: true
           # The generated datasets are machine-written: never lint them.
-          FILTER_REGEX_EXCLUDE: .*(data/|coverage/|dist/).*
+          FILTER_REGEX_EXCLUDE: ^${{ github.workspace }}/(data|coverage|dist|node_modules|super-linter-output)/
           # Languages enabled for this repository.
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_TYPESCRIPT_ES: true
@@ -58,8 +67,32 @@ jobs:
           # extraction scripts are standalone Python utilities with their own
           # formatting.
           # Linter configuration files.
-          LINTER_RULES_PATH: /
+          LINTER_RULES_PATH: .
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
+          # The workflow job is the check; do not require status-write access.
+          MULTI_STATUS: false
+          SAVE_SUPER_LINTER_OUTPUT: true
+          SAVE_SUPER_LINTER_SUMMARY: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report failed linter summary
+        if: failure()
+        run: |
+          if test -f super-linter-output/super-linter-summary.md; then
+            while IFS= read -r line; do
+              printf '::error::%s\n' "${line}"
+            done < super-linter-output/super-linter-summary.md
+          fi
+
+      - name: Upload Super-Linter reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: super-linter-reports
+          path: super-linter-output/
+          retention-days: 7
+          if-no-files-found: warn

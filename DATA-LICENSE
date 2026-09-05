@@ -40,7 +40,21 @@ selection, normalisation, de-duplication, part-of-speech tagging and
 provenance metadata added by this project. It does not transfer any rights in
 the upstream files themselves, which remain the property of their respective
 copyright holders and are never redistributed by this project. The corpus index
-in `data/corpus.json` publishes metadata only.
+in `data/corpus.json` publishes metadata only. The practice index in
+`data/practice.json` also publishes metadata only, derived from:
+
+  https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
+  commit ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c
+
+Credit ngoclong1209 when using that index. The source has no established project
+licence and its documentation describes login/paid access. This project's
+CC BY 4.0 notice applies only to the original metadata compilation; it grants no
+rights in upstream exercises, answers, audio, source code or learner records.
+Those payloads are not included. See docs/PRACTICE.md for the review and scope.
+
+The legacy vocabulary glosses have unknown third-party provenance (RESEARCH.md).
+This licence cannot grant rights the project does not hold in those glosses;
+users must assess the relevant third-party permissions independently.
 
 The band descriptors in `src/data/bands.ts` are original condensed paraphrases
 written for this project. They are not the official IELTS band descriptors,

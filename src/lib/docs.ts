@@ -8,6 +8,7 @@
 
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
+import { practiceManifest } from '../data/practice.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -48,6 +49,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const practice = practiceManifest();
 
   return `<!doctype html>
 <html lang="en">
@@ -94,6 +96,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>${corpus.ieltsRelevantFiles} of ${corpus.filesInRepository} upstream files</strong> indexed from the open research corpus (${(corpus.coverageRatio * 100).toFixed(1)}% IELTS-relevant); only metadata is published.</li>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
+  <li><strong>${practice.stats.indexedItems.toLocaleString('en-US')} Reading/Listening metadata records</strong> from four source collections, with pinned provenance, SHA-256 integrity and explicit-seed sampling. Upstream exercises are not redistributed and may require login/payment.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
 </ul>
 
@@ -135,9 +138,24 @@ ${service.map(routeRow).join('\n')}
   </tbody>
 </table>
 
+<h2>Reproducible Reading/Listening metadata</h2>
+<p><a href="/v1/practice">Inspect the manifest</a>, <a href="/v1/practice/collections">compare collections</a>,
+or <a href="/v1/practice/items?audio=missing">inspect missing companion audio</a>.
+The index contains 306 Listening and 1,546 Reading items; Reading Test 105 is absent in the reviewed source.</p>
+<p>Search and sample with <code>q</code>, <code>skill</code>, <code>collection</code>, <code>level</code>,
+<code>mode</code> and <code>audio</code>. Sampling requires an explicit <code>seed</code> and accepts
+<code>count</code> (1&ndash;50). Source levels are directory labels, not validated CEFR assessments.</p>
+<p><a href="/v1/practice/sample?seed=paper-example-v1&amp;skill=listening&amp;mode=full-test&amp;count=5">Open the tested sample</a>.
+Archive its effective filters, seed, count, dataset fingerprint, source commit and sampling algorithm
+alongside the software revision. No student identity or account is collected by these endpoints.</p>
+<p>See the <a href="${escapeHtml(repository)}/blob/main/docs/PRACTICE.md">source study and API reference</a>
+and <a href="${escapeHtml(repository)}/blob/main/docs/RESEARCH-WORKFLOW.md">research reporting checklist</a>.</p>
+
 <h2>Citing this API</h2>
 <p>If you use this API in research, please cite it; the <code>CITATION.cff</code> file in the repository
-and the archived Zenodo release both carry full metadata.</p>
+carries software metadata. No Zenodo DOI has been verified for this repository; cite the exact commit
+until a real versioned archive is available. A DOI or metadata file cannot guarantee Google Scholar
+indexing or citations.</p>
 <pre><code>@software{ielts_api,
   title  = {IELTS API: a free, no-authentication REST API for IELTS preparation research},
   author = {IELTS API contributors},
@@ -147,7 +165,7 @@ and the archived Zenodo release both carry full metadata.</p>
 }</code></pre>
 
 <footer>
-  <p class="meta">Code licensed under MIT; datasets under CC BY 4.0. Band descriptors are original condensed
+  <p class="meta">Code licensed under MIT; original derived metadata under CC BY 4.0. Upstream content rights are not transferred. Band descriptors are original condensed
   paraphrases written for this project and are not the official IELTS wording. Score concordances are indicative
   and compiled from the providers&rsquo; own published comparison tables.</p>
   <p class="meta"><a href="/openapi.json">OpenAPI 3.1 document</a> &middot; <a href="/health">health</a> &middot;

@@ -6,3 +6,7 @@ coverage/
 .env
 .idea/
 .vscode/
+
+# Release archives and CI linter reports are artefacts, not source.
+*.tgz
+super-linter-output/

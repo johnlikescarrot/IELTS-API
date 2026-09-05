@@ -1,8 +1,8 @@
 name: release
 
-# Cutting a tag publishes a citable, archived release. Zenodo mints a DOI for
-# every tag once the repository is enabled there; the CITATION.cff identifier
-# is updated automatically by the Zenodo integration.
+# Cutting a matching version tag publishes a GitHub release and its artefacts.
+# Zenodo archival requires a separately configured integration or deposit.
+# A maintainer must verify the DOI and update CITATION.cff; this workflow does neither.
 
 on:
   push:
@@ -11,20 +11,22 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   release:
     name: Build, verify and publish the release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '22.x'
           cache: npm
@@ -38,25 +40,20 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Prepare versioned research artefacts
+        run: |
+          npm run openapi:generate
+          npm pack --ignore-scripts
+
       - name: Create the GitHub release
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          test "${GITHUB_REF_NAME}" = "v$(node -p 'require("./package.json").version')"
           gh release create "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
             --verify-tag \
-            README.md CITATION.cff codemeta.json .zenodo.json
-
-      - name: Refresh the archived OpenAPI snapshot
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
-          SERVER_PID=$!
-          for attempt in $(seq 1 20); do
-            if curl -fsS "http://127.0.0.1:4010/openapi.json" -o docs/openapi.json; then break; fi
-            sleep 0.5
-          done
-          kill "${SERVER_PID}"
-          test -s docs/openapi.json
+            README.md CITATION.cff codemeta.json .zenodo.json DATA-LICENSE \
+            docs/openapi.json data/practice.json ielts-api-*.tgz

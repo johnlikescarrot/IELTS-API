@@ -24,12 +24,12 @@ jobs:
         node: ['20.19.0', '22.x']
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
 
       - name: Set up Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: ${{ matrix.node }}
           cache: npm
@@ -51,7 +51,7 @@ jobs:
 
       - name: Upload coverage report
         if: matrix.node == '22.x'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: coverage
           path: coverage/
@@ -63,12 +63,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: '22.x'
           cache: npm
@@ -85,27 +85,67 @@ jobs:
           node dist/cli.js --help
           node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
           SERVER_PID=$!
+          trap 'kill "${SERVER_PID}" 2>/dev/null || true' EXIT
           for attempt in $(seq 1 20); do
             if curl -fsS "http://127.0.0.1:4010/health" > /tmp/health.json; then break; fi
             sleep 0.5
           done
+          curl -fsS 'http://127.0.0.1:4010/v1/practice' -o /tmp/practice-manifest.json
+          node --input-type=module -e '
+          import { readFileSync } from "node:fs";
+          import assert from "node:assert/strict";
+          const manifest = JSON.parse(readFileSync("/tmp/practice-manifest.json", "utf8"));
+          assert.equal(manifest.data.stats.indexedItems, 1852);
+          assert.equal(manifest.data.rights.contentIncluded, false);
+          '
           kill "${SERVER_PID}"
           cat /tmp/health.json
           grep -q '"status": 200' /tmp/health.json
+
+      - name: Verify distributable data and licences
+        run: |
+          npm pack --ignore-scripts --pack-destination "${RUNNER_TEMP}"
+          tar -tf "${RUNNER_TEMP}/ielts-api-$(node -p 'require("./package.json").version').tgz" > /tmp/package-files.txt
+          grep -Fx 'package/DATA-LICENSE' /tmp/package-files.txt
+          grep -Fx 'package/data/practice.json' /tmp/package-files.txt
+          grep -Fx 'package/docs/openapi.json' /tmp/package-files.txt
 
   datasets:
     name: Verify dataset integrity
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           persist-credentials: false
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: '3.12'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Re-derive the practice metadata from the pinned Git tree
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh api 'repos/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/git/trees/52e6e832d6b3243205ebe3bb7fe901bbeca7f504?recursive=1' \
+            > "${RUNNER_TEMP}/practice-tree.json"
+          npm run data:practice -- "${RUNNER_TEMP}/practice-tree.json" "${RUNNER_TEMP}/practice.json"
+          cmp data/practice.json "${RUNNER_TEMP}/practice.json"
+
+      - name: Validate citation metadata
+        run: |
+          python3 -m pip install cffconvert==2.0.0
+          cffconvert --validate
 
       - name: Re-derive the vocabulary dataset from the upstream workbook
         run: |
@@ -124,4 +164,4 @@ jobs:
 
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); print('datasets are valid JSON')"
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice.json')); print('datasets are valid JSON')"

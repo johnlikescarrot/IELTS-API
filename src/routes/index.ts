@@ -8,6 +8,7 @@
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
 import { createMetaRoutes } from './meta.js';
+import { practiceRoutes } from './practice.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
 import { topicRoutes } from './topics.js';
@@ -22,6 +23,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...scoreRoutes,
   ...topicRoutes,
   ...corpusRoutes,
+  ...practiceRoutes,
   ...resourceRoutes,
 ];
 

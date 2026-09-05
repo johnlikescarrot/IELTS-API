@@ -4,7 +4,7 @@
     "title": "IELTS API",
     "version": "1.0.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
-    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, and an index\nof the open IELTS research corpus.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
+    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, and an index\nof the IELTS research corpus. Reading/Listening practice metadata includes\ncommit-pinned provenance, SHA-256 fingerprints and explicit-seed sampling.\nPractice content is not redistributed and upstream access may be restricted.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
       "name": "MIT (code) / CC BY 4.0 (data)",
       "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/LICENSE"
@@ -12,10 +12,11 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3000/",
+      "url": "/",
       "description": "This instance"
     }
   ],
+  "security": [],
   "tags": [
     {
       "name": "v1",
@@ -31,7 +32,9 @@
       "get": {
         "operationId": "v1_vocabulary",
         "summary": "Search the Cambridge IELTS 1-22 vocabulary dataset.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -47,7 +50,11 @@
             "description": "How `q` is matched against the dataset.",
             "schema": {
               "type": "string",
-              "enum": ["contains", "prefix", "exact"],
+              "enum": [
+                "contains",
+                "prefix",
+                "exact"
+              ],
               "default": "contains"
             }
           },
@@ -84,7 +91,12 @@
             "description": "Sort key.",
             "schema": {
               "type": "string",
-              "enum": ["word", "length", "volumes", "senses"],
+              "enum": [
+                "word",
+                "length",
+                "volumes",
+                "senses"
+              ],
               "default": "word"
             }
           },
@@ -93,7 +105,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "asc"
             }
           },
@@ -125,20 +140,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -151,31 +153,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -185,31 +163,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -221,7 +175,9 @@
       "get": {
         "operationId": "v1_vocabulary_stats",
         "summary": "Aggregate statistics for the vocabulary dataset.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -229,20 +185,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -255,31 +198,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -289,31 +208,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -325,7 +220,9 @@
       "get": {
         "operationId": "v1_vocabulary_random",
         "summary": "A seeded random sample of vocabulary entries.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "count",
@@ -352,20 +249,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -378,31 +262,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -412,31 +272,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -448,7 +284,9 @@
       "get": {
         "operationId": "v1_vocabulary_daily",
         "summary": "A deterministic vocabulary entry for a calendar date.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "date",
@@ -476,20 +314,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -502,31 +327,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -536,31 +337,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -568,11 +345,13 @@
         }
       }
     },
-    "/v1/vocabulary/:word": {
+    "/v1/vocabulary/{word}": {
       "get": {
         "operationId": "v1_vocabulary_word",
         "summary": "Look up a single headword.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "word",
@@ -589,20 +368,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -615,31 +381,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -649,31 +391,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -685,7 +403,9 @@
       "get": {
         "operationId": "v1_bands",
         "summary": "The IELTS band scale with indicative CEFR levels.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -693,20 +413,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -719,31 +426,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -753,31 +436,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -789,14 +448,20 @@
       "get": {
         "operationId": "v1_bands_descriptors",
         "summary": "Condensed analytic band descriptors, filterable by set, criterion and band.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "set",
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["speaking", "writing-task-1", "writing-task-2"],
+              "enum": [
+                "speaking",
+                "writing-task-1",
+                "writing-task-2"
+              ],
               "default": "speaking"
             }
           },
@@ -832,20 +497,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -858,31 +510,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -892,31 +520,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -924,11 +528,13 @@
         }
       }
     },
-    "/v1/bands/:band": {
+    "/v1/bands/{band}": {
       "get": {
         "operationId": "v1_bands_band",
         "summary": "One band level with the descriptors that bracket it.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "band",
@@ -945,20 +551,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -971,31 +564,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1005,31 +574,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1041,7 +586,9 @@
       "get": {
         "operationId": "v1_scores_overall",
         "summary": "Calculate an overall band score from the four component scores.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "listening",
@@ -1098,20 +645,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1124,31 +658,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1158,31 +668,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1194,7 +680,9 @@
       "get": {
         "operationId": "v1_scores_convert",
         "summary": "Convert an IELTS band to another scale (CEFR, TOEFL iBT, Cambridge, PTE, DET).",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "band",
@@ -1213,7 +701,13 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["cefr", "toefl-ibt", "cambridge-english-scale", "pte-academic", "duolingo"]
+              "enum": [
+                "cefr",
+                "toefl-ibt",
+                "cambridge-english-scale",
+                "pte-academic",
+                "duolingo"
+              ]
             }
           }
         ],
@@ -1223,20 +717,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1249,31 +730,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1283,31 +740,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1319,7 +752,9 @@
       "get": {
         "operationId": "v1_scores_interpret",
         "summary": "Map a score on another scale back to an indicative IELTS band.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "scale",
@@ -1327,7 +762,13 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["cefr", "toefl-ibt", "cambridge-english-scale", "pte-academic", "duolingo"]
+              "enum": [
+                "cefr",
+                "toefl-ibt",
+                "cambridge-english-scale",
+                "pte-academic",
+                "duolingo"
+              ]
             }
           },
           {
@@ -1345,20 +786,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1371,31 +799,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1405,31 +809,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1441,7 +821,9 @@
       "get": {
         "operationId": "v1_topics_writing",
         "summary": "Writing Task 2 prompts, filterable by category and question type.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -1480,7 +862,13 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["opinion", "discussion", "advantages-disadvantages", "problem-solution", "two-part"]
+              "enum": [
+                "opinion",
+                "discussion",
+                "advantages-disadvantages",
+                "problem-solution",
+                "two-part"
+              ]
             }
           },
           {
@@ -1511,20 +899,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1537,31 +912,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1571,31 +922,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1607,7 +934,9 @@
       "get": {
         "operationId": "v1_topics_speaking",
         "summary": "Speaking Part 1, 2 and 3 items.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -1622,7 +951,11 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "enum": [1, 2, 3]
+              "enum": [
+                1,
+                2,
+                3
+              ]
             }
           },
           {
@@ -1653,20 +986,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1679,31 +999,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1713,31 +1009,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1749,14 +1021,19 @@
       "get": {
         "operationId": "v1_tasks_writing",
         "summary": "Writing Task 1 task families with structure and timing guidance.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "module",
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["academic", "general-training"]
+              "enum": [
+                "academic",
+                "general-training"
+              ]
             }
           }
         ],
@@ -1766,20 +1043,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1792,31 +1056,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1826,31 +1066,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1862,7 +1078,9 @@
       "get": {
         "operationId": "v1_corpus",
         "summary": "Metadata and statistics for the indexed IELTS research corpus.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -1870,20 +1088,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1896,31 +1101,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1930,31 +1111,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1966,7 +1123,9 @@
       "get": {
         "operationId": "v1_corpus_stats",
         "summary": "Aggregate statistics only.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -1974,20 +1133,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -2000,31 +1146,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2034,31 +1156,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2070,7 +1168,9 @@
       "get": {
         "operationId": "v1_corpus_items",
         "summary": "Search the corpus index by category, skill, format or free text.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -2106,7 +1206,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["title", "category", "skill", "size"],
+              "enum": [
+                "title",
+                "category",
+                "skill",
+                "size"
+              ],
               "default": "title"
             }
           },
@@ -2115,7 +1220,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "asc"
             }
           },
@@ -2147,20 +1255,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -2173,31 +1268,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2207,31 +1278,433 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice": {
+      "get": {
+        "operationId": "v1_practice",
+        "summary": "Practice metadata manifest, provenance, rights and SHA-256 fingerprint.",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticeManifestResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/collections": {
+      "get": {
+        "operationId": "v1_practice_collections",
+        "summary": "Reading and Listening collections with declared and observed counts.",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticeCollectionsResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/items": {
+      "get": {
+        "operationId": "v1_practice_items",
+        "summary": "Search practice metadata by skill, collection, source level, mode or audio presence.",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Free-text search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "listening",
+                "reading"
+              ]
+            }
+          },
+          {
+            "name": "collection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "listening-basic",
+                "listening-full",
+                "reading-basic",
+                "reading-full"
+              ]
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "Unvalidated source directory label, not a calibrated CEFR level.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "basic",
+                "intermediate",
+                "advanced",
+                "a1-a2",
+                "b1-b2",
+                "c1-c2",
+                "unspecified"
+              ]
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "exercise",
+                "full-test"
+              ]
+            }
+          },
+          {
+            "name": "audio",
+            "in": "query",
+            "description": "Presence of a canonical companion file, not permission or playability.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "present",
+                "missing",
+                "not-applicable"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Page size (1-100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Zero-based offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticePageResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/sample": {
+      "get": {
+        "operationId": "v1_practice_sample",
+        "summary": "Reproducible metadata sample without replacement; requires an explicit seed.",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Free-text search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "listening",
+                "reading"
+              ]
+            }
+          },
+          {
+            "name": "collection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "listening-basic",
+                "listening-full",
+                "reading-basic",
+                "reading-full"
+              ]
+            }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "Unvalidated source directory label, not a calibrated CEFR level.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "basic",
+                "intermediate",
+                "advanced",
+                "a1-a2",
+                "b1-b2",
+                "c1-c2",
+                "unspecified"
+              ]
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "exercise",
+                "full-test"
+              ]
+            }
+          },
+          {
+            "name": "audio",
+            "in": "query",
+            "description": "Presence of a canonical companion file, not permission or playability.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "present",
+                "missing",
+                "not-applicable"
+              ]
+            }
+          },
+          {
+            "name": "seed",
+            "in": "query",
+            "required": true,
+            "description": "Required trimmed seed (1-256 Unicode code points); archive filters, count, dataset SHA-256 and algorithm for replay.",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 256
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Requested sample size; capped by the matching population.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticeSampleResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/items/{id}": {
+      "get": {
+        "operationId": "v1_practice_items_id",
+        "summary": "Look up a practice metadata record by its stable, path-derived ID.",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PracticeItemResponse"
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2243,7 +1716,9 @@
       "get": {
         "operationId": "v1_resources",
         "summary": "Freely accessible IELTS preparation resources and open datasets.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -2258,7 +1733,14 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["official", "course", "practice-material", "dataset", "tool", "community"]
+              "enum": [
+                "official",
+                "course",
+                "practice-material",
+                "dataset",
+                "tool",
+                "community"
+              ]
             }
           },
           {
@@ -2289,20 +1771,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -2315,31 +1784,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2349,31 +1794,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "error"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
-                      "type": "object",
-                      "required": ["code", "message"],
-                      "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
-                          "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2386,7 +1807,11 @@
     "schemas": {
       "ApiResponse": {
         "type": "object",
-        "required": ["status", "data", "meta"],
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
         "properties": {
           "status": {
             "type": "integer"
@@ -2402,26 +1827,750 @@
       },
       "ApiError": {
         "type": "object",
-        "required": ["status", "error"],
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
         "properties": {
           "status": {
-            "type": "integer"
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599
           },
-          "error": {
+          "data": {
+            "type": "null"
+          },
+          "meta": {
             "type": "object",
-            "required": ["code", "message"],
+            "required": [
+              "error",
+              "version"
+            ],
             "properties": {
-              "code": {
+              "version": {
                 "type": "string"
               },
-              "message": {
-                "type": "string"
+              "error": {
+                "type": "object",
+                "required": [
+                  "code",
+                  "message",
+                  "details"
+                ],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "details": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "PracticeItem": {
+        "type": "object",
+        "required": [
+          "id",
+          "collection",
+          "skill",
+          "mode",
+          "level",
+          "number",
+          "title",
+          "path",
+          "format",
+          "sizeBytes",
+          "sha1",
+          "sourceUrl",
+          "audio"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "collection": {
+            "type": "string",
+            "enum": [
+              "listening-basic",
+              "listening-full",
+              "reading-basic",
+              "reading-full"
+            ]
+          },
+          "skill": {
+            "type": "string",
+            "enum": [
+              "listening",
+              "reading"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "exercise",
+              "full-test"
+            ]
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "basic",
+              "intermediate",
+              "advanced",
+              "a1-a2",
+              "b1-b2",
+              "c1-c2",
+              "unspecified"
+            ]
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "title": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "html",
+              "json"
+            ]
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "sha1": {
+            "type": "string",
+            "pattern": "^[a-f0-9]{40}$"
+          },
+          "sourceUrl": {
+            "type": "string",
+            "format": "uri"
+          },
+          "audio": {
+            "type": "string",
+            "enum": [
+              "present",
+              "missing",
+              "not-applicable"
+            ],
+            "description": "Canonical regular companion file present in the tree; no playability or rights claim."
+          }
+        }
+      },
+      "PracticeCollection": {
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "skill",
+          "mode",
+          "sourceDirectory",
+          "declaredItems",
+          "indexedItems",
+          "levels"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "listening-basic",
+              "listening-full",
+              "reading-basic",
+              "reading-full"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "skill": {
+            "type": "string",
+            "enum": [
+              "listening",
+              "reading"
+            ]
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "exercise",
+              "full-test"
+            ]
+          },
+          "sourceDirectory": {
+            "type": "string"
+          },
+          "declaredItems": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "indexedItems": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "levels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "basic",
+                "intermediate",
+                "advanced",
+                "a1-a2",
+                "b1-b2",
+                "c1-c2",
+                "unspecified"
+              ]
+            }
+          }
+        }
+      },
+      "PracticeManifest": {
+        "type": "object",
+        "required": [
+          "schemaVersion",
+          "source",
+          "rights",
+          "integrity",
+          "collections",
+          "stats"
+        ],
+        "properties": {
+          "schemaVersion": {
+            "type": "integer",
+            "const": 1
+          },
+          "source": {
+            "type": "object",
+            "required": [
+              "repository",
+              "commit",
+              "treeSha",
+              "reviewedOn",
+              "contentLicense",
+              "access",
+              "note"
+            ],
+            "properties": {
+              "repository": {
+                "type": "string",
+                "format": "uri"
               },
-              "details": {
+              "commit": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "treeSha": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "reviewedOn": {
+                "type": "string",
+                "format": "date"
+              },
+              "contentLicense": {
+                "type": "string",
+                "const": "not-specified"
+              },
+              "access": {
+                "type": "string",
+                "const": "may-require-login-or-payment"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          },
+          "rights": {
+            "type": "object",
+            "required": [
+              "metadataLicense",
+              "contentIncluded"
+            ],
+            "properties": {
+              "metadataLicense": {
+                "type": "string",
+                "const": "CC-BY-4.0"
+              },
+              "contentIncluded": {
+                "type": "boolean",
+                "const": false
+              }
+            }
+          },
+          "integrity": {
+            "type": "object",
+            "required": [
+              "algorithm",
+              "scope",
+              "value"
+            ],
+            "properties": {
+              "algorithm": {
+                "type": "string",
+                "const": "sha256"
+              },
+              "scope": {
+                "type": "string",
+                "const": "JSON.stringify(items)"
+              },
+              "value": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            }
+          },
+          "collections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PracticeCollection"
+            }
+          },
+          "stats": {
+            "type": "object",
+            "required": [
+              "repositoryFiles",
+              "indexedItems",
+              "byCollection",
+              "bySkill",
+              "byLevel",
+              "byAudio"
+            ],
+            "properties": {
+              "repositoryFiles": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "indexedItems": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "byCollection": {
                 "type": "object",
                 "additionalProperties": {
-                  "type": "string"
+                  "type": "integer",
+                  "minimum": 0
                 }
+              },
+              "bySkill": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "byLevel": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              },
+              "byAudio": {
+                "type": "object",
+                "additionalProperties": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "PracticeManifestResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "status": {
+            "type": "integer",
+            "const": 200
+          },
+          "data": {
+            "$ref": "#/components/schemas/PracticeManifest"
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "endpoint",
+              "version"
+            ],
+            "properties": {
+              "endpoint": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "PracticeCollectionsResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "status": {
+            "type": "integer",
+            "const": 200
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PracticeCollection"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "endpoint",
+              "version",
+              "datasetSha256",
+              "sourceCommit",
+              "note",
+              "total"
+            ],
+            "properties": {
+              "endpoint": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "datasetSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "sourceCommit": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "note": {
+                "type": "string"
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              }
+            }
+          }
+        }
+      },
+      "PracticeItemResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "status": {
+            "type": "integer",
+            "const": 200
+          },
+          "data": {
+            "$ref": "#/components/schemas/PracticeItem"
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "endpoint",
+              "version",
+              "datasetSha256",
+              "sourceCommit",
+              "note"
+            ],
+            "properties": {
+              "endpoint": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "datasetSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "sourceCommit": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "note": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "PracticePageResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "status": {
+            "type": "integer",
+            "const": 200
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PracticeItem"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "endpoint",
+              "version",
+              "datasetSha256",
+              "sourceCommit",
+              "note",
+              "filters",
+              "total",
+              "limit",
+              "offset",
+              "hasMore"
+            ],
+            "properties": {
+              "endpoint": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "datasetSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "sourceCommit": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "note": {
+                "type": "string"
+              },
+              "filters": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "skill": {
+                    "type": "string",
+                    "enum": [
+                      "listening",
+                      "reading"
+                    ]
+                  },
+                  "collection": {
+                    "type": "string",
+                    "enum": [
+                      "listening-basic",
+                      "listening-full",
+                      "reading-basic",
+                      "reading-full"
+                    ]
+                  },
+                  "level": {
+                    "type": "string",
+                    "enum": [
+                      "basic",
+                      "intermediate",
+                      "advanced",
+                      "a1-a2",
+                      "b1-b2",
+                      "c1-c2",
+                      "unspecified"
+                    ]
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "exercise",
+                      "full-test"
+                    ]
+                  },
+                  "audio": {
+                    "type": "string",
+                    "enum": [
+                      "present",
+                      "missing",
+                      "not-applicable"
+                    ]
+                  }
+                }
+              },
+              "total": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "limit": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 100
+              },
+              "offset": {
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 9007199254740991
+              },
+              "hasMore": {
+                "type": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "PracticeSampleResponse": {
+        "type": "object",
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "status": {
+            "type": "integer",
+            "const": 200
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PracticeItem"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "required": [
+              "endpoint",
+              "version",
+              "datasetSha256",
+              "sourceCommit",
+              "note",
+              "filters",
+              "seed",
+              "requested",
+              "returned",
+              "population",
+              "samplingAlgorithm"
+            ],
+            "properties": {
+              "endpoint": {
+                "type": "string"
+              },
+              "version": {
+                "type": "string"
+              },
+              "datasetSha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              },
+              "sourceCommit": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{40}$"
+              },
+              "note": {
+                "type": "string"
+              },
+              "filters": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "query": {
+                    "type": "string"
+                  },
+                  "skill": {
+                    "type": "string",
+                    "enum": [
+                      "listening",
+                      "reading"
+                    ]
+                  },
+                  "collection": {
+                    "type": "string",
+                    "enum": [
+                      "listening-basic",
+                      "listening-full",
+                      "reading-basic",
+                      "reading-full"
+                    ]
+                  },
+                  "level": {
+                    "type": "string",
+                    "enum": [
+                      "basic",
+                      "intermediate",
+                      "advanced",
+                      "a1-a2",
+                      "b1-b2",
+                      "c1-c2",
+                      "unspecified"
+                    ]
+                  },
+                  "mode": {
+                    "type": "string",
+                    "enum": [
+                      "exercise",
+                      "full-test"
+                    ]
+                  },
+                  "audio": {
+                    "type": "string",
+                    "enum": [
+                      "present",
+                      "missing",
+                      "not-applicable"
+                    ]
+                  }
+                }
+              },
+              "seed": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              },
+              "requested": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 50
+              },
+              "returned": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "population": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "samplingAlgorithm": {
+                "type": "string",
+                "const": "fnv1a32-mulberry32-partial-fisher-yates-v1"
               }
             }
           }

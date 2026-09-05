@@ -6,9 +6,29 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Metadata-only Reading/Listening catalogue from the pinned
+  `ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS` snapshot: 1,852 canonical items across four collections,
+  explicit content-rights/access caveats, measured counts and SHA-256 integrity.
+- Five free/no-auth practice endpoints for manifests, collections, filtered/paginated search,
+  stable-ID lookup and explicit-seed sampling without replacement.
+- Offline TypeScript metadata extraction with strict tree/blob validation, pinned-tree CI
+  regeneration, immutable verified records and coverage for the TypeScript generation scripts.
+- A source review, research replay protocol and responsible citation/archival checklist.
+
+### Fixed
+
+- OpenAPI path templating and actual error envelopes, with independent schema validation,
+  typed practice responses, HTTP contract tests and snapshot drift detection.
+- Relative OpenAPI server URLs for HTTPS reverse-proxy/browser compatibility.
+- Removed the unissued DOI placeholder and unsupported archival/publication claims from citation
+  metadata; corrected quick-start instructions to build from source while npm is unpublished.
+- Packaged the data licence and research/contract documentation with the npm archive.
+
 ## [1.0.0] - 2026-09-04
 
-First citable release.
+Initial implementation. No verified archival DOI is recorded for this version.
 
 ### Added
 

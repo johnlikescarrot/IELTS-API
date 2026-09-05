@@ -1,8 +1,8 @@
 /**
  * OpenAPI 3.1 document generation.
  *
- * The document is generated from the live route table, so it can never drift
- * from the implementation: adding a route automatically documents it.
+ * Route discovery is generated from the live table. Parameter and payload
+ * schemas are explicit and tested against real responses to prevent drift.
  */
 
 import { CONVERSION_TARGETS } from '../data/conversions.js';
@@ -10,6 +10,14 @@ import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
+import {
+  PRACTICE_AUDIO_STATUSES,
+  PRACTICE_COLLECTION_IDS,
+  PRACTICE_LEVELS,
+  PRACTICE_MODES,
+  PRACTICE_SKILLS,
+} from '../data/practice-source.js';
+import { PRACTICE_RESPONSES, PRACTICE_SCHEMAS } from './practice-openapi.js';
 
 import type { RouteDefinition } from './route.js';
 import type { JsonValue } from '../types.js';
@@ -28,6 +36,25 @@ const OFFSET = {
   schema: { type: 'integer', minimum: 0, default: 0 },
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
+
+const PRACTICE_FILTERS = [
+  QUERY,
+  { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
+  { name: 'collection', in: 'query', schema: { type: 'string', enum: [...PRACTICE_COLLECTION_IDS] } },
+  {
+    name: 'level',
+    in: 'query',
+    description: 'Unvalidated source directory label, not a calibrated CEFR level.',
+    schema: { type: 'string', enum: [...PRACTICE_LEVELS] },
+  },
+  { name: 'mode', in: 'query', schema: { type: 'string', enum: [...PRACTICE_MODES] } },
+  {
+    name: 'audio',
+    in: 'query',
+    description: 'Presence of a canonical companion file, not permission or playability.',
+    schema: { type: 'string', enum: [...PRACTICE_AUDIO_STATUSES] },
+  },
+];
 
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
@@ -151,6 +178,28 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/practice/items': [
+    ...PRACTICE_FILTERS,
+    LIMIT,
+    { ...OFFSET, schema: { ...OFFSET.schema, maximum: Number.MAX_SAFE_INTEGER } },
+  ],
+  '/v1/practice/sample': [
+    ...PRACTICE_FILTERS,
+    {
+      name: 'seed',
+      in: 'query',
+      required: true,
+      description:
+        'Required trimmed seed (1-256 Unicode code points); archive filters, count, dataset SHA-256 and algorithm for replay.',
+      schema: { type: 'string', minLength: 1, maxLength: 256 },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Requested sample size; capped by the matching population.',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 5 },
+    },
+  ],
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },
@@ -172,16 +221,24 @@ const ENVELOPE = {
 
 const ERROR = {
   type: 'object',
-  required: ['status', 'error'],
+  required: ['status', 'data', 'meta'],
   properties: {
-    status: { type: 'integer' },
-    error: {
+    status: { type: 'integer', minimum: 400, maximum: 599 },
+    data: { type: 'null' },
+    meta: {
       type: 'object',
-      required: ['code', 'message'],
+      required: ['error', 'version'],
       properties: {
-        code: { type: 'string' },
-        message: { type: 'string' },
-        details: { type: 'object', additionalProperties: { type: 'string' } },
+        version: { type: 'string' },
+        error: {
+          type: 'object',
+          required: ['code', 'message', 'details'],
+          properties: {
+            code: { type: 'string' },
+            message: { type: 'string' },
+            details: { type: 'object', additionalProperties: { type: 'string' } },
+          },
+        },
       },
     },
   },
@@ -218,25 +275,30 @@ export function openApiDocument(
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
+    const path = route.path.replace(/:([^/]+)/g, '{$1}');
+    paths[path] = {
       get: {
-        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
+        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '') || 'service_root',
         summary: route.summary,
         tags: route.versioned ? ['v1'] : ['service'],
         parameters,
         responses: {
           '200': {
             description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
+            content: {
+              'application/json': {
+                schema: PRACTICE_RESPONSES[route.path] ?? { $ref: '#/components/schemas/ApiResponse' },
+              },
+            },
           },
           '304': { description: 'Not modified (ETag matched).' },
           '400': {
             description: 'Invalid parameters.',
-            content: { 'application/json': { schema: ERROR } },
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
           },
           '404': {
             description: 'Not found.',
-            content: { 'application/json': { schema: ERROR } },
+            content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
           },
         },
       },
@@ -254,7 +316,9 @@ export function openApiDocument(
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
         'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'of the IELTS research corpus. Reading/Listening practice metadata includes',
+        'commit-pinned provenance, SHA-256 fingerprints and explicit-seed sampling.',
+        'Practice content is not redistributed and upstream access may be restricted.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
@@ -264,13 +328,14 @@ export function openApiDocument(
       },
     },
     servers: [{ url: serverUrl, description: 'This instance' }],
+    security: [],
     tags: [
       { name: 'v1', description: 'Versioned, stable endpoints.' },
       { name: 'service', description: 'Service discovery, health and documentation.' },
     ],
     paths,
     components: {
-      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR },
+      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR, ...PRACTICE_SCHEMAS },
     },
     externalDocs: {
       description: 'Source code, citation metadata and data provenance',
