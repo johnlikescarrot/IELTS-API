@@ -6,6 +6,44 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-05
+
+The **assessment loop** closes: practice marks become band scores, and every dataset becomes one
+query away.
+
+The practice-test index published in 1.1.0 tells a candidate exactly how many questions each paper
+contains; what it could not say is what a mark on that paper is worth. This release adds the
+published raw-score conversion tables for the objective papers, so a count of correct answers
+converts to a band with the gap to the next band attached. It also adds cross-dataset search: one
+deterministic query across all eleven datasets, ranked by a fully documented rule, returning the
+most specific endpoint that answers the query. The API remains free, GET-only,
+authentication-free and dependency-free.
+
+### Added
+
+- **Raw-score tables** (`GET /v1/scores/raw`): the standard raw-to-band conversion tables published
+  by the IELTS partners for Listening (39-40/9.0), Academic Reading and General Training Reading —
+  the two modules differ (34-35/7.0 GT against 30-32/7.0 Academic), and Listening is common to
+  both. Three modes: `module` alone returns the full table with CEFR levels, `module` + `correct`
+  converts one practice mark to a band and reports how many additional answers the next half band
+  requires, and `module` + `band` reverses the lookup to the minimum mark a target band demands.
+  Marks below the published floor (band 4.0) are reported as unmatched, not extrapolated.
+- **Cross-dataset search** (`GET /v1/search?q=...`): one query across vocabulary, the writing and
+  speaking banks, the Task 1 families, the question-type taxonomy, the response frameworks, the
+  exam themes, the resource catalogue, the two indexes and the practice tests. Deterministic
+  ranking — exact primary-field match (4), prefix (3), substring (2), secondary fields (1), ties
+  ordered by stable identifier — per-dataset totals with a per-dataset `limit` (1-20, default 5),
+  and an optional `datasets` filter. Hits carry the most specific URL that returns the item, so a
+  search doubles as endpoint discovery.
+- `RESEARCH.md` Part V: provenance and limitations of the raw-score tables, and the search
+  semantics with its threats to validity.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.3.0.
+- Test suite grown to 518 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.2.0] - 2026-09-05
 
 Two additions in one release: the **toolkit** — the first capabilities that consume text as well as
@@ -133,6 +171,8 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

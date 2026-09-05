@@ -31,7 +31,9 @@ dataset, and [paper/paper.md](paper/paper.md) for the short research paper.
 The API also analyses text, not just publishes it: `/v1/tools/readability` scores any passage with
 the Flesch formulas and places it next to the corpus group means, `/v1/tools/essay-profile` turns a
 writing sample into lexical, structural and theme measurements with descriptor-aligned hints, and
-`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule.
+`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule. The
+assessment loop closes with the published raw-score tables at `/v1/scores/raw`, and
+`/v1/search?q=...` queries all eleven datasets at once.
 
 ## Quick start
 
@@ -46,6 +48,15 @@ curl -s "http://localhost:3000/v1/vocabulary?q=environment&limit=3"
 
 # Overall band score, with the IELTS rounding rule applied
 curl -s "http://localhost:3000/v1/scores/overall?listening=7&reading=6.5&writing=6&speaking=7"
+
+# 30/40 in a Listening practice is band 7.0 — and two more answers would make 7.5
+curl -s "http://localhost:3000/v1/scores/raw?module=listening&correct=30"
+
+# Or the other way round: the minimum mark a General Training Reading band 7 requires
+curl -s "http://localhost:3000/v1/scores/raw?module=reading-general-training&band=7"
+
+# Search all eleven datasets at once, with per-dataset totals
+curl -s "http://localhost:3000/v1/search?q=essay&limit=3"
 
 # One headword, with phonetics, senses and morpheme hints
 curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
@@ -88,6 +99,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
 | Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`             | Original compilation                                                           |
 | Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                         |
+| Raw-score tables                |                             3 objective papers x 11 rows | `/v1/scores/raw`        | The IELTS partners' published conversion tables                                |
 | Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                   |
 | Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                 |
 | Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`     | Original compilation                                                           |
@@ -124,6 +136,8 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
 | GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
 | GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
+| GET    | `/v1/scores/raw`          | Published raw-score tables; convert marks to bands or find the mark a band requires (`module`)          |
+| GET    | `/v1/search`              | Search all datasets at once (`q`, `datasets`, `limit`)                                                  |
 | GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
 | GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                        |
 | GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                           |
@@ -162,6 +176,51 @@ GET /v1/scores/overall?listening=7&reading=6&writing=6&speaking=6
     "explanation": "The mean of the four components is 6.25, which falls exactly between two
                     bands; IELTS rounds a .25/.75 mean up, giving 6.5."
   }
+}
+```
+
+**Practice mark to band.** The published raw-score tables close the loop from practice paper to
+band, and the response always says how many more answers the next half band requires.
+
+```jsonc
+GET /v1/scores/raw?module=listening&correct=30
+{
+  "status": 200,
+  "data": {
+    "module": { "id": "listening", "name": "Listening (Academic and General Training)",
+                "skill": "listening", "questions": 40 },
+    "correct": 30, "matched": true, "band": 7, "cefr": "C1",
+    "row": { "min": 30, "max": 31, "band": 7 },
+    "nextBand": { "band": 7.5, "correct": 32, "additionalNeeded": 2 }
+  },
+  "meta": { "provenance": "published-table", "...": "..." }
+}
+```
+
+**Cross-dataset search.** One deterministic query across all eleven datasets; every hit carries the
+most specific endpoint that returns the item.
+
+```jsonc
+GET /v1/search?q=essay&limit=2
+{
+  "status": 200,
+  "data": {
+    "query": "essay", "matches": 17,
+    "datasets": {
+      "vocabulary": {
+        "label": "Cambridge IELTS 1-22 vocabulary", "endpoint": "/v1/vocabulary", "total": 6,
+        "items": [
+          { "ref": "w01272", "dataset": "vocabulary", "title": "essay",
+            "snippet": "an analytic or interpretive literary composition.",
+            "url": "/v1/vocabulary/essay", "score": 4, "field": "primary" },
+          { "ref": "w38549", "title": "essayist", "url": "/v1/vocabulary/essayist", "score": 3, "...": "..." }
+        ]
+      },
+      "writing-topics": { "...": "..." },
+      "...": "..."
+    }
+  },
+  "meta": { "ranking": "Deterministic: exact match on the primary field (4), prefix (3), ..." }
 }
 ```
 
@@ -354,7 +413,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.2.0},
+  version = {1.3.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }

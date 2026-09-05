@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.2.0
+version: 1.3.0
 date-released: '2026-09-05'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
@@ -10,15 +10,17 @@ abstract: >-
   Cambridge IELTS volumes 1-22 vocabulary lists, condensed analytic band
   descriptors for Speaking and Writing across bands 0-9, indicative score
   concordances for CEFR, TOEFL iBT, the Cambridge English Scale, PTE Academic
-  and the Duolingo English Test, Writing and Speaking task banks, a canonical
+  and the Duolingo English Test, the published raw-score tables for the
+  objective papers, Writing and Speaking task banks, a canonical
   taxonomy of the thirteen IELTS Reading and Listening question types with the
   frequencies observed in 27,225 practice questions, a structure and
   readability index of 1,702 practice tests and CEFR-graded reading lessons,
   fifty recurring exam themes, and a curated index of an open IELTS research
   corpus. Deterministic analysis tools profile any text for Flesch readability,
   lexical diversity and Cambridge-headword coverage, and compose the datasets
-  into a week-by-week study plan towards a target band. Every endpoint is free
-  of charge,
+  into a week-by-week study plan towards a target band, and a deterministic
+  cross-dataset search exposes all eleven datasets through one query. Every
+  endpoint is free of charge,
   requires no authentication, returns a uniform JSON envelope with a stable
   ETag, and is covered by a test suite with 100% statement, branch, function
   and line coverage. The API is designed for reproducible second-language
@@ -33,6 +35,8 @@ keywords:
   - question types
   - readability
   - Flesch Reading Ease
+  - raw scores
+  - cross-dataset search
   - CEFR
   - open data
   - REST API

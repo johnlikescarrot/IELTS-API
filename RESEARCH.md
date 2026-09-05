@@ -520,3 +520,81 @@ python3 scripts/extract_materials.py tree.json data/materials.json
 The script is standard library only and deterministic: the same tree always produces byte-identical
 output. The continuous-integration workflow re-derives the index from the upstream tree on every run
 and fails if the committed file disagrees.
+
+## Part V — the raw-score tables and cross-dataset search
+
+Part V covers the two additions of release 1.3.0: the published raw-to-band conversion tables for
+the objective papers, and the deterministic cross-dataset search. Neither involves a new corpus;
+both involve measurement decisions that are recorded here.
+
+### 23. What the raw-score tables are
+
+Listening and Reading are marked objectively: one mark per correct answer, 40 marks per paper, no
+negative marking. The IELTS partners (British Council, IDP: IELTS Australia, Cambridge English)
+publish the standard conversion tables that map a raw mark to a band. The API reproduces the three
+published tables — Listening (common to both modules), Academic Reading and General Training
+Reading — as data, verbatim and with provenance, because they are the missing link between the
+practice-test index of Part II (which publishes, among other things, how many questions each paper
+contains) and an interpretable band.
+
+The tables confirm a point candidates routinely miss: **General Training Reading is stricter per
+mark, not easier.** Band 7.0 requires 34-35/40 on the General Training paper against 30-32/40 on the
+Academic paper — the GT texts are easier, and the cut points compensate. Publishing both tables side
+by side makes the trade-off machine-readable instead of anecdotal.
+
+Two representation decisions:
+
+- **The floor is 4.0.** Compiled tables universally agree down to band 4.0 (10-12/40 Listening and
+  Academic, 15-18/40 GT); below that, published compilations diverge and the partners publish no
+  official cut points. The API reports marks below the floor as unmatched rather than extrapolating.
+- **No filled rows.** Some compilations present the tables fully dense (one band per raw mark); the
+  API keeps the published sparse rows (`min`-`max` ranges) so that what is published and what is
+  interpolated stays distinguishable. A lookup is a range membership test, never an interpolation.
+
+### 24. Using the tables responsibly
+
+Every response carries the partners' caveat: cut points are reviewed for every test administration,
+so the published table is the standard, not a guarantee for a single sitting. The `nextBand`
+arithmetic (`additionalNeeded` answers to the next half band) is exact against the published table
+but should not be read as a prediction — practice papers vary in difficulty in both directions from
+live administrations.
+
+### 25. Cross-dataset search: semantics
+
+`/v1/search` is a deterministic in-memory scan, not an inverted index. For each dataset the matcher
+scores every item: 4 for an exact, case-insensitive match on the primary field (the headword, the
+prompt, the title or the name), 3 for a prefix match, 2 for a substring of the primary field, and 1
+for a substring of any secondary field; unmatched items score 0 and are dropped. Hits are ordered by
+score and then by the item's stable identifier, so identical queries always return byte-identical
+responses — the same reproducibility property every other endpoint has.
+
+Per-dataset results are truncated independently (`limit`, default 5, maximum 20) while `total`
+keeps the full count, so a caller can always tell the difference between "nothing found" and
+"truncated". The combination of `endpoint` (the dataset's browse URL) and the item-level `url` in
+each hit turns the search into endpoint discovery: the response names the endpoint that answers the
+follow-up question.
+
+### 26. Threats to validity (Part V)
+
+- **The tables are a standard, not the standard.** Cut points are re-confirmed per administration by
+  the partners; a sitting can deviate from the published table. This is stated in every response.
+- **Sparse rows hide within-band differences.** Two candidates at 30/40 and 32/40 Academic Reading
+  share band 7.0; the API reports the band, and only the band — fine-grained comparisons belong to
+  the raw mark, which is also returned.
+- **Search ranking measures position, not relevance.** A substring match on a title outranks a
+  match buried in a definition by construction; the rule is simple so its failures are predictable.
+  There is no stemming, no tokenisation and no synonymy: `essays` does not find `essay`.
+  Multi-word queries are matched as a single string.
+- **Full marks are required for full scans.** A one-character or empty query would match nearly
+  everything; the minimum length of two is a deliberate guard, and the 80-character maximum reflects
+  that no primary field is longer.
+- **The tables and the search are not joined.** Converting a practice paper from `/v1/tests` to a
+  band is a client-side composition (`item.questions` + `/v1/scores/raw`); the API deliberately
+  keeps the datasets orthogonal.
+
+### 27. Reproducing Part V
+
+The tables are in `src/data/rawScores.ts` with the partners' published URL; the search registry,
+scoring rule and snippet clipping are in `src/lib/globalSearch.ts`. Both are exercised end to end by
+`test/data/rawScores.test.ts`, `test/lib/globalSearch.test.ts`, `test/routes/scores.test.ts` and
+`test/routes/search.test.ts`, including tie-breaking, determinism and the below-floor behaviour.

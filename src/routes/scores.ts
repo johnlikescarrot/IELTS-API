@@ -4,13 +4,14 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
+import { bandForRawScore, rawScoreForBand, RAW_SCORE_MODULES, RAW_SCORE_TABLES } from '../data/rawScores.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getInt, getNumber, getString, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
-import type { ConversionEntry, Skill } from '../types.js';
+import type { ConversionEntry, RawScoreModuleId, Skill } from '../types.js';
 
 /** Read and validate one component of the test report. */
 function component(params: Record<string, string | string[] | undefined>, skill: Skill): number {
@@ -107,6 +108,113 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Compact module descriptor shared by the raw-score response modes. */
+function moduleDescriptor(moduleId: RawScoreModuleId): {
+  id: RawScoreModuleId;
+  name: string;
+  skill: string;
+  questions: number;
+} {
+  const table = RAW_SCORE_TABLES[moduleId];
+  return { id: table.id, name: table.name, skill: table.skill, questions: table.questions };
+}
+
+/** Provenance metadata shared by the raw-score response modes. */
+function rawScoreMeta(moduleId: RawScoreModuleId, note?: string): Record<string, string> {
+  const table = RAW_SCORE_TABLES[moduleId];
+  return {
+    source: table.source,
+    sourceUrl: table.sourceUrl,
+    provenance: 'published-table',
+    note: note ?? table.note,
+  };
+}
+
+/**
+ * The published raw-score conversion tables.
+ *
+ * Three modes: `module` alone returns the full table, `module` + `correct`
+ * converts one practice mark to a band, and `module` + `band` returns the
+ * minimum mark the band requires.
+ */
+function raw(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const moduleId = getEnum(params, 'module', RAW_SCORE_MODULES);
+  if (moduleId === undefined) {
+    throw badRequest('Parameter "module" is required.', {
+      parameter: 'module',
+      allowed: RAW_SCORE_MODULES.join(','),
+    });
+  }
+  const table = RAW_SCORE_TABLES[moduleId];
+  const correctRaw = getString(params, 'correct');
+  const bandRaw = getString(params, 'band');
+  if (correctRaw !== undefined && bandRaw !== undefined) {
+    throw badRequest('Parameters "correct" and "band" cannot be combined; provide only one.', {
+      parameter: 'correct,band',
+    });
+  }
+
+  if (correctRaw !== undefined) {
+    const correct = getInt(params, 'correct', 0, table.questions, 0);
+    const row = bandForRawScore(moduleId, correct);
+    const next = row === undefined ? undefined : rawScoreForBand(moduleId, row.band + 0.5);
+    return {
+      data: {
+        module: moduleDescriptor(moduleId),
+        correct,
+        matched: row !== undefined,
+        band: row?.band ?? null,
+        cefr: row === undefined ? null : cefrForBand(row.band),
+        row: row ?? null,
+        nextBand:
+          next === undefined
+            ? null
+            : {
+                band: next.band,
+                correct: next.min,
+                additionalNeeded: next.min - correct,
+              },
+      },
+      meta: rawScoreMeta(
+        moduleId,
+        row === undefined
+          ? `A raw score of ${correct} is below the published table's floor (band ${table.floor}).`
+          : undefined,
+      ),
+    };
+  }
+
+  if (bandRaw !== undefined) {
+    const band = assertBand(Number.parseFloat(bandRaw), 'band');
+    const row = rawScoreForBand(moduleId, band);
+    return {
+      data: {
+        module: moduleDescriptor(moduleId),
+        band,
+        matched: row !== undefined,
+        minCorrect: row?.min ?? null,
+        row: row ?? null,
+      },
+      meta: rawScoreMeta(
+        moduleId,
+        row === undefined
+          ? `Band ${band} is outside this table (bands ${table.floor}-9); Writing and Speaking are rated against /v1/bands/descriptors.`
+          : undefined,
+      ),
+    };
+  }
+
+  return {
+    data: {
+      module: moduleDescriptor(moduleId),
+      floor: table.floor,
+      rows: table.entries.map((entry) => ({ ...entry, cefr: cefrForBand(entry.band) })),
+    },
+    meta: rawScoreMeta(moduleId),
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -129,5 +237,13 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Map a score on another scale back to an indicative IELTS band.',
     handler: interpret,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw',
+    versioned: true,
+    summary:
+      'Published raw-score tables for the objective papers: convert correct answers to a band, or find the mark a band requires (`module`, `correct`, `band`).',
+    handler: raw,
   },
 ];

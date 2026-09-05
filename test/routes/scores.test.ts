@@ -101,6 +101,102 @@ describe('GET /v1/scores/convert', () => {
   });
 });
 
+describe('GET /v1/scores/raw', () => {
+  interface RawLookup {
+    module: { id: string; name: string; questions: number };
+    correct: number;
+    matched: boolean;
+    band: number | null;
+    cefr: string | null;
+    row: { min: number; max: number; band: number } | null;
+    nextBand: { band: number; correct: number; additionalNeeded: number } | null;
+  }
+
+  it('converts correct answers to a band with the gap to the next band', async () => {
+    const response = await server.json<RawLookup>('/v1/scores/raw?module=listening&correct=30');
+    expect(response.status).toBe(200);
+    expect(response.data.matched).toBe(true);
+    expect(response.data.band).toBe(7);
+    expect(response.data.cefr).toBe('C1');
+    expect(response.data.row).toEqual({ min: 30, max: 31, band: 7 });
+    expect(response.data.nextBand).toEqual({ band: 7.5, correct: 32, additionalNeeded: 2 });
+    expect(response.meta.sourceUrl).toContain('ielts.org');
+  });
+
+  it('reports no next band above band 9', async () => {
+    const response = await server.json<RawLookup>('/v1/scores/raw?module=listening&correct=40');
+    expect(response.data.band).toBe(9);
+    expect(response.data.nextBand).toBeNull();
+  });
+
+  it('reports raw scores below the published floor as unmatched', async () => {
+    const response = await server.json<RawLookup>('/v1/scores/raw?module=reading-general-training&correct=5');
+    expect(response.status).toBe(200);
+    expect(response.data.matched).toBe(false);
+    expect(response.data.band).toBeNull();
+    expect(response.data.cefr).toBeNull();
+    expect(response.data.row).toBeNull();
+    expect(response.meta.note).toContain('below the published table');
+  });
+
+  it('returns the full published table when no mark is supplied', async () => {
+    interface RawTable {
+      module: { id: string };
+      floor: number;
+      rows: { min: number; max: number; band: number; cefr: string }[];
+    }
+    const response = await server.json<RawTable>('/v1/scores/raw?module=reading-general-training');
+    expect(response.status).toBe(200);
+    expect(response.data.floor).toBe(4);
+    expect(response.data.rows).toHaveLength(11);
+    expect(response.data.rows[0]).toEqual({ min: 40, max: 40, band: 9, cefr: 'C2' });
+  });
+
+  it('reverses a band to the minimum correct answers required', async () => {
+    interface RawReverse {
+      band: number;
+      matched: boolean;
+      minCorrect: number | null;
+    }
+    const response = await server.json<RawReverse>('/v1/scores/raw?module=reading-general-training&band=7');
+    expect(response.status).toBe(200);
+    expect(response.data.matched).toBe(true);
+    expect(response.data.minCorrect).toBe(34);
+  });
+
+  it('reports bands outside the table as unmatched', async () => {
+    const response = await server.json<{ matched: boolean; minCorrect: number | null }>(
+      '/v1/scores/raw?module=listening&band=3',
+    );
+    expect(response.status).toBe(200);
+    expect(response.data.matched).toBe(false);
+    expect(response.data.minCorrect).toBeNull();
+    expect(response.meta.note).toContain('outside this table');
+  });
+
+  it('requires the module', async () => {
+    const response = await server.json('/v1/scores/raw');
+    expect(response.status).toBe(400);
+    expect((response.meta.error as { details: Record<string, string> }).details.allowed).toContain(
+      'listening',
+    );
+  });
+
+  it('rejects unknown modules', async () => {
+    expect((await server.json('/v1/scores/raw?module=writing&correct=30')).status).toBe(400);
+  });
+
+  it('rejects the combination of correct and band', async () => {
+    expect((await server.json('/v1/scores/raw?module=listening&correct=30&band=7')).status).toBe(400);
+  });
+
+  it('rejects out-of-range or malformed marks and bands', async () => {
+    expect((await server.json('/v1/scores/raw?module=listening&correct=41')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?module=listening&correct=abc')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?module=listening&band=7.25')).status).toBe(400);
+  });
+});
+
 describe('GET /v1/scores/interpret', () => {
   it('maps a TOEFL score back to a band', async () => {
     const response = await server.json<{ matched: boolean; to: { band: number } }>(

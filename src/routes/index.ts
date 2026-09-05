@@ -13,6 +13,7 @@ import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
+import { searchRoutes } from './search.js';
 import { studyRoutes } from './study.js';
 import { testRoutes } from './tests.js';
 import { toolRoutes } from './tools.js';
@@ -35,6 +36,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...studyRoutes,
   ...materialRoutes,
   ...resourceRoutes,
+  ...searchRoutes,
 ];
 
 /** Every route served by the API. */

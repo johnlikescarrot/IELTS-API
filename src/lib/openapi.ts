@@ -10,11 +10,14 @@ import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
+import { RAW_SCORE_MODULES } from '../data/rawScores.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
+
+import { SEARCH_DATASET_IDS } from './globalSearch.js';
 
 import type { RouteDefinition } from './route.js';
 import type { JsonValue } from '../types.js';
@@ -281,6 +284,48 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       schema: { type: 'integer', minimum: 1, maximum: 10, default: 5 },
     },
   ],
+  '/v1/scores/raw': [
+    {
+      name: 'module',
+      in: 'query',
+      required: true,
+      description: 'Objective module whose published table to use.',
+      schema: { type: 'string', enum: [...RAW_SCORE_MODULES] },
+    },
+    {
+      name: 'correct',
+      in: 'query',
+      description: 'Correct answers on a practice paper; converts to a band. Cannot be combined with `band`.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+    {
+      name: 'band',
+      in: 'query',
+      description: 'Target band; returns the minimum mark it requires. Cannot be combined with `correct`.',
+      schema: { type: 'number', minimum: 4, maximum: 9, multipleOf: 0.5 },
+    },
+  ],
+  '/v1/search': [
+    {
+      name: 'q',
+      in: 'query',
+      required: true,
+      description: 'Search query (2-80 characters), matched against every dataset.',
+      schema: { type: 'string', minLength: 2, maxLength: 80 },
+    },
+    {
+      name: 'datasets',
+      in: 'query',
+      description: 'Comma-separated datasets to search; defaults to all.',
+      schema: { type: 'string', enum: [...SEARCH_DATASET_IDS] },
+    },
+    {
+      name: 'limit',
+      in: 'query',
+      description: 'Maximum hits returned per dataset (1-20).',
+      schema: { type: 'integer', minimum: 1, maximum: 20, default: 5 },
+    },
+  ],
   '/v1/study/plan': [
     {
       name: 'target',
@@ -428,12 +473,14 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, a canonical',
-        'question-type taxonomy with observed frequencies, response frameworks for the',
-        'productive papers, a structure and readability index of 1,702 practice tests,',
-        'an index of the open IELTS research corpus, and an index of a 2,385-file',
-        'self-study materials collection. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        'descriptors, score concordances, the published raw-score tables for the',
+        'objective papers, Writing and Speaking task banks, a canonical question-type',
+        'taxonomy with observed frequencies, response frameworks for the productive',
+        'papers, a structure and readability index of 1,702 practice tests, an index',
+        'of the open IELTS research corpus, and an index of a 2,385-file self-study',
+        'materials collection. The toolkit additionally scores any text (readability',
+        'and essay profile), composes the datasets into study plans, and searches',
+        'every dataset at once.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
