@@ -14,6 +14,8 @@ import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
 import { studyRoutes } from './study.js';
+import { assignmentRoutes } from './assignments.js';
+import { assessRoutes } from './assess.js';
 import { testRoutes } from './tests.js';
 import { toolRoutes } from './tools.js';
 import { topicRoutes } from './topics.js';
@@ -32,8 +34,10 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...testRoutes,
   ...corpusRoutes,
   ...toolRoutes,
+  ...assessRoutes,
   ...studyRoutes,
   ...materialRoutes,
+  ...assignmentRoutes,
   ...resourceRoutes,
 ];
 

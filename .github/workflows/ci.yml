@@ -126,9 +126,46 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials"):
+          for name in ("vocabulary", "corpus", "practice-tests", "materials", "assignments"):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
+          PY
+
+      - name: Check the assignment index for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+          from urllib.parse import unquote
+
+          index = json.load(open('data/assignments.json'))
+          items, stats = index['items'], index['stats']
+
+          assert stats['documents'] == len(items), 'documents disagrees with items'
+          assert stats['submissions'] + stats['instructorDocuments'] == len(items), 'kinds disagree'
+          assert len({item['id'] for item in items}) == len(items), 'duplicate identifiers'
+          assert sum(stats['byGenre'].values()) == len(items), 'genre totals differ'
+          assert sum(stats['byTask'].values()) == stats['submissions'], 'task totals differ'
+          assert sum(stats['byLearner'].values()) == stats['submissions'], 'learner totals differ'
+          assert sum(stats['byDate'].values()) == stats['submissions'], 'date totals differ'
+          assert stats['totalWords'] == sum(item['stats']['words'] for item in items), 'word totals differ'
+          assert stats['firstDate'] < stats['lastDate'], 'date range inverted'
+
+          pseudonyms = {f'learner-{n}' for n in range(1, 10)} | {'unattributed'}
+          for item in items:
+              assert re.fullmatch(r'\d{4}-\d{2}-\d{2}', item['date']), item['id']
+              assert item['upstream']['path'].startswith('Assignments/'), item['id']
+              assert unquote(item['upstream']['url']).endswith(item['upstream']['path']), item['id']
+              assert len(item['upstream']['sha']) == 40, item['id']
+              if item['kind'] == 'submission':
+                  assert item['learner'] in pseudonyms, item['id']
+              else:
+                  assert item['learner'] == 'instructor', item['id']
+
+          print(
+              f"assignment index consistent: {len(items)} documents, "
+              f"{stats['submissions']} submissions, {stats['totalWords']} words"
+          )
           PY
 
       - name: Re-derive the study-materials index from the upstream tree

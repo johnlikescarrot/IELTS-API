@@ -20,18 +20,22 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is derived from three open collections — [`zhengyishiming/IELTS`][corpus] for the
+Everything here is derived from four open collections — [`zhengyishiming/IELTS`][corpus] for the
 vocabulary and the corpus index, [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
-question-type taxonomy and the practice-test structure and readability index, and
-[`Oxidaner/ielts`][materials] for the study-materials index. None is redistributed: the API publishes
-derived, non-substitutive metadata and statistics, plus original guidance datasets written for this
-project. See [RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every
-dataset, and [paper/paper.md](paper/paper.md) for the short research paper.
+question-type taxonomy and the practice-test structure and readability index,
+[`Oxidaner/ielts`][materials] for the study-materials index, and
+[`msneloy/IELTS`][assignments] for the assignment archive of a real preparation cohort. None is
+redistributed: the API publishes derived, non-substitutive metadata and statistics, plus original
+guidance datasets written for this project. See [RESEARCH.md](RESEARCH.md) for the analysis and the
+construction methodology of every dataset, and [paper/paper.md](paper/paper.md) for the short
+research paper.
 
 The API also analyses text, not just publishes it: `/v1/tools/readability` scores any passage with
 the Flesch formulas and places it next to the corpus group means, `/v1/tools/essay-profile` turns a
-writing sample into lexical, structural and theme measurements with descriptor-aligned hints, and
-`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule.
+writing sample into lexical, structural and theme measurements with descriptor-aligned hints,
+`/v1/assess/writing` converts the same measurements into a transparent heuristic band estimate —
+per criterion, with every rule that fired — and `/v1/study/plan` composes every dataset into a
+deterministic week-by-week study schedule.
 
 ## Quick start
 
@@ -62,6 +66,12 @@ curl -s "http://localhost:3000/v1/question-types?skill=listening"
 # Graded reading passages between Flesch Reading Ease 60 and 80
 curl -s "http://localhost:3000/v1/tests/items?level=b1-b2&minReadingEase=60&maxReadingEase=80"
 
+# A transparent heuristic band estimate for a writing sample
+curl -s "http://localhost:3000/v1/assess/writing?task=task2&text=Education%20matters.%20However%2C%20fees%20rise."
+
+# What a real coaching cohort's homework writing looks like
+curl -s "http://localhost:3000/v1/assignments/items?genre=map&limit=5"
+
 # The concession-rebuttal essay plan, with stages, cue language and pitfalls
 curl -s "http://localhost:3000/v1/frameworks/w2-concession-rebuttal"
 
@@ -82,24 +92,26 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 
 ## Datasets
 
-| Dataset                         |                                                     Size | Endpoint                | Provenance                                                                     |
-| ------------------------------- | -------------------------------------------------------: | ----------------------- | ------------------------------------------------------------------------------ |
-| Cambridge IELTS 1-22 vocabulary |                      4,174 headwords / 4,310 occurrences | `/v1/vocabulary`        | Derived from `1-22yas.xlsx` in [the upstream corpus][corpus]                   |
-| Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
-| Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`             | Original compilation                                                           |
-| Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                         |
-| Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                   |
-| Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                 |
-| Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`     | Original compilation                                                           |
-| Free resources                  |                                             27 resources | `/v1/resources`         | Original catalogue (free + no login only)                                      |
-| Research corpus index           |                                 76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                                |
-| Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
-| Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
-| Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
-| Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
-| Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
-| Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
-| Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
+| Dataset                         |                                                     Size | Endpoint                | Provenance                                                                              |
+| ------------------------------- | -------------------------------------------------------: | ----------------------- | --------------------------------------------------------------------------------------- |
+| Cambridge IELTS 1-22 vocabulary |                      4,174 headwords / 4,310 occurrences | `/v1/vocabulary`        | Derived from `1-22yas.xlsx` in [the upstream corpus][corpus]                            |
+| Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))                       |
+| Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`             | Original compilation                                                                    |
+| Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                                  |
+| Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                            |
+| Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                          |
+| Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`     | Original compilation                                                                    |
+| Free resources                  |                                             27 resources | `/v1/resources`         | Original catalogue (free + no login only)                                               |
+| Research corpus index           |                                 76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                                         |
+| Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus                    |
+| Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice]          |
+| Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                                  |
+| Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                               |
+| Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                                       |
+| Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                                |
+| Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                                |
+| Assignment-archive index        |              26 documents / 24 submissions / 8,033 words | `/v1/assignments`       | Derived structure and surface-statistics index of [the assignment archive][assignments] |
+| Writing assessment              |                 4 criteria, 25 published threshold rules | `/v1/assess/writing`    | Original heuristics ([RESEARCH.md](RESEARCH.md) Part V)                                 |
 
 ## Endpoints
 
@@ -144,6 +156,10 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/materials/items`     | Search the materials index (`category`, `skill`, `format`, `q`)                                         |
 | GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
+| GET    | `/v1/assess/writing`      | Heuristic band estimate per criterion with every rule that fired (`text`, `task`)                       |
+| GET    | `/v1/assignments`         | Assignment-archive metadata, statistics and facets                                                      |
+| GET    | `/v1/assignments/stats`   | Assignment-archive statistics                                                                           |
+| GET    | `/v1/assignments/items`   | Search the archive (`task`, `genre`, `learner`, `kind`, `from`, `to`, `sort`, `q`)                      |
 | GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
 | GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                                |
 
@@ -315,6 +331,7 @@ Every dataset is regenerated from source with standard-library-only Python:
 python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 python3 scripts/extract_corpus.py tree.json data/corpus.json
 python3 scripts/extract_practice_tests.py tree.json ./upstream data/practice-tests.json
+python3 scripts/extract_assignments.py tree.json ./upstream data/assignments.json
 ```
 
 CI re-derives `data/vocabulary.json` from the upstream workbook on every push and fails if the
@@ -323,7 +340,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 515 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -354,7 +371,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.2.0},
+  version = {1.3.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -379,6 +396,13 @@ Please also cite the upstream collections the datasets were derived from:
   year   = {2026},
   url    = {https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS}
 }
+
+@misc{ielts_assignment_archive,
+  title  = {IELTS: an assignment archive of a 2022 preparation cohort},
+  author = {msneloy},
+  year   = {2022},
+  url    = {https://github.com/msneloy/IELTS}
+}
 ```
 
 ## Licence and provenance
@@ -390,8 +414,10 @@ Please also cite the upstream collections the datasets were derived from:
   you need the authoritative text.
 - **Score concordances:** indicative values compiled from the providers' own published comparison
   tables. Receiving institutions apply their own rules.
-- **Upstream files:** never redistributed. `/v1/corpus` and `/v1/tests` publish derived metadata and
-  statistics only — no passage, question, answer key, transcript or recording.
+- **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests` and `/v1/assignments` publish
+  derived metadata and statistics only — no passage, question, answer key, transcript, recording or
+  essay. The assignment index pseudonymises the learner names that appear in upstream file names and
+  publishes no response text, only measured statistics.
 - **Question-type strategies:** original wording. The task families follow the partners' public task
   descriptions; the observed frequencies describe the indexed practice corpus, not the live exam.
 
@@ -402,3 +428,4 @@ partners.
 [corpus]: https://github.com/zhengyishiming/IELTS
 [practice]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
 [materials]: https://github.com/Oxidaner/ielts
+[assignments]: https://github.com/msneloy/IELTS

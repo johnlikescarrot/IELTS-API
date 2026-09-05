@@ -8,6 +8,7 @@
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
+import { assignmentFacets } from '../data/assignments.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
@@ -256,6 +257,51 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/assignments/items': [
+    QUERY,
+    { name: 'task', in: 'query', schema: { type: 'string', enum: ['task1', 'task2'] } },
+    { name: 'genre', in: 'query', schema: { type: 'string', enum: assignmentFacets('genre') } },
+    { name: 'learner', in: 'query', schema: { type: 'string', enum: assignmentFacets('learner') } },
+    {
+      name: 'kind',
+      in: 'query',
+      schema: { type: 'string', enum: ['submission', 'instructor'] },
+    },
+    {
+      name: 'from',
+      in: 'query',
+      description: 'Earliest assignment date, inclusive (YYYY-MM-DD).',
+      schema: { type: 'string', format: 'date' },
+    },
+    {
+      name: 'to',
+      in: 'query',
+      description: 'Latest assignment date, inclusive (YYYY-MM-DD).',
+      schema: { type: 'string', format: 'date' },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: {
+        type: 'string',
+        enum: ['date', 'genre', 'learner', 'words', 'readingEase'],
+        default: 'date',
+      },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/assess/writing': [
+    {
+      name: 'text',
+      in: 'query',
+      required: true,
+      description: 'Writing sample to assess; at most 4,000 characters and at least one alphabetic word.',
+      schema: { type: 'string' },
+    },
+    { name: 'task', in: 'query', schema: { type: 'string', enum: ['task1', 'task2'], default: 'task2' } },
+  ],
   '/v1/tools/readability': [
     {
       name: 'text',
@@ -431,9 +477,12 @@ export function openApiDocument(
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
-        'an index of the open IELTS research corpus, and an index of a 2,385-file',
-        'self-study materials collection. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        'an index of the open IELTS research corpus, an index of a 2,385-file',
+        'self-study materials collection, and a surface-statistics index of a real',
+        "coaching cohort's 26 assignment documents (24 learner submissions).",
+        'The toolkit additionally scores any text (readability and essay profile),',
+        'produces transparent heuristic writing-band estimates, and composes the',
+        'datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
