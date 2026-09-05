@@ -7,3 +7,6 @@ MD041: false
 MD040: false
 MD033: false
 MD024: false
+# The JOSS paper is a single document made of top-level sections, which is the
+# format the journal requires; its title lives in the YAML front matter.
+MD025: false

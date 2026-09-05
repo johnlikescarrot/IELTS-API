@@ -226,6 +226,204 @@ export type CorpusStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Practice-test index                                                        */
+/* -------------------------------------------------------------------------- */
+
+/** Practice collections indexed by `/v1/tests`. */
+export type PracticeCollection = 'reading-full-test' | 'listening-full-test' | 'graded-reading';
+
+/** CEFR bands used by the graded reading collection. */
+export type CefrBand = 'A1-A2' | 'B1-B2' | 'C1-C2';
+
+/** Canonical IELTS question-type identifiers. */
+export type QuestionTypeId =
+  | 'multiple-choice'
+  | 'multiple-choice-multiple-answer'
+  | 'true-false-not-given'
+  | 'yes-no-not-given'
+  | 'matching'
+  | 'matching-information'
+  | 'matching-headings'
+  | 'matching-features'
+  | 'matching-sentence-endings'
+  | 'sentence-completion'
+  | 'summary-completion'
+  | 'diagram-label-completion'
+  | 'short-answer';
+
+/** Readability statistics computed from a passage. */
+export type ReadabilityStats = {
+  /** Running words (alphabetic tokens). */
+  words: number;
+  /** Sentence count. */
+  sentences: number;
+  /** Distinct lower-cased word forms. */
+  distinctWords: number;
+  /** Mean sentence length in words. */
+  avgSentenceLength: number;
+  /** Mean syllables per word (heuristic count). */
+  avgSyllablesPerWord: number;
+  /** Mean word length in characters. */
+  avgWordLength: number;
+  /** Type-token ratio (lexical diversity). */
+  typeTokenRatio: number;
+  /** Flesch Reading Ease (higher is easier). */
+  fleschReadingEase: number;
+  /** Flesch-Kincaid grade level. */
+  fleschKincaidGrade: number;
+};
+
+/** Which companion assets the upstream item ships with. */
+export type PracticeAssets = {
+  /** Whether an audio recording accompanies the item. */
+  audio: boolean;
+  /** Number of figures shipped with the item. */
+  images: number;
+  /** Whether per-question strategy annotations exist upstream. */
+  strategies: boolean;
+  /** Whether a word-processor version of the item exists upstream. */
+  documents: boolean;
+};
+
+/** One indexed practice test or graded reading lesson. */
+export type PracticeItem = {
+  /** Stable identifier (`rft-001`, `lft-014`, `grd-c1c2-320`). */
+  id: string;
+  /** Collection the item belongs to. */
+  collection: PracticeCollection;
+  /** Skill assessed. */
+  skill: 'reading' | 'listening';
+  /** Ordinal of the item inside its upstream collection. */
+  number: number;
+  /** Item title as published upstream. */
+  title: string;
+  /** CEFR band for graded lessons; `null` for unrated full tests. */
+  level: CefrBand | null;
+  /** Number of sections or parts. */
+  sections: number;
+  /** Number of passages or listening contexts. */
+  passages: number;
+  /** Total number of questions. */
+  questions: number;
+  /** Canonical question types present, sorted. */
+  questionTypes: QuestionTypeId[];
+  /** Question count per canonical type. */
+  typeCounts: Partial<Record<QuestionTypeId, number>>;
+  /** Number of glossed vocabulary items shipped with the lesson. */
+  vocabularyCount: number;
+  /** Suggested time budget in seconds, when published. */
+  timeLimitSeconds: number | null;
+  /** Passage readability, or `null` when not applicable (listening) or too short. */
+  readability: ReadabilityStats | null;
+  /** Companion assets available upstream. */
+  assets: PracticeAssets;
+  /** Path of the source file inside the upstream repository. */
+  sourcePath: string;
+  /** Git blob SHA-1 of the source file. */
+  sha1: string | null;
+  /** Size of the source file in bytes. */
+  sizeBytes: number;
+  /** Public URL of the source file. */
+  sourceUrl: string;
+};
+
+/** Five-number summary of a numeric sample. */
+export type NumericSummary = {
+  count: number;
+  mean: number;
+  median: number;
+  min: number;
+  max: number;
+};
+
+/** Readability summaries for one group of items. */
+export type ReadabilitySummary = {
+  fleschReadingEase: NumericSummary | null;
+  fleschKincaidGrade: NumericSummary | null;
+  words: NumericSummary | null;
+};
+
+/** How one upstream free-text label was normalised. */
+export type RawLabelMapping = {
+  /** Canonical question type the label maps onto. */
+  canonical: QuestionTypeId;
+  /** Number of upstream questions carrying the label. */
+  occurrences: number;
+};
+
+/** Aggregate statistics over the practice-test index. */
+export type PracticeStats = {
+  /** Items published upstream (including those without machine-readable structure). */
+  upstreamItems: number;
+  /** Items indexed here. */
+  indexedItems: number;
+  /** `indexedItems / upstreamItems`. */
+  coverageRatio: number;
+  /** Upstream files that could not be parsed. */
+  unreadableSources: number;
+  /** Total number of indexed questions. */
+  questions: number;
+  /** Distribution of questions per item. */
+  questionsPerItem: NumericSummary | null;
+  /** Item count per collection. */
+  byCollection: Record<string, number>;
+  /** Item count per skill. */
+  bySkill: Record<string, number>;
+  /** Item count per CEFR band (`unrated` for full tests). */
+  byLevel: Record<string, number>;
+  /** Question count per canonical type. */
+  questionTypes: Partial<Record<QuestionTypeId, number>>;
+  /** Question count per canonical type, split by skill. */
+  questionTypesBySkill: Record<string, Partial<Record<QuestionTypeId, number>>>;
+  /** Readability summaries per CEFR band and per full-test collection. */
+  readabilityByGroup: Record<string, ReadabilitySummary>;
+  /** The upstream label to canonical type normalisation, with frequencies. */
+  rawLabels: Record<string, RawLabelMapping>;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Question-type taxonomy and exam themes                                     */
+/* -------------------------------------------------------------------------- */
+
+/** A canonical IELTS question type, with pedagogy and observed frequency. */
+export type QuestionType = {
+  /** Canonical identifier. */
+  id: QuestionTypeId;
+  /** Name used by the IELTS partners' public task descriptions. */
+  name: string;
+  /** Skills in which the task family occurs. */
+  skills: ('reading' | 'listening')[];
+  /** Task family the type belongs to. */
+  family: 'selection' | 'identification' | 'matching' | 'completion' | 'labelling';
+  /** What the candidate is asked to do. */
+  description: string;
+  /** The sub-skill the task family assesses. */
+  assesses: string;
+  /** Recommended procedure, as ordered steps. */
+  strategy: string[];
+  /** Recurring traps and how they are set. */
+  traps: string[];
+  /** Constraints on the expected answer. */
+  answerFormat: string;
+  /** Whether answers usually follow the order of the text. */
+  followsTextOrder: boolean;
+};
+
+/** A recurring IELTS exam theme. */
+export type ExamTheme = {
+  /** Stable identifier (`th-01`). */
+  id: string;
+  /** Thematic group. */
+  group: string;
+  /** Theme name. */
+  name: string;
+  /** Sub-topics and collocations that recur with the theme. */
+  keywords: string[];
+  /** Papers in which the theme is commonly set. */
+  skills: Skill[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

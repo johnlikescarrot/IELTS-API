@@ -5,6 +5,8 @@ tags:
   - English for academic purposes
   - second language assessment
   - vocabulary
+  - readability
+  - item types
   - open data
   - REST API
 authors:
@@ -13,7 +15,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 4 September 2026
+date: 5 September 2026
 bibliography: paper.bib
 ---
 
@@ -22,11 +24,15 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships five kinds of data: a 4,174-headword vocabulary dataset derived from
-the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking and
-Writing across bands 0-9; indicative score concordances between IELTS and five other scales; original
-Writing and Speaking task banks built on the question families and word lists that recur in IELTS
-preparation material [@coxhead2000]; and a curated metadata index of an open IELTS research corpus.
+JSON envelope. The service ships seven kinds of data: a 4,174-headword vocabulary dataset derived
+from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
+and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
+original Writing and Speaking task banks built on the question families and word lists that recur in
+IELTS preparation material [@coxhead2000]; a canonical taxonomy of the thirteen IELTS Reading and
+Listening question types, onto which 65 free-text annotation labels are normalised, carrying the
+frequency of each family observed in 27,225 practice questions; a structure and readability index of
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
+metadata indexes of two open IELTS collections.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -90,6 +96,34 @@ for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
 is a descriptive act over metadata.
 
+**Question-type taxonomy and practice-test index.** A second upstream collection
+[@ieltspractice] publishes 315 full reading tests, 204 full listening tests and 1,232 CEFR-graded
+reading lessons behind a paid login. Its per-item JSON carries sections, question ranges and
+free-text type labels, but uses 65 distinct labels for what the published task descriptions treat as
+thirteen task families. This work normalises those labels onto a canonical taxonomy, publishes the
+mapping with per-label frequencies so that any decision can be re-made, and derives from the 1,702
+machine-readable items an index of structure (sections, question counts, per-type counts, asset
+availability), provenance (path, blob SHA-1, permalink) and passage-level readability (words,
+sentences, type-token ratio, Flesch Reading Ease, Flesch-Kincaid grade). Only derived statistics are
+published; no passage, question, answer key, transcript or recording is redistributed.
+
+Two results follow from the aggregate. First, the task-family distribution is strongly paper
+dependent: completion tasks account for 58.5% of 8,007 indexed listening questions but only 14.3% of
+19,218 reading questions, where identification (True/False/Not Given, 18.3%) and multiple choice
+(17.2%) dominate — a candidate who trains only on reading material practises almost none of the
+family that carries the majority of the listening paper. Second, the CEFR tiers of the graded
+lessons are correctly _ordered_ but badly _calibrated_: mean Flesch Reading Ease falls monotonically
+from 70.2 (`A1-A2`) through 26.0 (`B1-B2`) to 5.0 (`C1-C2`), yet the middle tier already sits at
+Flesch-Kincaid grade 13.9 and the top tier, at grade 17.8, is denser than the full reading tests it
+prepares candidates for (grade 12.6). Generated graded readers over-shoot their target level, and
+they over-shoot hardest in the middle of the scale. The full tests are nevertheless the harder task
+overall, because they are ten times longer (2,642 words against roughly 250) at a _lower_ type-token
+ratio (0.388 against 0.54-0.64): short lessons cannot train reading stamina however dense their
+sentences are.
+
+**Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
+generated or collected material can be checked for thematic coverage.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
@@ -105,12 +139,13 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (295 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (341 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
-integration re-derives the vocabulary dataset from the upstream workbook and fails if the committed
-dataset has drifted, which guards against silent data rot.
+integration re-derives the vocabulary dataset from the upstream workbook, and revalidates the
+internal consistency of the practice-test index (question counts, type normalisation and provenance),
+failing if the committed data has drifted — which guards against silent data rot.
 
 # Availability
 
@@ -121,8 +156,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 # Acknowledgements
 
-This work builds on the open corpus assembled by `zhengyishiming`; the author of that corpus is cited
-in `CITATION.cff` and in every response that draws on it. IELTS is a jointly owned trademark of the
+This work builds on the open corpus assembled by `zhengyishiming` and on the practice collection
+assembled by `ngoclong1209`; both are cited in `CITATION.cff` and in every response that draws on
+them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

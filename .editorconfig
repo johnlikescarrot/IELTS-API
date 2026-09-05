@@ -8,8 +8,14 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
+# Markdown list continuations are indented to the marker, not to a multiple of
+# two, and BibTeX entries align their field values: leave both alone.
 [*.md]
 trim_trailing_whitespace = false
+indent_size = unset
+
+[*.bib]
+indent_size = unset
 
 [data/**.json]
 insert_final_newline = true

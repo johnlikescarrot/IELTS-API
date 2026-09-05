@@ -1,0 +1,11 @@
+# Checkov policy for this repository, used by super-linter.
+#
+# The OpenAPI security checks below expect every documented API to declare an
+# authentication scheme. This API is deliberately free and unauthenticated:
+# there is no key to issue, no quota to enforce and no account to create, which
+# is the whole point of publishing it for research reuse. Declaring an empty
+# `security` block to satisfy the policy would misdescribe the service, so the
+# two checks are skipped here with the reason recorded in the open.
+skip-check:
+  - CKV_OPENAPI_4 # Global security field has rules defined.
+  - CKV_OPENAPI_5 # Security operations is not empty.

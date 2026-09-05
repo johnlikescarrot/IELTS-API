@@ -32,14 +32,28 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      # super-linter 8 runs ESLint against this repository's own flat config
+      # (eslint.config.js), which imports @eslint/js, typescript-eslint and
+      # eslint-config-prettier. Those have to be resolvable inside the workspace
+      # or ESLint cannot load the configuration at all.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install dependencies for the project-local ESLint configuration
+        run: npm ci
+
       - name: Run super-linter
         uses: super-linter/super-linter/slim@v8.3.1
         env:
           DEFAULT_BRANCH: main
           DEFAULT_WORKSPACE: ${{ github.workspace }}
           VALIDATE_ALL_CODEBASE: true
-          # The generated datasets are machine-written: never lint them.
-          FILTER_REGEX_EXCLUDE: .*(data/|coverage/|dist/).*
+          # The generated datasets are machine-written, and node_modules is only
+          # present so that ESLint can resolve the flat config: never lint them.
+          FILTER_REGEX_EXCLUDE: .*(data/|coverage/|dist/|node_modules/).*
           # Languages enabled for this repository.
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_TYPESCRIPT_ES: true
@@ -61,5 +75,18 @@ jobs:
           LINTER_RULES_PATH: /
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
-          ESLINT_USE_FLAT_CONFIG: true
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          CREATE_LOG_FILE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Keep the linter log when the job fails: it is the only place that
+      # records which linter complained and why.
+      - name: Upload the super-linter log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: super-linter-log
+          path: super-linter.log
+          if-no-files-found: ignore
+          retention-days: 7

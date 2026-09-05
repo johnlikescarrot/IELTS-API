@@ -8,6 +8,7 @@
 
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
+import { practiceStats } from '../data/practiceTests.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -48,6 +49,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const practice = practiceStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -60,7 +62,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   @media (prefers-color-scheme: dark) { :root { --fg: #e8eaf0; --bg: #12151a; --muted: #9aa4b2; --line: #262b33; --accent: #6cb6ff; } }
   * { box-sizing: border-box; }
   body { margin: 0 auto; max-width: 62rem; padding: 2rem 1.25rem 4rem; background: var(--bg); color: var(--fg);
-         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
   h1 { font-size: 2rem; margin: 0 0 .25rem; }
   h2 { font-size: 1.25rem; margin: 2.5rem 0 .75rem; border-bottom: 1px solid var(--line); padding-bottom: .35rem; }
   p.lede { color: var(--muted); margin-top: 0; }
@@ -73,7 +75,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   th { color: var(--muted); font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .04em; }
   a { color: var(--accent); }
   .badge { font-size: .72rem; font-weight: 700; border: 1px solid var(--accent); color: var(--accent);
-           padding: .1rem .35rem; border-radius: 4px; }
+          padding: .1rem .35rem; border-radius: 4px; }
   .path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; }
   .meta { color: var(--muted); font-size: .9rem; }
   ul { padding-left: 1.2rem; }
@@ -95,6 +97,8 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
+  <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
+  <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
 </ul>
 
 <h2>Versioned endpoints</h2>
