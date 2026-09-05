@@ -17,7 +17,7 @@ date: 4 September 2026
 bibliography: paper.bib
 ---
 
-# Status and companion audit
+## Status and companion audit
 
 This is an unreviewed project manuscript, not an accepted publication. The newer Reading/Listening
 metadata audit is available in `docs/research.html` and at `/research` on a running API instance.
@@ -26,7 +26,7 @@ content, and documents 51 structurally incomplete observed units. Its data card 
 reproduction instructions and rights limitations. Neither test coverage nor metadata availability
 establishes learning effectiveness or ensures Google Scholar indexing.
 
-# Summary
+## Summary
 
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
@@ -40,7 +40,7 @@ Responses are deterministic — seeded sampling, stable identifiers, ETags and c
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
 
-# Statement of need
+## Statement of need
 
 IELTS is taken by millions of candidates a year and studied by a substantial research community, but
 the material researchers work with is not machine-readable. Vocabulary is published in workbooks,
@@ -66,7 +66,7 @@ The API addresses three concrete needs:
    no CORS restrictions, so the API is usable from a browser, a notebook or an offline archive
    snapshot.
 
-# Datasets
+## Datasets
 
 **Vocabulary.** `1-22yas.xlsx` in the upstream corpus holds one worksheet per Cambridge IELTS volume
 with the columns `Number | Words | Phonetic Symbol | Explanation | Notes`; sheets 5-22 swap the last
@@ -99,7 +99,7 @@ for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
 is a descriptive act over metadata.
 
-# Design
+## Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
 compression are implemented directly on `node:http` and `node:zlib`. This removes supply-chain risk,
@@ -112,7 +112,7 @@ document is generated from the live route table, so documentation cannot drift f
 implementation. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
 reproducible stimulus for longitudinal studies rather than a novelty.
 
-# Quality control
+## Quality control
 
 The test suite enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
@@ -121,7 +121,7 @@ code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOption
 integration re-derives the vocabulary dataset from the upstream workbook and fails if the committed
 dataset has drifted, which guards against silent data rot.
 
-# Availability
+## Availability
 
 Source, datasets, citation metadata and CI configuration are released at
 <https://github.com/johnlikescarrot/IELTS-API> under the MIT licence for code and CC BY 4.0 for data.
@@ -129,11 +129,11 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 [@codemeta], and Zenodo-ready metadata [@zenodo]. Archiving requires enabling the integration and verifying
 a successful deposit; no DOI is claimed until one is actually minted.
 
-# Acknowledgements
+## Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`; the author of that corpus is cited
 in `CITATION.cff` and in every response that draws on it. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 
-# References
+## References

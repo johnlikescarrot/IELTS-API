@@ -109,7 +109,7 @@ lessons are independent, that answer keys are correct, or that train/test leakag
    read. The generator accepts **metadata JSON only** and has no HTTP client.
 3. Match explicit canonical paths under the four collection roots. Only expected asset names are
    included; a file under `Test_1` named `Test_2.json` is not silently attached. Canonical images,
-   including the source's trailing-space `.png ` filenames, retain their exact paths.
+   including the source's PNG filenames with trailing spaces, retain their exact paths.
 4. Group Basic Reading by level plus extensionless lesson path. Group other assets by their lesson
    or test directory. Derive IDs from collection, level where present and zero-padded sequence:
    `reading-basic-a1-a2-0001`, `listening-basic-basic-0001`, `reading-tests-0001`.
