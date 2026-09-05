@@ -10,6 +10,8 @@ indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+# Ordered-list hanging indents are 3 spaces; Prettier owns Markdown indentation.
+indent_size = unset
 
 [data/**.json]
 insert_final_newline = true

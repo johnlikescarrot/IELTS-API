@@ -61,6 +61,10 @@ Use the exact commit/tree in `PRACTICE_SOURCE`; never infer licensing from publi
 [the data card](docs/UPGRADE-YOUR-IELTS-SKILLS.md). All new executable TypeScript, including `scripts/`,
 must remain within the per-file 100% coverage gate. Synthetic fixtures must contain metadata only.
 
+The shared flat ESLint configuration covers JSON as well as TypeScript/JavaScript, so Super-Linter
+does not silently ignore JSON files. Generated datasets are checked by the reproducibility tests.
+Markdown hanging indentation is owned by Prettier; EditorConfig still checks its other properties.
+
 Checkov remains enabled. Its two generic rules requiring authentication (`CKV_OPENAPI_4` and
 `CKV_OPENAPI_5`) are narrowly excepted in `.checkov.yml` because the public read-only API explicitly
 requires no auth. Do not add fake security schemes, or suppress unrelated checks, to make CI green.
