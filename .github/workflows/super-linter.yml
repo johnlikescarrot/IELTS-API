@@ -37,7 +37,7 @@ jobs:
       - name: Run super-linter
         id: lint
         continue-on-error: true
-        uses: super-linter/super-linter/slim@v8.3.1
+        uses: super-linter/super-linter/slim@v8.7.0
         env:
           DEFAULT_BRANCH: main
           DEFAULT_WORKSPACE: ${{ github.workspace }}
