@@ -53,6 +53,22 @@ const cases: [string, string, string, RequestInit?][] = [
 ];
 
 describe('OpenAPI contract validation', () => {
+  it('declares a maximum size for every array schema, not just request bodies', () => {
+    let arrays = 0;
+    function visit(value: unknown): void {
+      if (value === null || typeof value !== 'object') return;
+      const object = value as Record<string, unknown>;
+      if (object.type === 'array') {
+        arrays += 1;
+        expect(Number.isInteger(object.maxItems)).toBe(true);
+        expect(object.maxItems).toBeGreaterThan(0);
+      }
+      for (const child of Object.values(value)) visit(child);
+    }
+    visit(document);
+    expect(arrays).toBeGreaterThan(0);
+  });
+
   it('validates the complete document against OpenAPI 3.1', async () => {
     await expect(SwaggerParser.validate(structuredClone(document))).resolves.toHaveProperty(
       'openapi',

@@ -35,6 +35,7 @@ export const READING_SCHEMAS = {
           options: {
             type: 'array',
             minItems: 2,
+            maxItems: 3,
             items: {
               type: 'object',
               additionalProperties: false,
@@ -77,8 +78,13 @@ export const READING_SCHEMAS = {
       level: { type: 'string', enum: [...READING_LEVELS] },
       topic: { type: 'string', enum: [...READING_TOPICS] },
       suggestedMinutes: { type: 'integer', minimum: 1 },
-      paragraphs: { type: 'array', minItems: 1, items: { type: 'string', minLength: 1 } },
-      questions: { type: 'array', minItems: 1, items: { $ref: '#/components/schemas/ReadingQuestion' } },
+      paragraphs: { type: 'array', minItems: 1, maxItems: 4, items: { type: 'string', minLength: 1 } },
+      questions: {
+        type: 'array',
+        minItems: 1,
+        maxItems: 6,
+        items: { $ref: '#/components/schemas/ReadingQuestion' },
+      },
     },
   },
   ReadingStats: {
@@ -140,6 +146,7 @@ export const READING_SCHEMAS = {
       feedback: {
         type: 'array',
         minItems: 1,
+        maxItems: 6,
         items: {
           type: 'object',
           additionalProperties: false,
@@ -147,9 +154,14 @@ export const READING_SCHEMAS = {
           properties: {
             questionId: { type: 'string' },
             outcome: { type: 'string', enum: ['correct', 'incorrect', 'unanswered', 'word-limit-exceeded'] },
-            acceptedAnswers: { type: 'array', minItems: 1, items: { type: 'string' } },
+            acceptedAnswers: { type: 'array', minItems: 1, maxItems: 2, items: { type: 'string' } },
             explanation: { type: 'string' },
-            evidenceParagraphs: { type: 'array', minItems: 1, items: { type: 'integer', minimum: 1 } },
+            evidenceParagraphs: {
+              type: 'array',
+              minItems: 1,
+              maxItems: 4,
+              items: { type: 'integer', minimum: 1 },
+            },
           },
         },
       },

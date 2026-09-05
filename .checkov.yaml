@@ -2,6 +2,7 @@
 # practice grading. Requiring global security schemes would violate its contract.
 # Exempt only these two authentication-presence policies; keep every other
 # OpenAPI, Dockerfile and GitHub Actions security check enabled.
+quiet: true
 skip-check:
   - CKV_OPENAPI_4 # Require global security rules.
   - CKV_OPENAPI_5 # Require non-empty security operations.

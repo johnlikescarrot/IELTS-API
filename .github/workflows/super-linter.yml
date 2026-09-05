@@ -93,6 +93,8 @@ jobs:
               for group in failures or ['startup']:
                   match = re.search(r'::group::' + group + r'\n(.*?)::endgroup::', text, re.S)
                   detail = match.group(1)[-14000:] if match else '\n'.join(text.splitlines()[-40:])
-                  escaped = detail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-                  print(f'::error title=Super-Linter {group}::{escaped}')
+                  for start in range(0, len(detail), 3000):
+                      chunk = detail[start:start + 3000]
+                      escaped = chunk.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                      print(f'::error title=Super-Linter {group}::{escaped}')
           PY

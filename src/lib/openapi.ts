@@ -215,9 +215,13 @@ const ERROR = {
 };
 
 const READING_RESPONSES: Record<string, JsonValue> = {
-  '/v1/reading': { type: 'array', items: { $ref: '#/components/schemas/ReadingSummary' } },
+  '/v1/reading': { type: 'array', maxItems: 100, items: { $ref: '#/components/schemas/ReadingSummary' } },
   '/v1/reading/stats': { $ref: '#/components/schemas/ReadingStats' },
-  '/v1/reading/random': { type: 'array', items: { $ref: '#/components/schemas/ReadingExercise' } },
+  '/v1/reading/random': {
+    type: 'array',
+    maxItems: 6,
+    items: { $ref: '#/components/schemas/ReadingExercise' },
+  },
   '/v1/reading/:id': { $ref: '#/components/schemas/ReadingExercise' },
   '/v1/reading/:id/grade': { $ref: '#/components/schemas/ReadingGrade' },
 };
