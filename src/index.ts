@@ -31,6 +31,7 @@ export * from './data/materials.js';
 export * from './data/practiceTests.js';
 export * from './data/questionTypes.js';
 export * from './data/resources.js';
+export * from './data/samples.js';
 export * from './data/tasks.js';
 export * from './data/themes.js';
 export * from './data/topics.js';

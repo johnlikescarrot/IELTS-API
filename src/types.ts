@@ -694,7 +694,115 @@ export type MaterialsStats = {
 };
 
 /* -------------------------------------------------------------------------- */
-/* Response frameworks                                                        */
+/* Learner-writing and sample-task index                                       */
+/* -------------------------------------------------------------------------- */
+
+/** Collections indexed by `/v1/samples`. */
+export type SampleCollection = 'learner-writing' | 'reading-sample';
+
+/** The role one indexed file plays in the collection. */
+export type SampleKind = 'essay' | 'exercise' | 'prompt' | 'sample-task' | 'task-visual';
+
+/** One file in the learner-writing and sample-task collection. */
+export type SampleItem = {
+  /** Slugified, stable identifier. */
+  id: string;
+  /** Collection the file belongs to. */
+  collection: SampleCollection;
+  /** Role of the file. */
+  kind: SampleKind;
+  /** Human-readable title. */
+  title: string;
+  /** Path inside the upstream repository. */
+  path: string;
+  /** IELTS skill the file supports. */
+  skill: 'reading' | 'writing' | 'grammar';
+  /** File extension without the dot (`unknown` when the name carries none). */
+  format: string;
+  /** Size in bytes. */
+  sizeBytes: number;
+  /** Git blob SHA-1. */
+  sha1: string | null;
+  /** Public URL of the file in the upstream repository. */
+  sourceUrl: string;
+  /** Canonical question type a reading sample task illustrates. */
+  questionType: QuestionTypeId | null;
+  /** Task 1 family id from `/v1/tasks/writing`, `task-2`, or `null`. */
+  taskFamily: string | null;
+  /** ISO date of the classroom session, for learner-writing files. */
+  session: string | null;
+  /** Learner first name exactly as published upstream, or `null`. */
+  author: string | null;
+};
+
+/** Statistics aggregated over the learner-writing subset. */
+export type LearnerWritingStats = {
+  /** Indexed learner-writing files (essays, prompts, visuals, exercises). */
+  files: number;
+  /** Dated classroom sessions covered. */
+  sessions: number;
+  /** Earliest session date (ISO). */
+  firstSession: string | null;
+  /** Latest session date (ISO). */
+  lastSession: string | null;
+  /** Learner-produced essays and reports. */
+  essays: number;
+  /** Essays reporting a Task 1 visual. */
+  task1Reports: number;
+  /** Essays answering a Task 2 prompt. */
+  task2Essays: number;
+  /** Essays whose file name names no author. */
+  unstatedAuthors: number;
+  /** Essay count per published author (`unstated` for unnamed files). */
+  essaysByAuthor: Record<string, number>;
+  /** Essay count per task family. */
+  essaysByTask: Record<string, number>;
+  /** Total size of the essay files in bytes. */
+  essayBytes: number;
+};
+
+/** Statistics aggregated over the Academic Reading sample tasks. */
+export type ReadingSampleStats = {
+  /** Indexed sample-task sheets. */
+  files: number;
+  /** Distinct canonical question types illustrated. */
+  distinctQuestionTypes: number;
+  /** The canonical question types illustrated, sorted. */
+  questionTypes: QuestionTypeId[];
+  /** Number of types in the canonical taxonomy. */
+  taxonomyTypes: number;
+  /** `distinctQuestionTypes / taxonomyTypes`. */
+  taxonomyCoverage: number;
+};
+
+/** Aggregated statistics about the whole collection. */
+export type SamplesStats = {
+  /** Files in the upstream repository (indexed and excluded). */
+  filesInRepository: number;
+  /** Files indexed here. */
+  indexedFiles: number;
+  /** Total size of the indexed files in bytes. */
+  indexedBytes: number;
+  /** `indexedFiles / filesInRepository`. */
+  coverageRatio: number;
+  /** File count per top-level section of the upstream repository. */
+  repositoryComposition: Record<string, number>;
+  /** Indexed item count per collection. */
+  byCollection: Record<string, number>;
+  /** Indexed item count per kind. */
+  byKind: Record<string, number>;
+  /** Indexed item count per skill. */
+  bySkill: Record<string, number>;
+  /** Indexed item count per file format. */
+  byFormat: Record<string, number>;
+  /** Aggregates over the learner-writing subset. */
+  learnerWriting: LearnerWritingStats;
+  /** Aggregates over the reading sample tasks. */
+  readingSamples: ReadingSampleStats;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Response frameworks                                                         */
 /* -------------------------------------------------------------------------- */
 
 /** The response formats covered by the framework taxonomy. */

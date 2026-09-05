@@ -6,6 +6,40 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-05
+
+A fourth indexed collection — and a new kind of data. [`msneloy/IELTS`](https://github.com/msneloy/IELTS)
+is the public archive of an IELTS preparation group, and it is the only upstream source of
+**authentic learner production**: twenty-four Task 1 reports and Task 2 essays written by named
+learners across seven dated classroom sessions in August 2022, together with the chart visuals the
+tasks were set with, one grammar exercise and one Writing Task 2 prompt set. The release also
+indexes the collection's twelve official-style Academic Reading sample-task sheets, one per task
+family. Both subsets are cross-linked — essays resolve to Writing task families, sample tasks to
+canonical question types — and both are published as derived metadata only. The remaining 512
+files of the repository (Cambridge books and cassettes, grammar and practice-test audio) are
+third-party copyrighted material and are deliberately excluded. The API remains free, GET-only,
+authentication-free and dependency-free.
+
+### Added
+
+- **Learner-writing and sample-task index** (`data/samples.json`, 45 of 557 files indexed), built
+  by the new standard-library-only extractor `scripts/extract_samples.py` (`npm run data:samples`:
+  one upstream tree fetch, deterministic output). Session folders resolve to ISO dates, essays to
+  the published `/v1/tasks/writing` family identifiers via hand-verified file-name keywords with
+  session defaults (one content-verified override, documented in the script), and authors are
+  reported exactly as published upstream. CI re-derives the index from the upstream tree and fails
+  on drift.
+- **Four endpoints.** `GET /v1/samples` (provenance, statistics, facets, cross-links),
+  `GET /v1/samples/stats` (aggregates: sessions, per-author and per-task essay counts, taxonomy
+  coverage — the twelve sheets illustrate 8 of the 13 canonical question types),
+  `GET /v1/samples/items` (faceted search: `collection`, `kind`, `skill`, `format`, `session`,
+  `author`, `task`, `type`, free text, sort, pagination) and `GET /v1/samples/:id` (one indexed
+  file). The service index and `/health` report the new dataset sizes.
+- **Documentation and research notes.** RESEARCH.md gains Part V (composition, classification
+  rules, session table, taxonomy coverage, threats to validity, reproduction); README, DATA.md,
+  the JOSS paper, the OpenAPI snapshot and every citation file (CITATION.cff, codemeta.json,
+  .zenodo.json) now describe the four indexed collections.
+
 ## [1.2.0] - 2026-09-05
 
 Two additions in one release: the **toolkit** — the first capabilities that consume text as well as

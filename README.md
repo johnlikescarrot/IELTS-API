@@ -20,18 +20,22 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is derived from three open collections — [`zhengyishiming/IELTS`][corpus] for the
+Everything here is derived from four open collections — [`zhengyishiming/IELTS`][corpus] for the
 vocabulary and the corpus index, [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
-question-type taxonomy and the practice-test structure and readability index, and
-[`Oxidaner/ielts`][materials] for the study-materials index. None is redistributed: the API publishes
-derived, non-substitutive metadata and statistics, plus original guidance datasets written for this
+question-type taxonomy and the practice-test structure and readability index,
+[`Oxidaner/ielts`][materials] for the study-materials index, and [`msneloy/IELTS`][samples] for
+the learner-writing and sample-task index. None is redistributed: the API publishes derived,
+non-substitutive metadata and statistics, plus original guidance datasets written for this
 project. See [RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every
 dataset, and [paper/paper.md](paper/paper.md) for the short research paper.
 
 The API also analyses text, not just publishes it: `/v1/tools/readability` scores any passage with
 the Flesch formulas and places it next to the corpus group means, `/v1/tools/essay-profile` turns a
 writing sample into lexical, structural and theme measurements with descriptor-aligned hints, and
-`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule.
+`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule. And it
+indexes output as well as input: `/v1/samples` is a metadata index of authentic learner writing —
+twenty-four Task 1 reports and Task 2 essays from seven dated classroom sessions — and of the
+twelve Academic Reading sample-task sheets, cross-linked to the question-type taxonomy.
 
 ## Quick start
 
@@ -55,6 +59,12 @@ curl -s "http://localhost:3000/v1/tools/readability?text=Dogs%20run%20fast.%20Ca
 
 # A deterministic eight-week study plan towards band 7
 curl -s "http://localhost:3000/v1/study/plan?target=7&writing=6&speaking=6.5"
+
+# Authentic learner essays for one task family, from a classroom archive
+curl -s "http://localhost:3000/v1/samples/items?kind=essay&task=academic-pie-chart"
+
+# The official-style sample tasks that illustrate one question type
+curl -s "http://localhost:3000/v1/samples/items?type=matching-headings"
 
 # The 13 IELTS question types, ranked by how often they occur in 27,225 practice questions
 curl -s "http://localhost:3000/v1/question-types?skill=listening"
@@ -100,6 +110,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
+| Learner writing & sample tasks  |      45 of 557 files: 24 learner essays, 12 sample tasks | `/v1/samples`           | Metadata index of [the classroom collection][samples]                          |
 
 ## Endpoints
 
@@ -142,6 +153,10 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/materials`           | Study-materials metadata, statistics and facets                                                         |
 | GET    | `/v1/materials/stats`     | Study-materials statistics                                                                              |
 | GET    | `/v1/materials/items`     | Search the materials index (`category`, `skill`, `format`, `q`)                                         |
+| GET    | `/v1/samples`             | Learner-writing and sample-task index: provenance, statistics, facets                                   |
+| GET    | `/v1/samples/stats`       | Session, task-family, author and question-type statistics                                               |
+| GET    | `/v1/samples/items`       | Search the index (`collection`, `kind`, `skill`, `session`, `author`, `task`, `type`, `q`, `sort`, ...) |
+| GET    | `/v1/samples/:id`         | One indexed essay, prompt, chart visual or sample task                                                  |
 | GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
@@ -315,15 +330,18 @@ Every dataset is regenerated from source with standard-library-only Python:
 python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 python3 scripts/extract_corpus.py tree.json data/corpus.json
 python3 scripts/extract_practice_tests.py tree.json ./upstream data/practice-tests.json
+python3 scripts/extract_materials.py tree.json data/materials.json
+python3 scripts/extract_samples.py tree.json data/samples.json
 ```
 
-CI re-derives `data/vocabulary.json` from the upstream workbook on every push and fails if the
-committed dataset has drifted.
+CI re-derives `data/vocabulary.json`, `data/materials.json` and `data/samples.json` from their
+upstream sources on every push and fails if a committed dataset has drifted; the practice-test
+index is revalidated for internal consistency the same way.
 
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 495 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -354,7 +372,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.2.0},
+  version = {1.3.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -379,6 +397,20 @@ Please also cite the upstream collections the datasets were derived from:
   year   = {2026},
   url    = {https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS}
 }
+
+@misc{ielts_study_materials,
+  title  = {ielts: a self-study materials collection},
+  author = {Oxidaner},
+  year   = {2025},
+  url    = {https://github.com/Oxidaner/ielts}
+}
+
+@misc{ielts_classroom_collection,
+  title  = {IELTS: a classroom archive of learner writing and sample tasks},
+  author = {msneloy},
+  year   = {2022},
+  url    = {https://github.com/msneloy/IELTS}
+}
 ```
 
 ## Licence and provenance
@@ -402,3 +434,4 @@ partners.
 [corpus]: https://github.com/zhengyishiming/IELTS
 [practice]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
 [materials]: https://github.com/Oxidaner/ielts
+[samples]: https://github.com/msneloy/IELTS

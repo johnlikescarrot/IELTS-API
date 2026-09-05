@@ -3,14 +3,17 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Four independent upstream collections are analysed, alongside the original datasets written for
+this project (Part III):
 
-| Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
-| [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                     |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                        |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index   |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index (and the motivation for the response-framework taxonomy) |
+| [Part V](#part-v--the-learner-writing-and-sample-task-collection)               | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the learner-writing and sample-task index                                          |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+None of the collections is redistributed. All are indexed, measured and cited.
 
 ## Part I — the research corpus
 
@@ -520,3 +523,122 @@ python3 scripts/extract_materials.py tree.json data/materials.json
 The script is standard library only and deterministic: the same tree always produces byte-identical
 output. The continuous-integration workflow re-derives the index from the upstream tree on every run
 and fails if the committed file disagrees.
+
+## Part V — the learner-writing and sample-task collection
+
+### 23. What the collection actually contains
+
+The fourth upstream source, [`msneloy/IELTS`][samples-repo], is the public archive of an IELTS
+preparation group — a different kind of source again: not a publisher's dump, not a practice-test
+app and not a personal self-study library, but _a classroom_. At the indexed snapshot it holds 557
+files in five sections:
+
+| Section                     | Files | What it is                                                                  |
+| --------------------------- | ----: | --------------------------------------------------------------------------- |
+| `CAMBRIDGE IELTS 1 TO 17/`  |   237 | Cambridge practice books and their cassette audio — third-party copyrighted |
+| `combo/`                    |   215 | Grammar-course audio and documents — third-party copyrighted                |
+| `ptp 123/`                  |    58 | Practice Tests Plus audio CDs — third-party copyrighted                     |
+| `Assignments/`              |    33 | **Seven dated classroom sessions of authentic learner writing**             |
+| `Academic Reading Samples/` |    12 | **Official-style Academic Reading sample-task sheets, one per task family** |
+| repository root             |     2 | `README.md`, `.gitattributes`                                               |
+
+Only the two bold sections can be indexed: 45 files. The rest is redistributable by no one, so it
+is counted in `repositoryComposition` and deliberately not indexed item-by-item — the same policy
+as Parts I, II and IV.
+
+What makes this collection unique among the four is the `Assignments/` folder: it is the only
+upstream source of _authentic learner production_. Everything else the API indexes is input
+material — things to read, hear or memorise. These 33 files are output: twenty-four essays and
+reports written by named learners against dated tasks, the chart images those tasks were set with,
+one grammar exercise (with its solution) and one Writing Task 2 prompt set. For second-language
+writing research this is the rarest genre of open data: learner text whose task, date and cohort
+are all known.
+
+[samples-repo]: https://github.com/msneloy/IELTS
+
+### 24. Sessions, task families and the classification rules
+
+The `Assignments/` folder is organised by session, one folder per class day in August 2022
+(`yy.mm.dd`). Each session set one writing task (or two chart types), announced by one or two chart
+images:
+
+| Session    | Files | Chart visuals         | Essays | Task set for the day                        |
+| ---------- | ----: | --------------------- | -----: | ------------------------------------------- |
+| 2022-08-05 |     1 | —                     |      0 | grammar exercise: articles and countability |
+| 2022-08-11 |     5 | line chart            |      4 | Task 1: line-graph report                   |
+| 2022-08-12 |     3 | bar chart             |      2 | Task 1: bar-chart report                    |
+| 2022-08-15 |     7 | pie chart, table      |      5 | Task 1: pie chart and table reports         |
+| 2022-08-19 |     8 | map, man-made process |      6 | Task 1: map and process-diagram reports     |
+| 2022-08-21 |     4 | natural process       |      3 | Task 1: process-diagram reports             |
+| 2022-08-27 |     5 | —                     |      4 | Task 2: essays against an 8-prompt set      |
+
+Every file is assigned a `kind` by rule — image formats become `task-visual`, the two non-essay
+Markdown files are `prompt` and `exercise`, every other text file is an `essay` — and every essay
+is assigned a task family in three steps: a hand-verified override, then ordered file-name
+keywords (`line`, `bar`, `pie`, `table`, `map`, `process`/`mmp`/`np`, `essay`/`task 2`), then the
+session default from the table above. Exactly one override is needed:
+`household expenditures by riadul.md` names its topic but not its chart type; the upstream content
+(two pie charts of household expenditure, Japan and Malaysia, 2010) was read once by hand and the
+essay is mapped to `academic-pie-chart`. Task families use the published `/v1/tasks/writing`
+identifiers, so an essay, its task family and its strategy guidance are one hop apart; Task 2
+essays carry `task-2` and resolve through `/v1/topics/writing`.
+
+Authors are taken exactly as published in the upstream file names (first names only): `emon` (7
+essays), `pranto` (6), `riad` (5), `mahmuda` (3), `riadul` (2); one essay names no author and is
+reported as `unstated`. Whether `riad` and `riadul` are the same learner cannot be determined from
+the repository and they are deliberately counted separately — see section 26.
+
+The twelve reading sheets are classified by their published file-name stems onto the Part II
+taxonomy. Distinct canonical types covered: **8 of 13** — `multiple-choice`,
+`multiple-choice-multiple-answer`, `true-false-not-given`, `matching-headings`, `matching-features`,
+`matching-sentence-endings`, `sentence-completion` and `summary-completion` (the note, table and
+flow-chart sheets normalise onto `summary-completion`, exactly as the 65 upstream labels of Part II
+do). The five families with no sample sheet in the collection are `yes-no-not-given`, `matching`,
+`matching-information`, `diagram-label-completion` and `short-answer`.
+
+### 25. What the API publishes from Part V
+
+- `GET /v1/samples` — provenance, statistics, facet vocabulary and cross-links.
+- `GET /v1/samples/stats` — the aggregates only: repository composition, kind/skill/format counts,
+  `learnerWriting` (sessions, date range, essay counts, per-author and per-task totals) and
+  `readingSamples` (distinct question types and taxonomy coverage).
+- `GET /v1/samples/items` — faceted search over the 45 indexed files (`collection`, `kind`,
+  `skill`, `format`, `session`, `author`, `task`, `type`, free text, sortable, paginated).
+- `GET /v1/samples/:id` — one indexed file, with provenance.
+
+As everywhere in this API, the index is a **descriptive act over metadata**: path, title, kind,
+task family, session, author as published, size, blob SHA-1 and permalink. No essay sentence,
+prompt wording, chart image or sample passage is served; a researcher who needs the text fetches
+it from the upstream repository and cites both, which is the arrangement the licences require.
+
+### 26. Threats to validity (Part V)
+
+- **Tiny n, single cohort.** 24 essays from at most five learners in one classroom across 22 days
+  is a case study, not a sample of learner writing; per-author and per-task counts describe this
+  cohort and estimate nothing beyond it.
+- **Task classification is partly inferential.** Essay-to-family mapping comes from file names and
+  session visuals, reviewed against the session table; the single content-verified override is
+  documented in section 24 and in `scripts/extract_samples.py`. The extractor never reads essay
+  text, so a mislabelled file name would silently misclassify its essay.
+- **Author identity is the file name.** Names are first names as published; `riad`/`riadul` may or
+  may not be one person, and `unstated` essays cannot be attributed. Authorship claims beyond the
+  file names would be speculative, so none are made.
+- **The exercise is not exam writing.** The 2022-08-05 sheet is a grammar exercise with its
+  solution; it is indexed for completeness under skill `grammar` and excluded from essay counts.
+- **Eight of thirteen is coverage, not failure.** The reading sheets are the
+  maintainers' selection of official-style samples; the five uncovered families are absent from
+  the source, not dropped by the index.
+- **The snapshot is stable but pinned anyway.** The upstream repository has been untouched since
+  2022-10-01; `meta.commit` and per-file blob SHA-1s in `data/samples.json` pin the analysis all
+  the same.
+
+### 27. Reproducing Part V
+
+```bash
+curl -sL "https://api.github.com/repos/msneloy/IELTS/git/trees/main?recursive=1" -o tree.json
+python3 scripts/extract_samples.py tree.json data/samples.json
+```
+
+The script is standard library only and deterministic: the same tree always produces byte-identical
+output. The continuous-integration workflow re-derives the index from the upstream tree on every
+run and fails if the committed file disagrees.
