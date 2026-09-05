@@ -79,6 +79,20 @@ jobs:
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Annotate failed Super-Linter diagnostics
+        if: failure()
+        run: |
+          python3 - <<'PYTHON'
+          from pathlib import Path
+          log = Path('super-linter.log')
+          if log.exists():
+              text = log.read_text(errors='replace')[-48000:]
+              for start in range(0, len(text), 8000):
+                  chunk = text[start:start + 8000]
+                  chunk = chunk.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print(f'::warning title=Super-Linter diagnostics::{chunk}')
+          PYTHON
+
       - name: Preserve Super-Linter diagnostics
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
