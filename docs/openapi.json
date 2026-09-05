@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "IELTS API",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
     "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, response frameworks for the\nproductive papers, a structure and readability index of 1,702 practice tests,\nan index of the open IELTS research corpus, and an index of a 2,385-file\nself-study materials collection. The toolkit additionally scores any text\n(readability and essay profile) and composes the datasets into study plans.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:4101/",
+      "url": "http://127.0.0.1:4011/",
       "description": "This instance"
     }
   ],
@@ -31,7 +31,9 @@
       "get": {
         "operationId": "v1_vocabulary",
         "summary": "Search the Cambridge IELTS 1-22 vocabulary dataset.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -47,7 +49,11 @@
             "description": "How `q` is matched against the dataset.",
             "schema": {
               "type": "string",
-              "enum": ["contains", "prefix", "exact"],
+              "enum": [
+                "contains",
+                "prefix",
+                "exact"
+              ],
               "default": "contains"
             }
           },
@@ -84,7 +90,12 @@
             "description": "Sort key.",
             "schema": {
               "type": "string",
-              "enum": ["word", "length", "volumes", "senses"],
+              "enum": [
+                "word",
+                "length",
+                "volumes",
+                "senses"
+              ],
               "default": "word"
             }
           },
@@ -93,7 +104,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "asc"
             }
           },
@@ -126,7 +140,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -152,14 +170,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -186,14 +210,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -221,7 +251,9 @@
       "get": {
         "operationId": "v1_vocabulary_stats",
         "summary": "Aggregate statistics for the vocabulary dataset.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -230,7 +262,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -256,14 +292,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -290,14 +332,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -325,7 +373,9 @@
       "get": {
         "operationId": "v1_vocabulary_random",
         "summary": "A seeded random sample of vocabulary entries.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "count",
@@ -353,7 +403,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -379,14 +433,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -413,14 +473,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -448,7 +514,9 @@
       "get": {
         "operationId": "v1_vocabulary_daily",
         "summary": "A deterministic vocabulary entry for a calendar date.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "date",
@@ -477,7 +545,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -503,14 +575,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -537,14 +615,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -572,7 +656,9 @@
       "get": {
         "operationId": "v1_vocabulary_word",
         "summary": "Look up a single headword.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "word",
@@ -590,7 +676,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -616,14 +706,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -650,14 +746,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -685,7 +787,9 @@
       "get": {
         "operationId": "v1_bands",
         "summary": "The IELTS band scale with indicative CEFR levels.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -694,7 +798,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -720,14 +828,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -754,14 +868,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -789,14 +909,20 @@
       "get": {
         "operationId": "v1_bands_descriptors",
         "summary": "Condensed analytic band descriptors, filterable by set, criterion and band.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "set",
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["speaking", "writing-task-1", "writing-task-2"],
+              "enum": [
+                "speaking",
+                "writing-task-1",
+                "writing-task-2"
+              ],
               "default": "speaking"
             }
           },
@@ -833,7 +959,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -859,14 +989,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -893,14 +1029,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -928,7 +1070,9 @@
       "get": {
         "operationId": "v1_bands_band",
         "summary": "One band level with the descriptors that bracket it.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "band",
@@ -946,7 +1090,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -972,14 +1120,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1006,14 +1160,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1041,7 +1201,9 @@
       "get": {
         "operationId": "v1_scores_overall",
         "summary": "Calculate an overall band score from the four component scores.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "listening",
@@ -1099,7 +1261,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -1125,14 +1291,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1159,14 +1331,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1194,7 +1372,9 @@
       "get": {
         "operationId": "v1_scores_convert",
         "summary": "Convert an IELTS band to another scale (CEFR, TOEFL iBT, Cambridge, PTE, DET).",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "band",
@@ -1213,7 +1393,13 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["cefr", "toefl-ibt", "cambridge-english-scale", "pte-academic", "duolingo"]
+              "enum": [
+                "cefr",
+                "toefl-ibt",
+                "cambridge-english-scale",
+                "pte-academic",
+                "duolingo"
+              ]
             }
           }
         ],
@@ -1224,7 +1410,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -1250,14 +1440,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1284,14 +1480,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1319,7 +1521,9 @@
       "get": {
         "operationId": "v1_scores_interpret",
         "summary": "Map a score on another scale back to an indicative IELTS band.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "scale",
@@ -1327,7 +1531,13 @@
             "required": true,
             "schema": {
               "type": "string",
-              "enum": ["cefr", "toefl-ibt", "cambridge-english-scale", "pte-academic", "duolingo"]
+              "enum": [
+                "cefr",
+                "toefl-ibt",
+                "cambridge-english-scale",
+                "pte-academic",
+                "duolingo"
+              ]
             }
           },
           {
@@ -1346,7 +1556,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -1372,14 +1586,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1406,14 +1626,599 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/scores/raw/tables": {
+      "get": {
+        "operationId": "v1_scores_raw_tables",
+        "summary": "The raw-score to band conversion tables for Listening and Reading (Academic and General Training).",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/scores/raw": {
+      "get": {
+        "operationId": "v1_scores_raw",
+        "summary": "Convert correct answers out of 40 into a band score for a receptive paper.",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [
+          {
+            "name": "skill",
+            "in": "query",
+            "required": true,
+            "description": "Receptive paper scored.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "listening",
+                "reading"
+              ]
+            }
+          },
+          {
+            "name": "module",
+            "in": "query",
+            "description": "Test module; required for Reading, ignored for Listening (one table serves both).",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "academic",
+                "general-training"
+              ]
+            }
+          },
+          {
+            "name": "correct",
+            "in": "query",
+            "required": true,
+            "description": "Correct answers out of 40.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 40
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/exams": {
+      "get": {
+        "operationId": "v1_exams",
+        "summary": "Official four-paper format reference: structure, timings and minimum word counts.",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "description": "Restrict the reference to one module.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "academic",
+                "general-training"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/exams/blueprint": {
+      "get": {
+        "operationId": "v1_exams_blueprint",
+        "summary": "A deterministic, date-seeded full mock-exam blueprint with question-type mix and linked practice.",
+        "tags": [
+          "v1"
+        ],
+        "parameters": [
+          {
+            "name": "module",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "academic",
+                "general-training"
+              ]
+            }
+          },
+          {
+            "name": "date",
+            "in": "query",
+            "description": "ISO date (YYYY-MM-DD) seeding the session. Defaults to today.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "description": "Target band (4-9 in 0.5 steps); selects graded-reading sources of a matching CEFR level.",
+            "schema": {
+              "type": "number",
+              "minimum": 4,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "seed",
+            "in": "query",
+            "description": "Overrides the date as the selection seed; identical seeds return identical blueprints.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "error"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1441,7 +2246,9 @@
       "get": {
         "operationId": "v1_topics_writing",
         "summary": "Writing Task 2 prompts, filterable by category and question type.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -1480,7 +2287,13 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["opinion", "discussion", "advantages-disadvantages", "problem-solution", "two-part"]
+              "enum": [
+                "opinion",
+                "discussion",
+                "advantages-disadvantages",
+                "problem-solution",
+                "two-part"
+              ]
             }
           },
           {
@@ -1512,7 +2325,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -1538,14 +2355,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1572,14 +2395,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1607,7 +2436,9 @@
       "get": {
         "operationId": "v1_topics_speaking",
         "summary": "Speaking Part 1, 2 and 3 items.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -1622,7 +2453,11 @@
             "in": "query",
             "schema": {
               "type": "integer",
-              "enum": [1, 2, 3]
+              "enum": [
+                1,
+                2,
+                3
+              ]
             }
           },
           {
@@ -1654,7 +2489,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -1680,14 +2519,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1714,14 +2559,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1749,7 +2600,9 @@
       "get": {
         "operationId": "v1_topics_themes",
         "summary": "Fifty recurring exam themes, grouped and keyed by paper.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -1784,7 +2637,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["listening", "reading", "writing", "speaking"]
+              "enum": [
+                "listening",
+                "reading",
+                "writing",
+                "speaking"
+              ]
             }
           }
         ],
@@ -1795,7 +2653,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -1821,14 +2683,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1855,14 +2723,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1890,14 +2764,19 @@
       "get": {
         "operationId": "v1_tasks_writing",
         "summary": "Writing Task 1 task families with structure and timing guidance.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "module",
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["academic", "general-training"]
+              "enum": [
+                "academic",
+                "general-training"
+              ]
             }
           }
         ],
@@ -1908,7 +2787,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -1934,14 +2817,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -1968,14 +2857,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2003,7 +2898,9 @@
       "get": {
         "operationId": "v1_question_types",
         "summary": "Canonical IELTS question-type taxonomy with strategies and observed frequencies.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -2018,7 +2915,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["reading", "listening"]
+              "enum": [
+                "reading",
+                "listening"
+              ]
             }
           },
           {
@@ -2026,7 +2926,13 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["selection", "identification", "matching", "completion", "labelling"]
+              "enum": [
+                "selection",
+                "identification",
+                "matching",
+                "completion",
+                "labelling"
+              ]
             }
           }
         ],
@@ -2037,7 +2943,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -2063,14 +2973,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2097,14 +3013,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2132,7 +3054,9 @@
       "get": {
         "operationId": "v1_question_types_id",
         "summary": "One question type, with its strategy, traps and upstream label variants.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -2150,7 +3074,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -2176,14 +3104,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2210,14 +3144,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2245,7 +3185,9 @@
       "get": {
         "operationId": "v1_frameworks",
         "summary": "Response frameworks for Writing Task 2 and Speaking Parts 2-3, with stages and cue language.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -2260,7 +3202,11 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["writing-task-2", "speaking-part-2", "speaking-part-3"]
+              "enum": [
+                "writing-task-2",
+                "speaking-part-2",
+                "speaking-part-3"
+              ]
             }
           },
           {
@@ -2268,7 +3214,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["writing", "speaking"]
+              "enum": [
+                "writing",
+                "speaking"
+              ]
             }
           },
           {
@@ -2277,7 +3226,13 @@
             "description": "Essay question family.",
             "schema": {
               "type": "string",
-              "enum": ["opinion", "discussion", "advantages-disadvantages", "problem-solution", "two-part"]
+              "enum": [
+                "opinion",
+                "discussion",
+                "advantages-disadvantages",
+                "problem-solution",
+                "two-part"
+              ]
             }
           },
           {
@@ -2286,7 +3241,11 @@
             "description": "Speaking part.",
             "schema": {
               "type": "integer",
-              "enum": [1, 2, 3]
+              "enum": [
+                1,
+                2,
+                3
+              ]
             }
           }
         ],
@@ -2297,7 +3256,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -2323,14 +3286,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2357,14 +3326,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2392,7 +3367,9 @@
       "get": {
         "operationId": "v1_frameworks_id",
         "summary": "One framework, with its ordered stages, cue language and pitfalls.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -2410,7 +3387,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -2436,14 +3417,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2470,14 +3457,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2505,7 +3498,9 @@
       "get": {
         "operationId": "v1_tests",
         "summary": "Provenance and aggregate statistics for the indexed practice-test collections.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -2514,7 +3509,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -2540,14 +3539,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2574,14 +3579,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2609,7 +3620,9 @@
       "get": {
         "operationId": "v1_tests_stats",
         "summary": "Structure, question-type and readability statistics only.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -2618,7 +3631,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -2644,14 +3661,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2678,14 +3701,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2713,7 +3742,9 @@
       "get": {
         "operationId": "v1_tests_items",
         "summary": "Search indexed practice tests by collection, skill, CEFR band, question type or readability.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -2729,7 +3760,11 @@
             "description": "Comma-separated collections.",
             "schema": {
               "type": "string",
-              "enum": ["reading-full-test", "listening-full-test", "graded-reading"]
+              "enum": [
+                "reading-full-test",
+                "listening-full-test",
+                "graded-reading"
+              ]
             }
           },
           {
@@ -2738,7 +3773,10 @@
             "description": "Comma-separated skills.",
             "schema": {
               "type": "string",
-              "enum": ["reading", "listening"]
+              "enum": [
+                "reading",
+                "listening"
+              ]
             }
           },
           {
@@ -2747,7 +3785,11 @@
             "description": "Comma-separated CEFR bands.",
             "schema": {
               "type": "string",
-              "enum": ["a1-a2", "b1-b2", "c1-c2"]
+              "enum": [
+                "a1-a2",
+                "b1-b2",
+                "c1-c2"
+              ]
             }
           },
           {
@@ -2819,7 +3861,14 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["id", "title", "questions", "words", "reading-ease", "grade"],
+              "enum": [
+                "id",
+                "title",
+                "questions",
+                "words",
+                "reading-ease",
+                "grade"
+              ],
               "default": "id"
             }
           },
@@ -2828,7 +3877,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "asc"
             }
           },
@@ -2861,7 +3913,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -2887,14 +3943,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2921,14 +3983,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -2956,7 +4024,9 @@
       "get": {
         "operationId": "v1_tests_id",
         "summary": "One indexed practice test or graded reading lesson.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -2974,7 +4044,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -3000,14 +4074,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3034,14 +4114,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3069,7 +4155,9 @@
       "get": {
         "operationId": "v1_corpus",
         "summary": "Metadata and statistics for the indexed IELTS research corpus.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -3078,7 +4166,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -3104,14 +4196,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3138,14 +4236,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3173,7 +4277,9 @@
       "get": {
         "operationId": "v1_corpus_stats",
         "summary": "Aggregate statistics only.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -3182,7 +4288,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -3208,14 +4318,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3242,14 +4358,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3277,7 +4399,9 @@
       "get": {
         "operationId": "v1_corpus_items",
         "summary": "Search the corpus index by category, skill, format or free text.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -3313,7 +4437,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["title", "category", "skill", "size"],
+              "enum": [
+                "title",
+                "category",
+                "skill",
+                "size"
+              ],
               "default": "title"
             }
           },
@@ -3322,7 +4451,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "asc"
             }
           },
@@ -3355,7 +4487,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -3381,14 +4517,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3415,14 +4557,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3450,7 +4598,9 @@
       "get": {
         "operationId": "v1_tools_readability",
         "summary": "Flesch Reading Ease, Flesch-Kincaid grade and text statistics for any passage.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "text",
@@ -3469,7 +4619,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -3495,14 +4649,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3529,14 +4689,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3564,7 +4730,9 @@
       "get": {
         "operationId": "v1_tools_essay_profile",
         "summary": "Lexical diversity, headword coverage, themes and descriptor-aligned hints for a writing sample.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "text",
@@ -3580,7 +4748,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["task1", "task2"],
+              "enum": [
+                "task1",
+                "task2"
+              ],
               "default": "task2"
             }
           },
@@ -3603,7 +4774,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -3629,14 +4804,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3663,14 +4844,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3698,7 +4885,9 @@
       "get": {
         "operationId": "v1_study_plan",
         "summary": "Deterministic week-by-week study plan towards a target band.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "target",
@@ -3797,7 +4986,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -3823,14 +5016,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3857,14 +5056,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3892,7 +5097,9 @@
       "get": {
         "operationId": "v1_materials",
         "summary": "Metadata and statistics for the indexed IELTS study-materials collection.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -3901,7 +5108,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -3927,14 +5138,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3961,14 +5178,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -3996,7 +5219,9 @@
       "get": {
         "operationId": "v1_materials_stats",
         "summary": "Aggregate statistics only.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -4005,7 +5230,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -4031,14 +5260,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4065,14 +5300,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4100,7 +5341,9 @@
       "get": {
         "operationId": "v1_materials_items",
         "summary": "Search the materials index by category, skill, format or free text.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -4137,7 +5380,13 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["general", "listening", "reading", "speaking", "writing"]
+              "enum": [
+                "general",
+                "listening",
+                "reading",
+                "speaking",
+                "writing"
+              ]
             }
           },
           {
@@ -4172,7 +5421,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["title", "category", "skill", "size"],
+              "enum": [
+                "title",
+                "category",
+                "skill",
+                "size"
+              ],
               "default": "title"
             }
           },
@@ -4181,7 +5435,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "asc"
             }
           },
@@ -4214,7 +5471,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -4240,14 +5501,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4274,14 +5541,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4309,7 +5582,9 @@
       "get": {
         "operationId": "v1_archive",
         "summary": "Provenance, statistics and the Cambridge volume table for the indexed grey-literature archive.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -4318,7 +5593,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -4344,14 +5623,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4378,14 +5663,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4413,7 +5704,9 @@
       "get": {
         "operationId": "v1_archive_stats",
         "summary": "Aggregate statistics only.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -4422,7 +5715,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -4448,14 +5745,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4482,14 +5785,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4517,7 +5826,9 @@
       "get": {
         "operationId": "v1_archive_volumes",
         "summary": "One row per Cambridge IELTS volume: naming scheme, media era, tracks, recoverable tests, completeness.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [],
         "responses": {
           "200": {
@@ -4526,7 +5837,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -4552,14 +5867,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4586,14 +5907,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4621,7 +5948,9 @@
       "get": {
         "operationId": "v1_archive_volumes_id",
         "summary": "One Cambridge IELTS volume row.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -4639,7 +5968,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -4665,14 +5998,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4699,14 +6038,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4734,7 +6079,9 @@
       "get": {
         "operationId": "v1_archive_items",
         "summary": "Search the archive index by collection, format, media, skill, Cambridge volume or free text.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -4767,7 +6114,17 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["jpeg", "jpg", "md", "mp3", "none", "pdf", "png", "wav", "wma"]
+              "enum": [
+                "jpeg",
+                "jpg",
+                "md",
+                "mp3",
+                "none",
+                "pdf",
+                "png",
+                "wav",
+                "wma"
+              ]
             }
           },
           {
@@ -4775,7 +6132,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["audio", "document", "image", "text"]
+              "enum": [
+                "audio",
+                "document",
+                "image",
+                "text"
+              ]
             }
           },
           {
@@ -4783,7 +6145,12 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["general", "listening", "reading", "writing"]
+              "enum": [
+                "general",
+                "listening",
+                "reading",
+                "writing"
+              ]
             }
           },
           {
@@ -4801,7 +6168,13 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["title", "collection", "volume", "date", "size"],
+              "enum": [
+                "title",
+                "collection",
+                "volume",
+                "date",
+                "size"
+              ],
               "default": "title"
             }
           },
@@ -4810,7 +6183,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["asc", "desc"],
+              "enum": [
+                "asc",
+                "desc"
+              ],
               "default": "asc"
             }
           },
@@ -4843,7 +6219,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -4869,14 +6249,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4903,14 +6289,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -4938,7 +6330,9 @@
       "get": {
         "operationId": "v1_archive_id",
         "summary": "One indexed archive item.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -4956,7 +6350,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -4982,14 +6380,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -5016,14 +6420,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -5051,7 +6461,9 @@
       "get": {
         "operationId": "v1_resources",
         "summary": "Freely accessible IELTS preparation resources and open datasets.",
-        "tags": ["v1"],
+        "tags": [
+          "v1"
+        ],
         "parameters": [
           {
             "name": "q",
@@ -5066,7 +6478,14 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["official", "course", "practice-material", "dataset", "tool", "community"]
+              "enum": [
+                "official",
+                "course",
+                "practice-material",
+                "dataset",
+                "tool",
+                "community"
+              ]
             }
           },
           {
@@ -5098,7 +6517,11 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "data", "meta"],
+                  "required": [
+                    "status",
+                    "data",
+                    "meta"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
@@ -5124,14 +6547,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -5158,14 +6587,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": [
+                    "status",
+                    "error"
+                  ],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
                     "error": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": [
+                        "code",
+                        "message"
+                      ],
                       "properties": {
                         "code": {
                           "type": "string"
@@ -5194,7 +6629,11 @@
     "schemas": {
       "ApiResponse": {
         "type": "object",
-        "required": ["status", "data", "meta"],
+        "required": [
+          "status",
+          "data",
+          "meta"
+        ],
         "properties": {
           "status": {
             "type": "integer"
@@ -5210,14 +6649,20 @@
       },
       "ApiError": {
         "type": "object",
-        "required": ["status", "error"],
+        "required": [
+          "status",
+          "error"
+        ],
         "properties": {
           "status": {
             "type": "integer"
           },
           "error": {
             "type": "object",
-            "required": ["code", "message"],
+            "required": [
+              "code",
+              "message"
+            ],
             "properties": {
               "code": {
                 "type": "string"

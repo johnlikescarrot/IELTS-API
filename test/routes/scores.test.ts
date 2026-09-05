@@ -101,6 +101,83 @@ describe('GET /v1/scores/convert', () => {
   });
 });
 
+describe('GET /v1/scores/raw', () => {
+  it('converts Listening marks to a band and reports the margins', async () => {
+    const response = await server.json<{
+      band: number;
+      matched: boolean;
+      row: { min: number; max: number; band: number };
+      oneBandAhead: { band: number; correct: number };
+      oneBandBehind: { band: number; correct: number };
+    }>('/v1/scores/raw?skill=listening&correct=27');
+    expect(response.status).toBe(200);
+    expect(response.data.band).toBe(6.5);
+    expect(response.data.matched).toBe(true);
+    expect(response.data.row).toEqual({ min: 26, max: 29, band: 6.5 });
+    expect(response.data.oneBandAhead).toEqual({ band: 7, correct: 30 });
+    expect(response.data.oneBandBehind).toEqual({ band: 6, correct: 25 });
+    expect(response.meta.questions).toBe(40);
+  });
+
+  it('uses the module-specific Reading table', async () => {
+    const academic = await server.json<{ band: number }>(
+      '/v1/scores/raw?skill=reading&module=academic&correct=39',
+    );
+    expect(academic.data.band).toBe(9);
+    const general = await server.json<{ band: number }>(
+      '/v1/scores/raw?skill=reading&module=general-training&correct=39',
+    );
+    expect(general.data.band).toBe(8.5);
+  });
+
+  it('accepts a module for Listening but reports the shared table', async () => {
+    const response = await server.json<{ module: null }>(
+      '/v1/scores/raw?skill=listening&module=general-training&correct=30',
+    );
+    expect(response.status).toBe(200);
+    expect(response.data.module).toBeNull();
+  });
+
+  it('reports scores below the published rows without inventing a band', async () => {
+    const response = await server.json<{
+      band: number | null;
+      oneBandAhead: { band: number; correct: number };
+    }>('/v1/scores/raw?skill=listening&correct=3');
+    expect(response.data.band).toBeNull();
+    expect(response.data.oneBandAhead).toEqual({ band: 3, correct: 6 });
+  });
+
+  it('requires skill, module for reading, and correct', async () => {
+    expect((await server.json('/v1/scores/raw?correct=27')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?skill=writing&correct=27')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?skill=reading&correct=27')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?skill=listening')).status).toBe(400);
+  });
+
+  it('rejects out-of-range correct counts', async () => {
+    expect((await server.json('/v1/scores/raw?skill=listening&correct=41')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/scores/raw/tables', () => {
+  it('serves every conversion table with provenance', async () => {
+    const response =
+      await server.json<{ id: string; rows: { min: number; max: number; band: number }[] }[]>(
+        '/v1/scores/raw/tables',
+      );
+    expect(response.status).toBe(200);
+    expect(response.data).toHaveLength(3);
+    expect(response.data.map((table) => table.id)).toEqual([
+      'listening',
+      'reading-academic',
+      'reading-general-training',
+    ]);
+    expect(response.data.every((table) => table.rows.length > 10)).toBe(true);
+    expect(response.meta.total).toBe(3);
+    expect(String(response.meta.note)).toContain('Indicative conversion');
+  });
+});
+
 describe('GET /v1/scores/interpret', () => {
   it('maps a TOEFL score back to a band', async () => {
     const response = await server.json<{ matched: boolean; to: { band: number } }>(

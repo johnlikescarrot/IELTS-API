@@ -3,10 +3,18 @@
  */
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
+import {
+  RAW_SCORE_NOTE,
+  RAW_SCORE_TABLES,
+  convertRawScore,
+  rawScoreTable,
+  rawTableIdFor,
+} from '../data/rawScores.js';
 import { cefrForBand } from '../data/bands.js';
+import { TASK_MODULES } from '../data/tasks.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getInt, getNumber, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -107,6 +115,49 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Convert a raw score (correct answers out of 40) to a band score. */
+function raw(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const skill = getEnum(params, 'skill', ['listening', 'reading']);
+  if (skill === undefined) {
+    throw badRequest('Parameter "skill" is required.', {
+      parameter: 'skill',
+      allowed: 'listening,reading',
+    });
+  }
+  const module = getEnum(params, 'module', TASK_MODULES);
+  if (skill === 'reading' && module === undefined) {
+    throw badRequest('Parameter "module" is required when skill is "reading".', {
+      parameter: 'module',
+      allowed: TASK_MODULES.join(','),
+    });
+  }
+  const correct = getInt(params, 'correct', 0, 40, -1);
+  if (correct < 0) {
+    throw badRequest('Parameter "correct" is required.', { parameter: 'correct' });
+  }
+  const table = rawTableIdFor(skill, module ?? 'academic');
+  return {
+    data: convertRawScore(table, correct),
+    meta: {
+      questions: rawScoreTable(table).questions,
+      note: rawScoreTable(table).note,
+    },
+  };
+}
+
+/** Every published raw-score conversion table. */
+function rawTables(): HandlerResult {
+  return {
+    data: RAW_SCORE_TABLES,
+    meta: {
+      total: RAW_SCORE_TABLES.length,
+      note: RAW_SCORE_NOTE,
+      endpoint: '/v1/scores/raw?skill=listening&correct=27',
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -129,5 +180,20 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Map a score on another scale back to an indicative IELTS band.',
     handler: interpret,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw/tables',
+    versioned: true,
+    summary:
+      'The raw-score to band conversion tables for Listening and Reading (Academic and General Training).',
+    handler: rawTables,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw',
+    versioned: true,
+    summary: 'Convert correct answers out of 40 into a band score for a receptive paper.',
+    handler: raw,
   },
 ];

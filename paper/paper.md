@@ -24,20 +24,23 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
-original Writing and Speaking task banks built on the question families and word lists that recur in
+raw-score conversion tables that map correct answers out of 40 to band scores for Listening and
+Reading, compiled from the partners' published scoring guidance; original Writing and Speaking task
+banks built on the question families and word lists that recur in
 IELTS preparation material [@coxhead2000]; a canonical taxonomy of the thirteen IELTS Reading and
 Listening question types, onto which 65 free-text annotation labels are normalised, carrying the
 frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
-1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of four open IELTS collections, including a grey-literature archive index that
-catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
-twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; a mock-exam layer
+that composes the official four-paper format, the observed question-type mix and the task banks into
+a deterministic, date-seeded exam blueprint; and curated metadata indexes of four open IELTS
+collections, including a grey-literature archive index that catalogues the Cambridge IELTS 1-18
+listening audio by naming era and completeness, measures the twelve official sample tasks for
+readability, and summarises 24 marked learner essays as derived statistics.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -95,6 +98,23 @@ caveat that receiving institutions apply their own rules.
 recurring question families (opinion, discussion, advantages/disadvantages, problem/solution,
 two-part), 80 Speaking items across Parts 1-3, and 10 Writing Task 1 task families with response
 structure and timing guidance.
+
+**Raw-score conversion tables and the mock-exam layer.** A mock-exam site is only as good as its
+scoring: a candidate sits a paper, counts correct answers out of 40, and needs a reproducible,
+citable answer for "what band is 27 out of 40?". The API publishes the partners' raw-to-band
+guidance [@ieltsrawscoreguidance] as three machine-readable tables — one Listening table (shared by both
+modules, because the paper and marking are identical) and separate Academic and General Training
+Reading tables. Only rows that appear identically in at least two independent reproductions are
+published; below band 3.0, where the published tables diverge, the API returns `null` rather than a
+number it cannot source consistently. Each conversion names the matched range and the margins to
+the neighbouring bands, so "three more correct answers takes 6.5 to 7.0" is derivable without the
+API pretending to be the examiner. On top of the tables sits a mock-exam blueprint that composes the
+official four-paper format (timings, part contexts, word minima), the question-type frequencies
+observed in the practice-test index (allocated to exactly 40 questions by the largest-remainder
+method), the Writing and Speaking task banks, and links to practice material of a matching CEFR
+difficulty — all selected from a date-and-seed hash, so identical requests produce byte-identical
+exams. The blueprint publishes structure, timings, mixes and links only: no passage, question,
+answer key or transcript is ever redistributed.
 
 **Corpus index.** Metadata — path, normalised title, category, skill, format, size, blob SHA-1 —
 for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file repository. No
@@ -178,7 +198,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (539 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
