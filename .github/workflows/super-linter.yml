@@ -69,7 +69,7 @@ jobs:
             echo "VALIDATE_CHECKOV=true"
             # Linter configuration files, all committed at the repository root
             # and mounted at /tmp/lint.
-            echo "LINTER_RULES_PATH=/tmp/lint"
+            echo "LINTER_RULES_PATH=."
             echo "MARKDOWN_CONFIG_FILE=.markdown-lint.yml"
             echo "YAML_CONFIG_FILE=.yamllint.yml"
             echo "ESLINT_CONFIG_FILE=eslint.config.js"
