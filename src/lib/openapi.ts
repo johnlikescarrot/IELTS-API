@@ -5,7 +5,10 @@
  * from the implementation: adding a route automatically documents it.
  */
 
+import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
+import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
@@ -136,7 +139,70 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/topics/themes': [
+    QUERY,
+    { name: 'group', in: 'query', schema: { type: 'string', enum: [...THEME_GROUPS] } },
+    {
+      name: 'skill',
+      in: 'query',
+      schema: { type: 'string', enum: ['listening', 'reading', 'writing', 'speaking'] },
+    },
+  ],
   '/v1/tasks/writing': [{ name: 'module', in: 'query', schema: { type: 'string', enum: [...TASK_MODULES] } }],
+  '/v1/question-types': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
+    { name: 'family', in: 'query', schema: { type: 'string', enum: [...QUESTION_TYPE_FAMILIES] } },
+  ],
+  '/v1/tests/items': [
+    QUERY,
+    {
+      name: 'collection',
+      in: 'query',
+      description: 'Comma-separated collections.',
+      schema: { type: 'string', enum: [...PRACTICE_COLLECTIONS] },
+    },
+    {
+      name: 'skill',
+      in: 'query',
+      description: 'Comma-separated skills.',
+      schema: { type: 'string', enum: [...PRACTICE_SKILLS] },
+    },
+    {
+      name: 'level',
+      in: 'query',
+      description: 'Comma-separated CEFR bands.',
+      schema: { type: 'string', enum: CEFR_BANDS.map((band) => band.toLowerCase()) },
+    },
+    {
+      name: 'type',
+      in: 'query',
+      description: 'Comma-separated canonical question types; items must contain all of them.',
+      schema: { type: 'string', enum: [...QUESTION_TYPE_IDS] },
+    },
+    { name: 'minQuestions', in: 'query', schema: { type: 'integer', minimum: 0, maximum: 1000 } },
+    { name: 'maxQuestions', in: 'query', schema: { type: 'integer', minimum: 0, maximum: 1000 } },
+    {
+      name: 'minReadingEase',
+      in: 'query',
+      description: 'Minimum Flesch Reading Ease; drops items without a written passage.',
+      schema: { type: 'number' },
+    },
+    { name: 'maxReadingEase', in: 'query', schema: { type: 'number' } },
+    { name: 'audio', in: 'query', schema: { type: 'boolean', default: false } },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: {
+        type: 'string',
+        enum: ['id', 'title', 'questions', 'words', 'reading-ease', 'grade'],
+        default: 'id',
+      },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
   '/v1/corpus/items': [
     QUERY,
     { name: 'category', in: 'query', schema: { type: 'string' } },
@@ -253,8 +319,9 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'descriptors, score concordances, Writing and Speaking task banks, a canonical',
+        'question-type taxonomy with observed frequencies, a structure and readability',
+        'index of 1,702 practice tests, and an index of the open IELTS research corpus.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

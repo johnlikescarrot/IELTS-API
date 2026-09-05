@@ -8,6 +8,7 @@
 
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
+import { practiceStats } from '../data/practiceTests.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -48,6 +49,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const practice = practiceStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -95,6 +97,8 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
+  <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
+  <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
 </ul>
 
 <h2>Versioned endpoints</h2>

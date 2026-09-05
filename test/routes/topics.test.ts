@@ -3,7 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestServer } from '../helpers/server.js';
 
 import type { TestServer } from '../helpers/server.js';
-import type { SpeakingTopic, TaskType, WritingTopic } from '../../src/types.js';
+import type { ExamTheme, SpeakingTopic, TaskType, WritingTopic } from '../../src/types.js';
 
 let server: TestServer;
 
@@ -87,5 +87,35 @@ describe('GET /v1/tasks/writing', () => {
 
   it('rejects unknown modules', async () => {
     expect((await server.json('/v1/tasks/writing?module=academic-writing')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/topics/themes', () => {
+  it('returns the fifty recurring themes', async () => {
+    const response = await server.json<ExamTheme[]>('/v1/topics/themes');
+    expect(response.status).toBe(200);
+    expect(response.data).toHaveLength(50);
+    expect(response.meta.total).toBe(50);
+    expect(response.meta.group).toBeNull();
+    expect(response.meta.skill).toBeNull();
+    expect(response.meta.groups).toContain('environment');
+  });
+
+  it('filters by group, paper and free text', async () => {
+    const group = await server.json<ExamTheme[]>('/v1/topics/themes?group=health');
+    expect(group.data.every((theme) => theme.group === 'health')).toBe(true);
+    expect(group.meta.group).toBe('health');
+
+    const speaking = await server.json<ExamTheme[]>('/v1/topics/themes?skill=speaking');
+    expect(speaking.data.every((theme) => theme.skills.includes('speaking'))).toBe(true);
+
+    const search = await server.json<ExamTheme[]>('/v1/topics/themes?q=recycling');
+    expect(search.data).toHaveLength(1);
+    expect(search.data[0]!.group).toBe('environment');
+  });
+
+  it('rejects unknown groups and papers', async () => {
+    expect((await server.json('/v1/topics/themes?group=nope')).status).toBe(400);
+    expect((await server.json('/v1/topics/themes?skill=nope')).status).toBe(400);
   });
 });

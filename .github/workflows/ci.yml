@@ -124,4 +124,40 @@ jobs:
 
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); print('datasets are valid JSON')"
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); print('datasets are valid JSON')"
+
+      - name: Check the practice-test index for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+          import sys
+
+          sys.path.insert(0, 'scripts')
+          from extract_practice_tests import CANONICAL_TYPES, TYPE_ALIASES, normalise_type
+
+          index = json.load(open('data/practice-tests.json'))
+          items, stats = index['items'], index['stats']
+
+          assert stats['indexedItems'] == len(items), 'indexedItems disagrees with items'
+          assert sum(item['questions'] for item in items) == stats['questions'], 'question totals differ'
+          assert sum(stats['questionTypes'].values()) == stats['questions'], 'type totals differ'
+          assert len({item['id'] for item in items}) == len(items), 'duplicate identifiers'
+
+          for label, mapping in stats['rawLabels'].items():
+              assert normalise_type(label) == mapping['canonical'], f'stale mapping for {label}'
+
+          for item in items:
+              assert sum(item['typeCounts'].values()) == item['questions'], item['id']
+              assert sorted(item['typeCounts']) == item['questionTypes'], item['id']
+              assert set(item['questionTypes']) <= set(CANONICAL_TYPES), item['id']
+              assert item['sourcePath'] in item['sourceUrl'], item['id']
+              assert len(item['sha1'] or '') == 40, item['id']
+              if item['skill'] == 'listening':
+                  assert item['readability'] is None, item['id']
+
+          print(
+              f"practice-test index consistent: {len(items)} items, "
+              f"{stats['questions']} questions, "
+              f"{len(TYPE_ALIASES)} aliases -> {len(CANONICAL_TYPES)} canonical types"
+          )
+          PY

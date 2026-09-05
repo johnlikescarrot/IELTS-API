@@ -4,13 +4,16 @@
 
 import { ESSAY_QUESTION_TYPES, SPEAKING_TOPICS, WRITING_CATEGORIES, WRITING_TOPICS } from '../data/topics.js';
 import { TASK_MODULES, findTaskTypes } from '../data/tasks.js';
+import { THEME_GROUPS, findThemes } from '../data/themes.js';
 import { matchesQuery, paginate } from '../lib/search.js';
 import { getEnum, getInt, getString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
+import type { Skill } from '../types.js';
 
 const PARTS = [1, 2, 3] as const;
+const SKILLS = ['listening', 'reading', 'writing', 'speaking'] as const satisfies readonly Skill[];
 
 /** Writing Task 2 prompt bank. */
 function writingTopics(context: RouteContext): HandlerResult {
@@ -80,6 +83,29 @@ function speakingTopics(context: RouteContext): HandlerResult {
   };
 }
 
+/** Recurring exam themes. */
+function themes(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const group = getEnum(params, 'group', THEME_GROUPS);
+  const skill = getEnum(params, 'skill', SKILLS);
+  const query = getString(params, 'q') ?? '';
+  const filtered = findThemes({
+    ...(group === undefined ? {} : { group }),
+    ...(skill === undefined ? {} : { skill }),
+    ...(query.length === 0 ? {} : { query }),
+  });
+  return {
+    data: filtered,
+    meta: {
+      total: filtered.length,
+      group: group ?? null,
+      skill: skill ?? null,
+      groups: THEME_GROUPS,
+      note: 'Themes recur across all four papers; the keyword sets are original collocation lists.',
+    },
+  };
+}
+
 /** Writing Task 1 task families. */
 function writingTasks(context: RouteContext): HandlerResult {
   const params = toParams(context.url);
@@ -106,6 +132,13 @@ export const topicRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Speaking Part 1, 2 and 3 items.',
     handler: speakingTopics,
+  },
+  {
+    method: 'GET',
+    path: '/v1/topics/themes',
+    versioned: true,
+    summary: 'Fifty recurring exam themes, grouped and keyed by paper.',
+    handler: themes,
   },
   {
     method: 'GET',

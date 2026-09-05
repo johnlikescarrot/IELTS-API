@@ -16,6 +16,9 @@
     "vocabulary",
     "band descriptors",
     "score concordance",
+    "question types",
+    "readability",
+    "CEFR",
     "open data",
     "REST API"
   ],
@@ -28,6 +31,11 @@
     },
     {
       "identifier": "https://github.com/zhengyishiming/IELTS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }

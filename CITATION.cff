@@ -2,16 +2,20 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.0.0
-date-released: '2026-09-04'
+version: 1.1.0
+date-released: '2026-09-05'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
   Cambridge IELTS volumes 1-22 vocabulary lists, condensed analytic band
   descriptors for Speaking and Writing across bands 0-9, indicative score
   concordances for CEFR, TOEFL iBT, the Cambridge English Scale, PTE Academic
-  and the Duolingo English Test, Writing and Speaking task banks, and a curated
-  index of an open IELTS research corpus. Every endpoint is free of charge,
+  and the Duolingo English Test, Writing and Speaking task banks, a canonical
+  taxonomy of the thirteen IELTS Reading and Listening question types with the
+  frequencies observed in 27,225 practice questions, a structure and
+  readability index of 1,702 practice tests and CEFR-graded reading lessons,
+  fifty recurring exam themes, and a curated index of an open IELTS research
+  corpus. Every endpoint is free of charge,
   requires no authentication, returns a uniform JSON envelope with a stable
   ETag, and is covered by a test suite with 100% statement, branch, function
   and line coverage. The API is designed for reproducible second-language
@@ -23,6 +27,10 @@ keywords:
   - vocabulary
   - band descriptors
   - score concordance
+  - question types
+  - readability
+  - Flesch Reading Ease
+  - CEFR
   - open data
   - REST API
   - TypeScript
@@ -57,6 +65,24 @@ references:
     title: '1-22yas.xlsx: Cambridge IELTS volumes 1-22 vocabulary lists'
     url: 'https://github.com/zhengyishiming/IELTS/blob/main/1-22yas.xlsx'
     year: 2024
+  - type: dataset
+    authors:
+      - name: 'ngoclong1209'
+    title: 'UPGRADE YOUR IELTS SKILLS: a practice-test collection'
+    url: 'https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS'
+    year: 2026
+  - type: article
+    authors:
+      - family-names: 'Flesch'
+        given-names: 'Rudolf'
+    title: 'A new readability yardstick'
+    journal: 'Journal of Applied Psychology'
+    volume: 32
+    issue: 3
+    start: 221
+    end: 233
+    year: 1948
+    doi: '10.1037/h0057532'
   - type: manual
     authors:
       - name: 'British Council'
@@ -83,7 +109,7 @@ preferred-citation:
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.0.0
+  version: 1.1.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:
