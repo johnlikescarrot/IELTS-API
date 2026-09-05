@@ -60,3 +60,6 @@ jobs:
           done
           kill "${SERVER_PID}"
           test -s docs/openapi.json
+          # Keep the committed snapshot in the repository's Prettier format so
+          # that the CI format gate cannot drift from the generated artefact.
+          npx prettier --write docs/openapi.json

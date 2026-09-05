@@ -6,6 +6,46 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-05
+
+The **lexical network release**: the vocabulary dataset turns into a citable graph, and the API starts
+generating assessment items. Every headword that occurs inside another entry's gloss becomes a
+weighted, directed edge, so the 4,174-entry dataset is now also a 25,191-edge definitional network
+with published degree, component and hub statistics; on top of it, two seeded drill generators emit
+reproducible multiple-choice cloze and word–definition matching sets. The API remains free, GET-only,
+authentication-free and dependency-free.
+
+### Added
+
+- **Lexical network** (`GET /v1/lexgraph`): whole-graph statistics derived from the dataset's own
+  glosses — 4,174 nodes, 25,191 directed edges, 27,855 counted mentions, mean degree 12.07,
+  density 0.001446, 92 connected components with a giant component covering 97.8% of nodes, a
+  degree histogram and ranked hub words (`act`, `usually`, `can`, `state`, …). Tokenisation,
+  self-mention exclusion and gloss de-duplication are documented in `RESEARCH.md` Part V.
+- **Network neighbours** (`GET /v1/lexgraph/:word`): every adjacent headword in either direction
+  (`direction=defines|used-by|both`), with edge weight, part of speech, gloss and the Cambridge
+  volumes the two entries share; filterable by `minWeight`, sortable by `weight` or `word`,
+  paginated.
+- **Definition cloze generator** (`GET /v1/drills/cloze`): multiple-choice items cut from the 1,711
+  glosses that mention their own headword; the word is blanked out of its definition, distractors are
+  same-part-of-speech headwords that never occur in the item text, and `seed` (default: today's date)
+  makes the item set citable from the request URL. Filterable by `pos` and `volume`; 2–6 `options`.
+- **Word–definition matching generator** (`GET /v1/drills/matching`): seeded `count`-pair matching
+  sets drawn from the 4,026 entries with unique gloss texts, so every set has exactly one valid
+  solution; the answer key ships in the same response.
+- `src/lib/lexgraph.ts` and `src/lib/drills.ts` are exported from the package entry point, so the
+  network and the generators can be used without the HTTP layer; both accept custom entry pools
+  (a single volume, a part-of-speech slice) for subset analyses, and both are pure functions of the
+  dataset.
+
+### Changed
+
+- `shuffled()` added to `src/lib/rng.ts`: a seeded Fisher–Yates permutation for presentation orders
+  (drill options, matching sides) that must stay reproducible.
+- The `/docs` page and the OpenAPI document list the new endpoints and the new `direction`,
+  `minWeight` and `seed` parameters; the service description now mentions the lexical network and
+  the drill generators.
+
 ## [1.2.0] - 2026-09-05
 
 Two additions in one release: the **toolkit** — the first capabilities that consume text as well as

@@ -7,7 +7,9 @@
 
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
+import { drillRoutes } from './drills.js';
 import { frameworkRoutes } from './frameworks.js';
+import { lexgraphRoutes } from './lexgraph.js';
 import { materialRoutes } from './materials.js';
 import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
@@ -24,6 +26,8 @@ import type { RouteDefinition } from '../lib/route.js';
 /** Domain routes (all versioned under `/v1`). */
 export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...vocabularyRoutes,
+  ...lexgraphRoutes,
+  ...drillRoutes,
   ...bandRoutes,
   ...scoreRoutes,
   ...topicRoutes,

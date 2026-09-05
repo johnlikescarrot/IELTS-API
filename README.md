@@ -32,12 +32,16 @@ The API also analyses text, not just publishes it: `/v1/tools/readability` score
 the Flesch formulas and places it next to the corpus group means, `/v1/tools/essay-profile` turns a
 writing sample into lexical, structural and theme measurements with descriptor-aligned hints, and
 `/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule.
+Since v1.3 the vocabulary dataset is also exposed as a **definitional lexical network** — 25,191
+directed cross-reference edges recovered by matching headwords inside the dataset's own glosses —
+and as a **generator of seeded, reproducible vocabulary drills** (definition cloze and
+word–definition matching) whose item sets can be cited straight from the request URL.
 
 ## Quick start
 
 ```bash
 npx ielts-api                 # or: npm install -g ielts-api
-# ielts-api 1.0.0 listening on http://0.0.0.0:3000
+# ielts-api 1.3.0 listening on http://0.0.0.0:3000
 ```
 
 ```bash
@@ -52,6 +56,12 @@ curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
 
 # Flesch readability of any text, placed against the corpus groups
 curl -s "http://localhost:3000/v1/tools/readability?text=Dogs%20run%20fast.%20Cats%20sleep%20a%20lot."
+
+# The definitional lexical network of a headword: what defines it, what it defines
+curl -s "http://localhost:3000/v1/lexgraph/abandon?direction=defines"
+
+# A five-item multiple-choice cloze drill, reproducible from the URL alone
+curl -s "http://localhost:3000/v1/drills/cloze?seed=study-2026&count=5&pos=verb"
 
 # A deterministic eight-week study plan towards band 7
 curl -s "http://localhost:3000/v1/study/plan?target=7&writing=6&speaking=6.5"
@@ -97,6 +107,8 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
 | Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
+| Definitional lexical network    |             4,174 nodes / 25,191 edges / 27,855 mentions | `/v1/lexgraph`          | Derived from the vocabulary dataset's own glosses                              |
+| Vocabulary drills               |                   1,711-item cloze pool; seeded matching | `/v1/drills/*`          | Deterministic generation from the vocabulary dataset                           |
 | Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
@@ -118,6 +130,10 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/vocabulary/random`   | Seeded random sample (`count`, `seed`)                                                                  |
 | GET    | `/v1/vocabulary/daily`    | Deterministic entry for a date (`date`, `count`)                                                        |
 | GET    | `/v1/vocabulary/:word`    | Look up one headword                                                                                    |
+| GET    | `/v1/lexgraph`            | Lexical-network statistics: size, degrees, components, hubs (`limit`)                                   |
+| GET    | `/v1/lexgraph/:word`      | Adjacent words of a headword (`direction`, `minWeight`, `sort`, `order`, `limit`, `offset`)             |
+| GET    | `/v1/drills/cloze`        | Seeded multiple-choice definition cloze (`count`, `options`, `seed`, `pos`, `volume`)                   |
+| GET    | `/v1/drills/matching`     | Seeded word–definition matching set with exact answer key (`count`, `seed`)                             |
 | GET    | `/v1/bands`               | The band scale with indicative CEFR levels                                                              |
 | GET    | `/v1/bands/descriptors`   | Band descriptors (`set`, `criterion`, `band`)                                                           |
 | GET    | `/v1/bands/:band`         | One band, with the descriptors that bracket it                                                          |
@@ -211,6 +227,56 @@ GET /v1/tools/essay-profile?text=Governments%20should%20invest%20in%20public%20t
   }
 }
 ```
+
+**The lexical network.** Every headword that occurs in another entry's gloss becomes a directed,
+weighted edge. `/v1/lexgraph/abandon?direction=defines` returns what the Cambridge glosses use to
+define `abandon`:
+
+```jsonc
+GET /v1/lexgraph/abandon?direction=defines
+{
+  "status": 200,
+  "data": [
+    { "id": "w03868", "word": "trait",     "partOfSpeech": "noun",      "relation": "defines",
+      "definition": "a distinguishing feature of your personal nature.",
+      "weight": 1, "sharedVolumes": [] },
+    { "id": "w03055", "word": "reckless",  "partOfSpeech": "adjective", "relation": "defines",
+      "definition": "marked by defiant disregard for danger or consequences.",
+      "weight": 1, "sharedVolumes": [18] }
+    // ... freedom, feeling, emotional, intensity
+  ],
+  "meta": { "word": "abandon", "total": 6, "direction": "defines", "minWeight": 1, "sort": "weight" }
+}
+```
+
+`GET /v1/lexgraph` reports the whole network: 4,174 nodes, 25,191 directed edges, 27,855 counted
+mentions, 92 components with a giant component of 4,081 nodes (97.8%), and hub words such as `act`
+(575 weighted mentions).
+
+**Generated drills.** Cloze and matching items are pure functions of the seed, so an experiment can
+cite the generating URL and anyone can re-fetch the exact item set:
+
+```jsonc
+GET /v1/drills/cloze?seed=study-2026&count=1&options=4&pos=verb
+{
+  "status": 200,
+  "data": [
+    {
+      "id": "w00700",
+      "text": "_____, fasten, or put together two or more pieces.",
+      "source": "definition",
+      "options": ["irritate", "conceal", "connect", "rob"],
+      "answerIndex": 2, "answer": "connect",
+      "partOfSpeech": "verb", "volumes": [20], "morphemes": null
+    }
+  ],
+  "meta": { "seed": "study-2026", "requested": 1, "generated": 1, "pool": 154,
+            "optionCount": 4, "answerKeyIncluded": true }
+}
+```
+
+Distractors are same-part-of-speech headwords that never occur as tokens in the item text, so no
+option can be eliminated by surface overlap with the sentence.
 
 **Study planning.** The planner weights the gaps into weekly hours, splits the weeks into
 foundation, practice and polish phases, and links every week to the endpoints that supply its
@@ -323,7 +389,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 520 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -354,7 +420,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.2.0},
+  version = {1.3.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }

@@ -59,3 +59,27 @@ export function seededIndices(seed: string, population: number, count: number): 
   }
   return indices.slice(0, size).sort((a, b) => a - b);
 }
+
+/**
+ * Deterministically permute a list (Fisher-Yates).
+ *
+ * Unlike {@link seededIndices}, which returns ascending indices, this keeps a
+ * genuine shuffled order: useful when the presentation order of drill options
+ * must itself be reproducible.
+ *
+ * @param seed - Seed string; identical seeds return identical permutations.
+ * @param items - Items to permute; the input is not modified.
+ * @returns A new array holding the items in seeded order.
+ */
+export function shuffled<T>(seed: string, items: readonly T[]): T[] {
+  const result = [...items];
+  const random = mulberry32(hashString(seed));
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(random() * (index + 1));
+    const left = result[index] as T;
+    const right = result[swap] as T;
+    result[index] = right;
+    result[swap] = left;
+  }
+  return result;
+}

@@ -84,6 +84,73 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     },
     { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 10, default: 1 } },
   ],
+  '/v1/lexgraph': [
+    {
+      name: 'limit',
+      in: 'query',
+      description: 'Number of hub words to list (1-50).',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+  ],
+  '/v1/lexgraph/:word': [
+    {
+      name: 'direction',
+      in: 'query',
+      description: 'Which side of the network to return.',
+      schema: { type: 'string', enum: ['defines', 'used-by', 'both'], default: 'both' },
+    },
+    {
+      name: 'minWeight',
+      in: 'query',
+      description: 'Minimum edge weight (occurrences in glosses).',
+      schema: { type: 'integer', minimum: 1, maximum: 1000, default: 1 },
+    },
+    { name: 'sort', in: 'query', schema: { type: 'string', enum: ['weight', 'word'], default: 'weight' } },
+    {
+      name: 'order',
+      in: 'query',
+      description: 'Sort direction. Defaults to `desc` for weight, `asc` for word.',
+      schema: { type: 'string', enum: ['asc', 'desc'] },
+    },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/drills/cloze': [
+    { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 20, default: 5 } },
+    {
+      name: 'options',
+      in: 'query',
+      description: 'Options per item, including the answer.',
+      schema: { type: 'integer', minimum: 2, maximum: 6, default: 4 },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Generation seed; identical seeds return identical items. Defaults to the current date.',
+      schema: { type: 'string' },
+    },
+    { name: 'pos', in: 'query', schema: { type: 'string', enum: [...PARTS_OF_SPEECH] } },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Comma-separated Cambridge IELTS volumes (1-22).',
+      schema: { type: 'string', example: '10,11,12' },
+    },
+  ],
+  '/v1/drills/matching': [
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Number of word-definition pairs.',
+      schema: { type: 'integer', minimum: 2, maximum: 10, default: 4 },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Generation seed; identical seeds return identical sets. Defaults to the current date.',
+      schema: { type: 'string' },
+    },
+  ],
   '/v1/bands/descriptors': [
     {
       name: 'set',
@@ -433,7 +500,9 @@ export function openApiDocument(
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, and an index of a 2,385-file',
         'self-study materials collection. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        '(readability and essay profile), maps every headword into a citable',
+        'definitional lexical network, generates seeded reproducible vocabulary',
+        'drills, and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
