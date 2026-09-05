@@ -85,9 +85,14 @@ jobs:
         run: |
           sudo python3 - <<'PY'
           from pathlib import Path
+          import re
           log = Path('super-linter.log')
           if log.exists():
-              text = '\n'.join(log.read_text(errors='replace').splitlines()[-100:])
-              text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
-              print(f'::error title=Super-Linter diagnostics::{text}')
+              text = log.read_text(errors='replace')
+              failures = re.findall(r'Errors found in (\w+)', text)
+              for group in failures or ['startup']:
+                  match = re.search(r'::group::' + group + r'\n(.*?)::endgroup::', text, re.S)
+                  detail = match.group(1)[-14000:] if match else '\n'.join(text.splitlines()[-40:])
+                  escaped = detail.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+                  print(f'::error title=Super-Linter {group}::{escaped}')
           PY
