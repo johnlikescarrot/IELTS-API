@@ -7,9 +7,10 @@ import {
   QUESTION_TYPE_IDS,
   findQuestionType,
   questionTypesWithFrequency,
+  resolveQuestionTypeLabel,
 } from '../data/questionTypes.js';
 import { PRACTICE_SKILLS, practiceMeta } from '../data/practiceTests.js';
-import { getEnum, getString, toParams } from '../lib/query.js';
+import { getEnum, getString, requireString, toParams } from '../lib/query.js';
 import { matchesQuery } from '../lib/search.js';
 import { notFound } from '../lib/errors.js';
 
@@ -45,6 +46,22 @@ function index(context: RouteContext): HandlerResult {
   };
 }
 
+/** Resolve a heterogeneous corpus label to a canonical question type. */
+function resolve(context: RouteContext): HandlerResult {
+  const label = requireString(toParams(context.url), 'label');
+  const resolution = resolveQuestionTypeLabel(label);
+  if (resolution === undefined) {
+    throw notFound(`No canonical question type matches label "${label}".`, {
+      label,
+      hint: 'Use /v1/question-types to inspect canonical ids and known upstream labels.',
+    });
+  }
+  return {
+    data: resolution,
+    meta: { deterministic: true, normalisation: 'case-insensitive; punctuation and separators ignored' },
+  };
+}
+
 /** One canonical question type. */
 function detail(context: RouteContext): HandlerResult {
   const id = context.params['id'] as string;
@@ -57,6 +74,13 @@ function detail(context: RouteContext): HandlerResult {
 
 /** Question-type routes. */
 export const questionTypeRoutes: readonly RouteDefinition[] = [
+  {
+    method: 'GET',
+    path: '/v1/question-types/resolve',
+    versioned: true,
+    summary: 'Resolve a corpus label to one canonical IELTS question type.',
+    handler: resolve,
+  },
   {
     method: 'GET',
     path: '/v1/question-types',

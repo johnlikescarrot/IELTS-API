@@ -681,3 +681,16 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Comparative design review: online test-centre taxonomies
+
+A design review of [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)
+(snapshot inspected 2026-09-05) found separate machine-readable Reading and Listening taxonomies,
+including grouped question ranges, contextual labels and difficulty fields. This reinforced a general
+interoperability requirement: an API should not force downstream test banks to adopt its spelling of a
+question type before they can join data. The resulting `/v1/question-types/resolve` endpoint maps the
+65 labels already observed in this project's provenance chain, as well as canonical ids and display
+names, onto the 13-family taxonomy. Matching is deterministic and deliberately not fuzzy.
+
+No content was copied from the comparison repository: it declares no repository licence, so it was
+used only for architectural observation.

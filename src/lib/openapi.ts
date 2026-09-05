@@ -152,6 +152,15 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     },
   ],
   '/v1/tasks/writing': [{ name: 'module', in: 'query', schema: { type: 'string', enum: [...TASK_MODULES] } }],
+  '/v1/question-types/resolve': [
+    {
+      name: 'label',
+      in: 'query',
+      required: true,
+      description: 'Canonical id, display name or known corpus label to normalise.',
+      schema: { type: 'string', example: 'fill-in-blank' },
+    },
+  ],
   '/v1/question-types': [
     QUERY,
     { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },

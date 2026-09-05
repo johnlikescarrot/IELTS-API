@@ -349,3 +349,51 @@ export function findQuestionType(id: string): QuestionTypeWithFrequency | undefi
   const needle = id.trim().toLowerCase();
   return questionTypesWithFrequency().find((type) => type.id === needle);
 }
+
+/** Result of normalising a corpus label onto the canonical taxonomy. */
+export type QuestionTypeResolution = {
+  /** Canonical type, enriched with corpus frequencies. */
+  type: QuestionTypeWithFrequency;
+  /** Namespace in which the input matched. */
+  matchedBy: 'canonical-id' | 'name' | 'upstream-label';
+  /** Authoritative spelling of the matched label. */
+  matchedLabel: string;
+  /** Frequency of an upstream label, or `null` for taxonomy-owned labels. */
+  occurrences: number | null;
+};
+
+function normaliseLabel(label: string): string {
+  return label
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
+}
+
+/**
+ * Resolve heterogeneous corpus terminology to one canonical question type.
+ * Separators and case are ignored, but partial/fuzzy matches are deliberately
+ * rejected so automated data pipelines cannot silently misclassify an item.
+ */
+export function resolveQuestionTypeLabel(label: string): QuestionTypeResolution | undefined {
+  const needle = normaliseLabel(label);
+  const types = questionTypesWithFrequency();
+  const idMatch = types.find((type) => type.id === label.trim().toLowerCase());
+  if (idMatch !== undefined) {
+    return { type: idMatch, matchedBy: 'canonical-id', matchedLabel: idMatch.id, occurrences: null };
+  }
+  const nameMatch = types.find((type) => normaliseLabel(type.name) === needle);
+  if (nameMatch !== undefined) {
+    return { type: nameMatch, matchedBy: 'name', matchedLabel: nameMatch.name, occurrences: null };
+  }
+  const rawLabels = Object.entries(practiceStats().rawLabels);
+  const exactRaw = label.trim().toLowerCase();
+  const rawMatch =
+    rawLabels.find(([raw]) => raw.toLowerCase() === exactRaw) ??
+    rawLabels.find(([raw]) => normaliseLabel(raw) === needle);
+  if (rawMatch === undefined) {
+    return undefined;
+  }
+  const [matchedLabel, mapping] = rawMatch;
+  const type = types.find((candidate) => candidate.id === mapping.canonical) as QuestionTypeWithFrequency;
+  return { type, matchedBy: 'upstream-label', matchedLabel, occurrences: mapping.occurrences };
+}

@@ -49,6 +49,25 @@ describe('GET /v1/question-types', () => {
   });
 });
 
+describe('GET /v1/question-types/resolve', () => {
+  it('normalises an upstream label to the canonical taxonomy', async () => {
+    const response = await server.json<{
+      type: QuestionTypeWithFrequency;
+      matchedBy: string;
+      matchedLabel: string;
+    }>('/v1/question-types/resolve?label=fill-in-blank');
+    expect(response.status).toBe(200);
+    expect(response.data.type.id).toBe('summary-completion');
+    expect(response.data.matchedBy).toBe('upstream-label');
+    expect(response.data.matchedLabel).toBe('fill_in_blank');
+  });
+
+  it('requires a known label', async () => {
+    expect((await server.json('/v1/question-types/resolve')).status).toBe(400);
+    expect((await server.json('/v1/question-types/resolve?label=unknown')).status).toBe(404);
+  });
+});
+
 describe('GET /v1/question-types/:id', () => {
   it('returns one type with strategy, traps and label variants', async () => {
     const response = await server.json<QuestionTypeWithFrequency>('/v1/question-types/true-false-not-given');

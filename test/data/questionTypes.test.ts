@@ -6,6 +6,7 @@ import {
   QUESTION_TYPE_IDS,
   findQuestionType,
   questionTypesWithFrequency,
+  resolveQuestionTypeLabel,
 } from '../../src/data/questionTypes.js';
 import { practiceStats } from '../../src/data/practiceTests.js';
 
@@ -88,5 +89,27 @@ describe('findQuestionType', () => {
 
   it('returns undefined for an unknown identifier', () => {
     expect(findQuestionType('gap-fill')).toBeUndefined();
+  });
+});
+
+describe('resolveQuestionTypeLabel', () => {
+  it('resolves canonical ids, display names and punctuation variants', () => {
+    expect(resolveQuestionTypeLabel('Matching-Headings')).toMatchObject({
+      type: { id: 'matching-headings' },
+      matchedBy: 'canonical-id',
+    });
+    expect(resolveQuestionTypeLabel('matching headings')).toMatchObject({
+      type: { id: 'matching-headings' },
+      matchedBy: 'name',
+    });
+    expect(resolveQuestionTypeLabel(' TRUE_FALSE_NOT_GIVEN ')).toMatchObject({
+      type: { id: 'true-false-not-given' },
+      matchedBy: 'upstream-label',
+      matchedLabel: 'true_false_not_given',
+    });
+  });
+
+  it('returns undefined when no known label is equivalent', () => {
+    expect(resolveQuestionTypeLabel('mystery exercise')).toBeUndefined();
   });
 });
