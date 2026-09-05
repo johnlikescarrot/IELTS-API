@@ -81,6 +81,13 @@ jobs:
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Make container-generated diagnostics readable
+        if: always()
+        run: |
+          for report in super-linter.log super-linter-output; do
+            if [ -e "${report}" ]; then sudo chmod -R a+rX -- "${report}"; fi
+          done
+
       - name: Annotate failed Super-Linter diagnostics
         if: failure()
         run: |
