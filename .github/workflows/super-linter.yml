@@ -3,6 +3,11 @@ name: super-linter
 # super-linter runs on every push, every pull request, weekly, and on demand.
 # It is the project's single source of truth for style across TypeScript,
 # JavaScript, JSON, YAML, Markdown, Dockerfiles, shell scripts and workflows.
+#
+# The job runs the official super-linter container directly (the documented
+# "run it inside a container" usage). This is equivalent to the `uses:` form
+# but lets the job publish a readable diagnostic in the step summary even when
+# the raw Actions log is not reachable.
 
 on:
   push:
@@ -32,39 +37,77 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Write super-linter configuration
+        run: |
+          {
+            echo "DEFAULT_BRANCH=main"
+            echo "DEFAULT_WORKSPACE=/tmp/lint"
+            echo "VALIDATE_ALL_CODEBASE=true"
+            # The generated datasets are machine-written: never lint them.
+            echo "FILTER_REGEX_EXCLUDE=.*(data/|coverage/|dist/).*"
+            # Languages enabled for this repository.
+            echo "VALIDATE_JAVASCRIPT_ES=true"
+            echo "VALIDATE_TYPESCRIPT_ES=true"
+            echo "VALIDATE_JSON=true"
+            echo "VALIDATE_YAML=true"
+            echo "VALIDATE_MARKDOWN=true"
+            echo "VALIDATE_DOCKERFILE_HADOLINT=true"
+            echo "VALIDATE_BASH=true"
+            echo "VALIDATE_BASH_EXEC=true"
+            echo "VALIDATE_GITHUB_ACTIONS=true"
+            echo "VALIDATE_EDITORCONFIG=true"
+            echo "VALIDATE_ENV=true"
+            echo "VALIDATE_GITLEAKS=true"
+            echo "VALIDATE_CHECKOV=true"
+            # Deliberately disabled: the code base is TypeScript-only and the
+            # extraction scripts are standalone Python utilities with their own
+            # formatting.
+            # Linter configuration files, all committed at the repository root
+            # and mounted at /tmp/lint.
+            echo "LINTER_RULES_PATH=/tmp/lint"
+            echo "MARKDOWN_CONFIG_FILE=.markdown-lint.yml"
+            echo "YAML_CONFIG_FILE=.yamllint.yml"
+            echo "ESLINT_CONFIG_FILE=eslint.config.js"
+            echo "ESLINT_USE_FLAT_CONFIG=true"
+          } > /tmp/super-linter.env
+
       - name: Run super-linter
-        uses: super-linter/super-linter/slim@v8.3.1
-        env:
-          DEFAULT_BRANCH: main
-          DEFAULT_WORKSPACE: ${{ github.workspace }}
-          VALIDATE_ALL_CODEBASE: true
-          # The generated datasets are machine-written: never lint them.
-          FILTER_REGEX_EXCLUDE: .*(data/|coverage/|dist/).*
-          # Languages enabled for this repository.
-          VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_TYPESCRIPT_ES: true
-          VALIDATE_JSON: true
-          VALIDATE_YAML: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_DOCKERFILE_HADOLINT: true
-          VALIDATE_BASH: true
-          VALIDATE_BASH_EXEC: true
-          VALIDATE_GITHUB_ACTIONS: true
-          VALIDATE_EDITORCONFIG: true
-          VALIDATE_ENV: true
-          VALIDATE_GITLEAKS: true
-          VALIDATE_CHECKOV: true
-          # Deliberately disabled: the code base is TypeScript-only and the
-          # extraction scripts are standalone Python utilities with their own
-          # formatting.
-          # Linter configuration files, all committed at the repository root.
-          # LINTER_RULES_PATH '.' points super-linter at the checked-out
-          # workspace copy, so every custom config (including the ESLint flat
-          # config below) is found; the previous '/' left the configs outside
-          # the search path and the ESLint steps aborted before linting.
-          LINTER_RULES_PATH: .
-          MARKDOWN_CONFIG_FILE: .markdown-lint.yml
-          YAML_CONFIG_FILE: .yamllint.yml
-          ESLINT_CONFIG_FILE: eslint.config.js
-          ESLINT_USE_FLAT_CONFIG: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        id: lint
+        shell: bash
+        run: |
+          status=0
+          docker run --rm \
+            --volume "$GITHUB_WORKSPACE:/tmp/lint" \
+            --env-file /tmp/super-linter.env \
+            ghcr.io/super-linter/super-linter:slim-v8.3.1 \
+            > /tmp/super-linter.log 2>&1 || status=1
+          grep -qE "Failed linting|failed validation" /tmp/super-linter.log && status=1
+          echo "super-linter exit status: $status" >> "$GITHUB_STEP_SUMMARY"
+          exit "$status"
+
+      - name: Publish result summary
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          {
+            echo "## super-linter (slim-v8.3.1)"
+            echo
+            if grep -qE "Failed linting|failed validation" /tmp/super-linter.log; then
+              echo '**Failure details (per-linter):**'
+              echo '```'
+              grep -E "Failed to lint|ERROR.*lint|Errors while running" /tmp/super-linter.log | tail -n 60
+              echo '```'
+            else
+              echo 'All enabled linters passed on every file.'
+              grep -E "Linted|passed validation" /tmp/super-linter.log | tail -n 25 || true
+            fi
+            echo
+            echo '<details><summary>Last log lines</summary>'
+            echo
+            echo '```'
+            tail -n 25 /tmp/super-linter.log
+            echo '```'
+            echo '</details>'
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
