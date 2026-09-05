@@ -7867,6 +7867,7 @@
           "assets": {
             "type": "array",
             "minItems": 1,
+            "maxItems": 7,
             "items": {
               "$ref": "#/components/schemas/PracticeAsset"
             }
@@ -8028,6 +8029,8 @@
           },
           "collections": {
             "type": "array",
+            "minItems": 8,
+            "maxItems": 8,
             "items": {
               "type": "object",
               "required": ["id", "declaredUnits", "indexedUnits", "missingSequences"],
@@ -8046,6 +8049,7 @@
                 },
                 "missingSequences": {
                   "type": "array",
+                  "maxItems": 660,
                   "uniqueItems": true,
                   "items": {
                     "type": "integer",
@@ -8057,6 +8061,7 @@
           },
           "listeningWithoutAudio": {
             "type": "array",
+            "maxItems": 306,
             "uniqueItems": true,
             "items": {
               "type": "string",
@@ -8112,7 +8117,8 @@
           },
           "strategy": {
             "type": "array",
-            "minItems": 1,
+            "minItems": 3,
+            "maxItems": 3,
             "items": {
               "type": "string"
             }

@@ -1,6 +1,7 @@
 /** JSON Schema 2020-12 contracts shared by OpenAPI and live-response tests. */
 import {
   PRACTICE_ASSETS,
+  PRACTICE_COLLECTIONS,
   PRACTICE_LEVELS,
   PRACTICE_MODES,
   PRACTICE_SKILLS,
@@ -94,7 +95,13 @@ export const PRACTICE_UNIT_SCHEMA = {
     level: { type: 'string', enum: [...PRACTICE_LEVELS] },
     sequence: { type: 'integer', minimum: 1 },
     sourceUrl: { type: 'string', format: 'uri' },
-    assets: { type: 'array', minItems: 1, items: { $ref: '#/components/schemas/PracticeAsset' } },
+    // The full-test allowlist permits seven paths (two are HTML); basic layouts permit two.
+    assets: {
+      type: 'array',
+      minItems: 1,
+      maxItems: 7,
+      items: { $ref: '#/components/schemas/PracticeAsset' },
+    },
   },
 };
 
@@ -146,6 +153,8 @@ export const PRACTICE_STATS_SCHEMA = {
     unitsByAsset: counts(PRACTICE_ASSETS),
     collections: {
       type: 'array',
+      minItems: PRACTICE_COLLECTIONS.length,
+      maxItems: PRACTICE_COLLECTIONS.length,
       items: {
         type: 'object',
         required: ['id', 'declaredUnits', 'indexedUnits', 'missingSequences'],
@@ -154,11 +163,24 @@ export const PRACTICE_STATS_SCHEMA = {
           id: TEXT,
           declaredUnits: COUNT,
           indexedUnits: COUNT,
-          missingSequences: { type: 'array', uniqueItems: true, items: { type: 'integer', minimum: 1 } },
+          missingSequences: {
+            type: 'array',
+            maxItems: Math.max(...PRACTICE_COLLECTIONS.map((collection) => collection.declaredUnits)),
+            uniqueItems: true,
+            items: { type: 'integer', minimum: 1 },
+          },
         },
       },
     },
-    listeningWithoutAudio: { type: 'array', uniqueItems: true, items: ID },
+    listeningWithoutAudio: {
+      type: 'array',
+      maxItems: PRACTICE_COLLECTIONS.filter((collection) => collection.skill === 'listening').reduce(
+        (total, collection) => total + collection.declaredUnits,
+        0,
+      ),
+      uniqueItems: true,
+      items: ID,
+    },
   },
 };
 
@@ -187,7 +209,7 @@ export const RECEPTIVE_TASK_SCHEMA = {
     title: TEXT,
     responseMode: { type: 'string', enum: ['selection', 'text', 'mixed'] },
     focus: TEXT,
-    strategy: { type: 'array', minItems: 1, items: TEXT },
+    strategy: { type: 'array', minItems: 3, maxItems: 3, items: TEXT },
     pitfall: TEXT,
     sourceUrl: { type: 'string', format: 'uri' },
   },

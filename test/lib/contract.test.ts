@@ -5,6 +5,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { openApiDocument } from '../../src/lib/openapi.js';
 import { ROUTES } from '../../src/routes/index.js';
 import { practiceIndex } from '../../src/data/practice.js';
+import { PRACTICE_COLLECTIONS, PRACTICE_SOURCE } from '../../src/data/practice-source.js';
+import { buildPracticeIndex } from '../../src/lib/practice-index.js';
 import { API_VERSION } from '../../src/version.js';
 import { startTestServer } from '../helpers/server.js';
 import type { AnySchema } from 'ajv';
@@ -144,6 +146,92 @@ describe('the real OpenAPI contract', () => {
       .split('\n')
       .map((line) => JSON.parse(line) as unknown);
     for (const row of rows) validate(contract.components.schemas.PracticeExportRecord!, row);
+  });
+
+  it('bounds every array after references are resolved, including nested component arrays', () => {
+    const seen = new Set<object>();
+    function visit(value: unknown): void {
+      if (value === null || typeof value !== 'object' || seen.has(value)) return;
+      seen.add(value);
+      const schema = value as Record<string, unknown>;
+      if (schema.type === 'array') {
+        expect(schema.maxItems, JSON.stringify(schema)).toEqual(expect.any(Number));
+        expect(Number.isSafeInteger(schema.maxItems)).toBe(true);
+        expect(schema.maxItems).toBeGreaterThanOrEqual(0);
+      }
+      Object.values(value).forEach(visit);
+    }
+    visit(contract);
+  });
+
+  it('accepts real compiler-derived nested array maxima and rejects overflow', () => {
+    const paths = PRACTICE_COLLECTIONS.filter((collection) => collection.skill === 'listening').flatMap(
+      (collection) =>
+        Array.from(
+          { length: collection.declaredUnits },
+          (_, i) =>
+            `${collection.directory}/${
+              collection.layout === 'listening-basic'
+                ? `Lesson_${i + 1}/index.html`
+                : `Test_${i + 1}/Test_${i + 1}.html`
+            }`,
+        ),
+    );
+    // The full-test allowlist has seven distinct paths, including two HTML representations.
+    const fullPaths = [
+      'index.html',
+      'strategies.json',
+      'Test_1.json',
+      'Test_1_processed.json',
+      'Test_1.html',
+      'Test_1.docx',
+      'audio_1.mp3',
+    ];
+    const synthetic = buildPracticeIndex({
+      sha: PRACTICE_SOURCE.commit,
+      truncated: false,
+      tree: [...paths, ...fullPaths.map((file) => `Reading_315_FullTest/Test_1/${file}`)].map((path) => ({
+        path,
+        type: 'blob',
+        mode: '100644',
+        sha: 'a'.repeat(40),
+        size: 42,
+      })),
+    });
+    const statsCheck = ajv.compile(contract.components.schemas.PracticeStats!);
+    expect(statsCheck(synthetic.stats), JSON.stringify(statsCheck.errors)).toBe(true);
+    expect(synthetic.stats.collections).toHaveLength(8);
+    expect(
+      synthetic.stats.collections.find((collection) => collection.id === 'reading-basic-c1-c2')
+        ?.missingSequences,
+    ).toHaveLength(660);
+    expect(synthetic.stats.listeningWithoutAudio).toHaveLength(306);
+    expect(
+      statsCheck({
+        ...synthetic.stats,
+        collections: [...synthetic.stats.collections, synthetic.stats.collections[0]],
+      }),
+    ).toBe(false);
+    expect(
+      statsCheck({
+        ...synthetic.stats,
+        listeningWithoutAudio: [...synthetic.stats.listeningWithoutAudio, 'listening-full-test-0205'],
+      }),
+    ).toBe(false);
+    expect(
+      statsCheck({
+        ...synthetic.stats,
+        collections: synthetic.stats.collections.map((collection) => ({
+          ...collection,
+          missingSequences: Array.from({ length: 661 }, (_, i) => i + 1),
+        })),
+      }),
+    ).toBe(false);
+    const unitCheck = ajv.compile(contract.components.schemas.PracticeUnit!);
+    const fullUnit = synthetic.items.find((item) => item.id === 'reading-full-test-0001')!;
+    expect(fullUnit.assets).toHaveLength(7);
+    expect(unitCheck(fullUnit)).toBe(true);
+    expect(unitCheck({ ...fullUnit, assets: [...fullUnit.assets, fullUnit.assets[0]] })).toBe(false);
   });
 
   it('serves the same complete contract independently of the preview host or port', async () => {

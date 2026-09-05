@@ -97,8 +97,9 @@ jobs:
           log = Path('super-linter.log')
           if log.exists():
               text = log.read_text(errors='replace')[-48000:]
-              for start in range(0, len(text), 8000):
-                  chunk = text[start:start + 8000]
+              # GitHub truncates large annotation messages; retain readable chunks.
+              for start in range(0, len(text), 3000):
+                  chunk = text[start:start + 3000]
                   chunk = chunk.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
                   print(f'::warning title=Super-Linter diagnostics::{chunk}')
           PYTHON
