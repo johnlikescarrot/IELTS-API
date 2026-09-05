@@ -681,3 +681,31 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — anonymous session assembly
+
+### 29. Design rationale
+
+The referenced [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter) is a useful
+product reference for a different reason than its exam content: its static exam viewer is driven by a
+manifest, keeps score state in the browser, and can run without a server-side account. The API adopts
+that delivery principle without copying its implementation or redistributing test material.
+
+`GET /v1/study/session` is therefore a deterministic session manifest. A caller supplies an optional
+`seed`, `skill`, and vocabulary `count`; the response contains a stable session id, a selected original
+writing/speaking prompt or an indexed reading/listening item, and vocabulary entries. Repeating the same
+request is byte-identical, so a browser can persist only the seed and id in local storage. No account,
+cookie, API key, database, or server-side session is required.
+
+Receptive-paper activities intentionally contain metadata and a publisher URL, not questions, answer
+keys, audio, or passage text. This preserves the API's non-substitutive data policy and makes the
+endpoint safe to embed in free study clients. The `provenance.contentPolicy` field is machine-readable
+so downstream applications do not mistake an index entry for licensed exam content.
+
+### 30. Reproducibility and limitations
+
+The session uses the project's FNV-1a and Mulberry32 deterministic generator. The seed is part of the
+public contract; clients should store it if they need a resumable session. The generated activity is a
+study recommendation, not an IELTS score or an official mock examination. Prompt selection is drawn from
+this project's original topic bank, while receptive activities point to derived metadata from the
+indexed upstream collections. The endpoint remains intentionally authentication-free and stateless.

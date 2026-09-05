@@ -10,6 +10,7 @@
 export { createApiServer, startApiServer } from './server.js';
 export { createRequestHandler } from './app.js';
 export { DOMAIN_ROUTES, ROUTES } from './routes/index.js';
+export type { PracticeSession } from './routes/session.js';
 export { createMetaRoutes } from './routes/meta.js';
 export { openApiDocument } from './lib/openapi.js';
 export { escapeHtml, renderDocs } from './lib/docs.js';

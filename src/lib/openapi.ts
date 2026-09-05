@@ -303,6 +303,26 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       schema: { type: 'integer', minimum: 1, maximum: 10, default: 5 },
     },
   ],
+  '/v1/study/session': [
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Stable client-provided seed; defaults to today.',
+      schema: { type: 'string', default: 'today' },
+    },
+    {
+      name: 'skill',
+      in: 'query',
+      description: 'Focus skill. If omitted, it is selected deterministically from the seed.',
+      schema: { type: 'string', enum: ['reading', 'listening', 'writing', 'speaking'] },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Number of vocabulary drills to include (1-10).',
+      schema: { type: 'integer', minimum: 1, maximum: 10, default: 1 },
+    },
+  ],
   '/v1/study/plan': [
     {
       name: 'target',

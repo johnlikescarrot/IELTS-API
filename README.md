@@ -58,6 +58,9 @@ curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
 # Flesch readability of any text, placed against the corpus groups
 curl -s "http://localhost:3000/v1/tools/readability?text=Dogs%20run%20fast.%20Cats%20sleep%20a%20lot."
 
+# An anonymous, reproducible practice session
+curl -s "http://localhost:3000/v1/study/session?seed=demo-2026&skill=writing&count=3"
+
 # A deterministic eight-week study plan towards band 7
 curl -s "http://localhost:3000/v1/study/plan?target=7&writing=6&speaking=6.5"
 
@@ -105,6 +108,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
 | Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
+| Anonymous session builder       | Seeded practice sessions with no account or server state | `/v1/study/session`     |
 | Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
@@ -159,6 +163,7 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/archive/:id`         | One indexed archive item                                                                                |
 | GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
+| GET    | `/v1/study/session`       | Seeded anonymous practice session (`seed`, `skill`, `count`)                                            |
 | GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
 | GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                                |
 
