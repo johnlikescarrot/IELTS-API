@@ -8,6 +8,7 @@
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
+import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
@@ -253,6 +254,27 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/archive/items': [
+    QUERY,
+    { name: 'collection', in: 'query', schema: { type: 'string', enum: archiveFacets('collection') } },
+    { name: 'format', in: 'query', schema: { type: 'string', enum: archiveFacets('format') } },
+    { name: 'media', in: 'query', schema: { type: 'string', enum: archiveFacets('media') } },
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: archiveFacets('skill') } },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Restrict to one Cambridge IELTS volume (1-18).',
+      schema: { type: 'integer', minimum: 1, maximum: 18 },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['title', 'collection', 'volume', 'date', 'size'], default: 'title' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
     LIMIT,
     OFFSET,
   ],

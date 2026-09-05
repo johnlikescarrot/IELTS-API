@@ -694,6 +694,135 @@ export type MaterialsStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Grey-literature archive                                                    */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * One indexed file of the grey-literature archive
+ * (`https://github.com/msneloy/IELTS`).
+ *
+ * Fields that only apply to one sub-collection are `null` elsewhere: the
+ * Cambridge structure fields (`volume`, `test`, `section`) on audio, the
+ * sample fields (`questionType`, `readingPart`, `topic`, `pages`,
+ * `hasAnswerKey`) on the official reading samples, and the assignment fields
+ * (`learner`, `role`, `taskType`, `date`) on the marked student work.
+ */
+export type ArchiveItem = {
+  /** Slugified identifier. */
+  id: string;
+  /** Path inside the upstream repository. */
+  path: string;
+  /** Archive collection (`cambridge-audio`, `reading-samples`, ...). */
+  collection: string;
+  /** Human-readable title. */
+  title: string;
+  /** IELTS skill the file supports. */
+  skill: string;
+  /** File extension without the dot (`none` for extensionless files). */
+  format: string;
+  /** Coarse media class (`audio`, `document`, `image`, `text`). */
+  media: string;
+  /** Size in bytes. */
+  sizeBytes: number;
+  /** Git blob SHA-1. */
+  sha1: string | null;
+  /** Public URL of the file at the indexed commit. */
+  sourceUrl: string;
+  /** Cambridge IELTS volume (1-18) for the listening audio. */
+  volume: number | null;
+  /** Listening test number, when the file name encodes it. */
+  test: number | null;
+  /** Listening section number, when the file name encodes it. */
+  section: number | null;
+  /** Canonical question-type id, for the academic reading samples. */
+  questionType: QuestionTypeId | null;
+  /** Whether the sample PDF ships its answer key. */
+  hasAnswerKey: boolean;
+  /** Reading part (1-3) a sample was extracted from, when stated. */
+  readingPart: number | null;
+  /** Topic of the sample passage, as stated in its descriptive note. */
+  topic: string | null;
+  /** Page count of a sample PDF. */
+  pages: number | null;
+  /** Passage (samples) or essay (assignments) readability statistics. */
+  readability: ReadabilityStats | null;
+  /** Learner named in an assignment file name. */
+  learner: string | null;
+  /** Role of an assignment file (`essay`, `prompt-image`, ...). */
+  role: string | null;
+  /** Writing task type of an assignment (`line-chart`, `task-2-essay`, ...). */
+  taskType: string | null;
+  /** ISO date of an assignment, from its folder name. */
+  date: string | null;
+};
+
+/** The media-archaeology table: one row per Cambridge IELTS volume. */
+export type ArchiveVolume = {
+  /** Canonical volume number (1-18). */
+  volume: number;
+  /** Folder name in the upstream repository, verbatim. */
+  folder: string;
+  /** How the audio files are named (`cassette-side`, `cd-track`, ...). */
+  namingScheme: string;
+  /** Media era the naming scheme implies (`cassette`, `cd`, `download`, `none`). */
+  media: string;
+  /** Number of audio files in the volume. */
+  audioTracks: number;
+  /** Total size of the volume's files in bytes. */
+  bytes: number;
+  /** Listening tests recoverable from the file names, if any. */
+  testsInferred: number | null;
+  /** The recovered test numbers, if any. */
+  testNumbers: number[] | null;
+  /** Whether the volume holds a complete four-test, four-section audio set. */
+  complete: boolean;
+  /** Whether any file carries a vendor or channel watermark. */
+  watermarked: boolean;
+};
+
+/** Aggregated statistics about the grey-literature archive. */
+export type ArchiveStats = {
+  filesInRepository: number;
+  excludedFiles: number;
+  indexedFiles: number;
+  indexedBytes: number;
+  audioTracks: number;
+  audioBytes: number;
+  byCollection: Record<string, number>;
+  byFormat: Record<string, number>;
+  byMedia: Record<string, number>;
+  bySkill: Record<string, number>;
+  /** Derived facts about the Cambridge IELTS listening audio. */
+  cambridge: {
+    volumesIndexed: number;
+    volumesWithAudio: number;
+    completeVolumes: number;
+    volumesWithTestStructure: number;
+    audioTracks: number;
+    namingSchemes: Record<string, number>;
+    watermarkedVolumes: number[];
+  };
+  /** Derived facts about the official sample tasks. */
+  readingSamples: {
+    files: number;
+    distinctQuestionTypes: number;
+    withAnswerKey: number;
+  };
+  /** Derived facts about the marked student assignments. */
+  assignments: {
+    files: number;
+    essays: number;
+    learners: number;
+    essaysByLearner: Record<string, number>;
+    essaysByTaskType: Record<string, number>;
+    essayWords: number;
+    promptImages: number;
+    firstDate: string | null;
+    lastDate: string | null;
+  };
+};
+
+/* -------------------------------------------------------------------------- */
 /* Response frameworks                                                        */
 /* -------------------------------------------------------------------------- */
 

@@ -5,6 +5,7 @@
  * ones, because {@link matchRoute} returns the first match.
  */
 
+import { archiveRoutes } from './archive.js';
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
 import { frameworkRoutes } from './frameworks.js';
@@ -34,6 +35,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...toolRoutes,
   ...studyRoutes,
   ...materialRoutes,
+  ...archiveRoutes,
   ...resourceRoutes,
 ];
 

@@ -126,7 +126,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials"):
+          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive"):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
           PY
@@ -144,6 +144,112 @@ jobs:
           regenerated = json.load(open('/tmp/materials.json'))
           assert committed == regenerated, 'data/materials.json is out of date'
           print(f"materials index reproducible: {regenerated['stats']['indexedFiles']} files")
+          PY
+
+      - name: Re-derive the grey-literature archive index from the upstream tree
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/msneloy/IELTS/git/trees/HEAD?recursive=1" \
+            -o /tmp/archive-tree.json
+          # The text-derived statistics need only the ~4 MB of document blobs
+          # (sample PDFs and assignment text files), fetched by blob SHA so the
+          # derivation is pinned to the indexed commit.
+          pip install --quiet pypdf==6.17.0
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+          from pathlib import Path
+
+          token = os.environ.get('GITHUB_TOKEN')
+          index = json.load(open('data/archive.json'))
+          needed = [
+              item['path']
+              for item in index['items']
+              if item['collection'] == 'reading-samples' or item.get('role') in {
+                  'essay', 'prompt-list', 'answer-material'}
+          ]
+          blobs = {entry['path']: entry['sha'] for entry in json.load(
+              open('/tmp/archive-tree.json'))['tree'] if entry.get('type') == 'blob'}
+          for path in needed:
+              target = Path('/tmp/archive-source') / path
+              target.parent.mkdir(parents=True, exist_ok=True)
+              headers = {'Accept': 'application/vnd.github.v3.raw'}
+              if token:
+                  headers['Authorization'] = f'Bearer {token}'
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/msneloy/IELTS/git/blobs/{blobs[path]}",
+                  headers=headers)
+              with urllib.request.urlopen(request) as response, open(target, 'wb') as out:
+                  out.write(response.read())
+          print(f"downloaded {len(needed)} document blobs for the archive derivation")
+          PY
+          python3 scripts/extract_archive.py /tmp/archive-tree.json /tmp/archive-source /tmp/archive.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/archive.json'))
+          regenerated = json.load(open('/tmp/archive.json'))
+          assert committed == regenerated, 'data/archive.json is out of date'
+          print(f"archive index reproducible: {regenerated['stats']['indexedFiles']} files")
+          PY
+
+      - name: Check the archive index for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+
+          index = json.load(open('data/archive.json'))
+          items, stats, volumes = index['items'], index['stats'], index['volumes']
+
+          assert stats['indexedFiles'] == len(items), 'indexedFiles disagrees with items'
+          assert len({item['id'] for item in items}) == len(items), 'duplicate identifiers'
+          assert sum(stats['byCollection'].values()) == len(items), 'collection totals differ'
+          assert sum(stats['byFormat'].values()) == len(items), 'format totals differ'
+          assert sum(stats['byMedia'].values()) == len(items), 'media totals differ'
+          assert sum(stats['bySkill'].values()) == len(items), 'skill totals differ'
+          assert stats['audioTracks'] == stats['byMedia']['audio'], 'audio totals differ'
+
+          audio = [item for item in items if item['media'] == 'audio']
+          assert sum(item['sizeBytes'] for item in audio) == stats['audioBytes'], 'audio bytes differ'
+          assert stats['audioBytes'] <= stats['indexedBytes'], 'audio exceeds total bytes'
+
+          cambridge = stats['cambridge']
+          cambridge_items = [item for item in items if item['collection'] == 'cambridge-audio']
+          assert cambridge['audioTracks'] == sum(
+              1 for item in cambridge_items if item['media'] == 'audio'), 'cambridge tracks differ'
+          assert len(volumes) == cambridge['volumesIndexed'] == 18, 'volume table incomplete'
+          assert sum(1 for row in volumes if row['complete']) == cambridge['completeVolumes']
+          for row in volumes:
+              tracks = [item for item in cambridge_items if item['volume'] == row['volume']]
+              assert sum(1 for item in tracks if item['media'] == 'audio') == row['audioTracks'], row
+              assert sum(item['sizeBytes'] for item in tracks) == row['bytes'], row
+              tests = sorted({item['test'] for item in tracks if item['test'] is not None})
+              assert tests == (row['testNumbers'] or []), row
+              assert (len(tests) if tests else None) == row['testsInferred'], row
+
+          assignments = stats['assignments']
+          essays = [item for item in items if item.get('role') == 'essay']
+          assert len(essays) == assignments['essays'], 'essay totals differ'
+          assert sum(assignments['essaysByLearner'].values()) == len(essays), 'learner totals differ'
+          assert sum(assignments['essaysByTaskType'].values()) == len(essays), 'task totals differ'
+          for essay in essays:
+              assert essay['readability'] is not None, essay['id']
+              assert essay['date'] is not None, essay['id']
+
+          samples = [item for item in items if item['collection'] == 'reading-samples']
+          assert len(samples) == stats['readingSamples']['files'] == 12, 'sample totals differ'
+          assert sum(1 for item in samples if item['hasAnswerKey']) == stats['readingSamples']['withAnswerKey']
+          for sample in samples:
+              assert sample['questionType'] is not None, sample['id']
+              assert sample['readability'] is not None, sample['id']
+
+          print(
+              f"archive index consistent: {len(items)} files, "
+              f"{len(volumes)} volumes, {len(essays)} essays, {len(samples)} samples"
+          )
           PY
 
       - name: Check the practice-test index for internal consistency
