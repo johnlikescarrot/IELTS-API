@@ -1,6 +1,9 @@
 # Markdown lint rules used by super-linter and by editors.
 # Line length is not enforced: tables and long URLs are intentional.
 MD013: false
+# Multiple top-level headings are required: paper/paper.md follows the JOSS
+# paper format, whose sections (Summary, Statement of need, ...) are H1s.
+MD025: false
 # The first heading in each document is the document title.
 MD041: false
 # Fenced code blocks do not need a language when they contain data.
