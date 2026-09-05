@@ -1,0 +1,12 @@
+# Checkov configuration, read by super-linter.
+#
+# CKV_OPENAPI_4 and CKV_OPENAPI_5 require an OpenAPI document to declare a global
+# `security` scheme and non-empty per-operation security. This API is deliberately
+# and permanently unauthenticated — that is a design requirement, not an oversight:
+# it is a public read-only research dataset, it holds no user data, and requiring a
+# key would defeat its purpose of being citable and reproducible by anyone. Declaring
+# an empty security scheme to satisfy the check would be misleading, so the checks
+# are skipped here instead, in the open.
+skip-check:
+  - CKV_OPENAPI_4
+  - CKV_OPENAPI_5

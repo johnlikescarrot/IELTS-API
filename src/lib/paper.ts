@@ -254,7 +254,7 @@ ${scholarHead(record, context, datasetSizes)}
   @media (prefers-color-scheme: dark) { :root { --fg: #e8eaf0; --bg: #12151a; --muted: #9aa4b2; --line: #262b33; --accent: #6cb6ff; } }
   * { box-sizing: border-box; }
   body { margin: 0 auto; max-width: 46rem; padding: 2.5rem 1.25rem 4rem; background: var(--bg); color: var(--fg);
-         font: 16px/1.65 Georgia, "Iowan Old Style", "Times New Roman", serif; }
+    font: 16px/1.65 Georgia, "Iowan Old Style", "Times New Roman", serif; }
   h1.citation_title { font-size: 1.9rem; line-height: 1.25; margin: 0 0 .6rem; font-weight: 700; }
   .citation_author { font-size: 1.05rem; margin: 0 0 .35rem; }
   .citation_line { font-size: .85rem; color: var(--muted); font-style: italic; margin: 0 0 1.75rem; }

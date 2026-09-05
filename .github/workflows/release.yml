@@ -54,8 +54,14 @@ jobs:
         run: |
           node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
           SERVER_PID=$!
-          for attempt in $(seq 1 20); do
-            if curl -fsS "http://127.0.0.1:4010/openapi.json" -o docs/openapi.json; then break; fi
+          attempts=0
+          until curl -fsS "http://127.0.0.1:4010/openapi.json" -o docs/openapi.json; do
+            attempts=$((attempts + 1))
+            if [ "${attempts}" -ge 20 ]; then
+              echo "the compiled server never served the OpenAPI document" >&2
+              kill "${SERVER_PID}"
+              exit 1
+            fi
             sleep 0.5
           done
           kill "${SERVER_PID}"
