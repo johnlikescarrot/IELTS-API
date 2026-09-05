@@ -35,6 +35,8 @@ jobs:
           persist-credentials: false
 
       - name: Run super-linter
+        id: lint
+        continue-on-error: true
         uses: super-linter/super-linter/slim@v8.3.1
         env:
           DEFAULT_BRANCH: main
@@ -70,13 +72,16 @@ jobs:
           OUTPUT_FILE: .super-linter-report.md
 
       - name: Publish the linting report on the pull request
-        if: failure() && github.event_name == 'pull_request'
+        if: steps.lint.outcome == 'failure' && github.event_name == 'pull_request'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if [ -f .super-linter-report.md ]; then
+          if [ -s .super-linter-report.md ]; then
             head -c 60000 .super-linter-report.md > /tmp/report.md
+          elif [ -s super-linter.log ]; then
+            { grep -E '\[ERROR\]|Linting.*Failed|is not passing' super-linter.log || true; } |
+              head -c 60000 > /tmp/report.md
           else
             printf '%s\n' 'super-linter failed before writing a report; see the step log.' > /tmp/report.md
           fi
@@ -86,3 +91,9 @@ jobs:
             cat /tmp/report.md
           } > /tmp/report-comment.md
           gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/report-comment.md
+
+      - name: Fail the job when super-linter reported problems
+        if: steps.lint.outcome == 'failure'
+        run: |
+          echo "super-linter exited non-zero; see the step log and the pull-request comment."
+          exit 1
