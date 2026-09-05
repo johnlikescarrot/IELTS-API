@@ -424,6 +424,67 @@ export type ExamTheme = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Text analysis                                                              */
+/* -------------------------------------------------------------------------- */
+
+/** Vocabulary-coverage tiers used by the analysis engine. */
+export type VocabularyTierName = 'cross-volume' | 'single-volume' | 'out-of-list';
+
+/** One band of the coverage profile. */
+export type VocabularyTierExport = {
+  /** Tier identifier. */
+  tier: VocabularyTierName;
+  /** Human-readable tier definition. */
+  description: string;
+};
+
+/** One band of a computed coverage profile, with its measurements. */
+export type VocabularyTierStats = VocabularyTierExport & {
+  /** Tokens on this tier. */
+  words: number;
+  /** Distinct tokens on this tier. */
+  unique: number;
+  /** Share of all tokens (0-1, four decimals). */
+  share: number;
+};
+
+/** A word with its occurrence count. */
+export type WordFrequency = {
+  word: string;
+  count: number;
+};
+
+/** How a text's vocabulary maps onto the Cambridge IELTS 1-22 headwords. */
+export type VocabularyCoverage = {
+  /** Word tokens analysed. */
+  totalWords: number;
+  /** Distinct word tokens analysed. */
+  uniqueWords: number;
+  /** Share of tokens matched by a Cambridge headword (0-1, four decimals). */
+  coverage: number;
+  /** Per-tier measurements, in `VOCABULARY_TIERS` order. */
+  tiers: VocabularyTierStats[];
+  /** Most frequent out-of-list words (ties broken alphabetically). */
+  topOutOfList: WordFrequency[];
+};
+
+/** Grade-heuristic band indication for an analysed text. */
+export type BandEstimate = {
+  /** CEFR level suggested by the consensus grade. */
+  cefr: string;
+  /** Lowest IELTS band that carries this CEFR level in `/v1/bands`. */
+  bandMin: number;
+  /** Highest IELTS band that carries this CEFR level in `/v1/bands`. */
+  bandMax: number;
+  /** Midpoint of the range, rounded to a half band. */
+  pointEstimate: number;
+  /** Provenance: always `readability-grade heuristic`. */
+  basis: string;
+  /** Why this indication must not be read as a score prediction. */
+  caveat: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 
@@ -447,7 +508,7 @@ export type ApiResponse = {
 /** Description of an exposed route, used for discovery and OpenAPI. */
 export type RouteInfo = {
   /** HTTP method. */
-  method: 'GET';
+  method: 'GET' | 'POST';
   /** Path template. */
   path: string;
   /** Short summary. */

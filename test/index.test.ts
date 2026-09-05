@@ -38,6 +38,19 @@ describe('the package entry point', () => {
     expect(api.COMMON_HEADERS['access-control-allow-origin']).toBe('*');
   });
 
+  it('exports the text-analysis engine', () => {
+    expect(typeof api.analyzeText).toBe('function');
+    expect(typeof api.tokenize).toBe('function');
+    expect(typeof api.countSyllables).toBe('function');
+    expect(typeof api.readabilityScores).toBe('function');
+    expect(typeof api.vocabularyCoverage).toBe('function');
+    expect(typeof api.tierForToken).toBe('function');
+    expect(api.analyzeText('hello world').readability).not.toBeNull();
+    expect(api.VOCABULARY_TIERS).toHaveLength(3);
+    expect(api.GRADE_TO_CEFR).toHaveLength(4);
+    expect(api.POST_TEXT_MAX_CHARACTERS).toBe(50000);
+  });
+
   it('exports the datasets', () => {
     expect(api.BAND_SCALE).toHaveLength(19);
     expect(api.WRITING_TOPICS.length).toBeGreaterThan(90);

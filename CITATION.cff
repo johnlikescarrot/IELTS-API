@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.1.0
+version: 1.2.0
 date-released: '2026-09-05'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
@@ -15,7 +15,15 @@ abstract: >-
   frequencies observed in 27,225 practice questions, a structure and
   readability index of 1,702 practice tests and CEFR-graded reading lessons,
   fifty recurring exam themes, and a curated index of an open IELTS research
-  corpus. Every endpoint is free of charge,
+  corpus. Beyond serving datasets, the API measures submitted texts:
+  /v1/analyze/text returns deterministic counts, six readability formulae
+  (Flesch, Flesch-Kincaid, Gunning Fog, SMOG, Coleman-Liau, Automated
+  Readability Index), lexical-diversity measures including MTLD, a documented
+  grade-to-CEFR heuristic with an indicative band range, and a
+  vocabulary-coverage profile against the Cambridge headword list, while
+  /v1/analyze/reference publishes every formula, threshold and definition so a
+  study can cite the metric, not just the number. Every endpoint is free of
+  charge,
   requires no authentication, returns a uniform JSON envelope with a stable
   ETag, and is covered by a test suite with 100% statement, branch, function
   and line coverage. The API is designed for reproducible second-language
@@ -91,6 +99,58 @@ references:
     title: 'IELTS band descriptors'
     url: 'https://www.ielts.org/for-organisations/ielts-scoring-in-detail'
     year: 2025
+  - type: report
+    authors:
+      - family-names: 'Kincaid'
+        given-names: 'J. Peter'
+      - family-names: 'Fishburne'
+        given-names: 'Robert P.'
+      - family-names: 'Rogers'
+        given-names: 'Richard L.'
+      - family-names: 'Chissom'
+        given-names: 'Brad S.'
+    title: 'Derivation of new readability formulas (Automated Readability Index, Fog Count and Flesch Reading Ease Formula) for Navy enlisted personnel'
+    institution: 'Naval Technical Training Command, Millington TN'
+    year: 1975
+  - type: article
+    authors:
+      - family-names: 'McLaughlin'
+        given-names: 'G. Harry'
+    title: 'SMOG Grading - a New Readability Formula'
+    journal: 'Journal of Reading'
+    volume: 12
+    issue: 8
+    start: 639
+    end: 646
+    year: 1969
+  - type: article
+    authors:
+      - family-names: 'Coleman'
+        given-names: 'Meri'
+      - family-names: 'Liau'
+        given-names: 'T. L.'
+    title: 'A computer readability formula designed for machine scoring'
+    journal: 'Journal of Applied Psychology'
+    volume: 60
+    issue: 2
+    start: 283
+    end: 284
+    year: 1975
+    doi: '10.1037/h0076540'
+  - type: article
+    authors:
+      - family-names: 'McCarthy'
+        given-names: 'Philip M.'
+      - family-names: 'Jarvis'
+        given-names: 'Scott'
+    title: 'MTLD, vocd-D, and HD-D: A validation study of sophisticated approaches to lexical diversity assessment'
+    journal: 'Behavior Research Methods'
+    volume: 42
+    issue: 2
+    start: 381
+    end: 392
+    year: 2010
+    doi: '10.3758/BRM.42.2.381'
   - type: article
     authors:
       - family-names: 'Coxhead'
@@ -109,7 +169,7 @@ preferred-citation:
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.1.0
+  version: 1.2.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:

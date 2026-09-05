@@ -6,6 +6,43 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+A deterministic **text-analysis engine**: the API no longer only serves datasets, it measures the
+texts researchers paste into it. The same measurement definitions are used by the practice-test
+readability index, so results are consistent across the whole API, and every metric is documented,
+with citations, by the new self-describing reference endpoint.
+
+### Added
+
+- **`/v1/analyze/text`** (`GET` with `?text=` up to 8,000 characters, `POST` with a JSON body up to
+  50,000 characters): counts (words, unique words, sentences, paragraphs, letters, syllables,
+  polysyllabic words), averages, six readability formulae (Flesch Reading Ease, Flesch-Kincaid
+  Grade, Gunning Fog, SMOG, Coleman-Liau, Automated Readability Index) with a median consensus
+  grade, lexical-diversity measures (type-token ratio, root TTR, MTLD per McCarthy & Jarvis 2010,
+  hapax ratios), a documented grade-to-CEFR heuristic and an indicative band range anchored to the
+  `/v1/bands` concordance — always labelled as a difficulty indication, never a score prediction.
+- **Vocabulary-coverage profiles**: every analysed text is matched form-exactly (case- and
+  accent-insensitive, no stemming) against the 4,174 Cambridge IELTS 1-22 headwords, reported across
+  the disjoint `cross-volume` / `single-volume` / `out-of-list` tiers with a frequency-ranked digest
+  of out-of-list words.
+- **`/v1/analyze/reference`**: the machine-readable citable reference for every metric — tokeniser,
+  sentence and paragraph rules, syllable heuristic, all formulas with citations, the CEFR thresholds,
+  the tier definitions and the size limits.
+- `src/lib/textMetrics.ts` (pure, deterministic measurement functions) and `src/data/coverage.ts`
+  (tier logic over the vocabulary dataset), both fully exported from the package entry point.
+- POST support in the dispatcher: JSON body parsing with a 256 KiB cap (`413`), content-type
+  validation (`415`), invalid-JSON translation (`400`) and full allow-listed `405` handling with an
+  `allow` header; CORS now advertises `POST`.
+
+### Changed
+
+- The OpenAPI document emits merged `get`/`post` operations per path, documents the analyze request
+  bodies, and declares `405` (all routes) plus `413`/`415` (POST routes) responses.
+- Error catalogue extended with `payload_too_large` and `unsupported_media_type`.
+- `methodNotAllowed` now accepts an allow list; `HEAD` is implied wherever `GET` is served.
+- Test suite grown to 420 tests, still at 100% statement, branch, function and line coverage per file.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection

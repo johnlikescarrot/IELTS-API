@@ -33,6 +33,13 @@ Listening question types, onto which 65 free-text annotation labels are normalis
 frequency of each family observed in 27,225 practice questions; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
 metadata indexes of two open IELTS collections.
+Beyond serving datasets, the API **measures submitted texts**: `/v1/analyze/text` accepts an essay
+draft, transcript or passage and returns a deterministic bundle of counts, six readability formulae
+[@flesch1948; @kincaid1975; @mclaughlin1969; @colemanliau1975; @gunning1952], lexical-diversity
+measures including the Measure of Textual Lexical Diversity [@mccarthyjarvis2010], a documented
+grade-to-CEFR heuristic with an indicative band range, and the text's coverage profile against the
+Cambridge headword list; `/v1/analyze/reference` publishes every formula, threshold and definition
+so clients can cite or re-implement the metric, not just the numbers it produces.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -137,9 +144,18 @@ document is generated from the live route table, so documentation cannot drift f
 implementation. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
 reproducible stimulus for longitudinal studies rather than a novelty.
 
+The analysis engine is deliberately model-free. Readability, diversity and coverage measurements are
+closed-form functions of the input text — no embeddings, no sampling, no external models — which
+keeps the service deterministic and zero-dependency while making every measurement reproducible from
+its published definition. The syllable counter and Flesch constants mirror the pipeline that
+produced the practice-test readability index, so a passage scores identically whether it was
+analysed at index time or pasted by a researcher. Subjective assessment (band prediction, argument
+quality scoring) is out of scope by design: the API reports an indicative band **range** anchored to
+public concordances and labels it explicitly as a readability heuristic.
+
 # Quality control
 
-The test suite (341 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (420 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

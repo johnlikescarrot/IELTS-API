@@ -88,7 +88,8 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
 <p>No API key. No registration. No rate limiting by key. Every response carries an ETag and open CORS headers.</p>
 <pre><code>curl -s "https://ielts-api.example/v1/vocabulary?q=environment&amp;limit=3"
 curl -s "https://ielts-api.example/v1/scores/overall?listening=7&amp;reading=6.5&amp;writing=6&amp;speaking=7"
-curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
+curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"
+curl -s "https://ielts-api.example/v1/analyze/text?text=Studying%20abroad%20broadens%20horizons."</code></pre>
 
 <h2>Datasets</h2>
 <ul>
@@ -100,6 +101,14 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
   <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
 </ul>
+
+<h2>Text analysis</h2>
+<p><code>GET /v1/analyze/text?text=...</code> (or <code>POST /v1/analyze/text</code> with a JSON
+<code>{"text": "..."}</code> body) measures a pasted essay, transcript or passage deterministically:
+counts, six readability formulae, lexical diversity (TTR, root TTR, MTLD), a grade-to-CEFR
+heuristic with an indicative band range, and the text's coverage profile against the Cambridge
+headwords. <code>GET /v1/analyze/reference</code> publishes every formula, threshold and tier
+definition so clients can cite the metric itself.</p>
 
 <h2>Versioned endpoints</h2>
 <table>

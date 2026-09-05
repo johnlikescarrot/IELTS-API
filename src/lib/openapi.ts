@@ -13,6 +13,7 @@ import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
+import { GET_TEXT_MAX_CHARACTERS, POST_TEXT_MAX_CHARACTERS } from './textMetrics.js';
 
 import type { RouteDefinition } from './route.js';
 import type { JsonValue } from '../types.js';
@@ -32,8 +33,17 @@ const OFFSET = {
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
 
-/** Query parameters per path. */
+/** Query parameters per path (GET operations). */
 const PARAMETERS: Record<string, JsonValue[]> = {
+  '/v1/analyze/text': [
+    {
+      name: 'text',
+      in: 'query',
+      required: true,
+      description: `Text to analyse (up to ${GET_TEXT_MAX_CHARACTERS} characters; use POST for longer texts).`,
+      schema: { type: 'string', minLength: 1, maxLength: GET_TEXT_MAX_CHARACTERS },
+    },
+  ],
   '/v1/vocabulary': [
     QUERY,
     {
@@ -225,6 +235,31 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   ],
 };
 
+/** JSON request bodies per path (POST operations). */
+const REQUEST_BODIES: Record<string, JsonValue> = {
+  '/v1/analyze/text': {
+    required: true,
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          required: ['text'],
+          properties: {
+            text: {
+              type: 'string',
+              minLength: 1,
+              maxLength: POST_TEXT_MAX_CHARACTERS,
+              description: 'Text to analyse (essays, transcripts, passages).',
+            },
+          },
+          additionalProperties: false,
+        },
+        example: { text: 'Studying abroad broadens horizons. It is, however, expensive.' },
+      },
+    },
+  },
+};
+
 /** The shared JSON envelope schema. */
 const ENVELOPE = {
   type: 'object',
@@ -278,35 +313,61 @@ export function openApiDocument(
   serverUrl: string,
   version: string,
 ): JsonValue {
-  const paths: Record<string, JsonValue> = {};
+  const paths: Record<string, Record<string, JsonValue>> = {};
   for (const route of routes) {
     if (route.path === '/openapi.json' || route.path === '/docs') {
       continue;
     }
+    const method = route.method.toLowerCase();
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
-      get: {
-        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
-        summary: route.summary,
-        tags: route.versioned ? ['v1'] : ['service'],
-        parameters,
-        responses: {
-          '200': {
-            description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
-          },
-          '304': { description: 'Not modified (ETag matched).' },
-          '400': {
-            description: 'Invalid parameters.',
-            content: { 'application/json': { schema: ERROR } },
-          },
-          '404': {
-            description: 'Not found.',
-            content: { 'application/json': { schema: ERROR } },
-          },
-        },
+    const requestBody = REQUEST_BODIES[route.path];
+    const responses: Record<string, JsonValue> = {
+      '200': {
+        description: 'Successful response.',
+        content: { 'application/json': { schema: ENVELOPE } },
+      },
+      '400': {
+        description: 'Invalid parameters or request body.',
+        content: { 'application/json': { schema: ERROR } },
+      },
+      '404': {
+        description: 'Not found.',
+        content: { 'application/json': { schema: ERROR } },
+      },
+      '405': {
+        description: 'Method not allowed for this path.',
+        content: { 'application/json': { schema: ERROR } },
       },
     };
+    if (method === 'get') {
+      responses['304'] = { description: 'Not modified (ETag matched).' };
+    } else {
+      responses['413'] = {
+        description: 'Request body too large.',
+        content: { 'application/json': { schema: ERROR } },
+      };
+      responses['415'] = {
+        description: 'Unsupported media type.',
+        content: { 'application/json': { schema: ERROR } },
+      };
+    }
+    const operation: Record<string, JsonValue> = {
+      operationId:
+        route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '') + (method === 'get' ? '' : `_${method}`),
+      summary: route.summary,
+      tags: route.versioned ? ['v1'] : ['service'],
+      parameters: method === 'get' ? parameters : [],
+      responses,
+    };
+    if (method !== 'get' && requestBody !== undefined) {
+      operation.requestBody = requestBody;
+    }
+    const existing = paths[route.path];
+    if (existing === undefined) {
+      paths[route.path] = { [method]: operation };
+    } else {
+      existing[method] = operation;
+    }
   }
 
   return {
@@ -322,6 +383,10 @@ export function openApiDocument(
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, a structure and readability',
         'index of 1,702 practice tests, and an index of the open IELTS research corpus.',
+        '',
+        'Measurement: /v1/analyze/text scores pasted texts deterministically (readability,',
+        'lexical diversity, CEFR/band heuristic, Cambridge-vocabulary coverage); the metric',
+        'definitions are published at /v1/analyze/reference.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

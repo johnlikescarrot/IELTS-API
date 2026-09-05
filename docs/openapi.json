@@ -2,9 +2,9 @@
   "openapi": "3.1.0",
   "info": {
     "title": "IELTS API",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
-    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, a structure and readability\nindex of 1,702 practice tests, and an index of the open IELTS research corpus.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
+    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, a structure and readability\nindex of 1,702 practice tests, and an index of the open IELTS research corpus.\n\nMeasurement: /v1/analyze/text scores pasted texts deterministically (readability,\nlexical diversity, CEFR/band heuristic, Cambridge-vocabulary coverage); the metric\ndefinitions are published at /v1/analyze/reference.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
       "name": "MIT (code) / CC BY 4.0 (data)",
       "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/LICENSE"
@@ -27,6 +27,518 @@
     }
   ],
   "paths": {
+    "/v1/analyze/reference": {
+      "get": {
+        "operationId": "v1_analyze_reference",
+        "summary": "Reference for every analysis metric: definitions, formulae and citations.",
+        "tags": ["v1"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters or request body.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/analyze/text": {
+      "get": {
+        "operationId": "v1_analyze_text",
+        "summary": "Analyze a text passed as ?text= (up to 8000 characters).",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "required": true,
+            "description": "Text to analyse (up to 8000 characters; use POST for longer texts).",
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 8000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters or request body.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "operationId": "v1_analyze_text_post",
+        "summary": "Analyze a text posted as a JSON object with a text field (up to 50000 characters).",
+        "tags": ["v1"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid parameters or request body.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Request body too large.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported media type.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["text"],
+                "properties": {
+                  "text": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 50000,
+                    "description": "Text to analyse (essays, transcripts, passages)."
+                  }
+                },
+                "additionalProperties": false
+              },
+              "example": {
+                "text": "Studying abroad broadens horizons. It is, however, expensive."
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/vocabulary": {
       "get": {
         "operationId": "v1_vocabulary",
@@ -147,7 +659,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -182,6 +694,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -251,7 +797,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -286,6 +832,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -374,7 +954,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -409,6 +989,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -498,7 +1112,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -533,6 +1147,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -611,7 +1259,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -646,6 +1294,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -715,7 +1397,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -750,6 +1432,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -854,7 +1570,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -889,6 +1605,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -967,7 +1717,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1002,6 +1752,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1120,7 +1904,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1155,6 +1939,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1245,7 +2063,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1280,6 +2098,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1367,7 +2219,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1402,6 +2254,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1533,7 +2419,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1568,6 +2454,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1675,7 +2595,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1710,6 +2630,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1816,7 +2770,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1851,6 +2805,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1929,7 +2917,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -1964,6 +2952,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2058,7 +3080,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2093,6 +3115,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2171,7 +3227,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2206,6 +3262,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2275,7 +3365,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2310,6 +3400,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2379,7 +3503,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2414,6 +3538,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2622,7 +3780,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2657,6 +3815,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2735,7 +3927,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2770,6 +3962,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2839,7 +4065,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2874,6 +4100,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2943,7 +4203,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -2978,6 +4238,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3116,7 +4410,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3151,6 +4445,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3258,7 +4586,7 @@
             "description": "Not modified (ETag matched)."
           },
           "400": {
-            "description": "Invalid parameters.",
+            "description": "Invalid parameters or request body.",
             "content": {
               "application/json": {
                 "schema": {
@@ -3293,6 +4621,40 @@
           },
           "404": {
             "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed for this path.",
             "content": {
               "application/json": {
                 "schema": {

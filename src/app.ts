@@ -2,11 +2,19 @@
  * The request dispatcher.
  *
  * Everything between the socket and the route handlers lives here: method
- * checking, route matching, error translation, ETag negotiation, compression
- * and request logging. Handlers stay pure and trivially testable.
+ * checking, route matching, request-body parsing, error translation, ETag
+ * negotiation, compression and request logging. Handlers stay pure and
+ * trivially testable.
  */
 
-import { HttpError, methodNotAllowed, notFound } from './lib/errors.js';
+import {
+  badRequest,
+  HttpError,
+  methodNotAllowed,
+  notFound,
+  payloadTooLarge,
+  unsupportedMediaType,
+} from './lib/errors.js';
 import { acceptsGzip, sendJson, writeResponse } from './lib/http.js';
 import { isRawResult, matchRoute, splitPath } from './lib/route.js';
 import { ROUTES } from './routes/index.js';
@@ -15,6 +23,9 @@ import { API_VERSION } from './version.js';
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { RouteDefinition } from './lib/route.js';
 import type { JsonValue } from './types.js';
+
+/** Maximum request-body size accepted by POST routes, in bytes. */
+export const MAX_BODY_BYTES = 262_144;
 
 function sanitizeForLog(value: string): string {
   return value.replace(/[\r\n]/g, '');
@@ -31,6 +42,69 @@ export interface AppOptions {
 }
 
 /**
+ * List the methods allowed on a path template (`HEAD` is implied by `GET`).
+ *
+ * @param routes - The live route table.
+ * @param path - Matched path template.
+ */
+export function allowedMethods(routes: readonly RouteDefinition[], path: string): readonly string[] {
+  const allowed = new Set<string>();
+  for (const route of routes) {
+    if (route.path === path) {
+      allowed.add(route.method);
+      if (route.method === 'GET') {
+        allowed.add('HEAD');
+      }
+    }
+  }
+  return [...allowed].sort();
+}
+
+/**
+ * Read and JSON-parse a POST request body.
+ *
+ * The stream is always fully consumed (even past {@link MAX_BODY_BYTES}, so
+ * the connection is left in a clean state), then rejected with `413`. Bodies
+ * must declare (or, when empty, imply) a JSON content type.
+ *
+ * @param req - Incoming request.
+ */
+async function readJsonBody(req: IncomingMessage): Promise<unknown> {
+  const chunks: Buffer[] = [];
+  let size = 0;
+  let exceeded = false;
+  for await (const chunk of req as AsyncIterable<Buffer>) {
+    size += chunk.length;
+    if (size > MAX_BODY_BYTES) {
+      exceeded = true;
+    } else {
+      chunks.push(chunk);
+    }
+  }
+  if (exceeded) {
+    throw payloadTooLarge('Request body exceeds the 256 KiB limit.', {
+      maxBytes: String(MAX_BODY_BYTES),
+    });
+  }
+  const raw = Buffer.concat(chunks).toString('utf8');
+  if (raw.trim().length > 0) {
+    const contentType = req.headers['content-type'];
+    if (contentType !== undefined && !/^application\/json(?:\s*;|\s*$)/i.test(contentType)) {
+      throw unsupportedMediaType('Request body must use the application/json content type.', {
+        received: contentType,
+      });
+    }
+  }
+  try {
+    return JSON.parse(raw) as unknown;
+  } catch {
+    throw badRequest('Request body is not valid JSON.', {
+      hint: 'POST a JSON object such as {"text": "..."}.',
+    });
+  }
+}
+
+/**
  * Create the `node:http` request listener.
  *
  * @param options - Application options.
@@ -42,7 +116,8 @@ export function createRequestHandler(
   const version = options.version ?? API_VERSION;
   const log = options.log ?? false;
 
-  return (req, res) => {
+  /** The dispatch body, run asynchronously so POST bodies can be read. */
+  async function dispatch(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const started = process.hrtime.bigint();
     const method = (req.method ?? 'GET').toUpperCase();
     const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
@@ -54,12 +129,11 @@ export function createRequestHandler(
       if (method === 'OPTIONS') {
         res.writeHead(204, {
           'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, HEAD, OPTIONS',
+          'access-control-allow-methods': 'GET, HEAD, POST, OPTIONS',
+          'access-control-allow-headers': 'accept, accept-encoding, content-type, if-none-match',
           'access-control-max-age': '86400',
         });
         res.end();
-      } else if (method !== 'GET' && method !== 'HEAD') {
-        throw methodNotAllowed();
       } else {
         const match = matchRoute(routes, splitPath(url.pathname));
         if (match === undefined) {
@@ -68,7 +142,24 @@ export function createRequestHandler(
             documentation: '/docs',
           });
         }
-        const result = match.route.handler({ url, params: match.params });
+        const wanted = method === 'HEAD' ? 'GET' : method;
+        const route = routes.find(
+          (candidate) => candidate.path === match.route.path && candidate.method === wanted,
+        );
+        if (route === undefined) {
+          const allowed = allowedMethods(routes, match.route.path);
+          throw methodNotAllowed(
+            `Method ${method} is not allowed for ${match.route.path}.`,
+            allowed.join(', '),
+          );
+        }
+        const body = method === 'POST' ? await readJsonBody(req) : undefined;
+        const result = route.handler({
+          url,
+          params: match.params,
+          method,
+          ...(body === undefined ? {} : { body }),
+        });
         if (isRawResult(result)) {
           writeResponse(res, {
             status: 200,
@@ -81,7 +172,7 @@ export function createRequestHandler(
         } else {
           status = 200;
           const meta: Record<string, JsonValue> = {
-            endpoint: match.route.path,
+            endpoint: route.path,
             version,
             ...(result.meta ?? {}),
           };
@@ -89,7 +180,7 @@ export function createRequestHandler(
             gzipAllowed,
             ifNoneMatch,
             headOnly: method === 'HEAD',
-            headers: { 'x-endpoint': match.route.path },
+            headers: { 'x-endpoint': route.path },
           });
         }
       }
@@ -97,6 +188,11 @@ export function createRequestHandler(
       const httpError = error instanceof HttpError ? error : undefined;
       if (httpError !== undefined) {
         status = httpError.status;
+        const headers: Record<string, string> = { 'x-endpoint': url.pathname };
+        const allow = httpError.details.allow;
+        if (allow !== undefined) {
+          headers.allow = allow;
+        }
         sendJson(
           res,
           httpError.status,
@@ -109,7 +205,7 @@ export function createRequestHandler(
             },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          { gzipAllowed, headers },
         );
       } else {
         status = 500;
@@ -134,5 +230,9 @@ export function createRequestHandler(
       const safeSearch = sanitizeForLog(url.search);
       console.log(`${method} ${safePathname}${safeSearch} ${status} ${elapsed.toFixed(2)}ms`);
     }
+  }
+
+  return (req, res) => {
+    void dispatch(req, res);
   };
 }

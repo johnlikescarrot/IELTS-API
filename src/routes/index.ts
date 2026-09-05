@@ -5,6 +5,7 @@
  * ones, because {@link matchRoute} returns the first match.
  */
 
+import { analyzeRoutes } from './analyze.js';
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
 import { createMetaRoutes } from './meta.js';
@@ -19,6 +20,7 @@ import type { RouteDefinition } from '../lib/route.js';
 
 /** Domain routes (all versioned under `/v1`). */
 export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
+  ...analyzeRoutes,
   ...vocabularyRoutes,
   ...bandRoutes,
   ...scoreRoutes,

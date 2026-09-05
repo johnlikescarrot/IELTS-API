@@ -9,7 +9,24 @@ const document = openApiDocument(ROUTES, 'http://localhost:3000/', '1.0.0') as {
   openapi: string;
   info: { title: string; version: string };
   servers: { url: string }[];
-  paths: Record<string, { get: { summary: string; parameters?: { name: string }[] } }>;
+  paths: Record<
+    string,
+    {
+      get?: {
+        summary: string;
+        operationId: string;
+        parameters?: { name: string }[];
+        responses: Record<string, unknown>;
+      };
+      post?: {
+        summary: string;
+        operationId: string;
+        parameters?: { name: string }[];
+        requestBody?: { content: Record<string, unknown> };
+        responses: Record<string, unknown>;
+      };
+    }
+  >;
   components: { schemas: Record<string, unknown> };
 };
 
@@ -27,26 +44,65 @@ describe('openApiDocument', () => {
     expect(Object.keys(document.paths)).not.toContain('/docs');
     expect(Object.keys(document.paths)).not.toContain('/openapi.json');
     expect(Object.keys(document.paths)).toContain('/v1/vocabulary');
-    expect(document.paths['/v1/bands']?.get.summary).toContain('band scale');
+    expect(document.paths['/v1/bands']?.get?.summary).toContain('band scale');
   });
 
   it('declares query parameters for documented endpoints', () => {
-    const parameters = document.paths['/v1/vocabulary']?.get.parameters ?? [];
+    const parameters = document.paths['/v1/vocabulary']?.get?.parameters ?? [];
     expect(parameters.map((parameter) => parameter.name)).toContain('q');
     expect(parameters.map((parameter) => parameter.name)).toContain('volume');
   });
 
   it('leaves undocumented endpoints without parameters', () => {
-    expect(document.paths['/health']?.get.parameters).toEqual([]);
+    expect(document.paths['/health']?.get?.parameters).toEqual([]);
   });
 
   it('declares path parameters for parameterised routes', () => {
-    const parameters = document.paths['/v1/vocabulary/:word']?.get.parameters ?? [];
+    const parameters = document.paths['/v1/vocabulary/:word']?.get?.parameters ?? [];
     expect(parameters).toEqual([{ name: 'word', in: 'path', required: true, schema: { type: 'string' } }]);
   });
 
   it('accepts an empty route table', () => {
     const empty = openApiDocument([], 'http://x/', '1.0.0') as { paths: Record<string, JsonValue> };
     expect(empty.paths).toEqual({});
+  });
+
+  it('merges GET and POST operations on one path', () => {
+    const operations = document.paths['/v1/analyze/text'];
+    expect(operations?.get?.summary).toContain('?text=');
+    expect(operations?.get?.operationId).toBe('v1_analyze_text');
+    expect(operations?.post?.summary).toContain('text field');
+    expect(operations?.post?.operationId).toBe('v1_analyze_text_post');
+    expect(operations?.post?.requestBody?.content).toHaveProperty('application/json');
+    expect(operations?.post?.parameters).toEqual([]);
+  });
+
+  it('documents method-specific error responses', () => {
+    const getResponses = Object.keys(document.paths['/v1/vocabulary']?.get?.responses ?? {});
+    expect(getResponses).toContain('304');
+    expect(getResponses).toContain('405');
+
+    const postResponses = Object.keys(document.paths['/v1/analyze/text']?.post?.responses ?? {});
+    expect(postResponses).toContain('413');
+    expect(postResponses).toContain('415');
+    expect(postResponses).not.toContain('304');
+  });
+
+  it('renders POST routes without a registered request body as plain operations', () => {
+    const custom = openApiDocument(
+      [
+        {
+          method: 'POST',
+          path: '/v1/custom',
+          versioned: true,
+          summary: 'Custom post without a documented body.',
+          handler: () => ({ data: null }),
+        },
+      ],
+      'http://x/',
+      '1.0.0',
+    ) as { paths: Record<string, { post: { requestBody?: unknown; summary: string } }> };
+    expect(custom.paths['/v1/custom']?.post.summary).toContain('Custom post');
+    expect(custom.paths['/v1/custom']?.post.requestBody).toBeUndefined();
   });
 });

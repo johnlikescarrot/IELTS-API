@@ -9,6 +9,7 @@ Two independent upstream collections are analysed:
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
 | [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
 | [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| [Part III](#part-iii--the-text-analysis-engine)   | _no new upstream collection; plus a review of_ [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)  | commit `738c6082`, 2,385 blobs | the deterministic text-analysis engine (`/v1/analyze/*`)                         |
 
 Neither collection is redistributed. Both are indexed, measured and cited.
 
@@ -328,3 +329,90 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 
 The script is standard library only and deterministic: the same tree and the same files always
 produce byte-identical output.
+
+## Part III — the text-analysis engine
+
+Version 1.2.0 turns the service from a _data_ API into a _measurement_ API: `/v1/analyze/text`
+accepts a pasted candidate text (an essay draft, a transcript, a reading passage) and returns a
+deterministic set of descriptive statistics. Nothing is sampled, trained or inferred from a model,
+so the same input always produces the same output, on every replica and every release — the
+property that makes the numbers citable.
+
+### 13. Design decisions
+
+- **One measurement vocabulary for the whole API.** The syllable heuristic (vowel groups with a
+  silent-final-`e` correction), the Flesch family constants and the tokeniser mirror
+  `scripts/extract_practice_tests.py`, so a passage fetched through `/v1/tests` scores identically
+  when pasted into `/v1/analyze/text`. Where the engine deliberately refines the pipeline — Unicode
+  letters instead of ASCII-only words, accent folding before matching — the difference is
+  documented in `/v1/analyze/reference`.
+- **Sentence counting.** A sentence ends at a run of `.`, `!` or `?` followed by whitespace or the
+  end of the text; a trailing sentence without a terminator still counts. This adds the
+  final-sentence case to the rule used for the practice-test index; mid-text counts stay identical.
+- **Six readability formulae, not one.** Flesch Reading Ease (Flesch 1948), Flesch-Kincaid grade
+  (Kincaid et al. 1975), Gunning Fog (complex = 3+ syllables), SMOG (McLaughlin 1969), Coleman-Liau
+  (1975) and the Automated Readability Index (Smith & Senter 1967) are reported together with their
+  median ("consensus grade"), because any single formula is fragile against tailoring — dense
+  academic prose scores wildly apart across formulae, and reporting the spread is more honest than
+  hiding it.
+- **Lexical diversity beyond raw TTR.** Raw type-token ratio falls mechanically with text length,
+  so the engine also reports root TTR (Guiraud) and the Measure of Textual Lexical Diversity
+  (MTLD), computed bidirectionally with the standard 0.72 factor threshold and averaged, following
+  the original definition (McCarthy & Jarvis 2010). A text that never completes a factor reports
+  its token count, the documented upper bound.
+- **Form-exact vocabulary matching.** Coverage is computed against the 4,174 Cambridge IELTS 1-22
+  headwords with case- and accent-insensitive, form-exact matching: no stemming, no lemmatisation.
+  `governments` only matches if the inflected form is itself a published headword. This
+  underestimates true coverage slightly but is fully deterministic and reproducible with a
+  dictionary, which no stemmer can promise.
+- **Three disjoint tiers.** Headwords recurring in at least two Cambridge volumes (133 words) form
+  the `cross-volume` tier — the demonstrably recurring exam vocabulary; single-volume headwords
+  (4,041 words) the `single-volume` tier; everything else `out-of-list`. The frequency-ranked
+  out-of-list digest (ties broken alphabetically) is capped at ten words.
+- **A labelled heuristic, never a score.** The consensus grade maps to a CEFR level through a
+  documented threshold table (≤4 → A2, ≤6 → B1, ≤9 → B2, ≤12 → C1, else C2), and the band range is
+  the span of IELTS bands that carry that level on `/v1/bands` (e.g. B2 → 5.0-6.5). Task response,
+  argument quality and grammatical accuracy are not measured, so every response carries an explicit
+  caveat. Band **prediction** belongs to trained models; the API deliberately ships none.
+
+### 14. Validation anchors
+
+The unit suite pins the engine to hand-checkable anchors, for example "The quick brown fox jumps
+over the lazy dog. The dog barked loudly." (13 words, 2 sentences, 17 heuristic syllables) must
+score Flesch Reading Ease 89.61, Flesch-Kincaid 2.38, Coleman-Liau 3.62, consensus 2.6 → A2, and a
+dense three-sentence academic text (21 words, 70 syllables, 13 polysyllabic) must score consensus
+27.56 → C2. MTLD is pinned on constructed inputs: ten identical tokens produce five closed factors
+(MTLD 2), ten distinct tokens produce none (MTLD 10).
+
+### 15. Reviewed and not imported: the self-study notes collection
+
+[`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) (snapshot `738c6082`, 2,385 blobs, no
+licence file) is a Chinese self-study notebook organised by skill (作文 writing, 口语 speaking,
+听力 listening, 阅读 reading, 经验 experience). It aggregates community preparation material —
+Simon-method writing templates and 顾家北 phrase banks, situation-classified speaking cue-card
+banks (e.g. the "神奇题库" 2025 Sep-Dec set), listening scene-vocabulary and synonym-substitution
+lists, and full listening transcripts — exactly the categories that dominate exam-prep forums.
+
+It was reviewed end to end and **deliberately not indexed**: the repository redistributes
+commercial preparation material whose licence status the snapshot cannot establish, and importing
+it would contradict the project's provenance rule (index and measure, never redistribute). More
+substantively, its thematic categories — cue-card families, writing task archetypes, listening
+scene vocabulary — are already covered by the original, openly-licensed banks served through
+`/v1/topics/*` and `/v1/topics/themes`. The review motivates one tracked future work item: an
+openly-licensed listening scene-vocabulary taxonomy (rental, campus, library, travel, ...) as a
+companion coverage profile to the Cambridge tiers.
+
+### 16. Threats to validity (Part III)
+
+- **Heuristic syllabification.** Vowel-group counting disagrees with dictionaries on suffixes
+  (`-tion`, `-ed`, synced forms); it is the same trade-off the classic formulae were calibrated
+  with, and the dataset index uses it identically.
+- **Punctuation boundaries.** Abbreviations (`e.g.`) split sentences; decimals do not count as
+  words. Counts are deterministic, not linguistically perfect.
+- **Readability is not difficulty.** The formulae ignore cohesion, syntax depth and topic
+  familiarity; the consensus grade orders texts usefully but must not be read as an assessment
+  score — which is why the band estimate ships as a labelled range with a caveat.
+- **Form-exact matching undercounts coverage.** Inflected headwords match no lemma family; the
+  direction of the error is documented and stable.
+- **CEFR thresholds are ours.** The grade-to-CEFR table is a documented design choice, not a
+  standard; `/v1/analyze/reference` publishes it so clients can re-map.

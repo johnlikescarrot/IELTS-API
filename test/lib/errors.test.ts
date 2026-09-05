@@ -6,7 +6,9 @@ import {
   methodNotAllowed,
   notAcceptable,
   notFound,
+  payloadTooLarge,
   unprocessable,
+  unsupportedMediaType,
 } from '../../src/lib/errors.js';
 
 describe('HttpError', () => {
@@ -44,6 +46,24 @@ describe('error factories', () => {
     expect(error.status).toBe(405);
     expect(error.details.allow).toBe('GET');
     expect(methodNotAllowed('nope').message).toBe('nope');
+    const custom = methodNotAllowed('PUT is not allowed here.', 'GET, HEAD, POST');
+    expect(custom.details.allow).toBe('GET, HEAD, POST');
+  });
+
+  it('builds payload too large errors', () => {
+    const error = payloadTooLarge('too big', { maxBytes: '262144' });
+    expect(error.status).toBe(413);
+    expect(error.code).toBe('payload_too_large');
+    expect(error.details).toEqual({ maxBytes: '262144' });
+    expect(payloadTooLarge('too big').details).toEqual({});
+  });
+
+  it('builds unsupported media type errors', () => {
+    const error = unsupportedMediaType('json only', { received: 'text/plain' });
+    expect(error.status).toBe(415);
+    expect(error.code).toBe('unsupported_media_type');
+    expect(error.details).toEqual({ received: 'text/plain' });
+    expect(unsupportedMediaType('json only').details).toEqual({});
   });
 
   it('builds not acceptable errors', () => {

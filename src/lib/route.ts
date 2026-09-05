@@ -10,6 +10,10 @@ export interface RouteContext {
   url: URL;
   /** Path parameters extracted by the router. */
   params: Record<string, string>;
+  /** Upper-case HTTP method of the request (`GET`, `HEAD`, `POST`). */
+  method: string;
+  /** Parsed JSON request body; only present for `POST` routes with a body. */
+  body?: unknown;
 }
 
 /** A handler result rendered as a JSON envelope. */

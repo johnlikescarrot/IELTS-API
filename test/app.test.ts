@@ -1,8 +1,9 @@
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest';
 
-import { createRequestHandler } from '../src/app.js';
+import { allowedMethods, createRequestHandler } from '../src/app.js';
 import { startApiServer } from '../src/server.js';
 import { HttpError } from '../src/lib/errors.js';
+import { ROUTES } from '../src/routes/index.js';
 import { API_VERSION } from '../src/version.js';
 import { startTestServer } from './helpers/server.js';
 
@@ -41,15 +42,23 @@ describe('request handling', () => {
     const response = await server.request('/v1/bands', { method: 'OPTIONS' });
     expect(response.status).toBe(204);
     expect(response.headers.get('access-control-allow-methods')).toContain('GET');
+    expect(response.headers.get('access-control-allow-methods')).toContain('POST');
   });
 
-  it('rejects unsupported methods with 405', async () => {
+  it('rejects unsupported methods with 405 and an allow header', async () => {
     for (const method of ['POST', 'PUT', 'DELETE', 'PATCH']) {
       const response = await server.request('/v1/bands', { method });
       expect(response.status).toBe(405);
+      expect(response.headers.get('allow')).toBe('GET, HEAD');
       const body = (await response.json()) as { meta: { error: { code: string } } };
       expect(body.meta.error.code).toBe('method_not_allowed');
     }
+  });
+
+  it('computes the allowed methods per path, with HEAD implied by GET', () => {
+    expect(allowedMethods(ROUTES, '/v1/analyze/text')).toEqual(['GET', 'HEAD', 'POST']);
+    expect(allowedMethods(ROUTES, '/v1/bands')).toEqual(['GET', 'HEAD']);
+    expect(allowedMethods(ROUTES, '/does/not/exist')).toEqual([]);
   });
 
   it('returns 404 with a pointer to the documentation', async () => {

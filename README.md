@@ -49,6 +49,14 @@ curl -s "http://localhost:3000/v1/question-types?skill=listening"
 
 # Graded reading passages between Flesch Reading Ease 60 and 80
 curl -s "http://localhost:3000/v1/tests/items?level=b1-b2&minReadingEase=60&maxReadingEase=80"
+
+# Analyze an essay draft: readability, lexical diversity, Cambridge-vocabulary coverage
+curl -s "http://localhost:3000/v1/analyze/text?text=Studying%20abroad%20broadens%20horizons."
+
+# ...or POST a full essay (up to 50,000 characters)
+curl -s "http://localhost:3000/v1/analyze/text" \
+  -X POST -H "Content-Type: application/json" \
+  -d '{"text": "Universities shape the minds that shape economies. Graduates who question\nassumptions drive innovation forward."}'
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -78,6 +86,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
 | Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
+| Text-analysis engine            |    7 readability + 4 diversity metrics, 3 coverage tiers | `/v1/analyze/text`      | Deterministic measurement ([RESEARCH.md](RESEARCH.md) Part III)                |
 
 ## Endpoints
 
@@ -116,6 +125,9 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/corpus/stats`       | Corpus statistics                                                                                 |
 | GET    | `/v1/corpus/items`       | Search the corpus index                                                                           |
 | GET    | `/v1/resources`          | Free preparation resources (`type`, `q`)                                                          |
+| GET    | `/v1/analyze/reference`  | Machine-readable metric reference: definitions, formulas, citations                               |
+| GET    | `/v1/analyze/text`       | Analyze a text passed as `?text=` (up to 8,000 characters)                                        |
+| POST   | `/v1/analyze/text`       | Analyze a full essay posted as JSON (up to 50,000 characters)                                     |
 
 ### Worked examples
 
@@ -155,6 +167,42 @@ GET /v1/vocabulary?q=hydro&match=prefix&limit=2
 }
 ```
 
+**Text analysis (essay measurement).** Paste an essay draft — the response merges readability,
+lexical diversity, the CEFR/band heuristic and the Cambridge-headword coverage profile:
+
+```jsonc
+POST /v1/analyze/text  {"text": "Universities shape higher education ..."}
+{
+  "status": 200,
+  "data": {
+    "metrics": {
+      "counts": { "words": 13, "sentences": 2, "polysyllabicWords": 0, "...": "..." },
+      "readability": {
+        "fleschReadingEase": 89.61, "fleschKincaidGrade": 2.38, "gunningFog": 2.6,
+        "smogIndex": 3.13, "colemanLiauIndex": 3.62, "automatedReadabilityIndex": 1.02,
+        "consensusGrade": 2.6
+      },
+      "lexical": { "typeTokenRatio": 0.7692, "rootTtr": 2.7735, "mtld": 14.38, "...": "..." },
+      "cefr": "A2"
+    },
+    "vocabularyCoverage": {
+      "coverage": 0.8462,
+      "tiers": [
+        { "tier": "cross-volume", "words": 0, "unique": 0, "share": 0 },
+        { "tier": "single-volume", "words": 0, "unique": 0, "share": 0 },
+        { "tier": "out-of-list", "words": 0, "unique": 0, "share": 0, "...": "..." }
+      ],
+      "topOutOfList": [{ "word": "barked", "count": 1 }]
+    },
+    "bandEstimate": { "cefr": "A2", "bandMin": 3, "bandMax": 3.5, "pointEstimate": 3.5,
+                      "basis": "readability-grade heuristic" }
+  }
+}
+```
+
+Real outputs cover the full metric set; `GET /v1/analyze/reference` documents every field with its
+formula and citation.
+
 ### What the practice-test index measures
 
 The 1,232 CEFR-graded lessons and the 470 machine-readable full tests are indexed by structure and by
@@ -187,7 +235,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 420 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
