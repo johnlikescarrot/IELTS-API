@@ -6,3 +6,7 @@ coverage/
 .env
 .idea/
 .vscode/
+
+# Super-Linter diagnostics
+super-linter-output/
+github_conf/
