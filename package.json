@@ -11,7 +11,12 @@
     "assessment",
     "second-language-acquisition",
     "open-data",
-    "typescript"
+    "typescript",
+    "readability",
+    "lexical-diversity",
+    "mtld",
+    "automated-writing-evaluation",
+    "text-analysis"
   ],
   "license": "MIT",
   "type": "module",

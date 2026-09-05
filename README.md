@@ -69,34 +69,39 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 
 ## Endpoints
 
-All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
-same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
+All endpoints are CORS-open, ETag-cached and authentication-free. Every JSON response uses the
+same envelope: `{ "status": 200, "data": ..., "meta": ... }`. The `/v1/analyze/*` endpoints
+additionally accept `POST`, because essays exceed a safe query-string length; nothing is stored.
 
-| Method | Path                    | Description                                                                                       |
-| ------ | ----------------------- | ------------------------------------------------------------------------------------------------- |
-| GET    | `/`                     | Service index, dataset sizes, citation links                                                      |
-| GET    | `/v1`                   | List every versioned endpoint                                                                     |
-| GET    | `/health`               | Liveness and dataset availability                                                                 |
-| GET    | `/docs`                 | Human-readable documentation                                                                      |
-| GET    | `/openapi.json`         | OpenAPI 3.1 document generated from the live route table                                          |
-| GET    | `/v1/vocabulary`        | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
-| GET    | `/v1/vocabulary/stats`  | Dataset statistics                                                                                |
-| GET    | `/v1/vocabulary/random` | Seeded random sample (`count`, `seed`)                                                            |
-| GET    | `/v1/vocabulary/daily`  | Deterministic entry for a date (`date`, `count`)                                                  |
-| GET    | `/v1/vocabulary/:word`  | Look up one headword                                                                              |
-| GET    | `/v1/bands`             | The band scale with indicative CEFR levels                                                        |
-| GET    | `/v1/bands/descriptors` | Band descriptors (`set`, `criterion`, `band`)                                                     |
-| GET    | `/v1/bands/:band`       | One band, with the descriptors that bracket it                                                    |
-| GET    | `/v1/scores/overall`    | Overall band from the four components                                                             |
-| GET    | `/v1/scores/convert`    | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
-| GET    | `/v1/scores/interpret`  | Another scale back to an indicative IELTS band                                                    |
-| GET    | `/v1/topics/writing`    | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
-| GET    | `/v1/topics/speaking`   | Speaking Parts 1-3 (`part`, `q`)                                                                  |
-| GET    | `/v1/tasks/writing`     | Writing Task 1 families (`module`)                                                                |
-| GET    | `/v1/corpus`            | Corpus metadata, statistics and facets                                                            |
-| GET    | `/v1/corpus/stats`      | Corpus statistics                                                                                 |
-| GET    | `/v1/corpus/items`      | Search the corpus index                                                                           |
-| GET    | `/v1/resources`         | Free preparation resources (`type`, `q`)                                                          |
+| Method   | Path                     | Description                                                                                       |
+| -------- | ------------------------ | ------------------------------------------------------------------------------------------------- |
+| GET      | `/`                      | Service index, dataset sizes, citation links                                                      |
+| GET      | `/v1`                    | List every versioned endpoint                                                                     |
+| GET      | `/health`                | Liveness and dataset availability                                                                 |
+| GET      | `/docs`                  | Human-readable documentation                                                                      |
+| GET      | `/openapi.json`          | OpenAPI 3.1 document generated from the live route table                                          |
+| GET      | `/v1/vocabulary`         | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
+| GET      | `/v1/vocabulary/stats`   | Dataset statistics                                                                                |
+| GET      | `/v1/vocabulary/random`  | Seeded random sample (`count`, `seed`)                                                            |
+| GET      | `/v1/vocabulary/daily`   | Deterministic entry for a date (`date`, `count`)                                                  |
+| GET      | `/v1/vocabulary/:word`   | Look up one headword                                                                              |
+| GET      | `/v1/bands`              | The band scale with indicative CEFR levels                                                        |
+| GET      | `/v1/bands/descriptors`  | Band descriptors (`set`, `criterion`, `band`)                                                     |
+| GET      | `/v1/bands/:band`        | One band, with the descriptors that bracket it                                                    |
+| GET      | `/v1/scores/overall`     | Overall band from the four components                                                             |
+| GET      | `/v1/scores/convert`     | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
+| GET      | `/v1/scores/interpret`   | Another scale back to an indicative IELTS band                                                    |
+| GET      | `/v1/topics/writing`     | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
+| GET      | `/v1/topics/speaking`    | Speaking Parts 1-3 (`part`, `q`)                                                                  |
+| GET      | `/v1/tasks/writing`      | Writing Task 1 families (`module`)                                                                |
+| GET      | `/v1/corpus`             | Corpus metadata, statistics and facets                                                            |
+| GET      | `/v1/corpus/stats`       | Corpus statistics                                                                                 |
+| GET      | `/v1/corpus/items`       | Search the corpus index                                                                           |
+| GET      | `/v1/resources`          | Free preparation resources (`type`, `q`)                                                          |
+| GET/POST | `/v1/analyze/text`       | Readability, lexical diversity and sentence statistics (`text`, `top`)                            |
+| GET/POST | `/v1/analyze/cohesion`   | Cohesive devices grouped by discourse function (`text`)                                           |
+| GET/POST | `/v1/analyze/essay`      | Indicative, evidence-linked Writing diagnostics (`text`, `task`)                                  |
+| GET/POST | `/v1/analyze/vocabulary` | Coverage of a text against the Cambridge IELTS 1-22 word lists (`text`)                           |
 
 ### Worked examples
 
@@ -136,6 +141,31 @@ GET /v1/vocabulary?q=hydro&match=prefix&limit=2
 }
 ```
 
+**Text analysis.** `/v1/analyze/*` computes published, reproducible measures in-process; the text is
+never stored, logged or transmitted.
+
+```bash
+curl -s -X POST "http://localhost:3000/v1/analyze/essay?task=task-2" \
+  -H "content-type: application/json" \
+  -d '{"text": "Some people believe that governments should fund public transport ..."}'
+```
+
+| Family            | Measures                                                                                              |
+| ----------------- | ----------------------------------------------------------------------------------------------------- |
+| Readability       | Flesch Reading Ease, Flesch-Kincaid Grade, Gunning Fog, SMOG, Coleman-Liau, ARI, consensus grade      |
+| Lexical diversity | TTR, root TTR (Guiraud), log TTR (Herdan's C), Maas index, MTLD, hapax legomena, lexical density      |
+| Syntax            | Sentence count, mean length, standard deviation, shortest and longest sentence                        |
+| Cohesion          | 48 cohesive devices in 7 discourse functions (addition, contrast, cause, exemplification, ...)        |
+| Vocabulary        | Share of distinct types found in the Cambridge IELTS 1-22 word lists, with per-word volume provenance |
+
+The `indicativeBand` returned by `/v1/analyze/essay` is a **deterministic surface-feature rubric**
+published for reproducibility: four weighted dimensions (task length 0.2, lexical resource 0.3,
+grammatical range 0.25, coherence and cohesion 0.25), each returned with the evidence that produced
+it. It is not an IELTS score, is not produced by a trained examiner, and does not assess task
+content or argument quality. Because the rubric is fully specified in
+[`src/lib/essay.ts`](src/lib/essay.ts), any published result obtained through it can be audited and
+replicated exactly.
+
 ## Reproducible data pipeline
 
 Both datasets are regenerated from source with standard-library-only Python:
@@ -151,7 +181,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 295 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 362 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.

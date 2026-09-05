@@ -29,6 +29,13 @@ const OFFSET = {
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
 
+const TEXT_PARAM = {
+  name: 'text',
+  in: 'query',
+  description: 'Text to analyse (use POST for anything longer than a few sentences).',
+  schema: { type: 'string', maxLength: 20000 },
+};
+
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/vocabulary': [
@@ -151,12 +158,43 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/analyze/text': [
+    TEXT_PARAM,
+    {
+      name: 'top',
+      in: 'query',
+      description: 'How many rows of the frequency distribution to return.',
+      schema: { type: 'integer', minimum: 0, maximum: 100, default: 10 },
+    },
+  ],
+  '/v1/analyze/cohesion': [TEXT_PARAM],
+  '/v1/analyze/essay': [
+    TEXT_PARAM,
+    { name: 'task', in: 'query', schema: { type: 'string', enum: ['task-1', 'task-2'], default: 'task-2' } },
+  ],
+  '/v1/analyze/vocabulary': [TEXT_PARAM],
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },
     LIMIT,
     OFFSET,
   ],
+};
+
+/** Request body accepted by the `POST /v1/analyze/*` endpoints. */
+const TEXT_BODY = {
+  required: true,
+  description: 'The text to analyse. Send JSON `{"text": "..."}` or a plain-text body.',
+  content: {
+    'application/json': {
+      schema: {
+        type: 'object',
+        required: ['text'],
+        properties: { text: { type: 'string', maxLength: 20000 } },
+      },
+    },
+    'text/plain': { schema: { type: 'string', maxLength: 20000 } },
+  },
 };
 
 /** The shared JSON envelope schema. */
@@ -212,34 +250,43 @@ export function openApiDocument(
   serverUrl: string,
   version: string,
 ): JsonValue {
-  const paths: Record<string, JsonValue> = {};
+  const paths: Record<string, Record<string, JsonValue>> = {};
   for (const route of routes) {
     if (route.path === '/openapi.json' || route.path === '/docs') {
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
-      get: {
-        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
-        summary: route.summary,
-        tags: route.versioned ? ['v1'] : ['service'],
-        parameters,
-        responses: {
-          '200': {
-            description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
-          },
-          '304': { description: 'Not modified (ETag matched).' },
-          '400': {
-            description: 'Invalid parameters.',
-            content: { 'application/json': { schema: ERROR } },
-          },
-          '404': {
-            description: 'Not found.',
-            content: { 'application/json': { schema: ERROR } },
-          },
+    const method = route.method.toLowerCase();
+    paths[route.path] ??= {};
+    (paths[route.path] as Record<string, JsonValue>)[method] = {
+      operationId: `${method}_${route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '')}`,
+      summary: route.summary,
+      tags: route.versioned ? ['v1'] : ['service'],
+      parameters,
+      responses: {
+        '200': {
+          description: 'Successful response.',
+          content: { 'application/json': { schema: ENVELOPE } },
+        },
+        '304': { description: 'Not modified (ETag matched).' },
+        '400': {
+          description: 'Invalid parameters.',
+          content: { 'application/json': { schema: ERROR } },
+        },
+        '404': {
+          description: 'Not found.',
+          content: { 'application/json': { schema: ERROR } },
+        },
+        '405': {
+          description: 'Method not allowed.',
+          content: { 'application/json': { schema: ERROR } },
+        },
+        '413': {
+          description: 'Request body too large.',
+          content: { 'application/json': { schema: ERROR } },
         },
       },
+      ...(route.method === 'POST' ? { requestBody: TEXT_BODY } : {}),
     };
   }
 

@@ -159,3 +159,50 @@ python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 
 The commit SHA recorded in `data/corpus.json` identifies the exact snapshot; re-running against a
 different commit is expected to change the item count and the coverage ratio.
+
+## 7. Text analytics (`/v1/analyze/*`)
+
+### 7.1 What is computed, and from which definition
+
+| Measure                     | Definition used                                     | Reference              |
+| --------------------------- | --------------------------------------------------- | ---------------------- |
+| Flesch Reading Ease         | `206.835 - 1.015·(W/S) - 84.6·(Sy/W)`               | Kincaid et al. 1975    |
+| Flesch-Kincaid Grade        | `0.39·(W/S) + 11.8·(Sy/W) - 15.59`                  | Kincaid et al. 1975    |
+| Gunning Fog                 | `0.4·((W/S) + 100·(P/W))`                           | Gunning 1952           |
+| SMOG grade                  | `1.043·sqrt(P·30/S) + 3.1291`                       | McLaughlin 1969        |
+| Coleman-Liau                | `0.0588·L - 0.296·N - 15.8` (per 100 words)         | Coleman & Liau 1975    |
+| Automated Readability Index | `4.71·(C/W) + 0.5·(W/S) - 21.43`                    | Senter & Smith 1967    |
+| Type-token ratio            | `T/W`                                               | —                      |
+| Root TTR                    | `T/sqrt(W)`                                         | Guiraud 1960           |
+| Log TTR (Herdan's C)        | `log T / log W`                                     | Herdan 1960            |
+| Maas index                  | `(log W - log T) / (log W)²`                        | Maas 1972              |
+| MTLD                        | Mean of forward and backward passes, threshold 0.72 | McCarthy & Jarvis 2010 |
+
+`W` words, `S` sentences, `Sy` syllables, `P` polysyllables (3+ syllables), `C` characters,
+`T` types, `L` characters per 100 words, `N` sentences per 100 words.
+
+### 7.2 Threats to validity
+
+- **Syllable counting is heuristic.** Every readability formula that uses `Sy` or `P` inherits the
+  error term of the rule-based counter in `src/lib/text.ts`. The rules (vowel groups, silent
+  terminal `e`, syllabic `le`, minimum of one) are conventional but not exact for loanwords and
+  proper nouns. The counter is deterministic and unit-tested, so the error is at least stable.
+- **Sentence segmentation is punctuation-based.** Abbreviations ending in a full stop
+  ("e.g.", "Dr.") over-count sentences, which deflates mean sentence length and inflates the reading
+  ease. Candidate essays rarely contain them; research corpora may.
+- **Readability formulas were calibrated on L1 school texts**, not on L2 examination writing. They
+  describe surface complexity, not communicative quality, and should never be reported as a proxy
+  for a band score.
+- **MTLD is length-sensitive below roughly 100 tokens.** Short Task 1 responses will produce noisier
+  values than Task 2 responses; the token count is always returned alongside so a reader can judge.
+- **The cohesive-device inventory is closed and English-specific.** It counts 48 explicit
+  connectives and cannot see lexical cohesion, reference chains or substitution, so a text that is
+  coherent without explicit signposting is under-credited. The full inventory is returned in the
+  response metadata.
+- **The indicative band is a rubric, not a model.** It is a weighted sum over four surface features
+  with hand-set thresholds. It has not been validated against examiner-assigned bands, and the API
+  says so in every response. It exists so that a reproducible, inspectable baseline is available;
+  it should be reported as such and never as a predicted IELTS score.
+- **No content assessment.** Nothing in the pipeline reads the prompt, so task response, relevance,
+  factual accuracy and argument quality — the dimensions examiners weight most heavily — are
+  entirely outside its scope.

@@ -42,7 +42,8 @@ describe('error factories', () => {
   it('builds method not allowed errors', () => {
     const error = methodNotAllowed();
     expect(error.status).toBe(405);
-    expect(error.details.allow).toBe('GET');
+    expect(error.details.allow).toBe('GET, HEAD, OPTIONS, POST');
+    expect(methodNotAllowed('nope', 'GET').details.allow).toBe('GET');
     expect(methodNotAllowed('nope').message).toBe('nope');
   });
 

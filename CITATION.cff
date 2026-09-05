@@ -26,6 +26,11 @@ keywords:
   - open data
   - REST API
   - TypeScript
+  - readability
+  - lexical diversity
+  - MTLD
+  - automated writing evaluation
+  - corpus linguistics
 license:
   - MIT
   - CC-BY-4.0
