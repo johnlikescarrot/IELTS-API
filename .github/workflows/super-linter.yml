@@ -139,6 +139,12 @@ jobs:
           fi
           exit 0
 
+      # The container writes these as root; without this the runner user
+      # gets EACCES and upload-artifact fails the job after a green lint.
+      - name: Fix ownership of the diagnostic outputs
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" super-linter-output super-linter.log 2>/dev/null || true
+
       - name: Upload the super-linter output
         if: always()
         uses: actions/upload-artifact@v4
