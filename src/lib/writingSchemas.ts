@@ -1,4 +1,8 @@
-/** OpenAPI schemas for the original Task 1 practice contract. */
+/**
+ * OpenAPI schemas for the original Task 1 practice contract.
+ * Array bounds describe the tested revision-one corpus and its SVG layouts;
+ * extending those layouts requires updating the schemas and data invariants.
+ */
 
 import { WRITING_EXERCISE_KINDS } from '../data/writingExercises.js';
 
@@ -29,9 +33,11 @@ export const WRITING_EXERCISE_SCHEMA = {
     minimumWords: { type: 'integer', const: 150 },
     suggestedMinutes: { type: 'integer', const: 20 },
     figureUrl: { type: 'string', description: 'Relative URL of the accessible SVG figure.' },
-    checklist: { type: 'array', items: { type: 'string' } },
+    checklist: { type: 'array', minItems: 4, maxItems: 4, items: { type: 'string' } },
     checks: {
       type: 'array',
+      minItems: 3,
+      maxItems: 3,
       items: {
         type: 'object',
         required: ['id', 'question', 'options'],
@@ -40,6 +46,8 @@ export const WRITING_EXERCISE_SCHEMA = {
           question: { type: 'string' },
           options: {
             type: 'array',
+            minItems: 3,
+            maxItems: 3,
             items: {
               type: 'object',
               required: ['id', 'text'],
@@ -58,11 +66,13 @@ export const WRITING_EXERCISE_SCHEMA = {
             kind: { type: 'string', enum: ['line-graph', 'bar-chart', 'pie-chart'] },
             title: { type: 'string' },
             categoryLabel: { type: 'string' },
-            categories: { type: 'array', items: { type: 'string' } },
+            categories: { type: 'array', minItems: 2, maxItems: 5, items: { type: 'string' } },
             unit: { type: 'string' },
             note: { type: 'string' },
             series: {
               type: 'array',
+              minItems: 1,
+              maxItems: 3,
               items: {
                 type: 'object',
                 required: ['label', 'values'],
@@ -70,6 +80,8 @@ export const WRITING_EXERCISE_SCHEMA = {
                   label: { type: 'string' },
                   values: {
                     type: 'array',
+                    minItems: 2,
+                    maxItems: 5,
                     description: 'Aligned with categories. Null means not reported; zero is a reported zero.',
                     items: { type: ['number', 'null'], minimum: 0 },
                   },
@@ -87,6 +99,8 @@ export const WRITING_EXERCISE_SCHEMA = {
             note: { type: 'string' },
             columns: {
               type: 'array',
+              minItems: 2,
+              maxItems: 2,
               items: {
                 type: 'object',
                 required: ['label', 'unit'],
@@ -95,12 +109,14 @@ export const WRITING_EXERCISE_SCHEMA = {
             },
             rows: {
               type: 'array',
+              minItems: 3,
+              maxItems: 3,
               items: {
                 type: 'object',
                 required: ['label', 'values'],
                 properties: {
                   label: { type: 'string' },
-                  values: { type: 'array', items: { type: 'number', minimum: 0 } },
+                  values: { type: 'array', minItems: 2, maxItems: 2, items: { type: 'number', minimum: 0 } },
                 },
               },
             },
@@ -177,6 +193,8 @@ export const WRITING_FEEDBACK_SCHEMA = {
     explanation: { type: 'string' },
     evidence: {
       type: 'array',
+      minItems: 1,
+      maxItems: 3,
       items: { type: 'string' },
       description: 'RFC 6901 JSON pointers into the public exercise data.',
     },

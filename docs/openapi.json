@@ -2426,6 +2426,7 @@
                     },
                     "data": {
                       "type": "array",
+                      "maxItems": 100,
                       "items": {
                         "$ref": "#/components/schemas/WritingExercise"
                       }
@@ -5954,12 +5955,16 @@
           },
           "checklist": {
             "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
             "items": {
               "type": "string"
             }
           },
           "checks": {
             "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
             "items": {
               "type": "object",
               "required": ["id", "question", "options"],
@@ -5972,6 +5977,8 @@
                 },
                 "options": {
                   "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
                   "items": {
                     "type": "object",
                     "required": ["id", "text"],
@@ -6006,6 +6013,8 @@
                   },
                   "categories": {
                     "type": "array",
+                    "minItems": 2,
+                    "maxItems": 5,
                     "items": {
                       "type": "string"
                     }
@@ -6018,6 +6027,8 @@
                   },
                   "series": {
                     "type": "array",
+                    "minItems": 1,
+                    "maxItems": 3,
                     "items": {
                       "type": "object",
                       "required": ["label", "values"],
@@ -6027,6 +6038,8 @@
                         },
                         "values": {
                           "type": "array",
+                          "minItems": 2,
+                          "maxItems": 5,
                           "description": "Aligned with categories. Null means not reported; zero is a reported zero.",
                           "items": {
                             "type": ["number", "null"],
@@ -6054,6 +6067,8 @@
                   },
                   "columns": {
                     "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
                     "items": {
                       "type": "object",
                       "required": ["label", "unit"],
@@ -6069,6 +6084,8 @@
                   },
                   "rows": {
                     "type": "array",
+                    "minItems": 3,
+                    "maxItems": 3,
                     "items": {
                       "type": "object",
                       "required": ["label", "values"],
@@ -6078,6 +6095,8 @@
                         },
                         "values": {
                           "type": "array",
+                          "minItems": 2,
+                          "maxItems": 2,
                           "items": {
                             "type": "number",
                             "minimum": 0
@@ -6196,6 +6215,8 @@
           },
           "evidence": {
             "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
             "items": {
               "type": "string"
             },

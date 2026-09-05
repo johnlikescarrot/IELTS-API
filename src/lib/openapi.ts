@@ -371,7 +371,11 @@ const ENVELOPE = {
 
 /** Typed payloads for the original practice routes. */
 const RESPONSE_DATA: Record<string, JsonValue> = {
-  '/v1/practice/writing': { type: 'array', items: { $ref: '#/components/schemas/WritingExercise' } },
+  '/v1/practice/writing': {
+    type: 'array',
+    maxItems: 100,
+    items: { $ref: '#/components/schemas/WritingExercise' },
+  },
   '/v1/practice/writing/:id': { $ref: '#/components/schemas/WritingExercise' },
   '/v1/practice/writing/:id/check': { $ref: '#/components/schemas/WritingFeedback' },
 };

@@ -30,7 +30,7 @@ describe('original Writing Task 1 practice', () => {
       expect(item.id).toMatch(/^w1-[a-z-]+$/);
       expect(item.stimulus.kind).toBe(item.kind);
       expect(TASK_TYPES.some((type) => type.id === item.taskTypeId)).toBe(true);
-      expect(item.checklist.length).toBeGreaterThanOrEqual(4);
+      expect(item.checklist).toHaveLength(4);
     }
   });
 
@@ -46,6 +46,7 @@ describe('original Writing Task 1 practice', () => {
         expect(check.options.some((option) => option.id === check.correctOption)).toBe(true);
         expect(check.explanation.length).toBeGreaterThan(40);
         expect(check.evidence.length).toBeGreaterThan(0);
+        expect(check.evidence.length).toBeLessThanOrEqual(3);
         for (const pointer of check.evidence) {
           expect(pointer.startsWith('/stimulus/')).toBe(true);
           let value: unknown = writingExerciseView(exercise);
@@ -67,6 +68,7 @@ describe('original Writing Task 1 practice', () => {
         case 'pie-chart':
           expect(stimulus.categories.length).toBeGreaterThan(1);
           expect(stimulus.categories.length).toBeLessThanOrEqual(5);
+          expect(stimulus.series.length).toBeGreaterThan(0);
           expect(stimulus.series.length).toBeLessThanOrEqual(3);
           for (const series of stimulus.series) {
             expect(series.values).toHaveLength(stimulus.categories.length);

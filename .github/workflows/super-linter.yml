@@ -78,6 +78,10 @@ jobs:
           TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
           CREATE_LOG_FILE: true
+          # The required job check reports the result. Do not attempt optional
+          # status/comment writes with this deliberately read-only token.
+          MULTI_STATUS: false
+          ENABLE_GITHUB_PULL_REQUEST_SUMMARY_COMMENT: false
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # The container can move a root-owned mktemp file (mode 0600) into the
@@ -99,16 +103,22 @@ jobs:
         if: failure()
         run: |
           set +e
-          size=$(wc -c < super-linter.log 2>/dev/null)
-          echo "::error title=super-linter log::super-linter.log is ${size:-missing} bytes; tail follows"
-          grep -F '[ERROR]' super-linter.log 2>/dev/null | head -8 | while IFS= read -r line; do
-            message=$(printf '%s' "$line" | cut -c1-450)
-            echo "::error title=super-linter::${message}"
-          done
-          tail -n 8 super-linter.log 2>/dev/null | while IFS= read -r line; do
-            message=$(printf '%s' "$line" | cut -c1-450)
-            echo "::error title=super-linter tail::${message}"
-          done
+          if [[ ! -f super-linter.log || -L super-linter.log || ! -r super-linter.log ]]; then
+            echo '::error title=super-linter::No readable, regular diagnostic log was produced.'
+            exit 0
+          fi
+          # Findings can span many unprefixed lines (for example Checkov's
+          # policy name and location). Keep context, not just the ERROR header.
+          context=$(grep -A 35 -B 1 -F '[ERROR]' super-linter.log | head -n 110 | head -c 16000)
+          if [[ -z "$context" ]]; then
+            context=$(tail -n 20 super-linter.log | head -c 16000)
+          fi
+          # Escape workflow-command data and use a single multiline annotation
+          # so GitHub's per-step annotation limit cannot hide the first finding.
+          context=${context//'%'/'%25'}
+          context=${context//$'\r'/'%0D'}
+          context=${context//$'\n'/'%0A'}
+          printf '::error title=super-linter diagnostics::%s\n' "$context"
 
       - name: Upload the super-linter log
         if: failure()

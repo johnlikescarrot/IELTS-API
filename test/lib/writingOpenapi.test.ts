@@ -73,6 +73,50 @@ describe('the interoperable writing-practice OpenAPI contract', () => {
     ).toEqual(['image/svg+xml']);
   });
 
+  it('bounds collection responses by the same maximum as the pagination query', () => {
+    const document = generated() as {
+      paths: Record<
+        string,
+        {
+          get: {
+            parameters: { name: string; schema: { maximum?: number } }[];
+            responses: Record<
+              string,
+              { content: Record<string, { schema: { properties: { data: { maxItems: number } } } }> }
+            >;
+          };
+        }
+      >;
+    };
+    const list = document.paths['/v1/practice/writing']!.get;
+    const queryMaximum = list.parameters.find((parameter) => parameter.name === 'limit')!.schema.maximum;
+    expect(queryMaximum).toBe(100);
+    expect(list.responses['200']!.content['application/json']!.schema.properties.data.maxItems).toBe(
+      queryMaximum,
+    );
+  });
+
+  it('gives every array schema an explicit, finite bound, including referenced stimuli', () => {
+    let arrays = 0;
+    const inspect = (value: unknown): void => {
+      if (Array.isArray(value)) {
+        value.forEach(inspect);
+      } else if (value !== null && typeof value === 'object') {
+        const node = value as Record<string, unknown>;
+        if (node.type === 'array') {
+          arrays += 1;
+          expect(Number.isSafeInteger(node.maxItems), JSON.stringify(node)).toBe(true);
+          expect(node.maxItems).toBeGreaterThan(0);
+          expect(node.maxItems).toBeLessThanOrEqual(100);
+          expect(node.minItems ?? 0).toBeLessThanOrEqual(node.maxItems as number);
+        }
+        Object.values(node).forEach(inspect);
+      }
+    };
+    inspect(generated());
+    expect(arrays).toBe(14);
+  });
+
   it('declares typed exercise and feedback payloads and the actual error envelope', () => {
     const document = generated() as {
       components: { schemas: Record<string, { required: string[]; properties: Record<string, unknown> }> };
