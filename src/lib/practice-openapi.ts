@@ -20,8 +20,12 @@ const skill = { type: 'string', enum: [...PRACTICE_SKILLS] };
 const mode = { type: 'string', enum: [...PRACTICE_MODES] };
 const level = { type: 'string', enum: [...PRACTICE_LEVELS] };
 const counts = { type: 'object', additionalProperties: count };
-const itemList = { type: 'array', items: { $ref: '#/components/schemas/PracticeItem' } };
-const collectionList = { type: 'array', items: { $ref: '#/components/schemas/PracticeCollection' } };
+const itemList = { type: 'array', maxItems: 100, items: { $ref: '#/components/schemas/PracticeItem' } };
+const collectionList = {
+  type: 'array',
+  maxItems: PRACTICE_COLLECTION_IDS.length,
+  items: { $ref: '#/components/schemas/PracticeCollection' },
+};
 const baseMeta = { endpoint: text, version: text };
 const provenance = { ...baseMeta, datasetSha256: sha256, sourceCommit: sha1, note: text };
 const filters = {
@@ -74,7 +78,7 @@ export const PRACTICE_SCHEMAS: Record<string, JsonValue> = {
     sourceDirectory: text,
     declaredItems: count,
     indexedItems: count,
-    levels: { type: 'array', items: level },
+    levels: { type: 'array', maxItems: PRACTICE_LEVELS.length, uniqueItems: true, items: level },
   }),
   PracticeManifest: object({
     schemaVersion: { type: 'integer', const: 1 },
@@ -121,7 +125,7 @@ export const PRACTICE_SCHEMAS: Record<string, JsonValue> = {
     }),
   ),
   PracticeSampleResponse: envelope(
-    itemList,
+    { ...itemList, maxItems: 50 },
     object({
       ...provenance,
       filters,

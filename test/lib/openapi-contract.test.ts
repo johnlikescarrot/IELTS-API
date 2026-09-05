@@ -93,6 +93,20 @@ describe('OpenAPI contract fidelity', () => {
   });
 
   it.each([
+    ['/v1/practice/items', '/v1/practice/items', 100],
+    ['/v1/practice/sample?seed=bounds', '/v1/practice/sample', 50],
+    ['/v1/practice/collections', '/v1/practice/collections', 4],
+  ])('enforces documented response array bounds for %s', async (path, template, maximum) => {
+    const body = await server.json<unknown[]>(path);
+    const schema = contract.paths[template]?.get.responses['200']?.content['application/json']
+      .schema as object;
+    const validate = new Ajv2020({ strict: false, validateFormats: false }).compile(schema);
+    const oversized = { ...body, data: Array.from({ length: maximum + 1 }, () => body.data[0]) };
+    expect(validate(oversized)).toBe(false);
+    expect(validate.errors?.some((error) => error.keyword === 'maxItems')).toBe(true);
+  });
+
+  it.each([
     ['/v1/practice', '/v1/practice', '200'],
     ['/v1/practice/collections', '/v1/practice/collections', '200'],
     ['/v1/practice/items?level=a1-a2&limit=2', '/v1/practice/items', '200'],

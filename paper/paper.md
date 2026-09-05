@@ -20,7 +20,7 @@ bibliography: paper.bib
 > **Draft technical report:** not peer reviewed, not accepted for publication, and no verified
 > archival DOI is recorded. Counts describe the pinned artefacts, not learning outcomes.
 
-# Summary
+## Summary
 
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
@@ -35,7 +35,7 @@ samples are deterministic for a fixed software revision, dataset and query. Sour
 SHA-256 fingerprint and a versioned sampling algorithm support archival comparison and replay;
 a running service or version label alone is not a permanent archive.
 
-# Statement of need
+## Statement of need
 
 IELTS is taken by millions of candidates a year and studied by a substantial research community, but
 the material researchers work with is not machine-readable. Vocabulary is published in workbooks,
@@ -61,7 +61,7 @@ The API addresses three concrete needs:
    no CORS restrictions, so the API is usable from a browser, a notebook or an offline archive
    snapshot.
 
-# Datasets
+## Datasets
 
 **Vocabulary.** `1-22yas.xlsx` in the upstream corpus holds one worksheet per Cambridge IELTS volume
 with the columns `Number | Words | Phonetic Symbol | Explanation | Notes`; sheets 5-22 swap the last
@@ -110,7 +110,7 @@ circumventing upstream controls. CEFR-like directory labels are not independentl
 individual question families, semantic duplicate passages and assessment quality were not inferred
 from filenames. The review and exact selection rules are recorded in `docs/PRACTICE.md`.
 
-# Design
+## Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
 compression are implemented directly on `node:http` and `node:zlib`. This reduces runtime dependency exposure
@@ -124,7 +124,7 @@ are independently validated and tested against real HTTP responses, with a check
 drift gate. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
 reproducible stimulus for longitudinal studies rather than a novelty.
 
-# Quality control
+## Quality control
 
 The test suite enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
@@ -138,7 +138,7 @@ missing items, checksum corruption, seeded sampling, Unicode seeds, validation e
 contracts. A golden sampling fixture was cross-checked against an independent implementation
 of the specified generator.
 
-# Availability
+## Availability
 
 Source, datasets, citation metadata and CI configuration are released at
 <https://github.com/johnlikescarrot/IELTS-API> under the MIT licence for code and CC BY 4.0 for the project's original derived metadata, not for
@@ -149,7 +149,7 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 A maintainer must publish and verify a release archive before citing its DOI; this draft does not
 claim journal acceptance, Scholar indexing or citation impact.
 
-# Acknowledgements
+## Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`; the author of that corpus is cited
 in `CITATION.cff` and in relevant dataset provenance. The practice metadata source assembled by
@@ -157,4 +157,4 @@ in `CITATION.cff` and in relevant dataset provenance. The practice metadata sour
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 
-# References
+## References

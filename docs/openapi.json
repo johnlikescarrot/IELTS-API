@@ -2025,6 +2025,8 @@
           },
           "levels": {
             "type": "array",
+            "maxItems": 7,
+            "uniqueItems": true,
             "items": {
               "type": "string",
               "enum": [
@@ -2137,6 +2139,7 @@
           },
           "collections": {
             "type": "array",
+            "maxItems": 4,
             "items": {
               "$ref": "#/components/schemas/PracticeCollection"
             }
@@ -2238,6 +2241,7 @@
           },
           "data": {
             "type": "array",
+            "maxItems": 4,
             "items": {
               "$ref": "#/components/schemas/PracticeCollection"
             }
@@ -2338,6 +2342,7 @@
           },
           "data": {
             "type": "array",
+            "maxItems": 100,
             "items": {
               "$ref": "#/components/schemas/PracticeItem"
             }
@@ -2461,6 +2466,7 @@
           },
           "data": {
             "type": "array",
+            "maxItems": 50,
             "items": {
               "$ref": "#/components/schemas/PracticeItem"
             }

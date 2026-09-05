@@ -73,6 +73,15 @@ descriptor text must remain an original paraphrase, never the official wording.
 - Every exported symbol carries a TSDoc comment.
 - Comments and documentation are English; the code base has no other language convention.
 
+## Explicit lint policy exceptions
+
+The API is intentionally public and read-only. `.checkov.yaml` documents only two authentication
+policy exceptions (`CKV_OPENAPI_4`, `CKV_OPENAPI_5`); satisfying them by adding authentication would
+break the API contract. Other OpenAPI, Dockerfile, workflow and secret checks stay enabled. Revisit
+these exceptions if an authenticated surface is ever introduced. Generated/dependency directories
+are excluded from recursive scanners, not source code. Markdown uses syntax-dependent list
+indentation enforced by Prettier/Markdownlint instead of EditorConfig's fixed-width modulus.
+
 ## Pull request checklist
 
 - [ ] Branch off `main`, one logical change per pull request.
