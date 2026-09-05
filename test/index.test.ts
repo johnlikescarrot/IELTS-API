@@ -50,10 +50,16 @@ describe('the package entry point', () => {
     expect(api.READING_PASSAGES.length).toBeGreaterThanOrEqual(8);
     expect(api.READING_LEVELS).toContain('C1');
     expect(api.STRATEGIES.length).toBeGreaterThanOrEqual(24);
+    expect(api.SKILL_BLUEPRINTS).toHaveLength(4);
+    expect(api.QUESTION_TYPES).toHaveLength(19);
+    expect(api.RAW_SCORE_TABLES).toHaveLength(3);
+    expect(api.STUDY_PHASES).toHaveLength(4);
   });
 
   it('exports the generators', () => {
     expect(typeof api.buildStudyPlan).toBe('function');
+    expect(typeof api.rawToBand).toBe('function');
+    expect(typeof api.convertRawMark).toBe('function');
     expect(typeof api.generateVocabularyQuiz).toBe('function');
     expect(typeof api.searchReading).toBe('function');
     expect(typeof api.findStrategy).toBe('function');

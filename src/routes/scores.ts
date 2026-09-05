@@ -4,9 +4,11 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
+import { RAW_SCORE_TABLE_IDS } from '../data/skills.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
+import { MAX_RAW_SCORE, MIN_RAW_SCORE, convertRawMark } from '../lib/study.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getInt, getNumber, getString, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -107,6 +109,36 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Map a raw mark on a machine-marked paper to its indicative band score. */
+function raw(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const scale = getEnum(params, 'scale', RAW_SCORE_TABLE_IDS);
+  if (scale === undefined) {
+    throw badRequest('Parameter "scale" is required.', {
+      parameter: 'scale',
+      allowed: RAW_SCORE_TABLE_IDS.join(','),
+    });
+  }
+  if (getString(params, 'raw') === undefined) {
+    throw badRequest('Parameter "raw" is required.', { parameter: 'raw' });
+  }
+  const mark = getInt(params, 'raw', MIN_RAW_SCORE, MAX_RAW_SCORE, MIN_RAW_SCORE);
+  const { table, band } = convertRawMark(scale, mark);
+  return {
+    data: {
+      from: { scale, raw: mark, questions: table.questions },
+      to: { scale: 'ielts', band },
+      matched: band !== null,
+    },
+    meta: {
+      note:
+        band === null
+          ? `No published mapping covers ${mark} marks on ${table.name}; very low raw marks have no indicative band.`
+          : table.note,
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -129,5 +161,12 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Map a score on another scale back to an indicative IELTS band.',
     handler: interpret,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw',
+    versioned: true,
+    summary: 'Map a raw mark (0-40) on Listening or Reading to its indicative band.',
+    handler: raw,
   },
 ];

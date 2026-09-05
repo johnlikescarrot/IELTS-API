@@ -7,6 +7,7 @@
 
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { READING_LEVELS, READING_TOPICS } from '../data/reading.js';
+import { QUESTION_TYPE_SKILLS, RAW_SCORE_TABLE_IDS } from '../data/skills.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
@@ -124,6 +125,21 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/scores/interpret': [
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
+  ],
+  '/v1/scores/raw': [
+    {
+      name: 'scale',
+      in: 'query',
+      required: true,
+      schema: { type: 'string', enum: [...RAW_SCORE_TABLE_IDS] },
+    },
+    { name: 'raw', in: 'query', required: true, schema: { type: 'integer', minimum: 0, maximum: 40 } },
+  ],
+  '/v1/question-types': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...QUESTION_TYPE_SKILLS] } },
+    LIMIT,
+    OFFSET,
   ],
   '/v1/reading': [
     QUERY,
@@ -330,8 +346,9 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, original',
-        'CEFR-graded reading passages with exam-style items, an evidence-labelled',
+        'descriptors, score concordances, Writing and Speaking task banks, test-format',
+        'blueprints, question-type strategy guides, indicative raw-score mappings,',
+        'original CEFR-graded reading passages with exam-style items, an evidence-labelled',
         'learning-strategy bank, and deterministic generators for seeded vocabulary',
         'quizzes and weekly study plans; plus an index of the open IELTS research corpus.',
         '',

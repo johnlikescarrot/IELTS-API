@@ -13,6 +13,7 @@ import { quizRoutes } from './quizzes.js';
 import { readingRoutes } from './reading.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
+import { skillRoutes } from './skills.js';
 import { strategyRoutes } from './strategies.js';
 import { topicRoutes } from './topics.js';
 import { vocabularyRoutes } from './vocabulary.js';
@@ -24,6 +25,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...vocabularyRoutes,
   ...bandRoutes,
   ...scoreRoutes,
+  ...skillRoutes,
   ...readingRoutes,
   ...strategyRoutes,
   ...quizRoutes,

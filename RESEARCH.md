@@ -128,7 +128,9 @@ The value added by this project is therefore in the _derived_ layer, all of it o
   caveat in every response;
 - original Writing and Speaking task banks modelled on the question families that recur in the
   corpus;
-- a catalogue of preparation resources restricted to ones that are free **and** require no login.
+- a catalogue of preparation resources restricted to ones that are free **and** require no login;
+- the practice layer of §7 and the format/technique/raw-score layer of §9, all of it original
+  work written for this project.
 
 ## 5. Threats to validity
 
@@ -230,3 +232,29 @@ re-derived or used to seed any dataset here, because scraped items inherit their
 and its provenance chain, and neither survives review — the whole reason this API can be cited at
 all is that its data provenance is checkable. The mirror is therefore cited here as evidence of
 demand, not as a source.
+
+## 9. Format blueprints, question-type technique and raw scoring
+
+The practice layer of §7 gives learners material to work on; this section records the smaller
+companion layer that tells them what the test looks like and how each item family is attacked:
+format blueprints (`/v1/skills`), per-family exam-technique guides (`/v1/question-types`),
+indicative raw-score mappings (`/v1/scores/raw`) and the study-system catalogue behind them
+(`/v1/study-system`: six-step cycle, four plan phases, CEFR ladder).
+
+The motivation is the same case study as §8. Full-test mirrors drill complete 4-part / 40-question
+Listening papers and 3-passage / 40-question Reading papers, organise practice around a stable
+taxonomy of receptive question families (eleven for Reading, eight for Listening), and pair every
+passage with the same fixed study cycle — preview, timed attempt, error analysis, vocabulary
+extraction, deep review, progress logging. Those three structural facts are encoded here as
+machine-readable data; the §8 boundary is honoured throughout: no item, transcript, explanation or
+audio from any third-party mirror was imported, re-derived or used to seed anything. Every
+blueprint note, approach step, trap and timing tip is original prose, the raw-score intervals are
+compiled from the IELTS partners' own published band-score guidance with provenance and caveat in
+every response, and marks below the lowest published interval report `null` instead of a guess.
+
+Two deliberate divisions of labour keep the layers coherent. The `/v1/strategies` bank of §7 gives
+_skill-level_ learning strategies with evidence labels; `/v1/question-types` gives _item-level_
+exam technique (approach, traps, timing) with no evidence claims beyond practitioner consensus, and
+says so. The `/v1/study-plan` generator of §7 is the canonical planner and the only one exposed;
+`/v1/study-system` publishes the raw catalogue (cycle steps, phase shares and exit criteria, CEFR
+ladder) it is consistent with, so a researcher can audit a plan's shape against the same data.

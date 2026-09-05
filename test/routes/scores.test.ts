@@ -132,3 +132,48 @@ describe('GET /v1/scores/interpret', () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
   });
 });
+
+describe('GET /v1/scores/raw', () => {
+  it('maps a listening raw mark to its band', async () => {
+    const response = await server.json<{
+      from: { scale: string; raw: number; questions: number };
+      to: { band: number };
+      matched: boolean;
+    }>('/v1/scores/raw?scale=listening&raw=30');
+    expect(response.status).toBe(200);
+    expect(response.data.from).toEqual({ scale: 'listening', raw: 30, questions: 40 });
+    expect(response.data.to.band).toBe(7);
+    expect(response.data.matched).toBe(true);
+    expect(response.meta.note).toContain('Indicative mapping');
+  });
+
+  it('distinguishes the academic and general reading tables', async () => {
+    const academic = await server.json<{ to: { band: number } }>(
+      '/v1/scores/raw?scale=reading-academic&raw=39',
+    );
+    expect(academic.data.to.band).toBe(9);
+    const general = await server.json<{ to: { band: number } }>(
+      '/v1/scores/raw?scale=reading-general&raw=39',
+    );
+    expect(general.data.to.band).toBe(8.5);
+  });
+
+  it('reports marks below the lowest published interval', async () => {
+    const response = await server.json<{ to: { band: null }; matched: boolean }>(
+      '/v1/scores/raw?scale=listening&raw=2',
+    );
+    expect(response.data.to.band).toBeNull();
+    expect(response.data.matched).toBe(false);
+    expect(response.meta.note).toContain('No published mapping');
+  });
+
+  it('requires scale and raw', async () => {
+    expect((await server.json('/v1/scores/raw')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?scale=listening')).status).toBe(400);
+  });
+
+  it('rejects unknown scales and out-of-range marks', async () => {
+    expect((await server.json('/v1/scores/raw?scale=writing&raw=30')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?scale=listening&raw=41')).status).toBe(400);
+  });
+});

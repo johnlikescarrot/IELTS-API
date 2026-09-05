@@ -412,6 +412,103 @@ export type StudyPlan = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Test format, question types, raw scoring and study system                 */
+/* -------------------------------------------------------------------------- */
+
+/** One timed section of an IELTS test paper. */
+export type TestSection = {
+  /** Section name as used on the test paper. */
+  name: string;
+  /** Time budget in minutes (excluding transfer/reading time where noted). */
+  minutes: number;
+  /** Number of questions in the section. */
+  questions: number;
+  /** What the section contains. */
+  description: string;
+};
+
+/** The public format blueprint of one IELTS skill paper. */
+export type SkillBlueprint = {
+  /** Skill assessed. */
+  skill: Skill;
+  /** Human-readable paper name. */
+  name: string;
+  /** Timed sections in test order. */
+  sections: TestSection[];
+  /** Total testing time in minutes, excluding transfer time. */
+  totalMinutes: number;
+  /** Total number of scored questions (0 for human-marked papers). */
+  totalQuestions: number;
+  /** Format notes (word counts, transfer time, module differences). */
+  notes: string[];
+};
+
+/** A receptive question family with an original strategy guide. */
+export type QuestionType = {
+  /** Stable identifier. */
+  id: string;
+  /** Skill the family belongs to. */
+  skill: 'listening' | 'reading';
+  /** Question family name. */
+  name: string;
+  /** What the candidate is asked to do. */
+  description: string;
+  /** Recommended step-by-step approach. */
+  approach: string[];
+  /** Common traps. */
+  traps: string[];
+  /** One-line timing guidance. */
+  timingTip: string;
+};
+
+/** One raw-score interval of an indicative raw-to-band table. */
+export type RawScoreRow = {
+  /** Lowest raw mark in the interval. */
+  min: number;
+  /** Highest raw mark in the interval. */
+  max: number;
+  /** Indicative band score. */
+  band: BandScore;
+};
+
+/** Raw-mark scales with published band mappings. */
+export type RawScoreTableId = 'listening' | 'reading-academic' | 'reading-general';
+
+/** An indicative raw-score to band-score table. */
+export type RawScoreTable = {
+  /** Table identifier. */
+  id: RawScoreTableId;
+  /** Human-readable name. */
+  name: string;
+  /** Number of questions on the paper. */
+  questions: number;
+  /** Organisation that publishes the mapping. */
+  provider: string;
+  /** Public URL documenting the mapping. */
+  sourceUrl: string;
+  /** How the mapping should be interpreted. */
+  provenance: 'indicative';
+  /** Caveat surfaced in every response that uses this table. */
+  note: string;
+  /** Raw-score intervals, ordered by band descending. */
+  rows: RawScoreRow[];
+};
+
+/** One phase of a multi-week study plan. */
+export type StudyPhase = {
+  /** Stable identifier. */
+  id: string;
+  /** Phase name. */
+  name: string;
+  /** Share of the total weeks allocated to this phase. */
+  share: number;
+  /** What to work on during the phase. */
+  focus: string[];
+  /** Exit criterion for the phase. */
+  exit: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

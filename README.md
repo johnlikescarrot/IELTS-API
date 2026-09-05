@@ -72,6 +72,10 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Analytic band descriptors       |      120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors`  | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))        |
 | Band scale with CEFR levels     |                                         19 rows | `/v1/bands`              | Original compilation                                                     |
 | Score concordances              |                             5 scales x 11 bands | `/v1/scores/convert`     | Providers' published comparison tables                                   |
+| Indicative raw-score mappings   |               3 tables (Listening, Reading x 2) | `/v1/scores/raw`         | IELTS partners' published band-score guidance                            |
+| Test format blueprints          |                     4 papers, 12 timed sections | `/v1/skills`             | Original compilation of the public test format                           |
+| Question-type strategy guides   |           19 families (11 reading, 8 listening) | `/v1/question-types`     | Original exam-technique guides (see [RESEARCH.md §9](RESEARCH.md))       |
+| Study system                    |             6-step cycle, 4 phases, CEFR ladder | `/v1/study-system`       | Original catalogue feeding `/v1/study-plan`                              |
 | Writing Task 2 prompts          | 111 prompts, 15 categories, 5 question families | `/v1/topics/writing`     | Original items modelled on recurring IELTS question families             |
 | Speaking items                  |        80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`    | Original items                                                           |
 | Writing Task 1 families         |                                10 task families | `/v1/tasks/writing`      | Original compilation                                                     |
@@ -105,6 +109,12 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/scores/overall`     | Overall band from the four components                                                             |
 | GET    | `/v1/scores/convert`     | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
 | GET    | `/v1/scores/interpret`   | Another scale back to an indicative IELTS band                                                    |
+| GET    | `/v1/scores/raw`         | Raw mark (0-40) to indicative band (`scale`, `raw`)                                               |
+| GET    | `/v1/skills`             | Format blueprints of the four papers                                                              |
+| GET    | `/v1/skills/:skill`      | Format blueprint of one paper                                                                     |
+| GET    | `/v1/question-types`     | Question families with exam-technique guides (`skill`, `q`)                                       |
+| GET    | `/v1/question-types/:id` | Technique guide of one question family                                                            |
+| GET    | `/v1/study-system`       | Study cycle, plan phases and CEFR ladder                                                          |
 | GET    | `/v1/reading`            | Graded reading passages (`level`, `topic`, `q`, `limit`, `offset`)                                |
 | GET    | `/v1/reading/stats`      | Reading dataset statistics                                                                        |
 | GET    | `/v1/reading/:id`        | One full passage with items (`answers=false` withholds the key)                                   |
@@ -173,7 +183,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 349 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 381 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -233,6 +243,10 @@ Please also cite the upstream corpus the vocabulary dataset was derived from:
   you need the authoritative text.
 - **Score concordances:** indicative values compiled from the providers' own published comparison
   tables. Receiving institutions apply their own rules.
+- **Raw-score mappings:** indicative intervals from the IELTS partners' published band-score guidance.
+  Paper difficulty varies between versions; very low raw marks have no published mapping.
+- **Strategy guides and blueprints:** original teaching content describing the public test format, not
+  official IELTS material.
 - **Upstream files:** never redistributed. `/v1/corpus` publishes metadata only.
 
 IELTS is a jointly owned trademark of the British Council, IDP: IELTS Australia and Cambridge

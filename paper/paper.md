@@ -96,6 +96,14 @@ recurring question families (opinion, discussion, advantages/disadvantages, prob
 two-part), 80 Speaking items across Parts 1-3, and 10 Writing Task 1 task families with response
 structure and timing guidance.
 
+**Format, technique and raw scoring.** Machine-readable format blueprints of the four papers
+(sections, timings, question counts); 19 receptive question families — eleven for Reading, eight
+for Listening — each with an original exam-technique guide (three-step approach, two traps, timing
+tip) that complements the evidence-labelled strategy bank at the level of the individual item; and
+indicative raw-score to band mappings for the three machine-marked papers, compiled from the IELTS
+partners' published band-score guidance with the same provenance-and-caveat discipline as the
+concordances.
+
 **Corpus index.** Metadata — path, normalised title, category, skill, format, size, blob SHA-1 —
 for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file repository. No
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
@@ -131,7 +139,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (349 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (381 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

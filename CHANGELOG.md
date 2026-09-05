@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **Test-format and exam-technique layer**: machine-readable format blueprints of the four papers
+  (`/v1/skills`, `/v1/skills/:skill`), 19 receptive question families with original exam-technique
+  guides — eleven for Reading, eight for Listening (`/v1/question-types`, `/v1/question-types/:id`),
+  indicative raw-score to band mappings for Listening, Academic Reading and General Training Reading
+  (`/v1/scores/raw`), and the study-system catalogue of cycle, phases and CEFR ladder
+  (`/v1/study-system`). Complements the v1.1.0 practice layer; all prose is original work, no
+  third-party test content is reproduced (see `RESEARCH.md` §9).
+
 ## [1.1.0] - 2026-09-05
 
 The practice release: everything a learner practises on, in citable, licensed form.
