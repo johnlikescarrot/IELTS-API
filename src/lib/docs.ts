@@ -6,23 +6,61 @@
  * citation-manager preview.
  */
 
-import { vocabularyStats } from '../data/vocabulary.js';
+import { CITATION } from '../data/citation.js';
 import { corpusStats } from '../data/corpus.js';
+import { QUESTION_TYPES } from '../data/questions.js';
+import { vocabularyStats } from '../data/vocabulary.js';
+import { toBibtex } from './citation.js';
+import { escapeHtml, jsonLdBody, metaProperty, metaTag } from './html.js';
 
 import type { RouteDefinition } from './route.js';
 
+export { escapeHtml } from './html.js';
+
 /**
- * Escape text for safe inclusion in HTML.
+ * Structured data for the documentation page.
  *
- * @param value - Raw text.
+ * Deliberately **not** Highwire `citation_*` tags: those belong on `/paper` and
+ * nowhere else. Repeating them here would make Google Scholar treat the
+ * documentation as a second, competing record of the same work and split its
+ * citations between the two URLs. This page therefore describes itself as an
+ * API, and points at the paper as the thing to cite.
+ *
+ * @param repository - Source repository URL.
  */
-export function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+function structuredData(repository: string): string {
+  const graph = {
+    '@context': 'https://schema.org',
+    '@type': 'WebAPI',
+    name: 'IELTS API',
+    description:
+      'A free, open, no-authentication REST API for IELTS preparation research: vocabulary, band descriptors, score conversion, question-type taxonomy, test-format blueprints and task banks.',
+    documentation: '/docs',
+    termsOfService: `${repository}/blob/main/LICENSE`,
+    provider: { '@type': 'Organization', name: 'The IELTS API contributors' },
+    isAccessibleForFree: true,
+    license: 'https://opensource.org/licenses/MIT',
+    citation: '/paper',
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: '/v1/vocabulary?q={search_term_string}',
+      'query-input': 'required name=search_term_string',
+    },
+  };
+  return [
+    metaTag(
+      'description',
+      'Free, no-authentication REST API for IELTS research: vocabulary, band descriptors, raw-score conversion, question types and task banks.',
+    ),
+    metaTag('robots', 'index, follow'),
+    metaProperty('og:type', 'website'),
+    metaProperty('og:title', 'IELTS API - free, open, no authentication'),
+    metaProperty('og:description', 'Machine-readable IELTS preparation data. No API key, no registration.'),
+    '<link rel="alternate" type="text/html" href="/paper" title="Accompanying paper">',
+    '<script type="application/ld+json">',
+    jsonLdBody(graph),
+    '</script>',
+  ].join('\n');
 }
 
 /** One row of the endpoint table. */
@@ -48,6 +86,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const questionTypes = QUESTION_TYPES.length;
 
   return `<!doctype html>
 <html lang="en">
@@ -55,6 +94,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>IELTS API &mdash; free, open, no authentication</title>
+${structuredData(repository)}
 <style>
   :root { color-scheme: light dark; --fg: #111; --bg: #fff; --muted: #5b6470; --line: #e3e6ea; --accent: #0b6bcb; }
   @media (prefers-color-scheme: dark) { :root { --fg: #e8eaf0; --bg: #12151a; --muted: #9aa4b2; --line: #262b33; --accent: #6cb6ff; } }
@@ -94,6 +134,12 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>${corpus.ieltsRelevantFiles} of ${corpus.filesInRepository} upstream files</strong> indexed from the open research corpus (${(corpus.coverageRatio * 100).toFixed(1)}% IELTS-relevant); only metadata is published.</li>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
+  <li><strong>Raw-score conversion tables</strong> mapping 0&ndash;40 correct answers onto a band for Listening,
+      Academic Reading and General Training Reading &mdash; every boundary labelled <em>published</em> or
+      <em>extrapolated</em>, and contested boundaries carrying the competing value.</li>
+  <li><strong>${questionTypes} question types</strong> covering the complete Listening and Reading taxonomy, each with the
+      construct it measures, its answer format and original strategy notes.</li>
+  <li><strong>Test-format blueprints</strong> for all six papers, with part-level item counts, timings and register.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
 </ul>
 
@@ -132,25 +178,37 @@ ${service.map(routeRow).join('\n')}
     <tr><td class="path">order</td><td>collections</td><td><code>asc</code> or <code>desc</code>.</td></tr>
     <tr><td class="path">match</td><td><code>/v1/vocabulary</code></td><td><code>contains</code>, <code>prefix</code> or <code>exact</code>.</td></tr>
     <tr><td class="path">volume</td><td><code>/v1/vocabulary</code></td><td>Comma-separated Cambridge IELTS volumes, 1&ndash;22.</td></tr>
+    <tr><td class="path">component</td><td><code>/v1/scores/raw</code></td><td><code>listening</code>, <code>reading-academic</code> or <code>reading-general-training</code>.</td></tr>
+    <tr><td class="path">raw</td><td><code>/v1/scores/raw</code></td><td>Correct answers out of 40.</td></tr>
+    <tr><td class="path">skill</td><td><code>/v1/questions</code>, <code>/v1/format</code></td><td>Filter by skill.</td></tr>
+    <tr><td class="path">format</td><td><code>/v1/citation</code></td><td><code>bibtex</code>, <code>ris</code>, <code>csl-json</code>, <code>apa</code>, <code>mla</code>, <code>chicago</code>, <code>harvard</code>, <code>endnote</code>, <code>text</code>.</td></tr>
   </tbody>
 </table>
 
 <h2>Citing this API</h2>
-<p>If you use this API in research, please cite it; the <code>CITATION.cff</code> file in the repository
-and the archived Zenodo release both carry full metadata.</p>
-<pre><code>@software{ielts_api,
-  title  = {IELTS API: a free, no-authentication REST API for IELTS preparation research},
-  author = {IELTS API contributors},
-  url    = {${escapeHtml(repository)}},
-  version= {${escapeHtml(version)}},
-  license= {MIT}
-}</code></pre>
+<p>If you use this API or its datasets in research, please cite it &mdash; citations are what keep the project
+free. The accompanying paper has its own landing page at <a href="/paper">/paper</a> with a
+<a href="/paper.pdf">PDF full text</a> and machine-readable citation metadata.</p>
+<p>Every reference-manager format is served directly by the API:
+<a href="/v1/citation?format=bibtex">BibTeX</a>,
+<a href="/v1/citation?format=ris">RIS</a>,
+<a href="/v1/citation?format=csl-json">CSL-JSON</a>,
+<a href="/v1/citation?format=apa">APA</a>,
+<a href="/v1/citation?format=mla">MLA</a>,
+<a href="/v1/citation?format=chicago">Chicago</a>,
+<a href="/v1/citation?format=harvard">Harvard</a> and
+<a href="/v1/citation?format=endnote">EndNote</a>.</p>
+<pre><code>${escapeHtml(toBibtex(CITATION))}</code></pre>
+<p class="meta">Please also cite the upstream corpus the vocabulary dataset was derived from:
+<a href="/v1/citation?upstream=true&amp;format=bibtex">/v1/citation?upstream=true&amp;format=bibtex</a>.</p>
 
 <footer>
   <p class="meta">Code licensed under MIT; datasets under CC BY 4.0. Band descriptors are original condensed
   paraphrases written for this project and are not the official IELTS wording. Score concordances are indicative
   and compiled from the providers&rsquo; own published comparison tables.</p>
-  <p class="meta"><a href="/openapi.json">OpenAPI 3.1 document</a> &middot; <a href="/health">health</a> &middot;
+  <p class="meta"><a href="/openapi.json">OpenAPI 3.1 document</a> &middot; <a href="/paper">paper</a> &middot;
+  <a href="/paper.pdf">PDF</a> &middot; <a href="/v1/citation">citation</a> &middot;
+  <a href="/health">health</a> &middot; <a href="/sitemap.xml">sitemap</a> &middot;
   <a href="${escapeHtml(repository)}">source repository</a></p>
 </footer>
 </body>

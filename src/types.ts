@@ -189,6 +189,191 @@ export type Resource = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Raw-score conversion                                                       */
+/* -------------------------------------------------------------------------- */
+
+/** The objectively marked components, each with its own conversion table. */
+export type RawScoreComponent = 'listening' | 'reading-academic' | 'reading-general-training';
+
+/** One row of a raw-score to band-score conversion table. */
+export type RawBandRow = {
+  /** Band awarded for a raw score inside this row. */
+  band: BandScore;
+  /** Lowest raw score mapping to this band, inclusive. */
+  min: number;
+  /** Highest raw score mapping to this band, inclusive. */
+  max: number;
+  /**
+   * Whether the boundary is reproduced from widely agreeing public tables
+   * (`published`) or inferred by this project to make the table exhaustive
+   * (`extrapolated`).
+   */
+  basis: 'published' | 'extrapolated';
+  /** Competing boundary published elsewhere, or `null` where sources agree. */
+  disagreement: string | null;
+};
+
+/** A complete raw-score to band-score conversion table. */
+export type RawScoreTable = {
+  /** Component this table converts. */
+  component: RawScoreComponent;
+  /** Human-readable name. */
+  name: string;
+  /** Skill assessed. */
+  skill: 'listening' | 'reading';
+  /** Module the table applies to. */
+  module: 'both' | 'academic' | 'general-training';
+  /** Number of scored questions. */
+  questions: number;
+  /** How the table should be interpreted. */
+  provenance: 'indicative';
+  /** Caveat surfaced in every response that uses this table. */
+  note: string;
+  /** Rows, ordered from band 9 downwards and exhaustive over 0-40. */
+  rows: readonly RawBandRow[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Question types and test format                                             */
+/* -------------------------------------------------------------------------- */
+
+/** Skills whose papers are built from a closed question-type taxonomy. */
+export type QuestionTypeSkill = 'listening' | 'reading';
+
+/** How an answer to a question type is recorded. */
+export type AnswerFormat =
+  'letter' | 'letters' | 'words-from-text' | 'number' | 'true-false-not-given' | 'yes-no-not-given';
+
+/** One question type of the Listening or Reading paper. */
+export type QuestionType = {
+  /** Stable identifier, e.g. `reading-matching-headings`. */
+  id: string;
+  /** Skill the type belongs to. */
+  skill: QuestionTypeSkill;
+  /** Published name of the question type. */
+  name: string;
+  /** What the candidate is asked to do. */
+  description: string;
+  /** The construct the type is designed to measure. */
+  tests: string;
+  /** How the answer is recorded. */
+  answerFormat: AnswerFormat;
+  /** Whether the answers follow the order of the text or recording. */
+  ordered: boolean;
+  /** Listening parts or Reading passages in which the type typically appears. */
+  appearsIn: readonly number[];
+  /** Original strategy notes. */
+  strategy: readonly string[];
+  /** Original notes on the errors this type provokes. */
+  pitfalls: readonly string[];
+};
+
+/** The papers a candidate can sit. */
+export type TestModule =
+  | 'listening'
+  | 'reading-academic'
+  | 'reading-general-training'
+  | 'writing-academic'
+  | 'writing-general-training'
+  | 'speaking';
+
+/** One part, section or passage of a paper. */
+export type TestPart = {
+  /** Part number, counting from 1. */
+  number: number;
+  /** Part name. */
+  name: string;
+  /** Number of scored items in the part. */
+  items: number;
+  /** What the part contains. */
+  description: string;
+  /** Register of the language used. */
+  register: 'social' | 'academic' | 'workplace' | 'everyday' | 'general';
+  /** What the part is really testing. */
+  focus: string;
+};
+
+/** The fixed structure of one paper. */
+export type TestBlueprint = {
+  /** Module identifier. */
+  module: TestModule;
+  /** Human-readable name. */
+  name: string;
+  /** Skill assessed. */
+  skill: Skill;
+  /** Whether Academic and General Training candidates sit the same paper. */
+  sharedAcrossModules: boolean;
+  /** Working time in minutes. */
+  durationMinutes: number;
+  /** Extra answer-transfer time in minutes (paper-based test). */
+  transferMinutes: number;
+  /** Number of scored items or tasks. */
+  items: number;
+  /** Whether the paper is objectively marked or examiner-rated. */
+  scoring: 'raw' | 'analytic';
+  /** Conversion table used, or `null` for examiner-rated papers. */
+  rawScoreTable: RawScoreComponent | null;
+  /** Original commentary on how the paper behaves. */
+  summary: string;
+  /** The parts of the paper, in order. */
+  parts: readonly TestPart[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Citation                                                                   */
+/* -------------------------------------------------------------------------- */
+
+/** One author of a cited work. */
+export type CitationAuthor = {
+  /** Family name, or the full name of a collective author. */
+  family: string;
+  /** Given names, empty for collective authors. */
+  given: string;
+  /** Non-empty when the author is an organisation or collective. */
+  literal: string;
+};
+
+/** A bibliographic record. */
+export type CitationRecord = {
+  /** Kind of work. */
+  type: 'software' | 'dataset';
+  /** Full title. */
+  title: string;
+  /** Short title used in narrative citations. */
+  shortTitle: string;
+  /** Authors, in citation order. */
+  authors: readonly CitationAuthor[];
+  /** Year of publication. */
+  year: number;
+  /** Month of publication, 1-12. */
+  month: number;
+  /** Day of publication, 1-31. */
+  day: number;
+  /** Publisher or archive. */
+  publisher: string;
+  /** Version cited. */
+  version: string;
+  /** DOI without the resolver prefix, or `null` when none has been minted. */
+  doi: string | null;
+  /** Canonical URL. */
+  url: string;
+  /** Source repository. */
+  repository: string;
+  /** Licence statement. */
+  license: string;
+  /** BCP-47 language tag of the work. */
+  language: string;
+  /** Subject keywords. */
+  keywords: readonly string[];
+  /** Author-written abstract. */
+  abstract: string;
+};
+
+/** Serialisations offered by `/v1/citation`. */
+export type CitationFormat =
+  'bibtex' | 'ris' | 'csl-json' | 'apa' | 'mla' | 'chicago' | 'harvard' | 'endnote' | 'text';
+
+/* -------------------------------------------------------------------------- */
 /* Research corpus                                                            */
 /* -------------------------------------------------------------------------- */
 

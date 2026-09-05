@@ -7,3 +7,5 @@ MD041: false
 MD040: false
 MD033: false
 MD024: false
+# The JOSS paper uses one top-level heading per section, as the JOSS template requires.
+MD025: false

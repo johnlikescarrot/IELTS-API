@@ -132,3 +132,124 @@ describe('GET /v1/scores/interpret', () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
   });
 });
+
+interface RawScore {
+  component: string;
+  raw: number;
+  outOf: number;
+  accuracy: number;
+  band: number;
+  range: { min: number; max: number };
+  basis: string;
+  disagreement: string | null;
+  nextBand: { band: number; raw: number; additionalCorrect: number } | null;
+  marginToLoseBand: number | null;
+  cefr: string;
+  table: string;
+}
+
+describe('GET /v1/scores/raw', () => {
+  it('converts a Listening raw score', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?component=listening&raw=30');
+    expect(response.status).toBe(200);
+    expect(response.data.band).toBe(7);
+    expect(response.data.outOf).toBe(40);
+    expect(response.data.accuracy).toBe(0.75);
+    expect(response.data.cefr).toBe('C1');
+    expect(response.meta.provenance).toBe('indicative');
+  });
+
+  it('converts the same raw score differently for the two Reading modules', async () => {
+    const academic = await server.json<RawScore>('/v1/scores/raw?component=reading-academic&raw=30');
+    const general = await server.json<RawScore>('/v1/scores/raw?component=reading-general-training&raw=30');
+    expect(academic.data.band).toBe(7);
+    expect(general.data.band).toBe(6);
+  });
+
+  it('reports the marginal cost of the next half band', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?component=reading-academic&raw=28');
+    expect(response.data.nextBand).toEqual({ band: 7, raw: 30, additionalCorrect: 2 });
+    expect(response.data.marginToLoseBand).toBe(1);
+  });
+
+  it('reports no next band at the top of the scale', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?component=listening&raw=40');
+    expect(response.data.band).toBe(9);
+    expect(response.data.nextBand).toBeNull();
+  });
+
+  it('surfaces a contested boundary and the basis of the row', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?component=listening&raw=30');
+    expect(response.data.disagreement).toContain('older');
+    expect(response.meta.basis).toBe('published');
+  });
+
+  it('flags an extrapolated boundary', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?component=listening&raw=5');
+    expect(response.data.basis).toBe('extrapolated');
+  });
+
+  it('accepts a raw score of zero', async () => {
+    const response = await server.json<RawScore>('/v1/scores/raw?component=listening&raw=0');
+    expect(response.data.band).toBe(0);
+    expect(response.data.marginToLoseBand).toBeNull();
+  });
+
+  it('requires the component', async () => {
+    const response = await server.json('/v1/scores/raw?raw=30');
+    expect(response.status).toBe(400);
+    expect((response.meta.error as { details: Record<string, string> }).details.allowed).toContain(
+      'listening',
+    );
+  });
+
+  it('requires the raw score', async () => {
+    const response = await server.json('/v1/scores/raw?component=listening');
+    expect(response.status).toBe(400);
+    expect((response.meta.error as { details: Record<string, string> }).details.parameter).toBe('raw');
+  });
+
+  it('rejects an unknown component', async () => {
+    expect((await server.json('/v1/scores/raw?component=writing&raw=30')).status).toBe(400);
+  });
+
+  it('rejects a raw score above the number of questions', async () => {
+    const response = await server.json('/v1/scores/raw?component=listening&raw=99');
+    expect(response.status).toBe(400);
+    expect((response.meta.error as { message: string }).message).toContain('outside the');
+  });
+
+  it('rejects a negative and a non-integer raw score', async () => {
+    expect((await server.json('/v1/scores/raw?component=listening&raw=-1')).status).toBe(400);
+    expect((await server.json('/v1/scores/raw?component=listening&raw=7.5')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/scores/tables', () => {
+  it('publishes all three conversion tables', async () => {
+    const response = await server.json<{ component: string; rows: unknown[] }[]>('/v1/scores/tables');
+    expect(response.status).toBe(200);
+    expect(response.data).toHaveLength(3);
+    expect(response.meta.questions).toBe(40);
+    expect(response.meta.component).toBeNull();
+  });
+
+  it('counts the extrapolated and contested rows', async () => {
+    const response = await server.json('/v1/scores/tables');
+    expect(response.meta.extrapolatedRows).toBeGreaterThan(0);
+    expect(response.meta.contestedRows).toBeGreaterThan(0);
+  });
+
+  it('restricts the response to one table', async () => {
+    const response = await server.json<{ component: string }[]>(
+      '/v1/scores/tables?component=reading-academic',
+    );
+    expect(response.data).toHaveLength(1);
+    expect(response.data[0]!.component).toBe('reading-academic');
+    expect(response.meta.component).toBe('reading-academic');
+  });
+
+  it('rejects an unknown component', async () => {
+    expect((await server.json('/v1/scores/tables?component=speaking')).status).toBe(400);
+  });
+});

@@ -30,10 +30,28 @@ describe('renderDocs', () => {
 
   it('advertises the datasets, the citation block and the licence', () => {
     expect(page).toContain('4,174');
-    expect(page).toContain('@software{ielts_api');
+    expect(page).toContain('@software{theieltsapicontributors2026ielts');
     expect(page).toContain('https://github.com/johnlikescarrot/IELTS-API');
     expect(page).toContain('MIT');
     expect(page).toContain('CC BY 4.0');
+  });
+
+  it('describes itself as a WebAPI in JSON-LD and defers citation to /paper', () => {
+    const body = /<script type="application\/ld\+json">([\s\S]*?)<\/script>/.exec(page)![1]!;
+    const graph = JSON.parse(body) as { '@type': string; citation: string };
+    expect(graph['@type']).toBe('WebAPI');
+    expect(graph.citation).toBe('/paper');
+  });
+
+  it('does not carry Highwire tags, which belong only to /paper', () => {
+    expect(page).not.toContain('citation_title');
+    expect(page).not.toContain('citation_author');
+  });
+
+  it('links the paper, the PDF and the citation endpoint', () => {
+    expect(page).toContain('href="/paper"');
+    expect(page).toContain('href="/paper.pdf"');
+    expect(page).toContain('/v1/citation?format=bibtex');
   });
 
   it('escapes the values it interpolates', () => {

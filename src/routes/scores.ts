@@ -4,9 +4,10 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
+import { RAW_SCORE_COMPONENTS, RAW_SCORE_MAX, RAW_SCORE_TABLES, convertRawScore } from '../data/rawscores.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getInt, getNumber, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -107,6 +108,80 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/**
+ * Convert a raw Listening or Reading score into a band score.
+ *
+ * The raw score is the number of correct answers out of 40; there is no partial
+ * credit and no negative marking. The response reports the marginal cost of the
+ * next half band, which is the number a practice test actually needs, and
+ * surfaces the provenance of the boundary rather than presenting an indicative
+ * table as if it were official.
+ */
+function rawScore(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const component = getEnum(params, 'component', RAW_SCORE_COMPONENTS);
+  if (component === undefined) {
+    throw badRequest('Parameter "component" is required.', {
+      parameter: 'component',
+      allowed: RAW_SCORE_COMPONENTS.join(','),
+    });
+  }
+  if (params['raw'] === undefined) {
+    throw badRequest('Parameter "raw" is required.', { parameter: 'raw' });
+  }
+  // Deliberately parsed with a wide range so that an out-of-range raw score is
+  // reported against the conversion table rather than as a generic bound error.
+  const raw = getInt(params, 'raw', 0, 1000, 0);
+  const table = RAW_SCORE_TABLES[component];
+  const result = convertRawScore(component, raw);
+  if (result === undefined) {
+    throw badRequest(`Raw score ${raw} is outside the ${table.name} conversion table.`, {
+      parameter: 'raw',
+      received: String(raw),
+      max: String(RAW_SCORE_MAX),
+    });
+  }
+  return {
+    data: { ...result, cefr: cefrForBand(result.band), table: table.name },
+    meta: {
+      provenance: table.provenance,
+      note: table.note,
+      components: RAW_SCORE_COMPONENTS,
+      basis: result.basis,
+      tablesEndpoint: '/v1/scores/tables',
+    },
+  };
+}
+
+/** Publish the raw-score conversion tables themselves. */
+function rawScoreTables(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const component = getEnum(params, 'component', RAW_SCORE_COMPONENTS);
+  const tables = RAW_SCORE_COMPONENTS.filter(
+    (candidate) => component === undefined || candidate === component,
+  ).map((candidate) => RAW_SCORE_TABLES[candidate]);
+  const extrapolated = tables.reduce(
+    (count, table) => count + table.rows.filter((row) => row.basis === 'extrapolated').length,
+    0,
+  );
+  const contested = tables.reduce(
+    (count, table) => count + table.rows.filter((row) => row.disagreement !== null).length,
+    0,
+  );
+  return {
+    data: tables,
+    meta: {
+      total: tables.length,
+      component: component ?? null,
+      components: RAW_SCORE_COMPONENTS,
+      questions: RAW_SCORE_MAX,
+      extrapolatedRows: extrapolated,
+      contestedRows: contested,
+      note: 'Tables are exhaustive over 0-40, so every raw score resolves. Rows carry the basis of their boundary and, where public tables disagree, the competing boundary.',
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -122,6 +197,20 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Convert an IELTS band to another scale (CEFR, TOEFL iBT, Cambridge, PTE, DET).',
     handler: convert,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw',
+    versioned: true,
+    summary: 'Convert a raw Listening or Reading score out of 40 into a band score.',
+    handler: rawScore,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/tables',
+    versioned: true,
+    summary: 'The raw-score to band-score conversion tables, with the provenance of every boundary.',
+    handler: rawScoreTables,
   },
   {
     method: 'GET',

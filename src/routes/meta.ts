@@ -2,7 +2,10 @@
  * Service routes: discovery, health, OpenAPI document and documentation.
  */
 
+import { CITATION, DOI_IS_PLACEHOLDER } from '../data/citation.js';
 import { corpusStats } from '../data/corpus.js';
+import { QUESTION_TYPES } from '../data/questions.js';
+import { TEST_BLUEPRINTS } from '../data/format.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
@@ -21,6 +24,8 @@ function datasetSummary(): Record<string, number> {
     cambridgeVolumes: words.volumes,
     corpusFiles: corpus.filesInRepository,
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
+    questionTypes: QUESTION_TYPES.length,
+    testBlueprints: TEST_BLUEPRINTS.length,
   };
 }
 
@@ -33,6 +38,7 @@ function datasetSummary(): Record<string, number> {
 export function createMetaRoutes(
   routes: readonly RouteDefinition[],
   startedAt: number = Date.now(),
+  extraRoutes: readonly RouteDefinition[] = [],
 ): RouteDefinition[] {
   /** Service routes, populated once the definitions are built. */
   const serviceRoutes: RouteDefinition[] = [];
@@ -53,11 +59,22 @@ export function createMetaRoutes(
           openapi: '/openapi.json',
           health: '/health',
           api: '/v1',
+          paper: '/paper',
+          paperPdf: '/paper.pdf',
+          citation: '/v1/citation',
+          sitemap: '/sitemap.xml',
         },
         datasets: datasetSummary(),
         citation: {
+          title: CITATION.title,
+          version: CITATION.version,
+          year: CITATION.year,
+          doi: CITATION.doi,
+          doiIsPlaceholder: DOI_IS_PLACEHOLDER,
           cff: `${REPOSITORY_URL}/blob/main/CITATION.cff`,
-          note: 'Please cite this API when you use it in research.',
+          formats: '/v1/citation',
+          bibtex: '/v1/citation?format=bibtex',
+          note: 'Please cite this API when you use it in research; citations are what keep it free.',
         },
       },
       meta: { count: routes.length },
@@ -105,7 +122,7 @@ export function createMetaRoutes(
     return {
       raw: {
         contentType: 'text/html; charset=utf-8',
-        body: renderDocs([...routes, ...serviceRoutes], API_VERSION, REPOSITORY_URL),
+        body: renderDocs([...routes, ...extraRoutes, ...serviceRoutes], API_VERSION, REPOSITORY_URL),
       },
     };
   }

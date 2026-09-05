@@ -66,7 +66,10 @@ Two findings shaped the API:
 
 - **Writing dominates; listening is nearly absent.** The single listening item
   (`雅思听力1000词`, 758 KB) is a vocabulary list, not audio. Any IELTS resource built from this
-  corpus inherits that bias, so this API does not claim to cover listening comprehension.
+  corpus inherits that bias. The API therefore covers Listening only where it can do so from a
+  documented, non-corpus source — the raw-score conversion table (section 5), the question-type
+  taxonomy and the format blueprint (section 6) — and makes no claim to publish listening
+  comprehension _items_, which would require audio this corpus does not contain.
 - **Vocabulary is the only structured asset.** Everything except `1-22yas.xlsx` is prose, images or
   audio inside a proprietary container. Extracting clean data from 244 multipart `.rar` files of
   scanned textbooks is not a reproducible operation, and the files are third-party copyrighted
@@ -128,9 +131,86 @@ The value added by this project is therefore in the _derived_ layer, all of it o
   caveat in every response;
 - original Writing and Speaking task banks modelled on the question families that recur in the
   corpus;
+- exhaustive raw-score conversion tables whose every boundary carries its own provenance, and whose
+  contested boundaries carry the competing value (section 5);
+- the complete Listening and Reading question-type taxonomy and the format blueprints for all six
+  papers, with original strategy and error commentary (section 6);
+- a canonical bibliographic record rendered to nine citation formats from one source, so that no two
+  surfaces of the project can describe it differently;
 - a catalogue of preparation resources restricted to ones that are free **and** require no login.
 
-## 5. Threats to validity
+## 5. Raw-score to band-score conversion: a table with its uncertainty attached
+
+Listening and Reading are marked out of 40 and converted to a band with a lookup table. That table
+is the single most-used artefact in IELTS preparation, and it is also the least well sourced: the
+IELTS partners re-equate boundaries for every test version precisely so that a band means the same
+thing across sittings, and they publish no definitive, versioned table. What circulates is a
+consensus reconstruction.
+
+Publishing that reconstruction as a bare lookup — a number in, a number out — would launder an
+estimate into an apparent fact. Surveying the public tables shows why that matters.
+
+**Academic Reading** is the well-behaved case: independent sources agree on every boundary from
+band 1.0 to 9.0. **General Training Reading** likewise agrees from band 2.0 upwards, and confirms
+the expected direction of the difference — because General Training texts are less academic, the
+same band costs more correct answers (band 7.0 needs 34 correct, against 30 for Academic).
+
+**Listening is contested.** Recent sources agree on one table; an older table, still widely
+reprinted, disagrees at five consecutive boundaries between bands 5.0 and 7.5:
+
+| Band | Recent tables | Older reprinted table |
+| ---: | ------------: | --------------------: |
+|  7.5 |         32-34 |                 33-34 |
+|  7.0 |         30-31 |                 30-32 |
+|  6.5 |         26-29 |                 27-29 |
+|  6.0 |         23-25 |                 23-26 |
+|  5.5 |         18-22 |                 20-22 |
+|  5.0 |         16-17 |                 16-19 |
+
+A candidate scoring 32 is band 7.5 under one table and 7.0 under the other. A study that converts
+raw Listening scores without saying which table it used is therefore not reproducible at the half-band
+level, and a difference of half a band is exactly the effect size much of this literature reports.
+
+The datasets published here respond to that in three ways:
+
+1. **Every row is labelled.** `basis` is `published` where the boundary is reproduced from agreeing
+   public sources, and `extrapolated` where this project inferred it. Public Listening tables stop
+   at band 4.0, so the rows below it are extrapolated and say so; Academic Reading needs no
+   extrapolation above band 0.
+2. **Disagreement is data.** Where sources conflict, the row carries the competing boundary in
+   `disagreement` and it is returned in the API response, so a sensitivity analysis is a filter
+   rather than a literature review.
+3. **The tables are exhaustive over 0-40.** Every raw score resolves to exactly one row, which is
+   asserted by a test that walks all 41 values of all three tables. A lookup can never silently
+   fail or fall through a gap.
+
+Consumers doing measurement work should treat a converted band as an estimate carrying roughly half
+a band of table uncertainty, and should cite the version of the table they used — which is what the
+version-specific DOI is for.
+
+## 6. The question-type taxonomy
+
+The receptive papers are built from a closed set of item types: six in Listening and eleven in
+Reading. Every published practice test is a permutation of them, which makes the taxonomy the
+natural unit of analysis for item-difficulty work, for tagging a corpus of practice material, and
+for generating balanced practice sets.
+
+The type names, answer rules and the parts each type appears in follow the partners' published test
+format. Two properties are recorded that the published format leaves implicit and that matter for
+automated processing:
+
+- **`answerFormat`** distinguishes the two look-alike verification types. Identifying information
+  takes True/False/Not Given; identifying the writer's views takes Yes/No/Not Given. Labelling one
+  with the other's rubric scores zero, and conflating them in a dataset silently merges two
+  different constructs.
+- **`ordered`** records whether answers follow the order of the text. Three Reading types do not
+  (matching information, matching features, diagram labelling), which changes both the strategy a
+  candidate should use and the assumptions an item-response model can make.
+
+The strategy and pitfall prose is original to this project and is not derived from any published
+preparation material.
+
+## 7. Threats to validity
 
 - **Provenance of the glosses is unknown.** The workbook's definitions are short dictionary-style
   glosses of unverifiable origin; they are republished as-is and should be treated as a convenience
@@ -144,8 +224,14 @@ The value added by this project is therefore in the _derived_ layer, all of it o
 - **Band descriptors are paraphrases.** They are calibrated for teaching and for machine-readable
   lookup, not for official scoring.
 - **Concordances are indicative.** Providers revise their tables, and institutions apply their own.
+- **Raw-score tables are a consensus reconstruction, not an official artefact.** See section 5: the
+  boundaries are re-equated per test version, public sources disagree on Listening, and the rows
+  below band 4.0 are extrapolated. The uncertainty is published alongside the value rather than
+  hidden behind it, but it cannot be removed.
+- **The question-type taxonomy describes the instrument, not a sample of items.** It records what
+  the papers are made of; it does not contain real test items, which are copyright.
 
-## 6. Reproducing this analysis
+## 8. Reproducing this analysis
 
 ```bash
 curl -sL "https://api.github.com/repos/zhengyishiming/IELTS/git/trees/main?recursive=1" -o tree.json

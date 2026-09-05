@@ -5,8 +5,12 @@
  * from the implementation: adding a route automatically documents it.
  */
 
+import { CITATION_FORMATS } from './citation.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
+import { QUESTION_SKILLS } from '../data/questions.js';
+import { RAW_SCORE_COMPONENTS, RAW_SCORE_MAX } from '../data/rawscores.js';
+import { TEST_MODULES } from '../data/format.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
@@ -123,6 +127,63 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
   ],
+  '/v1/scores/raw': [
+    {
+      name: 'component',
+      in: 'query',
+      required: true,
+      description: 'Which paper the raw score comes from.',
+      schema: { type: 'string', enum: [...RAW_SCORE_COMPONENTS] },
+    },
+    {
+      name: 'raw',
+      in: 'query',
+      required: true,
+      description: `Correct answers out of ${RAW_SCORE_MAX}.`,
+      schema: { type: 'integer', minimum: 0, maximum: RAW_SCORE_MAX },
+    },
+  ],
+  '/v1/scores/tables': [
+    {
+      name: 'component',
+      in: 'query',
+      description: 'Restrict the response to one conversion table.',
+      schema: { type: 'string', enum: [...RAW_SCORE_COMPONENTS] },
+    },
+  ],
+  '/v1/questions': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...QUESTION_SKILLS] } },
+    {
+      name: 'ordered',
+      in: 'query',
+      description: 'Keep only types whose answers do or do not follow the order of the text.',
+      schema: { type: 'string', enum: ['true', 'false'] },
+    },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/format': [
+    {
+      name: 'skill',
+      in: 'query',
+      schema: { type: 'string', enum: ['listening', 'reading', 'writing', 'speaking'] },
+    },
+  ],
+  '/v1/citation': [
+    {
+      name: 'format',
+      in: 'query',
+      description: 'Return one serialisation verbatim instead of the JSON envelope.',
+      schema: { type: 'string', enum: [...CITATION_FORMATS] },
+    },
+    {
+      name: 'upstream',
+      in: 'query',
+      description: 'Cite the upstream corpus this work derives from.',
+      schema: { type: 'boolean', default: false },
+    },
+  ],
   '/v1/topics/writing': [
     QUERY,
     { name: 'category', in: 'query', schema: { type: 'string', enum: [...WRITING_CATEGORIES] } },
@@ -187,8 +248,27 @@ const ERROR = {
   },
 };
 
+/**
+ * Paths that do not answer with the JSON envelope and are therefore not
+ * described as JSON operations.
+ */
+const NON_JSON_PATHS = new Set([
+  '/openapi.json',
+  '/docs',
+  '/paper',
+  '/paper.pdf',
+  '/robots.txt',
+  '/sitemap.xml',
+]);
+
+/** Enumerated schemas for path parameters that accept a closed set. */
+const PATH_PARAMETER_SCHEMAS: Record<string, JsonValue> = {
+  '/v1/format/:module': { type: 'string', enum: [...TEST_MODULES] },
+};
+
 /** Path parameters, e.g. `:word` in `/v1/vocabulary/:word`. */
 function pathParameters(path: string): JsonValue[] {
+  const schema = PATH_PARAMETER_SCHEMAS[path] ?? { type: 'string' };
   return path
     .split('/')
     .filter((segment) => segment.startsWith(':'))
@@ -196,7 +276,7 @@ function pathParameters(path: string): JsonValue[] {
       name: segment.slice(1),
       in: 'path',
       required: true,
-      schema: { type: 'string' },
+      schema,
     }));
 }
 
@@ -214,7 +294,7 @@ export function openApiDocument(
 ): JsonValue {
   const paths: Record<string, JsonValue> = {};
   for (const route of routes) {
-    if (route.path === '/openapi.json' || route.path === '/docs') {
+    if (NON_JSON_PATHS.has(route.path)) {
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
@@ -253,10 +333,14 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'descriptors, score concordances, raw-score to band-score conversion tables,',
+        'the complete Listening and Reading question-type taxonomy, test-format',
+        'blueprints, Writing and Speaking task banks, and an index of the open IELTS',
+        'research corpus.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
+        '',
+        'Cite this API: GET /v1/citation?format=bibtex, or see the paper at /paper.',
       ].join('\n'),
       license: {
         name: 'MIT (code) / CC BY 4.0 (data)',
