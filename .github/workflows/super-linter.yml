@@ -52,7 +52,7 @@ jobs:
             -e DEFAULT_WORKSPACE=/tmp/lint \
             -e VALIDATE_ALL_CODEBASE=true \
             -e FILTER_REGEX_EXCLUDE='.*(data/|coverage/|dist/).*' \
-            -e LINTER_RULES_PATH=/tmp/lint \
+            -e LINTER_RULES_PATH=/ \
             -e MARKDOWN_CONFIG_FILE=.markdown-lint.yml \
             -e YAML_CONFIG_FILE=.yamllint.yml \
             -e VALIDATE_JAVASCRIPT_ES=true \
