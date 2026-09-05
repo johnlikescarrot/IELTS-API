@@ -66,6 +66,11 @@ jobs:
           VALIDATE_BASH: true
           VALIDATE_BASH_EXEC: true
           VALIDATE_GITHUB_ACTIONS: true
+          # editorconfig-checker reads `.ecrc` from the repository root, which
+          # disables only its IndentSize sub-check: that rule cannot model
+          # continuation lines (wrapped CSS, ordered-list text, shell
+          # backslashes). Charset, final newline, trailing whitespace and line
+          # endings stay enforced.
           VALIDATE_EDITORCONFIG: true
           VALIDATE_ENV: true
           VALIDATE_GITLEAKS: true
@@ -75,7 +80,6 @@ jobs:
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           CHECKOV_FILE_NAME: .checkov.yml
           YAML_CONFIG_FILE: .yamllint.yml
-          EDITORCONFIG_FILE_NAME: .ecrc
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Surface the details in the job summary and the log when linting fails,

@@ -1,21 +1,4 @@
 {
-  "$comment": [
-    "editorconfig-checker configuration, used by super-linter (VALIDATE_EDITORCONFIG).",
-    "",
-    "Only the indent-size sub-check is disabled, and only because it cannot model",
-    "continuation lines. It requires every line's left padding to be a multiple of",
-    "indent_size, which flags three constructs that are correct and deliberate:",
-    "",
-    "  - wrapped CSS declarations aligned under the property they continue",
-    "    (src/lib/docs.ts),",
-    "  - continuation text in ordered lists, indented three spaces to align with",
-    "    the item text (CONTRIBUTING.md, RESEARCH.md, paper/paper.md),",
-    "  - shell arguments aligned under a backslash continuation (workflows).",
-    "",
-    "Every other editorconfig rule stays enforced: charset, final newline,",
-    "trailing whitespace, line endings and indent style. Actual indentation is",
-    "enforced for TypeScript by Prettier, which runs in CI and pre-commit."
-  ],
   "Exclude": ["^data/", "^coverage/", "^dist/", "^node_modules/", "package-lock\\.json$"],
   "Disable": {
     "IndentSize": true
