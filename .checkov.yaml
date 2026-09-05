@@ -1,0 +1,16 @@
+# Checkov walks the workspace itself and does not honour Super-Linter filters.
+# Exclude installed dependencies and generated artefacts, not project code.
+quiet: true
+skip-path:
+  - node_modules
+  - dist
+  - coverage
+  - super-linter-output
+
+# Intentional policy exceptions: every API route is public and read-only.
+# Adding credentials just to satisfy these policies would break the no-auth
+# contract. Revisit these exceptions if authenticated routes are ever added.
+# All other OpenAPI, Dockerfile and workflow security checks remain enabled.
+skip-check:
+  - CKV_OPENAPI_4 # Requires global authentication rules.
+  - CKV_OPENAPI_5 # Forbids the explicit public `security: []` declaration.

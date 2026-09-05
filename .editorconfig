@@ -8,7 +8,10 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
+# Ordered-list continuation indentation is syntax-dependent (often 3 spaces).
+# Prettier and Markdownlint enforce Markdown indentation, not a fixed modulus.
 [*.md]
+indent_size = unset
 trim_trailing_whitespace = false
 
 [data/**.json]
