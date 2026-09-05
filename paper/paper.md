@@ -9,6 +9,8 @@ tags:
   - item types
   - open data
   - REST API
+  - study planning
+  - second language pedagogy
 authors:
   - name: The IELTS API contributors
     affiliation: 1
@@ -33,6 +35,15 @@ Listening question types, onto which 65 free-text annotation labels are normalis
 frequency of each family observed in 27,225 practice questions; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
 metadata indexes of two open IELTS collections.
+On top of the datasets the service runs a deterministic study-planning layer: a 26-item activity
+catalogue organised along the four tested skills plus collected exam experience — the taxonomy of
+open learner study-notebooks such as `Oxidaner/ielts`, whose own (largely third-party copyrighted)
+content is deliberately not redistributed — drives a gap-proportional weekly minute allocator, an
+indicative hours-per-half-band feasibility model, and a seeded quiz generator that turns the
+vocabulary dataset into reproducible practice items. Because plans and quizzes are pure functions
+of their query strings, an intervention schedule or drill set used in a study can be re-derived from
+its parameters alone.
+
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -96,6 +107,17 @@ for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
 is a descriptive act over metadata.
 
+**Study-planning layer.** `GET /v1/plan` shares a weekly budget across the four skills in
+proportion to their band gaps (maintenance skills keep a 25% floor), sequences four plan phases over
+the requested weeks, funds a weekly error-log review and a taper-week mock examination out of the
+largest skill budget, and materialises a seeded, re-fetchable API endpoint for every session.
+`GET /v1/plan/estimate` reports hours and weeks required per half band (100/140/200/280/360 h,
+increasing with the current band — a published-guidance-order heuristic, stated as such on every
+response, never a score prediction). `GET /v1/quiz` generates deterministic vocabulary drills with
+same-part-of-speech distractors in three formats, with the answer key optionally withheld for test
+delivery. The engine is exported as a library, so experiments can run the planner offline without
+the HTTP layer.
+
 **Question-type taxonomy and practice-test index.** A second upstream collection
 [@ieltspractice] publishes 315 full reading tests, 204 full listening tests and 1,232 CEFR-graded
 reading lessons behind a paid login. Its per-item JSON carries sections, question ranges and
@@ -139,7 +161,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (341 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (399 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -158,7 +180,10 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 This work builds on the open corpus assembled by `zhengyishiming` and on the practice collection
 assembled by `ngoclong1209`; both are cited in `CITATION.cff` and in every response that draws on
-them. IELTS is a jointly owned trademark of the
+them. The organisation of the study-activity catalogue follows the structure of learner
+study-notebooks published openly by the IELTS community, notably `Oxidaner/ielts`, whose four
+skill folders and collected-experience notes motivated the `general`/`experience` activity
+category; only that organisation, not any content, is carried across. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

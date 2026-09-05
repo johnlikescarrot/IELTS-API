@@ -6,6 +6,45 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+Study-planning layer: the API moves from describing preparation material to sequencing it. The design
+was informed by the structure of open learner study-notebooks — most directly
+[`Oxidaner/ielts`](https://github.com/Oxidaner/ielts), whose folders organise preparation by the four
+tested skills plus collected exam experience (经验). No content from that repository (or from the
+third-party commercial files it mirrors) is redistributed: the activity catalogue, the study-time
+model and the drills are all original artefacts of this project, and the catalogue documents the
+same four-skill-plus-experience taxonomy in English.
+
+### Added
+
+- **Study-activity catalogue** (`/v1/plan/activities`): 26 original activities across listening,
+  reading, writing, speaking and general exam experience, each tagged with a band range, the plan
+  phases it suits, timed steps, and — where useful — an endpoint template that materialises the
+  session's material from this API's own datasets.
+- **Deterministic study-plan engine** (`/v1/plan`): a pure, seeded generator that shares a weekly
+  minute budget across the four skills in proportion to their band gaps (five-minute granularity,
+  largest-remainder rounding, budget exactly conserved), sequences the four plan phases across the
+  weeks, funds a 15-minute weekly error-log review and a full mock examination out of the largest
+  skill budget, and emits fully materialised per-session endpoints. Identical parameters always
+  produce byte-identical plans, so a generated plan is citable and reproducible from its inputs.
+- **Study-time feasibility model** (`/v1/plan/estimate`): indicative hours per half-band that grow
+  with the current band (100/140/200/280/360), reported overall and per skill with an explicit
+  "planning heuristic, not a score prediction" caveat.
+- **Seeded vocabulary quizzes** (`/v1/quiz`): three drill formats (word-to-definition,
+  definition-to-word, spelling cloze) generated from the Cambridge IELTS 1-22 vocabulary dataset
+  with same-part-of-speech distractors; the answer key can be withheld (`answers=omit`) for test
+  delivery, and a quiz is reproducible from its seed.
+- Library exports for all of the above (`buildStudyPlan`, `estimateFeasibility`,
+  `normalizeStudyPlanInput`, `skillAllocations`, `hoursPerHalfBand`, `generateQuiz`,
+  `STUDY_ACTIVITIES`, `activitiesFor`, `activityStats`), so researchers can run the engine offline
+  without the HTTP layer.
+
+### Verification
+
+- 399 tests; the 100% per-file coverage gate still passes.
+- `/openapi.json` and `/docs` pick the new endpoints up automatically from the live route table.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection
@@ -77,6 +116,7 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

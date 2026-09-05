@@ -16,6 +16,20 @@ describe('the package entry point', () => {
     expect(typeof api.openApiDocument).toBe('function');
     expect(typeof api.renderDocs).toBe('function');
     expect(api.escapeHtml('<')).toBe('&lt;');
+    expect(api.ROUTES.some((route) => route.path === '/v1/plan')).toBe(true);
+    expect(api.ROUTES.some((route) => route.path === '/v1/quiz')).toBe(true);
+  });
+
+  it('exports the study-plan and quiz engines', () => {
+    expect(typeof api.buildStudyPlan).toBe('function');
+    expect(typeof api.estimateFeasibility).toBe('function');
+    expect(typeof api.normalizeStudyPlanInput).toBe('function');
+    expect(typeof api.generateQuiz).toBe('function');
+    expect(api.QUIZ_MODES).toContain('spelling');
+    expect(api.PLAN_PHASES).toContain('foundation');
+    expect(api.STUDY_ACTIVITIES.length).toBeGreaterThanOrEqual(24);
+    expect(typeof api.activityStats).toBe('function');
+    expect(api.findActivity('error-log-review')).toBeDefined();
   });
 
   it('exports the command-line helpers', () => {

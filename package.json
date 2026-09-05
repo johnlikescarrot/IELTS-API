@@ -1,7 +1,7 @@
 {
   "name": "ielts-api",
-  "version": "1.1.0",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy and a structure and readability index of 1,702 practice tests.",
+  "version": "1.2.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, a deterministic study-plan engine with a seeded vocabulary quiz generator.",
   "keywords": [
     "ielts",
     "api",
@@ -14,7 +14,10 @@
     "typescript",
     "readability",
     "question-types",
-    "language-testing"
+    "language-testing",
+    "study-planning",
+    "self-regulated-learning",
+    "practice-quizzes"
   ],
   "license": "MIT",
   "type": "module",

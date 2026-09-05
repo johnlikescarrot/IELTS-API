@@ -328,3 +328,76 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 
 The script is standard library only and deterministic: the same tree and the same files always
 produce byte-identical output.
+
+---
+
+## Part III — the study-planning layer (v1.2)
+
+### 13. Motivation and provenance
+
+The datasets in Parts I and II describe _what_ IELTS preparation consists of; they say nothing about
+_in what order_ a candidate should work through it. The structure of the activity catalogue follows
+the organisation used by open learner study-notebooks — most directly
+[`Oxidaner/ielts`](https://github.com/Oxidaner/ielts), whose folders split preparation into 听力
+(listening), 阅读 (reading), 作文 (writing), 口语 (speaking) and 经验 (collected exam experience:
+recency lists, error logs, review routines). That repository is a personal collection whose files
+are largely scans of third-party commercial materials, so **nothing from it is redistributed here**;
+what is reused is the taxonomy — four skill folders plus a folder of experience — rendered as an
+explicit `general`/`experience` activity category alongside the four skills. All 26 activity
+descriptions, the phase model and the five-tier time-on-task model are original artefacts of this
+project, written for it, and published under the same CC BY 4.0 data licence as everything else.
+
+### 14. The allocation model
+
+`GET /v1/plan` allocates a weekly minute budget across skills. For each skill _s_ with current band
+_c_s_ and target band _t_:
+
+```
+gap_s     = max(0, t − c_s)
+weight_s  = gap_s          if gap_s > 0
+          = 0.25           otherwise            (maintenance floor)
+minutes_s = 60 · hoursPerWeek · weight_s / Σ weight, quantised to 5-minute
+              units by the largest-remainder method (budget exactly conserved)
+```
+
+A skill already at the target never drops out of the plan (it keeps a maintenance share), and under a
+tight budget maintenance shares are starved first — a candidate with one catastrophic skill and an
+hour a week gets that skill, not four crumbs. Weeks are assigned to four phases by position —
+`foundation` (< 25%), `skill-build` (< 60%), `exam-practice` (< 85%), `assessment-taper` — and
+activities are drawn from the catalogue filtered by skill, phase and the candidate's band in that
+skill. Each week additionally spends 15 minutes on an error-log review out of the largest skill's
+budget, and a funded taper week runs a 180-minute mock the same way, so meta-cognitive practice
+(the `经验` habit) is structural rather than optional.
+
+Feasibility uses an indicative hours-per-half-band schedule — 100 h below band 4.5, 140 h below
+5.5, 200 h below 6.5, 280 h below 7.5, 360 h above — the order of magnitude commonly quoted by
+preparation providers for guided study time, monotonically increasing to encode diminishing returns.
+**It is a heuristic for sequencing, not a prediction of any candidate's score**, and every response
+says so in its metadata.
+
+### 15. Determinism as a research feature
+
+The engine draws every choice — which activities fill a week, option order in the quiz generator —
+from `mulberry32(hashString(seed))`, so plans and quizzes are pure functions of their inputs. The
+default seed is a canonical rendering of all other parameters, which means even an _unseeded_ request
+is reproducible as long as the explicit inputs are recorded (`startDate` defaults to today, so
+yesterday's unseeded plan is recoverable by pinning the date). A published study can therefore cite
+`GET /v1/plan?current=6&target=7&weeks=8&startDate=2026-09-07` and any reader obtains byte-identical
+schedules, ETag match included. Every session that has a material endpoint embeds the same seed
+mechanism, so the drills themselves — not just the schedule around them — can be re-fetched years
+later, which is the property Item-response research needs from a service and static notebooks lack.
+
+### 16. Threats to validity (Part III)
+
+- **The time-on-task tiers are not calibrated on this project's data.** They are a coarse prior; the
+  API labels them as such everywhere and publishes the constants inside the response itself, so
+  downstream studies can re-weight them explicitly rather than silently inheriting them.
+- **Band-gap-proportional allocation assumes linear skill independence** — in reality writing gains
+  correlate with reading input. The maintenance floor keeps non-target skills alive but does not
+  model transfer.
+- **The catalogue is hand-authored.** 26 activities × 4 skills coverage is verified exhaustively by
+  the test suite (every skill, every half-band, every phase has ≥ 2 eligible activities, so the
+  sampling never degenerates), but the activity content is expert judgment, not a validated
+  pedagogical instrument.
+- **`full-mock-test` minutes are deducted, never added**, so on a minimal budget a taper week may
+  contain no mock; the response makes this visible per week rather than faking the session.

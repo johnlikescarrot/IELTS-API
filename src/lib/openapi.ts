@@ -5,8 +5,10 @@
  * from the implementation: adding a route automatically documents it.
  */
 
+import { ACTIVITY_PHASES, ACTIVITY_SKILLS } from '../data/activities.js';
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { QUIZ_MODES } from './quiz.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
@@ -223,6 +225,132 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/plan': [
+    {
+      name: 'current',
+      in: 'query',
+      required: true,
+      description:
+        'One band, or four comma-separated component bands (listening, reading, writing, speaking).',
+      schema: { type: 'string', example: '6.5,6,5.5,6' },
+    },
+    {
+      name: 'currentListening',
+      in: 'query',
+      description: 'Override for a single component band.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'target',
+      in: 'query',
+      description: 'Target overall band.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5, default: 7 },
+    },
+    {
+      name: 'weeks',
+      in: 'query',
+      description: 'Plan length in weeks.',
+      schema: { type: 'integer', minimum: 1, maximum: 52, default: 8 },
+    },
+    {
+      name: 'hoursPerWeek',
+      in: 'query',
+      description: 'Nominal weekly study budget.',
+      schema: { type: 'integer', minimum: 1, maximum: 80, default: 10 },
+    },
+    {
+      name: 'restDays',
+      in: 'query',
+      description: 'Full rest days dropped from each week (from the end of the week).',
+      schema: { type: 'integer', minimum: 0, maximum: 3, default: 0 },
+    },
+    {
+      name: 'startDate',
+      in: 'query',
+      description: 'ISO date of the first study day. Defaults to today.',
+      schema: { type: 'string', format: 'date' },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description:
+        'Seed; defaults to a canonical string of all other parameters, so omitting it is still deterministic.',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/plan/estimate': [
+    {
+      name: 'current',
+      in: 'query',
+      required: true,
+      description: 'One band, or four comma-separated component bands.',
+      schema: { type: 'string', example: '6' },
+    },
+    {
+      name: 'target',
+      in: 'query',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5, default: 7 },
+    },
+    {
+      name: 'hoursPerWeek',
+      in: 'query',
+      schema: { type: 'integer', minimum: 1, maximum: 80, default: 10 },
+    },
+    {
+      name: 'weeks',
+      in: 'query',
+      description: 'Proposed window for the verdict.',
+      schema: { type: 'integer', minimum: 1, maximum: 104, default: 12 },
+    },
+  ],
+  '/v1/plan/activities': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...ACTIVITY_SKILLS] } },
+    { name: 'phase', in: 'query', schema: { type: 'string', enum: [...ACTIVITY_PHASES] } },
+    {
+      name: 'band',
+      in: 'query',
+      description: 'Keep only activities whose designed band range covers this band.',
+      schema: { type: 'number', minimum: 0, maximum: 9 },
+    },
+  ],
+  '/v1/quiz': [
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds return identical quizzes.',
+      schema: { type: 'string', default: 'ielts-api-default' },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Requested number of items (clamped to the filtered pool size).',
+      schema: { type: 'integer', minimum: 1, maximum: 25, default: 10 },
+    },
+    {
+      name: 'mode',
+      in: 'query',
+      schema: { type: 'string', enum: [...QUIZ_MODES], default: 'word-to-definition' },
+    },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Comma-separated Cambridge IELTS volumes (1-22).',
+      schema: { type: 'string', example: '15,16' },
+    },
+    {
+      name: 'pos',
+      in: 'query',
+      description: 'Comma-separated parts of speech.',
+      schema: { type: 'string', enum: [...PARTS_OF_SPEECH] },
+    },
+    {
+      name: 'answers',
+      in: 'query',
+      description: 'Include or withhold the answer key (nulls answer, answerIndex and explanation).',
+      schema: { type: 'string', enum: ['include', 'omit'], default: 'include' },
+    },
+  ],
 };
 
 /** The shared JSON envelope schema. */
@@ -322,6 +450,10 @@ export function openApiDocument(
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, a structure and readability',
         'index of 1,702 practice tests, and an index of the open IELTS research corpus.',
+        '',
+        'Study planning: a deterministic, seeded plan generator (/v1/plan) over a',
+        '26-activity catalogue and an indicative hours-per-half-band feasibility model,',
+        'plus reproducible vocabulary drills (/v1/quiz).',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

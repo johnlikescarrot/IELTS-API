@@ -424,6 +424,172 @@ export type ExamTheme = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Study plans and quizzes                                                    */
+/* -------------------------------------------------------------------------- */
+
+/** Phases of the four-phase study plan. */
+export type PlanPhase = 'foundation' | 'skill-build' | 'exam-practice' | 'assessment-taper';
+
+/** How an activity contributes to preparation. */
+export type ActivityCategory = 'technique' | 'drill' | 'experience';
+
+/** One entry of the study-activity catalogue. */
+export type StudyActivity = {
+  /** Stable identifier (`listening-dictation`). */
+  id: string;
+  /** Skill trained; `general` covers exam-experience activities. */
+  skill: Skill | 'general';
+  /** Technique, timed drill or exam-experience habit. */
+  category: ActivityCategory;
+  /** Short human-readable title. */
+  title: string;
+  /** One-paragraph description of the method and why it works. */
+  summary: string;
+  /** Recommended session length in minutes. */
+  minutes: number;
+  /** Lowest band score the activity is designed for. */
+  minBand: number;
+  /** Highest band score the activity is designed for. */
+  maxBand: number;
+  /** Plan phases during which the activity may be scheduled. */
+  phases: PlanPhase[];
+  /** Numbered instructions, in order. */
+  steps: string[];
+  /**
+   * API path template that materialises the session's material, with
+   * `{seed}` and `{date}` placeholders; `null` when the session needs none.
+   */
+  endpoint: string | null;
+};
+
+/** Weekly minutes assigned to one skill. */
+export type SkillAllocation = {
+  /** Skill allocated. */
+  skill: Skill;
+  /** Current band in that skill. */
+  current: number;
+  /** Target minus current, floored at zero. */
+  gap: number;
+  /** Unnormalised weight used for the allocation. */
+  weight: number;
+  /** Minutes per week scheduled for the skill (multiples of five). */
+  minutesPerWeek: number;
+};
+
+/** Feasibility estimate produced by the study-time model. */
+export type PlanFeasibility = {
+  /** Mean of the current component bands. */
+  currentMean: number;
+  /** Target overall band. */
+  target: number;
+  /** Bands to gain (never negative). */
+  gap: number;
+  /** Indicative guided-study hours per 0.5-band increase at the current level. */
+  hoursPerHalfBand: number;
+  /** Hours implied by the gap at this rate. */
+  requiredHours: number;
+  /** Weeks needed when studying `hoursPerWeek` per week. */
+  weeksRequired: number;
+  /** Hours the candidate proposes to spend in total. */
+  availableHours: number;
+  /** Band gain achievable in the proposed time at the model rate. */
+  projectedGain: number;
+  /** Model verdict for the proposed schedule. */
+  verdict: 'at-target' | 'achievable' | 'ambitious' | 'insufficient-time';
+};
+
+/** One scheduled study session inside a plan week. */
+export type PlanSession = {
+  /** Day of the study week (1-7). */
+  day: number;
+  /** Calendar date of the session (ISO). */
+  date: string;
+  /** Skill trained, or `general` for experience anchors. */
+  skill: Skill | 'general';
+  /** Catalogue activity performed. */
+  activityId: string;
+  /** Activity title, copied for readability. */
+  title: string;
+  /** Minutes budgeted for this session. */
+  minutes: number;
+  /** Material endpoint for this exact session, or `null`. */
+  endpoint: string | null;
+};
+
+/** One week of a study plan. */
+export type PlanWeek = {
+  /** One-based week number. */
+  week: number;
+  /** Phase of the plan this week sits in. */
+  phase: PlanPhase;
+  /** Skills with an unresolved gap (all four when the target is already met). */
+  focus: Skill[];
+  /** Scheduled minutes, equal to the weekly budget. */
+  totalMinutes: number;
+  /** Sessions in day order. */
+  sessions: PlanSession[];
+};
+
+/** A generated study plan. */
+export type StudyPlan = {
+  /** Seed that made this plan deterministic. */
+  seed: string;
+  /** First Monday-style start date (ISO). */
+  startDate: string;
+  /** Rest days dropped from each week. */
+  restDays: number;
+  /** Study days per week. */
+  studyDays: number;
+  /** Current component bands. */
+  current: Record<Skill, number>;
+  /** Mean of the current component bands. */
+  currentMean: number;
+  /** Target overall band. */
+  target: number;
+  /** Length of the plan in weeks. */
+  durationWeeks: number;
+  /** Nominal weekly study time. */
+  hoursPerWeek: number;
+  /** Feasibility assessment for the proposed schedule. */
+  feasibility: PlanFeasibility;
+  /** Per-skill weekly minute shares. */
+  allocations: SkillAllocation[];
+  /** The schedule, one entry per week. */
+  schedule: PlanWeek[];
+  /** Aggregates over every session. */
+  totals: {
+    sessions: number;
+    minutes: number;
+    bySkill: Record<string, number>;
+  };
+  /** Methodology notes explaining every modelling choice. */
+  methodology: string[];
+};
+
+/** Drill format for the seeded vocabulary quiz. */
+export type QuizMode = 'word-to-definition' | 'definition-to-word' | 'spelling';
+
+/** A generated quiz item; answer-bearing fields are `null` when withheld. */
+export type QuizItem = {
+  /** Stable identifier (`seed:position:entryId`). */
+  id: string;
+  /** Vocabulary entry the item was generated from. */
+  wordId: string;
+  /** Drill format. */
+  mode: QuizMode;
+  /** Question text shown to the candidate. */
+  prompt: string;
+  /** Answer options; empty in spelling mode. */
+  options: string[];
+  /** Correct option text, or the headword in spelling mode. */
+  answer: string | null;
+  /** Index of the correct option; `null` in spelling mode or when withheld. */
+  answerIndex: number | null;
+  /** Definition of the tested headword, withheld together with the key. */
+  explanation: string | null;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

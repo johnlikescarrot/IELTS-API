@@ -8,7 +8,9 @@
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
 import { createMetaRoutes } from './meta.js';
+import { planRoutes } from './plan.js';
 import { questionTypeRoutes } from './questionTypes.js';
+import { quizRoutes } from './quiz.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
 import { testRoutes } from './tests.js';
@@ -20,6 +22,7 @@ import type { RouteDefinition } from '../lib/route.js';
 /** Domain routes (all versioned under `/v1`). */
 export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...vocabularyRoutes,
+  ...quizRoutes,
   ...bandRoutes,
   ...scoreRoutes,
   ...topicRoutes,
@@ -27,6 +30,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...testRoutes,
   ...corpusRoutes,
   ...resourceRoutes,
+  ...planRoutes,
 ];
 
 /** Every route served by the API. */

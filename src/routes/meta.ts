@@ -2,6 +2,7 @@
  * Service routes: discovery, health, OpenAPI document and documentation.
  */
 
+import { activityStats } from '../data/activities.js';
 import { corpusStats } from '../data/corpus.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { vocabularyStats } from '../data/vocabulary.js';
@@ -25,6 +26,7 @@ function datasetSummary(): Record<string, number> {
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
     practiceItems: practice.indexedItems,
     practiceQuestions: practice.questions,
+    studyActivities: activityStats().activities,
   };
 }
 

@@ -2,9 +2,9 @@
   "openapi": "3.1.0",
   "info": {
     "title": "IELTS API",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
-    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, a structure and readability\nindex of 1,702 practice tests, and an index of the open IELTS research corpus.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
+    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, a structure and readability\nindex of 1,702 practice tests, and an index of the open IELTS research corpus.\n\nStudy planning: a deterministic, seeded plan generator (/v1/plan) over a\n26-activity catalogue and an indicative hours-per-half-band feasibility model,\nplus reproducible vocabulary drills (/v1/quiz).\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
       "name": "MIT (code) / CC BY 4.0 (data)",
       "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/LICENSE"
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:4011/",
+      "url": "http://127.0.0.1:4010/",
       "description": "This instance"
     }
   ],
@@ -580,6 +580,177 @@
             "required": true,
             "schema": {
               "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/quiz": {
+      "get": {
+        "operationId": "v1_quiz",
+        "summary": "Deterministic seeded vocabulary quizzes (definition matching and spelling).",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "seed",
+            "in": "query",
+            "description": "Seed; identical seeds return identical quizzes.",
+            "schema": {
+              "type": "string",
+              "default": "ielts-api-default"
+            }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Requested number of items (clamped to the filtered pool size).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 25,
+              "default": 10
+            }
+          },
+          {
+            "name": "mode",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["word-to-definition", "definition-to-word", "spelling"],
+              "default": "word-to-definition"
+            }
+          },
+          {
+            "name": "volume",
+            "in": "query",
+            "description": "Comma-separated Cambridge IELTS volumes (1-22).",
+            "schema": {
+              "type": "string",
+              "example": "15,16"
+            }
+          },
+          {
+            "name": "pos",
+            "in": "query",
+            "description": "Comma-separated parts of speech.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "noun",
+                "verb",
+                "adjective",
+                "adverb",
+                "pronoun",
+                "preposition",
+                "conjunction",
+                "other"
+              ]
+            }
+          },
+          {
+            "name": "answers",
+            "in": "query",
+            "description": "Include or withhold the answer key (nulls answer, answerIndex and explanation).",
+            "schema": {
+              "type": "string",
+              "enum": ["include", "omit"],
+              "default": "include"
             }
           }
         ],
@@ -3227,6 +3398,480 @@
               "type": "integer",
               "minimum": 0,
               "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/plan": {
+      "get": {
+        "operationId": "v1_plan",
+        "summary": "Generate a deterministic, reproducible week-by-week study plan.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "current",
+            "in": "query",
+            "required": true,
+            "description": "One band, or four comma-separated component bands (listening, reading, writing, speaking).",
+            "schema": {
+              "type": "string",
+              "example": "6.5,6,5.5,6"
+            }
+          },
+          {
+            "name": "currentListening",
+            "in": "query",
+            "description": "Override for a single component band.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "description": "Target overall band.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5,
+              "default": 7
+            }
+          },
+          {
+            "name": "weeks",
+            "in": "query",
+            "description": "Plan length in weeks.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 52,
+              "default": 8
+            }
+          },
+          {
+            "name": "hoursPerWeek",
+            "in": "query",
+            "description": "Nominal weekly study budget.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 80,
+              "default": 10
+            }
+          },
+          {
+            "name": "restDays",
+            "in": "query",
+            "description": "Full rest days dropped from each week (from the end of the week).",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 3,
+              "default": 0
+            }
+          },
+          {
+            "name": "startDate",
+            "in": "query",
+            "description": "ISO date of the first study day. Defaults to today.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "seed",
+            "in": "query",
+            "description": "Seed; defaults to a canonical string of all other parameters, so omitting it is still deterministic.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/plan/activities": {
+      "get": {
+        "operationId": "v1_plan_activities",
+        "summary": "The activity catalogue plans are built from (techniques, drills and exam-experience habits).",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Free-text search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["listening", "reading", "writing", "speaking", "general"]
+            }
+          },
+          {
+            "name": "phase",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["foundation", "skill-build", "exam-practice", "assessment-taper"]
+            }
+          },
+          {
+            "name": "band",
+            "in": "query",
+            "description": "Keep only activities whose designed band range covers this band.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/plan/estimate": {
+      "get": {
+        "operationId": "v1_plan_estimate",
+        "summary": "Estimate weeks and hours needed to reach a target band at a given study intensity.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "current",
+            "in": "query",
+            "required": true,
+            "description": "One band, or four comma-separated component bands.",
+            "schema": {
+              "type": "string",
+              "example": "6"
+            }
+          },
+          {
+            "name": "target",
+            "in": "query",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5,
+              "default": 7
+            }
+          },
+          {
+            "name": "hoursPerWeek",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 80,
+              "default": 10
+            }
+          },
+          {
+            "name": "weeks",
+            "in": "query",
+            "description": "Proposed window for the verdict.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 104,
+              "default": 12
             }
           }
         ],
