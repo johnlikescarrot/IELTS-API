@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: super-linter-${{ github.ref }}
@@ -80,15 +80,24 @@ jobs:
           CREATE_LOG_FILE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Surface the failure in the job annotations: the raw log is only
-      # reachable from the Actions UI, which a review bot cannot open.
+      # Surface the failure where it can be read without opening the Actions
+      # UI: the tail of the super-linter log is posted as a commit comment.
       - name: Report the super-linter log on failure
         if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.sha }}
         run: |
           if [ -f super-linter.log ]; then
-            grep -E '\[(ERROR|FATAL)\]' super-linter.log | tail -n 40 | while IFS= read -r line; do
-              echo "::error::${line}"
-            done
+            {
+              echo 'super-linter failed. Tail of super-linter.log:'
+              echo
+              echo '```'
+              tail -c 40000 super-linter.log
+              echo '```'
+            } > /tmp/super-linter-comment.md
           else
-            echo "::error::super-linter produced no log file"
+            echo 'super-linter failed and produced no log file.' > /tmp/super-linter-comment.md
           fi
+          gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}/comments" \
+            -f "body=@/tmp/super-linter-comment.md" > /dev/null
