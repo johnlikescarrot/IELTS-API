@@ -2,9 +2,9 @@
   "openapi": "3.1.0",
   "info": {
     "title": "IELTS API",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
-    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, a structure and readability\nindex of 1,702 practice tests, and an index of the open IELTS research corpus.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
+    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, response frameworks for the\nproductive papers, a structure and readability index of 1,702 practice tests,\nan index of the open IELTS research corpus, and an index of a 2,385-file\nself-study materials collection. The toolkit additionally scores any text\n(readability and essay profile) and composes the datasets into study plans.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
       "name": "MIT (code) / CC BY 4.0 (data)",
       "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/LICENSE"
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:4011/",
+      "url": "http://127.0.0.1:4101/",
       "description": "This instance"
     }
   ],
@@ -2241,6 +2241,266 @@
         }
       }
     },
+    "/v1/frameworks": {
+      "get": {
+        "operationId": "v1_frameworks",
+        "summary": "Response frameworks for Writing Task 2 and Speaking Parts 2-3, with stages and cue language.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Free-text search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "section",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["writing-task-2", "speaking-part-2", "speaking-part-3"]
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["writing", "speaking"]
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "description": "Essay question family.",
+            "schema": {
+              "type": "string",
+              "enum": ["opinion", "discussion", "advantages-disadvantages", "problem-solution", "two-part"]
+            }
+          },
+          {
+            "name": "part",
+            "in": "query",
+            "description": "Speaking part.",
+            "schema": {
+              "type": "integer",
+              "enum": [1, 2, 3]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/frameworks/:id": {
+      "get": {
+        "operationId": "v1_frameworks_id",
+        "summary": "One framework, with its ordered stages, cue language and pitfalls.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/tests": {
       "get": {
         "operationId": "v1_tests",
@@ -3046,6 +3306,865 @@
             "in": "query",
             "schema": {
               "type": "string"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["title", "category", "skill", "size"],
+              "default": "title"
+            }
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["asc", "desc"],
+              "default": "asc"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Page size (1-100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Zero-based offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tools/readability": {
+      "get": {
+        "operationId": "v1_tools_readability",
+        "summary": "Flesch Reading Ease, Flesch-Kincaid grade and text statistics for any passage.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "required": true,
+            "description": "Text to analyse; at most 4,000 characters and at least one alphabetic word.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/tools/essay-profile": {
+      "get": {
+        "operationId": "v1_tools_essay_profile",
+        "summary": "Lexical diversity, headword coverage, themes and descriptor-aligned hints for a writing sample.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "text",
+            "in": "query",
+            "required": true,
+            "description": "Writing sample to analyse; at most 4,000 characters and at least one alphabetic word.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "task",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["task1", "task2"],
+              "default": "task2"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum detected themes to report.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "default": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/study/plan": {
+      "get": {
+        "operationId": "v1_study_plan",
+        "summary": "Deterministic week-by-week study plan towards a target band.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "target",
+            "in": "query",
+            "required": true,
+            "description": "Target overall band.",
+            "schema": {
+              "type": "number",
+              "minimum": 4,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "listening",
+            "in": "query",
+            "description": "Current listening band; defaults to target − 1.5.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "reading",
+            "in": "query",
+            "description": "Current reading band; defaults to target − 1.5.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "writing",
+            "in": "query",
+            "description": "Current writing band; defaults to target − 1.5.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "speaking",
+            "in": "query",
+            "description": "Current speaking band; defaults to target − 1.5.",
+            "schema": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 9,
+              "multipleOf": 0.5
+            }
+          },
+          {
+            "name": "weeks",
+            "in": "query",
+            "description": "Plan length in weeks.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 52,
+              "default": 8
+            }
+          },
+          {
+            "name": "hoursPerWeek",
+            "in": "query",
+            "description": "Study hours available per week.",
+            "schema": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 80,
+              "default": 10
+            }
+          },
+          {
+            "name": "wordsPerDay",
+            "in": "query",
+            "description": "New headwords to learn per day.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/materials": {
+      "get": {
+        "operationId": "v1_materials",
+        "summary": "Metadata and statistics for the indexed IELTS study-materials collection.",
+        "tags": ["v1"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/materials/stats": {
+      "get": {
+        "operationId": "v1_materials_stats",
+        "summary": "Aggregate statistics only.",
+        "tags": ["v1"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "error"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "error": {
+                      "type": "object",
+                      "required": ["code", "message"],
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "details": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/materials/items": {
+      "get": {
+        "operationId": "v1_materials_items",
+        "summary": "Search the materials index by category, skill, format or free text.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Free-text search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "answer-key",
+                "audio",
+                "idea-bank",
+                "link-list",
+                "methodology",
+                "past-paper-recall",
+                "practice-material",
+                "question-bank",
+                "repository-meta",
+                "sentence-patterns",
+                "site-asset",
+                "template",
+                "vocabulary"
+              ]
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["general", "listening", "reading", "speaking", "writing"]
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "bat",
+                "cjs",
+                "css",
+                "docx",
+                "html",
+                "ico",
+                "jpg",
+                "js",
+                "lnk",
+                "md",
+                "mp3",
+                "pdf",
+                "png",
+                "svg",
+                "txt",
+                "unknown",
+                "xlsx",
+                "zip"
+              ]
             }
           },
           {

@@ -328,3 +328,195 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 
 The script is standard library only and deterministic: the same tree and the same files always
 produce byte-identical output.
+
+## Part III — the analysis toolkit
+
+Part III adds the first capabilities that consume arbitrary text instead of publishing derived
+metadata. Two analyser endpoints and a planner join the route table in 1.2.0; all three are pure
+functions of their inputs plus the datasets already described, so their outputs inherit the
+project-wide guarantees: deterministic, reproducible, versioned and archivable.
+
+### 13. `/v1/tools/readability`: measuring any text with the corpus as reference
+
+The readability endpoint reports Flesch Reading Ease and the Flesch-Kincaid grade level for a text
+supplied in the query string, alongside the counts they are computed from. Tokenisation keeps
+alphabetic tokens only (numerals and symbols are not words), keeping internal apostrophes and
+hyphens (`don't`, `well-known` stay single tokens). Sentences are split on `.`, `!`, `?` and the
+ellipsis character; repeated terminators end a single sentence, and an unterminated final stretch
+counts as one sentence. Syllables are estimated with the standard vowel-group heuristic (maximal
+`aeiouy` runs, minus one for a trailing silent `e`, never below one). The formulas are the 1948
+originals cited in `CITATION.cff`.
+
+The report closes with a corpus context: the group from
+[`/v1/tests/stats`](#9-passage-readability) whose mean reading ease is closest to the text, with
+the distance in points. This is what makes the endpoint useful for research rather than a toy: a
+candidate essay scoring 40 lands between the full reading tests (43.5) and the `B1-B2` graded
+lessons (26.0), which is exactly the kind of calibration statement the Part II analysis needed.
+
+Texts are capped at 4,000 characters because the API is GET-only: the cap keeps percent-encoded
+requests comfortably inside common HTTP header limits while still fitting any Task 2 essay.
+
+### 14. `/v1/tools/essay-profile`: surface heuristics mapped to the descriptors
+
+The essay profile measures the writing sample and maps the measurements onto hints phrased after
+the four analytic criteria published at `/v1/bands/descriptors`. It is deliberately a surface
+analyser — no model, no scoring, no claim to predict an examiner. Each measurement is standard:
+
+| Measurement                | Definition                                                           |
+| -------------------------- | -------------------------------------------------------------------- |
+| Type-token ratio           | distinct lower-cased forms / running words                           |
+| Guiraud's index (root TTR) | types / √tokens                                                      |
+| Headword coverage          | share of tokens found in the Cambridge 1-22 headword list            |
+| Long-word share            | share of tokens with three or more syllables                         |
+| Sentence-length spread     | population standard deviation of sentence lengths in words           |
+| Signposting density        | discourse markers per 100 words (fixed 19-marker list)               |
+| Theme coverage             | themes whose keyword sets (Part II, §8) appear as whole-word matches |
+
+Hints fire only at fixed, published thresholds — for example, lexical diversity is judged only
+above 60 tokens, counts as a strength at a TTR of 0.55 or more and earns a warning below 0.42.
+Every hint names its numbers, and the response repeats the disclaimer that hints are teaching
+heuristics, not scores. Ranking themes by matched-keyword count (ties broken by occurrences, then
+dataset order) is deterministic, so a corpus of essays profiles identically on every replica.
+
+### 15. `/v1/study/plan`: composing the datasets into a schedule
+
+The planner turns a target band (4.0-9.0), optional component scores, a weekly hour budget and a
+vocabulary rate into a week-by-week schedule. Gaps (`target − current`, clipped at zero) are
+weighted into weekly hours and rounded to 0.1 h; components without a query value default to
+`target − 1.5` bands. Weeks are split into foundation (40%), practice (40%) and polish (remainder)
+phases, the focus component rotates from the largest gap, and each week links to the endpoints
+that supply its material: canonical question-type drills for reading and listening weeks
+(`/v1/question-types`), level-calibrated graded lessons (`/v1/tests/items`, using the Part II
+finding that the `C1-C2` tier is harder than the real papers), a Task 2 category and essay family
+for writing weeks (`/v1/topics/writing`), a rotating part topic for speaking weeks
+(`/v1/topics/speaking`), and two recurring themes per week (`/v1/topics/themes`). Full mocks are
+scheduled quarterly with a final review in the last week.
+
+Every random selection is seeded from the canonical input string, so identical requests produce
+byte-identical plans; the endpoint is a scheduler, not a recommender, and it says so in `meta`.
+
+### 16. Threats to validity (Part III)
+
+- **Heuristics, not measurement.** Syllable estimation, tokenisation and the linker list are
+  approximations; the readability formulas ignore syntax, cohesion and reader knowledge. They are
+  published so results can be audited and criticised, which is the point.
+- **The headword list is volume-derived.** Coverage against the Cambridge 1-22 list rewards words
+  the volumes gloss, not "good vocabulary"; inflected forms that are not listed count as misses.
+- **The thresholds are pedagogical, not empirical.** The TTR, coverage and signposting cut-offs
+  encode published teaching guidance, not a calibration study against examiner-awarded bands.
+- **The plan allocates, it does not optimise.** Gap-proportional hours assume equal returns per
+  hour across components; research on score improvement rates would need longitudinal data the API
+  does not hold.
+
+### 17. Reproducing Part III
+
+Nothing to re-derive: the analysers are code, and their behaviour is pinned by the test suite
+(100% statement, branch, function and line coverage per file, as for the rest of the API).
+
+## Part IV — the study-materials collection and the response frameworks
+
+### 18. What the collection actually contains
+
+The third upstream source, [`Oxidaner/ielts`][materials-repo], is a different kind of artefact from
+the first two: not a publisher's dump or a practice-test app, but a _personal self-study repository_ —
+the material one candidate actually aggregated between August 2025 and November 2025 while preparing
+for the computer-delivered exam. At the indexed snapshot it holds 2,385 files (≈4.7 GB) in five
+skill folders plus repository-level notes.
+
+That provenance is exactly what makes it worth indexing. Commercial preparation material is curated
+for sale; this collection is curated _for use_. Its shape is therefore evidence about which
+preparation genres candidates rely on when nobody is marketing to them:
+
+| Folder         | Files | Formats             | Dominant content                                                     |
+| -------------- | ----: | ------------------- | -------------------------------------------------------------------- |
+| 阅读 reading   | 1,593 | PDF, HTML, JS, JPG  | Saved reading-passage websites and "high-frequency" passage banks    |
+| 听力 listening |   722 | PDF, MP3, DOCX, TXT | Practice books with audio, answer keys, scenario vocabulary, recalls |
+| 作文 writing   |    27 | PDF, DOCX, JPG      | Essay templates, idea banks, sentence-pattern sheets, recall banks   |
+| 口语 speaking  |     7 | MD, DOCX, PDF, ZIP  | Part 3 methodology notes, seasonal question banks                    |
+| 经验 tips      |     2 | PDF                 | Post-exam experience write-ups                                       |
+
+As with Parts I and II, none of it can be redistributed: most files are third-party commercial
+materials collected without a licence, and the repository itself declares none. The API therefore
+publishes a **metadata index only** — path, format, size, blob SHA-1, permalink and the category
+assigned by the classification rules below.
+
+[materials-repo]: https://github.com/Oxidaner/ielts
+
+### 19. Classification rules
+
+Every file is assigned one category by the first matching rule, evaluated against the lower-cased
+full path; the skill facet comes from the top-level folder. The rules are published in
+`scripts/extract_materials.py` and are deliberately lexical and ordered, so any item's category can
+be re-derived by hand:
+
+| Rule order | Category            | Matched by (examples)                               | Files |
+| ---------: | ------------------- | --------------------------------------------------- | ----: |
+|          1 | `answer-key`        | 答案, `keys_`, "answer"                             |    71 |
+|          2 | `past-paper-recall` | 机经 ("jijing" — recalled exam content)             |     2 |
+|          3 | `question-bank`     | 题库, 题卡, 题目, 真题, 新题, 保留题                |    64 |
+|          4 | `vocabulary`        | 词汇, 替换, 词伙, 场景词                            |     7 |
+|          5 | `idea-bank`         | 观点库                                              |     3 |
+|          6 | `sentence-patterns` | 句式                                                |     1 |
+|          7 | `template`          | 模板/模版, 速成, 宝典, chart-type guides (静态图…)  |    15 |
+|          8 | `methodology`       | 方法论, 秘籍, 笔记, 经验, 情感模块, `roadmap`       |     9 |
+|          9 | `link-list`         | 网站链接                                            |     1 |
+|         10 | `repository-meta`   | `readme.md`                                         |     2 |
+|         11 | `site-asset`        | `.js`, `.css`, `.ico` of saved websites             |    64 |
+|         12 | `audio`             | `.mp3`, or a path under an 音频 (audio) folder      |   292 |
+|          — | `practice-material` | default: articles, tests, worksheets, mock packages | 1,823 |
+
+Thirty-one files are excluded entirely: 29 `.DS_Store` records and two `~$`-prefixed Microsoft Word
+lock files. They are editor and operating-system noise, not study material, and are reported
+separately in `stats.excludedFiles` so the totals reconcile:
+`indexedFiles + excludedFiles = filesInRepository`.
+
+### 20. The response-framework taxonomy
+
+The collection's writing and speaking folders share a consistent implicit theory of preparation:
+prompts are organised into _families_ (question banks), and each family is answered with a reusable
+_response shape_ (templates, structures, methodology notes). The `/v1/frameworks` dataset makes that
+second layer explicit and citable.
+
+Twelve frameworks are published, all **original to this project** — the taxonomy was written for this
+API after surveying the preparation genres above, and no upstream sentence is reproduced:
+
+- **Writing Task 2** (6): `w2-thesis-led`, `w2-concession-rebuttal`, `w2-discussion-verdict`,
+  `w2-weighing`, `w2-causal-chain`, `w2-sequenced-answers` — one per question family already served
+  by `/v1/topics/writing` (`type` facet), with the concession–rebuttal shape broken out as its own
+  framework because it is the variant markers reward on opinion prompts.
+- **Speaking Part 2** (2): `p2-narrative-spine` (experience cue cards) and `p2-feature-highlight`
+  (thing/place/person cue cards).
+- **Speaking Part 3** (4): `p3-stance-and-support`, `p3-it-depends`, `p3-comparison-over-time`,
+  `p3-criteria-evaluation` — the four recurring discussion moves of Part 3 questions.
+
+Each framework carries ordered stages, each with a purpose, concrete moves and exemplar cue
+language, plus three pitfalls that describe how the framework fails when misapplied. Frameworks
+cross-reference the task banks (`questionTypes` ↔ `/v1/topics/writing`, `speakingParts` ↔
+`/v1/topics/speaking`), so a client can move from prompt to plan in two calls.
+
+### 21. Threats to validity (Part IV)
+
+- **The collection is one candidate's.** n = 1 by design: the index documents what one learner
+  collected, not a sample of what learners collect. The category distribution should be read as a
+  case study, not an estimate.
+- **Lexical classification is approximate.** File names are noisy (hash names, mixed languages,
+  branding). The rules are published precisely so that misclassifications can be found and reported;
+  the fallback category (`practice-material`) is the most common single label and the least specific.
+- **Category sizes conflate genres.** A 300-page PDF and a one-line text file each count once.
+  `indexedBytes` is published alongside counts so analyses can weight by size.
+- **The frameworks are prescriptive, not empirical.** They formalise received preparation doctrine;
+  they are not derived from an empirical study of high-scoring responses, and no such claim is made.
+- **The snapshot is mutable.** The upstream repository is unlicensed and unversioned; the tree SHA
+  and per-file blob SHA-1s recorded in `data/materials.json` pin the analysis. The index would need
+  re-deriving after upstream changes.
+
+### 22. Reproducing Part IV
+
+```bash
+curl -sL "https://api.github.com/repos/Oxidaner/ielts/git/trees/main?recursive=1" -o tree.json
+python3 scripts/extract_materials.py tree.json data/materials.json
+```
+
+The script is standard library only and deterministic: the same tree always produces byte-identical
+output. The continuous-integration workflow re-derives the index from the upstream tree on every run
+and fails if the committed file disagrees.

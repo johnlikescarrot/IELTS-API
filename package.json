@@ -1,6 +1,6 @@
 {
   "name": "ielts-api",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy and a structure and readability index of 1,702 practice tests.",
   "keywords": [
     "ielts",
@@ -47,7 +47,8 @@
     "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test",
     "data:vocabulary": "python3 scripts/extract_vocabulary.py",
     "data:corpus": "python3 scripts/extract_corpus.py",
-    "data:practice-tests": "python3 scripts/extract_practice_tests.py"
+    "data:practice-tests": "python3 scripts/extract_practice_tests.py",
+    "data:materials": "python3 scripts/extract_materials.py"
   },
   "dependencies": {},
   "devDependencies": {

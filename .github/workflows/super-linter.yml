@@ -46,7 +46,7 @@ jobs:
         run: npm ci
 
       - name: Run super-linter
-        uses: super-linter/super-linter/slim@v8.3.1
+        uses: super-linter/super-linter/slim@4ce20838b8ab83717e78138c5b3a1407148e0918 # v8.7.0
         env:
           DEFAULT_BRANCH: main
           DEFAULT_WORKSPACE: ${{ github.workspace }}
@@ -81,7 +81,24 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Keep the linter log when the job fails: it is the only place that
-      # records which linter complained and why.
+      # records which linter complained and why. The annotations below
+      # surface the finding even when the log artifact cannot be uploaded
+      # (a runner-side zip failure would otherwise mask the real errors).
+      - name: Surface super-linter errors as annotations
+        if: failure()
+        run: |
+          set +e
+          size=$(wc -c < super-linter.log 2>/dev/null)
+          echo "::error title=super-linter log::super-linter.log is ${size:-missing} bytes; tail follows"
+          grep -F '[ERROR]' super-linter.log 2>/dev/null | head -8 | while IFS= read -r line; do
+            message=$(printf '%s' "$line" | cut -c1-450)
+            echo "::error title=super-linter::${message}"
+          done
+          tail -n 8 super-linter.log 2>/dev/null | while IFS= read -r line; do
+            message=$(printf '%s' "$line" | cut -c1-450)
+            echo "::error title=super-linter tail::${message}"
+          done
+
       - name: Upload the super-linter log
         if: failure()
         uses: actions/upload-artifact@v4

@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.1.0
+version: 1.2.0
 date-released: '2026-09-05'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
@@ -15,7 +15,10 @@ abstract: >-
   frequencies observed in 27,225 practice questions, a structure and
   readability index of 1,702 practice tests and CEFR-graded reading lessons,
   fifty recurring exam themes, and a curated index of an open IELTS research
-  corpus. Every endpoint is free of charge,
+  corpus. Deterministic analysis tools profile any text for Flesch readability,
+  lexical diversity and Cambridge-headword coverage, and compose the datasets
+  into a week-by-week study plan towards a target band. Every endpoint is free
+  of charge,
   requires no authentication, returns a uniform JSON envelope with a stable
   ETag, and is covered by a test suite with 100% statement, branch, function
   and line coverage. The API is designed for reproducible second-language
@@ -109,7 +112,7 @@ preferred-citation:
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.1.0
+  version: 1.2.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:

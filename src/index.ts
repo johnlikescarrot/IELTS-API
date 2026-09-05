@@ -26,6 +26,8 @@ export * from './lib/search.js';
 export * from './data/bands.js';
 export * from './data/conversions.js';
 export * from './data/corpus.js';
+export * from './data/frameworks.js';
+export * from './data/materials.js';
 export * from './data/practiceTests.js';
 export * from './data/questionTypes.js';
 export * from './data/resources.js';

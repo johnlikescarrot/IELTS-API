@@ -17,10 +17,14 @@
     "band descriptors",
     "score concordance",
     "question types",
+    "response frameworks",
     "readability",
     "CEFR",
     "open data",
-    "REST API"
+    "REST API",
+    "text analysis",
+    "lexical diversity",
+    "study planning"
   ],
   "license": "other-open",
   "related_identifiers": [

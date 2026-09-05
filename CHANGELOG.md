@@ -6,6 +6,62 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+Two additions in one release: the **toolkit** — the first capabilities that consume text as well as
+publish it — and the **strategy layer**, a third dataset family.
+
+The toolkit adds two deterministic text analysers and a study planner that composes every existing
+dataset into a week-by-week schedule. The strategy layer indexes a self-study materials collection
+([`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)) the same way as the research corpus — derived
+metadata and statistics only, nothing redistributed — and adds an original response-framework
+taxonomy that gives the productive papers what the question-type taxonomy gives the receptive ones.
+The API remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Readability analyser** (`GET /v1/tools/readability`): Flesch Reading Ease and Flesch-Kincaid
+  grade for any text (up to 4,000 characters) with the full counts behind them, an interpretive
+  label, and a corpus context that places the text next to the group means published by
+  `/v1/tests/stats` (full reading tests 43.5, graded lessons `A1-A2` 70.2, `B1-B2` 26.0,
+  `C1-C2` 5.0).
+- **Essay profiler** (`GET /v1/tools/essay-profile`): type-token ratio, Guiraud's root TTR,
+  long-word share, sentence-length spread, discourse-marker density, coverage against the 4,174
+  Cambridge headwords and recurring-theme detection through the Part II keyword sets, mapped onto
+  heuristic hints phrased after the four Writing band-descriptor criteria. Every threshold is
+  published and every hint names its numbers.
+- **Study planner** (`GET /v1/study/plan`): deterministic week-by-week plans from a target band,
+  optional component scores (defaulting to target − 1.5), a weekly hour budget and a vocabulary
+  rate. Gaps are weighted into hours, weeks are split into foundation, practice and polish phases,
+  and every week links to the endpoints that supply its material: question-type drills, graded
+  reading at the corpus-calibrated level, Task 2 categories, rotating speaking topics, two themes
+  per week, quarterly full mocks and a final review. Identical requests produce byte-identical
+  plans.
+- **Study-materials index** (`data/materials.json`, 2,354 of 2,385 files indexed): a metadata index of
+  what candidates actually collect while preparing — past-paper recall banks ("jijing"), question
+  banks, scenario vocabulary, essay templates, idea banks, methodology notes, mock-practice packages
+  and saved reading-passage websites — classified by category, skill and format, with upstream
+  provenance (path, blob SHA-1, permalink). Endpoints: `/v1/materials`, `/v1/materials/stats`,
+  `/v1/materials/items`.
+- **Response frameworks**: 12 original frameworks for Writing Task 2 (one per question family,
+  including the concession–rebuttal variant) and Speaking Parts 2–3 (long-turn spines and Part 3
+  development frames), each with ordered stages, purpose statements, concrete moves, cue language and
+  pitfalls, cross-linked to `/v1/topics/writing` and `/v1/topics/speaking`. Endpoints:
+  `/v1/frameworks`, `/v1/frameworks/:id`.
+- `scripts/extract_materials.py`: standard-library-only, deterministic extraction of the materials
+  index from a GitHub tree listing; reproducible in CI.
+- `RESEARCH.md` Part III (toolkit methodology, measurement definitions, threats to validity of
+  surface heuristics) and Part IV (materials collection, classification rules, framework taxonomy).
+- The service index, `/health`, `/docs` and `/openapi.json` now report the new capabilities and
+  datasets.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.2.0; the keyword
+  lists now include text analysis, lexical diversity, study planning and response frameworks.
+- Test suite grown to 469 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection

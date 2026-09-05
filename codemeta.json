@@ -4,7 +4,7 @@
   "identifier": "ielts-api",
   "name": "IELTS API",
   "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, and an indexed open research corpus.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "dateCreated": "2026-09-04",
   "datePublished": "2026-09-05",
   "programmingLanguage": [
@@ -28,11 +28,15 @@
     "band descriptors",
     "score concordance",
     "question types",
+    "response frameworks",
     "readability",
     "CEFR",
     "open data",
     "REST API",
-    "TypeScript"
+    "TypeScript",
+    "text analysis",
+    "lexical diversity",
+    "study planning"
   ],
   "author": [
     {
