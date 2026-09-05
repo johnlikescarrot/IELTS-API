@@ -73,6 +73,8 @@ jobs:
             echo "MARKDOWN_CONFIG_FILE=.markdown-lint.yml"
             echo "YAML_CONFIG_FILE=.yamllint.yml"
             echo "ESLINT_CONFIG_FILE=eslint.config.js"
+            echo "JAVASCRIPT_ES_CONFIG_FILE=eslint.config.js"
+            echo "TYPESCRIPT_ES_CONFIG_FILE=eslint.config.js"
             echo "ESLINT_USE_FLAT_CONFIG=true"
           } > /tmp/super-linter.env
           status=0
@@ -102,10 +104,16 @@ jobs:
             # Surface the failure through check-run annotations: they are
             # available through the Checks API even when the raw job log is
             # not reachable.
-            tail -n 80 /tmp/super-linter.log \
+            {
+              for name in $(grep -oE "Errors found in [A-Z_]+" /tmp/super-linter.log | awk '{print $4}' | sort -u); do
+                echo "==== failing linter: $name ===="
+                awk -v g="::group::$name" 'index($0,g)==1{f=1;next} f && /::endgroup::/{f=0} f' /tmp/super-linter.log | head -n 45
+                grep -B 3 -A 3 "Errors found in $name" /tmp/super-linter.log | head -n 15
+              done
+            } \
               | sed -e 's/%/%25/g' -e 's/:/%3A/g' -e 's/\r//g' \
-              | sed -e :a -e '$!N; s/\n/%0A/g; ta' \
-              | awk 'NR==1 {print "::error title=super-linter log tail::" $0}'
+              | awk '{printf "::error title=super-linter (%s) detail::%s\n", "report", $0}' \
+              | head -n 140
           else
             echo "super-linter passed: $(grep -cE 'Linted \[' /tmp/super-linter.log) file groups linted" >> "$GITHUB_STEP_SUMMARY"
           fi
