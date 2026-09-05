@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -37,7 +37,7 @@ jobs:
       # eslint-config-prettier. Those have to be resolvable inside the workspace
       # or ESLint cannot load the configuration at all.
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: '22.x'
           cache: npm
@@ -84,7 +84,7 @@ jobs:
       # records which linter complained and why.
       - name: Upload the super-linter log
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: super-linter-log
           path: super-linter.log
