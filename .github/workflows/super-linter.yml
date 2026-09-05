@@ -97,7 +97,11 @@ jobs:
             # Surface the failure through check-run annotations: they are
             # available through the Checks API even when the raw job log is
             # not reachable.
-            tail -n 20 /tmp/super-linter.log \
+            {
+              grep -nE "FATAL|fatal|Unable|dubious|Error|error while|not found|denied" /tmp/super-linter.log | head -n 10
+              echo "---- log size: $(wc -l < /tmp/super-linter.log) lines; last 20 ----"
+              tail -n 20 /tmp/super-linter.log
+            } | sed -e '/\[[A-Z_]*\]/d' \
               | sed -e 's/%/%25/g' -e 's/:/%3A/g' -e 's/\r//g' \
               | while IFS= read -r line; do
                   echo "::error title=super-linter::$line"
