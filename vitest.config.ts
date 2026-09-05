@@ -8,7 +8,7 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json-summary', 'json', 'lcov', 'html'],
       reportsDirectory: './coverage',
-      include: ['src/**/*.ts'],
+      include: ['src/**/*.ts', 'scripts/**/*.ts'],
       exclude: ['src/**/*.d.ts', 'src/types.ts'],
       thresholds: {
         // 100% coverage is a release gate: every branch must be exercised.

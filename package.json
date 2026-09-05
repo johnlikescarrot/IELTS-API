@@ -31,6 +31,7 @@
     "data",
     "README.md",
     "CITATION.cff",
+    "DATA-LICENSE",
     "LICENSE"
   ],
   "scripts": {
@@ -48,10 +49,11 @@
     "data:vocabulary": "python3 scripts/extract_vocabulary.py",
     "data:corpus": "python3 scripts/extract_corpus.py",
     "data:practice-tests": "python3 scripts/extract_practice_tests.py",
-    "data:materials": "python3 scripts/extract_materials.py"
+    "data:materials": "python3 scripts/extract_materials.py",
+    "data:source-audit": "tsx scripts/audit_msneloy.ts"
   },
-  "dependencies": {},
   "devDependencies": {
+    "@apidevtools/swagger-parser": "^13.0.0",
     "@eslint/js": "^9.18.0",
     "@types/node": "^22.10.7",
     "@vitest/coverage-v8": "^5.0.0",

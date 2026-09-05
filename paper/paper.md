@@ -21,10 +21,12 @@ bibliography: paper.bib
 
 # Summary
 
+_Manuscript draft. Publication, indexing and an archival DOI are not asserted._
+
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
-contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+contract. Every endpoint is free of charge and requires no authentication. Data endpoints answer
+with a uniform JSON envelope; original practice figures are also available as SVG. The service ships several kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -137,11 +139,22 @@ composes the gap between a target band and current component scores into a deter
 week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
 pure functions of their inputs, so their outputs are as reproducible as the datasets.
 
+**Original Task 1 data practice.** A fourth collection, `msneloy/IELTS` [@msneloy2022], was
+reviewed at a pinned commit: 557 blobs, 509 of them audio, with a small set of writing assignments
+and sample-task PDFs rather than an application. The full-file manifest and a deterministic
+TypeScript audit are published, but no learner essays, recordings or third-party figures are
+redistributed. Seven independently authored Task 1 stimuli provide numeric series, a table,
+spatial grids and process sequences, rendered as accessible SVG. Twenty-one multiple-choice checks
+explain data-reading decisions with JSON-pointer evidence, addressing units, missing observations,
+percentage points, denominators, spatial change and recurrence. The checks are instructional aids,
+not an IELTS exam format or a writing assessment; no band validity or learning effect has been
+established. The source review is a convenience-sample case study, not a prevalence estimate.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
-compression are implemented directly on `node:http` and `node:zlib`. This removes supply-chain risk,
-keeps cold start under a second, and means the code an auditor reads is the code that runs.
+compression are implemented directly on `node:http` and `node:zlib`. This reduces exposure to runtime dependency-chain changes and keeps the execution path small
+enough to audit directly. Development dependencies still require supply-chain review.
 
 Responses use a single envelope, `{ "status", "data", "meta" }`, so any endpoint can be parsed
 uniformly. Collections paginate with `limit` and `offset` and report `total` and `hasMore`; errors
@@ -152,8 +165,8 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (469 tests) enforces **100% statement, branch, function and line coverage, per file**;
-the test command fails below the threshold, so coverage is a release gate rather than a badge. The
+The TypeScript test suite enforces **100% statement, branch, function and line coverage, per file**;
+the test command fails below the threshold, so coverage is a release gate rather than a badge. The new TypeScript audit CLI is included; legacy Python extractors and type-only declarations are not part of this coverage metric. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
@@ -166,12 +179,14 @@ failing if the committed data has drifted — which guards against silent data r
 Source, datasets, citation metadata and CI configuration are released at
 <https://github.com/johnlikescarrot/IELTS-API> under the MIT licence for code and CC BY 4.0 for data.
 Citation metadata is published in Citation File Format [@citationfileformat] and CodeMeta
-[@codemeta], and tagged releases are archived on Zenodo [@zenodo], which mints a versioned DOI.
+[@codemeta]. Zenodo-ready metadata [@zenodo] supports future archival deposits, but an integration
+and a successful deposit must be verified before any DOI is claimed. Repository URLs and exact
+versions/commits are the citation target until then.
 
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming` and on the practice collection
-assembled by `ngoclong1209`; both are cited in `CITATION.cff` and in every response that draws on
+assembled by `ngoclong1209`; the new preparation review credits `msneloy` and contributors. Sources are cited in `CITATION.cff` and in every response that draws on
 them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.

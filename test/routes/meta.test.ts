@@ -30,6 +30,8 @@ describe('GET /', () => {
     expect(response.data.authentication).toBe('none');
     expect(response.data.licenses).toEqual({ code: 'MIT', data: 'CC BY 4.0' });
     expect(response.data.datasets.vocabularyWords).toBe(4174);
+    expect(response.data.datasets.writingExercises).toBe(7);
+    expect(response.data.datasets.writingDataChecks).toBe(21);
     expect(response.data.endpoints.documentation).toBe('/docs');
     expect(response.meta.count).toBe(DOMAIN_ROUTES.length);
   });
@@ -73,5 +75,7 @@ describe('GET /docs', () => {
     expect(response.headers.get('content-type')).toContain('text/html');
     expect(body).toContain('IELTS API');
     expect(body).toContain('/v1/vocabulary');
+    expect(body).toContain('id="writing-practice"');
+    expect(body).toContain('src="/v1/practice/writing/w1-cycle-rentals/figure"');
   });
 });

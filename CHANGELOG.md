@@ -6,6 +6,31 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Seven original Academic Writing Task 1 exercises with plot-ready JSON, accessible self-contained
+  SVG figures, writing checklists and 21 stateless multiple-choice data-literacy checks at
+  `/v1/practice/writing`, `/:id`, `/:id/figure` and `/:id/check`. Figures, numbers and questions are
+  fictional and project-authored; no learner writing or third-party source content is republished.
+- Pinned, full-tree `msneloy/IELTS` review (557 blobs, 3,115,412,304 bytes), compact metadata
+  manifest, deterministic TypeScript audit CLI and independent pinned-tree reproduction in CI.
+  The new auditor and CLI are inside the per-file 100% coverage gate.
+- Practice gallery in `/docs`, typed exercise/feedback OpenAPI schemas and an offline OpenAPI 3.1
+  validation/snapshot test. Swagger Parser is a development-only dependency; runtime remains
+  dependency-free, GET-only, free of charge and authentication-free.
+- Source-review methodology, data rights, explicit audio-review limits and a research-use protocol
+  in `docs/research/MSNELOY.md`, with updated paper draft and citation references.
+
+### Fixed
+
+- OpenAPI path templates now use `{id}` rather than router-specific `:id`; the error schema now
+  describes the actual `{status, data, meta: {error, version}}` envelope. HTTP paths are unchanged.
+- Removed the unverified placeholder DOI and invalid CFF fields/reference types. Citation metadata
+  now passes CFF 1.2.0 schema validation in CI; archival/publication claims are conditional on a
+  real verified record rather than implied by configuration files.
+- CodeMeta's Node requirement now matches the package's Node >=20.19.0 requirement. The npm package
+  includes `DATA-LICENSE` for the original stimuli and derived metadata.
+
 ## [1.2.0] - 2026-09-05
 
 Two additions in one release: the **toolkit** — the first capabilities that consume text as well as
@@ -133,6 +158,6 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.2.0...HEAD
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

@@ -126,7 +126,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials"):
+          for name in ("vocabulary", "corpus", "practice-tests", "materials", "msneloy-tree", "msneloy-audit"):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
           PY
@@ -181,3 +181,43 @@ jobs:
               f"{len(TYPE_ALIASES)} aliases -> {len(CANONICAL_TYPES)} canonical types"
           )
           PY
+
+      - name: Validate citation metadata (CFF 1.2.0)
+        run: |
+          python3 -m pip install cffconvert==2.0.0
+          cffconvert --validate
+
+  source-audit:
+    name: Reproduce the pinned preparation-source audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install development dependencies
+        run: npm ci
+
+      - name: Reproduce the offline manifest audit
+        run: |
+          npm run data:source-audit -- data/msneloy-tree.json /tmp/msneloy-audit.json
+          cmp data/msneloy-audit.json /tmp/msneloy-audit.json
+
+      - name: Verify the commit-to-tree link and independently fetch the pinned tree
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TREE=1a4de7132e4e0a7e63908f322bbb177393841d63
+          COMMIT=db1064c36b6435b8a23adaf8e74c858476c38812
+          ACTUAL_TREE=$(gh api "repos/msneloy/IELTS/git/commits/${COMMIT}" --jq '.tree.sha')
+          test "$ACTUAL_TREE" = "$TREE"
+          gh api "repos/msneloy/IELTS/git/trees/${TREE}?recursive=1" > /tmp/msneloy-tree.json
+          npm run data:source-audit -- /tmp/msneloy-tree.json /tmp/msneloy-remote-audit.json
+          cmp data/msneloy-audit.json /tmp/msneloy-remote-audit.json

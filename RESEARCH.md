@@ -3,14 +3,17 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Four upstream collections are reviewed; the analysis toolkit in Part III is a derived capability:
 
-| Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
-| [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | 2,385 blobs                    | study-material metadata and original response frameworks                         |
+| [Part V](#part-v--the-community-preparation-review)                             | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | full-tree audit and the design of original Task 1 data practice                  |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+Upstream binaries and learner writing are not redistributed. The vocabulary convenience layer has
+the provenance limitations explicitly described in Part I.
 
 ## Part I — the research corpus
 
@@ -520,3 +523,19 @@ python3 scripts/extract_materials.py tree.json data/materials.json
 The script is standard library only and deterministic: the same tree always produces byte-identical
 output. The continuous-integration workflow re-derives the index from the upstream tree on every run
 and fails if the committed file disagrees.
+
+## Part V — the community preparation review
+
+The [full msneloy/IELTS review](docs/research/MSNELOY.md) records the pinned commit and tree IDs,
+all-file accounting (557 blobs, 3,115,412,304 bytes), inspection of all source-text files and the
+non-audio materials, and the explicit exclusion of audio-content analysis. Its compact manifest
+and deterministic TypeScript auditor are reproducible offline and checked against the pinned
+upstream tree in CI.
+
+The review found no application to port and no declared upstream licence. In the writing portion,
+file boundaries, informal feedback and speculative band comments cannot be treated as independent,
+examiner-scored essays. Instead, this update adds seven **original** Task 1 stimuli with structured
+data, SVG figures, writing checklists and 21 stateless data-reading checks. These address units,
+missing values, percentages, denominators, spatial changes and process topology without collecting
+or scoring learner text. The review documents all limitations; neither instructional effectiveness
+nor IELTS-band validity is claimed.

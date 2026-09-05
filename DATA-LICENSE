@@ -42,6 +42,14 @@ the upstream files themselves, which remain the property of their respective
 copyright holders and are never redistributed by this project. The corpus index
 in `data/corpus.json` publishes metadata only.
 
+The msneloy/IELTS manifest and audit (`data/msneloy-tree.json` and
+`data/msneloy-audit.json`) contain descriptive metadata only. The original Task 1
+stimuli, questions, explanations and figures in `src/data/writingExercises.ts`
+and rendered by `src/lib/writingFigure.ts` are also made available under CC BY
+4.0. Credit the IELTS API contributors for those original stimuli and cite the
+pinned msneloy/IELTS collection when discussing the source review. No licence is
+asserted or granted over its learner writing, books, figures or recordings.
+
 The band descriptors in `src/data/bands.ts` are original condensed paraphrases
 written for this project. They are not the official IELTS band descriptors,
 which are published by the British Council, IDP: IELTS Australia and Cambridge

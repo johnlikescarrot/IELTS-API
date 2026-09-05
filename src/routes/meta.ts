@@ -6,6 +6,7 @@ import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { vocabularyStats } from '../data/vocabulary.js';
+import { WRITING_EXERCISES } from '../data/writingExercises.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
 import { CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME, API_VERSION } from '../version.js';
@@ -29,6 +30,8 @@ function datasetSummary(): Record<string, number> {
     practiceQuestions: practice.questions,
     materialsFiles: materials.filesInRepository,
     materialsIndexedFiles: materials.indexedFiles,
+    writingExercises: WRITING_EXERCISES.length,
+    writingDataChecks: WRITING_EXERCISES.reduce((count, exercise) => count + exercise.checks.length, 0),
   };
 }
 
