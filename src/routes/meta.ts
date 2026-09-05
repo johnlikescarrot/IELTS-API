@@ -4,6 +4,7 @@
 
 import { corpusStats } from '../data/corpus.js';
 import { practiceStats } from '../data/practiceTests.js';
+import { recallStats } from '../data/recall.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
@@ -17,6 +18,7 @@ function datasetSummary(): Record<string, number> {
   const words = vocabularyStats();
   const corpus = corpusStats();
   const practice = practiceStats();
+  const recall = recallStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -25,6 +27,8 @@ function datasetSummary(): Record<string, number> {
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
     practiceItems: practice.indexedItems,
     practiceQuestions: practice.questions,
+    recallItems: recall.indexedItems,
+    recallFiles: recall.repository.filesInRepository,
   };
 }
 
@@ -89,7 +93,9 @@ export function createMetaRoutes(
         uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
         datasets: datasetSummary(),
       },
-      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index'] },
+      meta: {
+        checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index', 'exam-recall-index'],
+      },
     };
   }
 

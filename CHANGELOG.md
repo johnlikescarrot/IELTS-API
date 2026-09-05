@@ -8,13 +8,31 @@ All notable changes to this project are documented here. The format is based on
 
 ## [1.2.0] - 2026-09-05
 
-A deterministic **text-analysis engine**: the API no longer only serves datasets, it measures the
-texts researchers paste into it. The same measurement definitions are used by the practice-test
-readability index, so results are consistent across the whole API, and every metric is documented,
-with citations, by the new self-describing reference endpoint.
+This release ships two complementary additions. Third upstream collection: the self-study
+exam-recall archive [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) is analysed and indexed —
+as with the other two collections, only derived structure and metadata are published, never
+cue-card wording, question text, passages, transcripts, audio or answer values. And the API no
+longer only serves datasets: a deterministic **text-analysis engine** measures the texts
+researchers paste into it, with the same measurement definitions as the practice-test readability
+index and every metric documented, with citations, by a self-describing reference endpoint.
 
 ### Added
 
+- **Exam-season recall index** (`data/exam-recall.json`, 423 items): 18 Speaking Part 1 topics
+  (79 questions), all 76 Speaking Part 2 cue cards of the Sep-Dec 2025 season classified
+  (people / objects / events / places) and flagged new (27) vs. retained (49), 323 recalled reading
+  passages with part and recurrence tier across five seasonal snapshot collections, and 6 recalled
+  listening test sets (240 answers counted, 24 audio tracks) — each with bilingual titles where
+  published and full upstream provenance (path, blob SHA-1, permalink). Endpoints: `/v1/recall`,
+  `/v1/recall/stats`, `/v1/recall/items`, `/v1/recall/:id`.
+- `scripts/extract_exam_recall.py`: standard-library-only, deterministic extraction of the index
+  from the upstream tree listing, the seasonal speaking bank, the Part 2 category document and the
+  six listening answer keys.
+- `RESEARCH.md` Part III: the collection analysis (2,385 blobs, 93% of them PDFs and audio), the
+  seasonal speaking-bank census, the reading recurrence tiers and snapshot redundancy, the
+  listening key inventory, and the threats to validity that apply to all of it.
+- CI re-derives `data/exam-recall.json` from the live upstream collection on every push and fails
+  if the committed dataset has drifted; a consistency step cross-checks the index totals.
 - **`/v1/analyze/text`** (`GET` with `?text=` up to 8,000 characters, `POST` with a JSON body up to
   50,000 characters): counts (words, unique words, sentences, paragraphs, letters, syllables,
   polysyllabic words), averages, six readability formulae (Flesch Reading Ease, Flesch-Kincaid
@@ -37,11 +55,15 @@ with citations, by the new self-describing reference endpoint.
 
 ### Changed
 
+- `/` and `/health` report the recall dataset sizes; `/docs` lists the new dataset and quick
+  reference parameters.
 - The OpenAPI document emits merged `get`/`post` operations per path, documents the analyze request
-  bodies, and declares `405` (all routes) plus `413`/`415` (POST routes) responses.
+  bodies, and declares `405` (all routes) plus `413`/`415` (POST routes) responses; the README
+  dataset table, the endpoint index and the citation metadata (`CITATION.cff`, `codemeta.json`,
+  `.zenodo.json`) cover the new collection and the analysis engine.
 - Error catalogue extended with `payload_too_large` and `unsupported_media_type`.
 - `methodNotAllowed` now accepts an allow list; `HEAD` is implied wherever `GET` is served.
-- Test suite grown to 420 tests, still at 100% statement, branch, function and line coverage per file.
+- Test suite grown to 445 tests, still at 100% statement, branch, function and line coverage per file.
 
 ## [1.1.0] - 2026-09-05
 
@@ -114,6 +136,7 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

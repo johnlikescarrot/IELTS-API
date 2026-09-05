@@ -122,9 +122,61 @@ jobs:
           print(f"dataset reproducible: {regenerated['meta']['words']} words")
           PY
 
+      - name: Re-derive the exam-recall index from the upstream collection
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          curl -fsSL -H "Authorization: Bearer ${GH_TOKEN}" \
+            "https://api.github.com/repos/Oxidaner/ielts/git/trees/main?recursive=1" \
+            -o /tmp/recall-tree.json
+          mkdir -p /tmp/recall-keys
+          python3 - <<'PY'
+          import json, os, pathlib, subprocess
+
+          token = os.environ["GH_TOKEN"]
+          tree = json.loads(pathlib.Path("/tmp/recall-tree.json").read_text(encoding="utf-8"))
+          blobs = {entry["path"]: entry for entry in tree["tree"] if entry["type"] == "blob"}
+
+          def fetch(path, destination):
+              blob = blobs[path]
+              subprocess.run(
+                  [
+                      "curl",
+                      "-fsSL",
+                      "-H",
+                      "Accept: application/vnd.github.v3.raw",
+                      "-H",
+                      f"Authorization: Bearer {token}",
+                      blob["url"],
+                      "-o",
+                      destination,
+                  ],
+                  check=True,
+              )
+
+          fetch("口语/神奇题库.md", "/tmp/recall-bank.md")
+          fetch("口语/2025年9-12月口语Part2按四大类分类新题+保留题.docx", "/tmp/recall-part2.docx")
+          for path in blobs:
+              name = pathlib.PurePosixPath(path).name
+              if path.startswith("听力/听力/") and name.startswith("keys_") and name.endswith(".txt"):
+                  fetch(path, f"/tmp/recall-keys/{name}")
+          print("upstream exam-recall inputs fetched")
+          PY
+          python3 scripts/extract_exam_recall.py \
+            /tmp/recall-tree.json /tmp/recall-bank.md /tmp/recall-part2.docx /tmp/recall-keys /tmp/exam-recall.json
+          python3 - <<'PY'
+          import json
+
+          committed = json.load(open("data/exam-recall.json"))
+          regenerated = json.load(open("/tmp/exam-recall.json"))
+          assert committed == regenerated, "data/exam-recall.json is out of date"
+          print(f"exam-recall dataset reproducible: {regenerated['stats']['indexedItems']} items")
+          PY
+
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); print('datasets are valid JSON')"
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); json.load(open('data/exam-recall.json')); print('datasets are valid JSON')"
 
       - name: Check the practice-test index for internal consistency
         run: |
@@ -160,4 +212,34 @@ jobs:
               f"{stats['questions']} questions, "
               f"{len(TYPE_ALIASES)} aliases -> {len(CANONICAL_TYPES)} canonical types"
           )
+          PY
+
+      - name: Check the exam-recall index for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+
+          index = json.load(open("data/exam-recall.json"))
+          items, stats = index["items"], index["stats"]
+
+          assert stats["indexedItems"] == len(items), "indexedItems disagrees with items"
+          assert len({item["id"] for item in items}) == len(items), "duplicate identifiers"
+          for skill, expected in stats["bySkill"].items():
+              assert sum(1 for item in items if item["skill"] == skill) == expected, skill
+          assert sum(1 for item in items if item["kind"] == "speaking-cue-card") == stats["speaking"]["cueCards"]
+          assert sum(1 for item in items if item["kind"] == "speaking-topic") == stats["speaking"]["part1Topics"]
+          assert (
+              sum(item["questions"] or 0 for item in items if item["kind"] == "speaking-topic")
+              == stats["speaking"]["part1Questions"]
+          )
+          assert sum(1 for item in items if item["kind"] == "reading-article") == stats["reading"]["articles"]
+          assert sum(1 for item in items if item["kind"] == "listening-test") == stats["listening"]["testSets"]
+          assert (
+              sum(item["questions"] or 0 for item in items if item["kind"] == "listening-test")
+              == stats["listening"]["answers"]
+          )
+          for item in items:
+              assert item["sourceUrl"].startswith("https://github.com/Oxidaner/ielts/blob/main/"), item["id"]
+              assert len(item["sha1"] or "") == 40, item["id"]
+          print(f"exam-recall index consistent: {len(items)} items")
           PY

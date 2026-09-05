@@ -14,20 +14,22 @@ abstract: >-
   taxonomy of the thirteen IELTS Reading and Listening question types with the
   frequencies observed in 27,225 practice questions, a structure and
   readability index of 1,702 practice tests and CEFR-graded reading lessons,
-  fifty recurring exam themes, and a curated index of an open IELTS research
-  corpus. Beyond serving datasets, the API measures submitted texts:
-  /v1/analyze/text returns deterministic counts, six readability formulae
-  (Flesch, Flesch-Kincaid, Gunning Fog, SMOG, Coleman-Liau, Automated
-  Readability Index), lexical-diversity measures including MTLD, a documented
-  grade-to-CEFR heuristic with an indicative band range, and a
-  vocabulary-coverage profile against the Cambridge headword list, while
-  /v1/analyze/reference publishes every formula, threshold and definition so a
-  study can cite the metric, not just the number. Every endpoint is free of
-  charge,
-  requires no authentication, returns a uniform JSON envelope with a stable
-  ETag, and is covered by a test suite with 100% statement, branch, function
-  and line coverage. The API is designed for reproducible second-language
-  assessment research: responses are deterministic, versioned and citable.
+  fifty recurring exam themes, a curated index of an open IELTS research
+  corpus, and an exam-season recall index of 423 items (a seasonal speaking
+  bank, recalled reading passages by recurrence tier and recalled listening
+  tests) derived from a third open collection. Beyond serving datasets, the
+  API measures submitted texts: /v1/analyze/text returns deterministic
+  counts, six readability formulae (Flesch, Flesch-Kincaid, Gunning Fog,
+  SMOG, Coleman-Liau, Automated Readability Index), lexical-diversity
+  measures including MTLD, a documented grade-to-CEFR heuristic with an
+  indicative band range, and a vocabulary-coverage profile against the
+  Cambridge headword list, while /v1/analyze/reference publishes every
+  formula, threshold and definition so a study can cite the metric, not just
+  the number. Every endpoint is free of charge, requires no authentication,
+  returns a uniform JSON envelope with a stable ETag, and is covered by a
+  test suite with 100% statement, branch, function and line coverage. The
+  API is designed for reproducible second-language assessment research:
+  responses are deterministic, versioned and citable.
 keywords:
   - IELTS
   - English for Academic Purposes
@@ -79,6 +81,12 @@ references:
     title: 'UPGRADE YOUR IELTS SKILLS: a practice-test collection'
     url: 'https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS'
     year: 2026
+  - type: dataset
+    authors:
+      - name: 'Oxidaner'
+    title: 'ielts: a self-study archive of IELTS exam recall material'
+    url: 'https://github.com/Oxidaner/ielts'
+    year: 2025
   - type: article
     authors:
       - family-names: 'Flesch'

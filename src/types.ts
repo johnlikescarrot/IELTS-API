@@ -424,6 +424,134 @@ export type ExamTheme = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Exam-season recall index                                                   */
+/* -------------------------------------------------------------------------- */
+
+/** Kinds of entries in the exam-season recall index. */
+export type RecallKind = 'speaking-topic' | 'speaking-cue-card' | 'reading-article' | 'listening-test';
+
+/** Skills covered by the exam-season recall index. */
+export type RecallSkill = 'speaking' | 'reading' | 'listening';
+
+/** How often a recalled reading passage recurs across exam sessions. */
+export type RecallTier = 'high' | 'next' | 'background';
+
+/** Seasonal status of a Speaking Part 2 cue card. */
+export type RecallStatus = 'new' | 'retained';
+
+/** One indexed entry of the exam-season recall collection. */
+export type RecallItem = {
+  /** Stable identifier (`sp1-01-machine`, `sp2-001`, `rd-sept2025-p1-001`, `ls-te2-2`). */
+  id: string;
+  /** Kind of entry. */
+  kind: RecallKind;
+  /** Skill the entry belongs to. */
+  skill: RecallSkill;
+  /** Human-readable title (Chinese as published when no English title exists). */
+  title: string;
+  /** English title, when one is published upstream. */
+  titleEn: string | null;
+  /** Chinese title, when one is published upstream. */
+  titleZh: string | null;
+  /** Speaking part or reading passage part, when applicable. */
+  part: 1 | 2 | 3 | null;
+  /** Recurrence tier for reading articles; `null` otherwise. */
+  tier: RecallTier | null;
+  /** Cue-card category (people, objects, events, places); `null` otherwise. */
+  category: string | null;
+  /** Seasonal cue-card status; `null` otherwise. */
+  status: RecallStatus | null;
+  /** Upstream collection the entry was indexed from. */
+  collection: string;
+  /** Exam-season label (e.g. `2025-09`), when known. */
+  season: string | null;
+  /** Attached question count (Part 1 topics) or answer count (listening tests). */
+  questions: number | null;
+  /** Path of the source file inside the upstream repository. */
+  sourcePath: string;
+  /** Git blob SHA-1 of the source file. */
+  sha1: string | null;
+  /** Size of the source file in bytes. */
+  sizeBytes: number | null;
+  /** Public URL of the source file. */
+  sourceUrl: string;
+};
+
+/** Repository-level structure of the upstream recall collection. */
+export type RecallRepositoryStats = {
+  /** Total number of files in the upstream repository. */
+  filesInRepository: number;
+  /** Total size of the upstream repository in bytes. */
+  totalBytes: number;
+  /** File count per top-level skill directory. */
+  bySkill: Record<string, number>;
+  /** File count per format. */
+  byFormat: Record<string, number>;
+};
+
+/** Speaking structure observed in the recall collection. */
+export type RecallSpeakingStats = {
+  /** Part 1 topics published in the seasonal speaking bank. */
+  part1Topics: number;
+  /** Part 1 questions across those topics. */
+  part1Questions: number;
+  /** Part 2 cue cards of the season. */
+  cueCards: number;
+  /** Cue cards new in the season. */
+  cueCardsNew: number;
+  /** Cue cards retained from earlier seasons. */
+  cueCardsRetained: number;
+  /** Cue-card count per category. */
+  cueCardsByCategory: Record<string, number>;
+  /** Cue cards carried by the question bank file itself. */
+  bankCueCards: number;
+  /** Part 3 follow-up questions carried by the question bank file. */
+  bankPart3Questions: number;
+};
+
+/** Reading structure observed in the recall collection. */
+export type RecallReadingStats = {
+  /** Recalled reading passages indexed. */
+  articles: number;
+  /** Duplicate backup files excluded from the index. */
+  backupFilesExcluded: number;
+  /** Web-application files excluded from the index. */
+  nonArticleFilesExcluded: number;
+  /** Article count per passage part. */
+  byPart: Record<string, number>;
+  /** Article count per recurrence tier (`unrated` when none is recorded). */
+  byTier: Record<string, number>;
+  /** Article count per upstream snapshot collection. */
+  byCollection: Record<string, number>;
+};
+
+/** Listening structure observed in the recall collection. */
+export type RecallListeningStats = {
+  /** Recalled listening test sets with a machine-readable answer key. */
+  testSets: number;
+  /** Answers across those sets. */
+  answers: number;
+  /** Audio tracks shipped with those sets. */
+  audioTracks: number;
+};
+
+/** Aggregate statistics over the exam-season recall index. */
+export type RecallStats = {
+  /** Entries indexed. */
+  indexedItems: number;
+  /** Entry count per skill. */
+  bySkill: Record<string, number>;
+  /** Whole-repository structure. */
+  repository: RecallRepositoryStats;
+  /** Speaking structure. */
+  speaking: RecallSpeakingStats;
+  /** Reading structure. */
+  reading: RecallReadingStats;
+  /** Listening structure. */
+  listening: RecallListeningStats;
+};
+
+/* -------------------------------------------------------------------------- */
 /* Text analysis                                                              */
 /* -------------------------------------------------------------------------- */
 

@@ -30,6 +30,7 @@ export * from './data/corpus.js';
 export * from './data/coverage.js';
 export * from './data/practiceTests.js';
 export * from './data/questionTypes.js';
+export * from './data/recall.js';
 export * from './data/resources.js';
 export * from './data/tasks.js';
 export * from './data/themes.js';
