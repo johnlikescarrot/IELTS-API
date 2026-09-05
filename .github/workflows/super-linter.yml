@@ -90,14 +90,14 @@ jobs:
         run: |
           sudo chmod -R a+rX . || true
           log_file="$(find . /tmp -maxdepth 3 -name 'super-linter.log' -print -quit 2>/dev/null || true)"
-          if [ -n "${log_file}" ]; then
-            tail -c 30000 "${log_file}" > /tmp/super-linter-tail.txt
-          else
-            {
-              echo 'No super-linter.log was produced. Workspace listing:'
-              ls -la
-            } > /tmp/super-linter-tail.txt
+          if [ -z "${log_file}" ]; then
+            echo 'No super-linter.log was produced.' > /tmp/super-linter.log
+            log_file=/tmp/super-linter.log
           fi
-          jq -Rs '{body: ("```text\n" + . + "\n```")}' /tmp/super-linter-tail.txt > /tmp/super-linter-comment.json
-          gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}/comments" \
-            --input /tmp/super-linter-comment.json > /dev/null
+          grep -vE '\[(DEBUG|TRACE)\]' "${log_file}" > /tmp/super-linter-trimmed.log
+          split -b 55000 -d /tmp/super-linter-trimmed.log /tmp/super-linter-chunk-
+          for chunk in /tmp/super-linter-chunk-*; do
+            jq -Rs '{body: ("```text\n" + . + "\n```")}' "${chunk}" > "${chunk}.json"
+            gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}/comments" \
+              --input "${chunk}.json" > /dev/null
+          done
