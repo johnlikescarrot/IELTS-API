@@ -7,3 +7,7 @@ MD041: false
 MD040: false
 MD033: false
 MD024: false
+
+# The JOSS-format paper (paper/paper.md) uses multiple top-level sections;
+# single-title enforcement is incompatible with that submission format.
+MD025: false
