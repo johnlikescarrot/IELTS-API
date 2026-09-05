@@ -15,6 +15,16 @@ Five parts, four upstream collections:
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
+## Reference implementation and design boundary
+
+The public [wanli4473/yysd-testcenter](https://github.com/wanli4473/yysd-testcenter) project was
+reviewed as a reference for learner-facing flows such as daily vocabulary practice, speaking-topic
+browsing and practice-test discovery. This API deliberately implements the research-friendly,
+stateless part of that experience: deterministic datasets, transparent provenance and no account or
+authentication requirement. It does not copy the reference project's application code, private
+workflows or copyrighted test content. The release also exposes `/citation.cff` and `/citation.bib`
+so a response or dataset release can be cited without scraping the documentation page.
+
 ## Part I — the research corpus
 
 **Corpus snapshot:** commit `a9e2d6c9a070eecea6ffaa6f15b2a00c1c7b938c` (2 September 2024, "Add files

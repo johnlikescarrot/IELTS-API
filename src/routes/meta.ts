@@ -64,6 +64,8 @@ export function createMetaRoutes(
         endpoints: {
           documentation: '/docs',
           openapi: '/openapi.json',
+          citationCff: '/citation.cff',
+          citationBibtex: '/citation.bib',
           health: '/health',
           api: '/v1',
         },
@@ -125,6 +127,26 @@ export function createMetaRoutes(
     };
   }
 
+  /** Citation File Format metadata for reference managers and archives. */
+  function citationCff(): HandlerResult {
+    return {
+      raw: {
+        contentType: 'application/yaml; charset=utf-8',
+        body: `cff-version: 1.2.0\nmessage: If you use this software, please cite it.\ntitle: IELTS API\ntype: software\nversion: ${API_VERSION}\ndate-released: '2026-09-05'\nauthors:\n  - name: The IELTS API contributors\nlicense: MIT\nrepository-code: ${REPOSITORY_URL}\nurl: ${REPOSITORY_URL}\npreferred-citation:\n  type: software\n  title: IELTS API\n  version: ${API_VERSION}\n  url: ${REPOSITORY_URL}\n`,
+      },
+    };
+  }
+
+  /** BibTeX metadata for scholarly manuscripts. */
+  function citationBibtex(): HandlerResult {
+    return {
+      raw: {
+        contentType: 'application/x-bibtex; charset=utf-8',
+        body: `@software{ielts_api_${API_VERSION.replaceAll('.', '_')},\n  author = {{The IELTS API contributors}},\n  title = {IELTS API},\n  version = {${API_VERSION}},\n  year = {2026},\n  url = {${REPOSITORY_URL}}\n}\n`,
+      },
+    };
+  }
+
   const definitions: RouteDefinition[] = [
     {
       method: 'GET',
@@ -154,6 +176,20 @@ export function createMetaRoutes(
       versioned: false,
       summary: 'Human-readable documentation.',
       handler: docs,
+    },
+    {
+      method: 'GET',
+      path: '/citation.cff',
+      versioned: false,
+      summary: 'Machine-readable Citation File Format metadata for this release.',
+      handler: citationCff,
+    },
+    {
+      method: 'GET',
+      path: '/citation.bib',
+      versioned: false,
+      summary: 'BibTeX citation metadata for this release.',
+      handler: citationBibtex,
     },
   ];
   serviceRoutes.push(...definitions);

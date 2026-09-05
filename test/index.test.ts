@@ -12,7 +12,7 @@ describe('the package entry point', () => {
   it('exports the route table and the documentation builders', () => {
     expect(api.ROUTES.length).toBeGreaterThan(15);
     expect(api.DOMAIN_ROUTES.every((route) => route.versioned)).toBe(true);
-    expect(api.createMetaRoutes([])).toHaveLength(5);
+    expect(api.createMetaRoutes([])).toHaveLength(7);
     expect(typeof api.openApiDocument).toBe('function');
     expect(typeof api.renderDocs).toBe('function');
     expect(api.escapeHtml('<')).toBe('&lt;');

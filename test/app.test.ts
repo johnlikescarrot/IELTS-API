@@ -79,6 +79,20 @@ describe('request handling', () => {
     expect(response.headers.get('content-encoding')).toBeNull();
   });
 
+  it('serves citable metadata in Citation File Format', async () => {
+    const response = await server.request('/citation.cff');
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('application/yaml');
+    expect(await response.text()).toContain(`version: ${API_VERSION}`);
+  });
+
+  it('serves a BibTeX citation for reference managers', async () => {
+    const response = await server.request('/citation.bib');
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('application/x-bibtex');
+    expect(await response.text()).toContain('@software{ielts_api_');
+  });
+
   it('adds the endpoint to the envelope metadata and an x-endpoint header', async () => {
     const response = await server.request('/v1/bands');
     expect(response.headers.get('x-endpoint')).toBe('/v1/bands');

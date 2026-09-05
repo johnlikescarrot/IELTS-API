@@ -113,7 +113,8 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 ## Endpoints
 
 All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
-same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
+same envelope: `{ "status": 200, "data": ..., "meta": ... }`. The two citation files are deliberately
+served as raw documents so they can be fetched directly by reference managers and archival services.
 
 | Method | Path                      | Description                                                                                             |
 | ------ | ------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -122,6 +123,8 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/health`                 | Liveness and dataset availability                                                                       |
 | GET    | `/docs`                   | Human-readable documentation                                                                            |
 | GET    | `/openapi.json`           | OpenAPI 3.1 document generated from the live route table                                                |
+| GET    | `/citation.cff`           | Release-pinned Citation File Format metadata for reference managers                                     |
+| GET    | `/citation.bib`           | Release-pinned BibTeX metadata for scholarly manuscripts                                                |
 | GET    | `/v1/vocabulary`          | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`)       |
 | GET    | `/v1/vocabulary/stats`    | Dataset statistics                                                                                      |
 | GET    | `/v1/vocabulary/random`   | Seeded random sample (`count`, `seed`)                                                                  |
@@ -403,7 +406,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.3.0},
+  version = {1.4.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
