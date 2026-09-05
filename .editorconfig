@@ -8,8 +8,14 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
+# Prose and bibliographies wrap and align to the text, not to a code grid, so
+# the indent-size rule does not apply to them.
 [*.md]
 trim_trailing_whitespace = false
+indent_size = unset
+
+[*.bib]
+indent_size = unset
 
 [data/**.json]
 insert_final_newline = true
