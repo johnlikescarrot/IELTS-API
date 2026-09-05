@@ -80,6 +80,17 @@ jobs:
           CREATE_LOG_FILE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # The container can move a root-owned mktemp file (mode 0600) into the
+      # workspace. Give the host runner access before reading or archiving it;
+      # otherwise an upload failure hides the actual lint finding.
+      - name: Make the container diagnostic log readable
+        if: failure()
+        run: |
+          if sudo test -f super-linter.log && ! test -L super-linter.log; then
+            sudo chown --no-dereference "$(id -u):$(id -g)" super-linter.log
+          fi
+          ls -ln super-linter.log 2>/dev/null || true
+
       # Keep the linter log when the job fails: it is the only place that
       # records which linter complained and why. The annotations below
       # surface the finding even when the log artifact cannot be uploaded
