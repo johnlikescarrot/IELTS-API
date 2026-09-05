@@ -139,8 +139,14 @@ jobs:
           fi
           exit 0
 
+      # super-linter writes its output as root inside the container.
+      - name: Take ownership of the super-linter output
+        if: always()
+        run: sudo chown -R "$(id -u):$(id -g)" super-linter-output || true
+
       - name: Upload the super-linter output
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: super-linter-output
