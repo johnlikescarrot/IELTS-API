@@ -82,15 +82,18 @@ jobs:
               cat super-linter-output/super-linter-summary.md
             fi
             echo
-            for log in super-linter-output/super-linter/*.log; do
-              [ -f "$log" ] || continue
-              echo "<details><summary>$(basename "$log")</summary>"
+            find super-linter-output -type f | sort | while read -r log; do
+              case "$log" in
+                *.md) continue ;;
+              esac
+              echo "<details><summary>$log</summary>"
               echo
               echo '```text'
-              tail -c 40000 "$log"
+              tail -c 30000 "$log"
               echo '```'
               echo
               echo '</details>'
+              echo
             done
           } > "$report"
           cat "$report" >> "$GITHUB_STEP_SUMMARY"
