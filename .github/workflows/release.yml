@@ -60,3 +60,7 @@ jobs:
           done
           kill "${SERVER_PID}"
           test -s docs/openapi.json
+          # The snapshot is served as raw JSON.stringify output; normalise it
+          # with the project's Prettier so the format gate accepts it.
+          npx prettier --write docs/openapi.json > /dev/null
+          npx prettier --check docs/openapi.json
