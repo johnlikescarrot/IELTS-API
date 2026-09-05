@@ -62,4 +62,31 @@ jobs:
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
+          SAVE_SUPER_LINTER_OUTPUT: true
+          SAVE_SUPER_LINTER_SUMMARY: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Expose linter diagnostics
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          root = Path('super-linter-output/super-linter')
+          prefix = 'super-linter-parallel-command-exit-code-'
+          emitted = False
+          for result in sorted(root.glob(prefix + '*')):
+              if result.read_text().strip() == '0':
+                  continue
+              language = result.name.removeprefix(prefix)
+              messages = []
+              for stream in ('stdout', 'stderr'):
+                  path = root / f'super-linter-parallel-{stream}-{language}'
+                  if path.exists():
+                      messages.append(path.read_text(errors='replace'))
+              message = ''.join(messages)[:6000] or 'See the Super-Linter report artefact.'
+              message = message.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::error title=Super-Linter {language}::{message}')
+              emitted = True
+          if not emitted:
+              print('::error title=Super-Linter::Super-Linter failed without per-language output.')
+          PY
