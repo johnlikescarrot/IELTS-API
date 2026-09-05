@@ -124,7 +124,12 @@ jobs:
 
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); json.load(open('data/materials.json')); print('datasets are valid JSON')"
+          python3 - <<'PY'
+          import json
+          for name in ("vocabulary", "corpus", "practice-tests", "materials"):
+              json.load(open(f"data/{name}.json"))
+          print("datasets are valid JSON")
+          PY
 
       - name: Re-derive the study-materials index from the upstream tree
         run: |
