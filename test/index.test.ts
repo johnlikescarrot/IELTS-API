@@ -10,9 +10,9 @@ describe('the package entry point', () => {
   });
 
   it('exports the route table and the documentation builders', () => {
-    expect(api.ROUTES.length).toBeGreaterThan(15);
+    expect(api.ROUTES.length).toBeGreaterThan(20);
     expect(api.DOMAIN_ROUTES.every((route) => route.versioned)).toBe(true);
-    expect(api.createMetaRoutes([])).toHaveLength(5);
+    expect(api.createMetaRoutes([])).toHaveLength(6);
     expect(typeof api.openApiDocument).toBe('function');
     expect(typeof api.renderDocs).toBe('function');
     expect(api.escapeHtml('<')).toBe('&lt;');
@@ -30,6 +30,8 @@ describe('the package entry point', () => {
     expect(typeof api.loadDataset).toBe('function');
     expect(typeof api.clearDatasetCache).toBe('function');
     expect(typeof api.roundBand).toBe('function');
+    expect(typeof api.rawScoreToBand).toBe('function');
+    expect(typeof api.getManifest).toBe('function');
     expect(typeof api.hashString).toBe('function');
     expect(typeof api.matchRoute).toBe('function');
     expect(typeof api.paginate).toBe('function');
@@ -44,6 +46,10 @@ describe('the package entry point', () => {
     expect(api.SPEAKING_TOPICS.length).toBeGreaterThan(70);
     expect(api.TASK_TYPES.length).toBeGreaterThanOrEqual(10);
     expect(api.RESOURCES.length).toBeGreaterThan(20);
+    expect(api.THEMES).toHaveLength(50);
+    expect(api.PRACTICE_UNITS).toHaveLength(1852);
+    expect(api.PRACTICE_STRATEGIES).toHaveLength(17);
+    expect(api.STUDY_FRAMEWORK_STEPS).toHaveLength(6);
     expect(api.CONVERSION_TARGETS).toContain('cefr');
     expect(api.allEntries().length).toBe(4174);
     expect(api.corpusStats().filesInRepository).toBe(404);

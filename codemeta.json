@@ -3,10 +3,10 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks and an indexed open research corpus.",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, 50 high-frequency themes, practice curriculum catalogue (1,852 units), 17 task family strategies, analytic band descriptors, score concordances, task banks and an indexed open research corpus.",
   "version": "1.0.0",
   "dateCreated": "2026-09-04",
-  "datePublished": "2026-09-04",
+  "datePublished": "2026-09-05",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",
@@ -27,6 +27,7 @@
     "vocabulary",
     "band descriptors",
     "score concordance",
+    "practice curriculum",
     "open data",
     "REST API",
     "TypeScript"
@@ -38,27 +39,8 @@
       "url": "https://github.com/johnlikescarrot/IELTS-API"
     }
   ],
-  "applicationCategory": "WebService",
-  "developmentStatus": "active",
-  "softwareRequirements": [],
-  "referencePublication": [
-    {
-      "@type": "ScholarlyArticle",
-      "name": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-      "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/paper/paper.md"
-    }
-  ],
-  "isAccessibleForFree": true,
-  "funding": "None",
   "citation": [
-    {
-      "@type": "CreativeWork",
-      "name": "IELTS: an open corpus of IELTS preparation materials",
-      "url": "https://github.com/zhengyishiming/IELTS",
-      "creator": {
-        "@type": "Person",
-        "name": "zhengyishiming"
-      }
-    }
+    "https://github.com/zhengyishiming/IELTS",
+    "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS"
   ]
 }

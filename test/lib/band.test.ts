@@ -7,6 +7,7 @@ import {
   calculateOverall,
   isValidBand,
   meanOf,
+  rawScoreToBand,
   roundBand,
   SKILLS,
 } from '../../src/lib/band.js';
@@ -97,5 +98,43 @@ describe('calculateOverall', () => {
 
   it('exposes the four skills in report order', () => {
     expect(SKILLS).toEqual(['listening', 'reading', 'writing', 'speaking']);
+  });
+});
+
+describe('rawScoreToBand', () => {
+  it('converts raw listening scores across the scale', () => {
+    expect(rawScoreToBand(40, 'listening').band).toBe(9.0);
+    expect(rawScoreToBand(39, 'listening').band).toBe(9.0);
+    expect(rawScoreToBand(35, 'listening').band).toBe(8.0);
+    expect(rawScoreToBand(30, 'listening').band).toBe(7.0);
+    expect(rawScoreToBand(23, 'listening').band).toBe(6.0);
+    expect(rawScoreToBand(16, 'listening').band).toBe(5.0);
+    expect(rawScoreToBand(0, 'listening').band).toBe(0.0);
+  });
+
+  it('converts raw academic reading scores across the scale', () => {
+    expect(rawScoreToBand(40, 'reading', 'academic').band).toBe(9.0);
+    expect(rawScoreToBand(39, 'reading', 'academic').band).toBe(9.0);
+    expect(rawScoreToBand(35, 'reading', 'academic').band).toBe(8.0);
+    expect(rawScoreToBand(30, 'reading', 'academic').band).toBe(7.0);
+    expect(rawScoreToBand(23, 'reading', 'academic').band).toBe(6.0);
+    expect(rawScoreToBand(15, 'reading', 'academic').band).toBe(5.0);
+    expect(rawScoreToBand(0, 'reading', 'academic').band).toBe(0.0);
+  });
+
+  it('converts raw general training reading scores', () => {
+    expect(rawScoreToBand(40, 'reading', 'general-training').band).toBe(9.0);
+    expect(rawScoreToBand(39, 'reading', 'general-training').band).toBe(8.5);
+    expect(rawScoreToBand(37, 'reading', 'general-training').band).toBe(8.0);
+    expect(rawScoreToBand(34, 'reading', 'general-training').band).toBe(7.0);
+    expect(rawScoreToBand(30, 'reading', 'general-training').band).toBe(6.0);
+    expect(rawScoreToBand(23, 'reading', 'general-training').band).toBe(5.0);
+    expect(rawScoreToBand(0, 'reading', 'general-training').band).toBe(0.0);
+  });
+
+  it('throws for out-of-range or non-integer raw scores', () => {
+    expect(() => rawScoreToBand(-1, 'listening')).toThrow(HttpError);
+    expect(() => rawScoreToBand(41, 'listening')).toThrow(HttpError);
+    expect(() => rawScoreToBand(35.5, 'listening')).toThrow(HttpError);
   });
 });

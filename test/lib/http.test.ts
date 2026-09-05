@@ -11,6 +11,7 @@ import {
   apiResponse,
   encodeBody,
   etagFor,
+  matchesIfNoneMatch,
   sendHtml,
   sendJson,
   writeResponse,
@@ -65,6 +66,30 @@ describe('acceptsGzip', () => {
     expect(acceptsGzip('br, gzip;q=0.8, *;q=0.1')).toBe(true);
     expect(acceptsGzip('  GZIP ')).toBe(true);
     expect(acceptsGzip('identity')).toBe(false);
+    expect(acceptsGzip('gzip;foo')).toBe(true);
+    expect(acceptsGzip('gzip;q=abc')).toBe(true);
+    expect(acceptsGzip('gzip;q=0')).toBe(false);
+    expect(acceptsGzip('gzip;q=invalid')).toBe(true);
+    expect(acceptsGzip('gzip;other=val')).toBe(true);
+    expect(acceptsGzip('gzip;q')).toBe(true);
+    expect(acceptsGzip('*')).toBe(true);
+    expect(acceptsGzip('*;q=0')).toBe(false);
+  });
+});
+
+describe('matchesIfNoneMatch', () => {
+  it('handles undefined header', () => {
+    expect(matchesIfNoneMatch(undefined, 'W/"123"')).toBe(false);
+  });
+
+  it('matches wildcard asterisks', () => {
+    expect(matchesIfNoneMatch('*', 'W/"123"')).toBe(true);
+  });
+
+  it('matches weak and strong forms across comma-separated lists', () => {
+    expect(matchesIfNoneMatch('W/"123", W/"456"', 'W/"123"')).toBe(true);
+    expect(matchesIfNoneMatch('"123"', 'W/"123"')).toBe(true);
+    expect(matchesIfNoneMatch('W/"abc"', 'W/"xyz"')).toBe(false);
   });
 });
 

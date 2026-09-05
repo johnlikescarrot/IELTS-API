@@ -1,0 +1,72 @@
+{
+  "manifestVersion": 1,
+  "api": {
+    "name": "ielts-api",
+    "version": "1.0.0",
+    "repository": "https://github.com/johnlikescarrot/IELTS-API",
+    "license": "MIT (code) / CC BY 4.0 (data)",
+    "docsUrl": "https://github.com/johnlikescarrot/IELTS-API#readme"
+  },
+  "datasets": {
+    "vocabulary": {
+      "id": "vocabulary",
+      "path": "data/vocabulary.json",
+      "sha256": "178b6c1f87114f03a02e1b9491940c726e99f2e34722c4f493bb0c91c19529aa",
+      "records": 4174,
+      "source": {
+        "url": "https://github.com/zhengyishiming/IELTS",
+        "snapshot": "d66fded8b74057a96a677eb25d9b9f7b39965ce3"
+      },
+      "license": "CC BY 4.0",
+      "note": "Cambridge IELTS 1-22 extracted vocabulary dataset with phonetic, senses, and occurrence frequencies."
+    },
+    "corpus": {
+      "id": "corpus",
+      "path": "data/corpus.json",
+      "sha256": "2a7dbab2f8d8b4e7ca1fce31cd7b508f261785c445fb972887988e8363dd8bb2",
+      "records": 76,
+      "source": {
+        "url": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+        "snapshot": "ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c"
+      },
+      "license": "CC BY 4.0",
+      "note": "IELTS research corpus cataloguing study materials and practice components."
+    },
+    "themes": {
+      "id": "themes",
+      "path": "src/data/themes.ts",
+      "records": 50,
+      "source": {
+        "url": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+        "snapshot": "ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c"
+      },
+      "license": "CC BY 4.0",
+      "note": "Themes are ranked by relative frequency across recent IELTS papers."
+    },
+    "practice": {
+      "id": "practice",
+      "path": "src/data/practice.ts",
+      "records": 1852,
+      "source": {
+        "url": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+        "snapshot": "ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c"
+      },
+      "license": "CC BY 4.0",
+      "note": "Test_105 is missing in upstream Reading full tests; audio is missing for Listening full tests 83, 85, and 88."
+    }
+  },
+  "review": {
+    "upstream": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+    "commit": "ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c",
+    "reviewedDate": "2026-09-05",
+    "unitsObserved": 1852,
+    "unitsDeclared": 1853,
+    "notes": [
+      "Reading basic: 1,232 observed units across A1-A2 (198), B1-B2 (374), C1-C2 (660).",
+      "Reading full tests: 314 observed units out of 315 declared (Test 105 is missing in upstream repository).",
+      "Listening basic: 102 observed units across Basic (34), Intermediate (34), Advanced (34).",
+      "Listening full tests: 204 observed units; audio files are missing for tests 83, 85, and 88.",
+      "All dataset lookups, scoring conversions, and strategy guides are 100% unauthenticated and open."
+    ]
+  }
+}

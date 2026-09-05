@@ -7,7 +7,7 @@
  */
 
 import { HttpError, methodNotAllowed, notFound } from './lib/errors.js';
-import { acceptsGzip, sendJson, writeResponse } from './lib/http.js';
+import { acceptsGzip, COMMON_HEADERS, sendJson, writeResponse } from './lib/http.js';
 import { isRawResult, matchRoute, splitPath } from './lib/route.js';
 import { ROUTES } from './routes/index.js';
 import { API_VERSION } from './version.js';
@@ -48,10 +48,10 @@ export function createRequestHandler(
 
     try {
       if (method === 'OPTIONS') {
+        status = 204;
         res.writeHead(204, {
-          'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, HEAD, OPTIONS',
-          'access-control-max-age': '86400',
+          ...COMMON_HEADERS,
+          allow: 'GET, HEAD, OPTIONS',
         });
         res.end();
       } else if (method !== 'GET' && method !== 'HEAD') {
@@ -91,8 +91,12 @@ export function createRequestHandler(
       }
     } catch (error) {
       const httpError = error instanceof HttpError ? error : undefined;
+      const extraHeaders: Record<string, string> = { 'x-endpoint': url.pathname };
       if (httpError !== undefined) {
         status = httpError.status;
+        if (status === 405) {
+          extraHeaders.allow = 'GET, HEAD, OPTIONS';
+        }
         sendJson(
           res,
           httpError.status,
@@ -105,7 +109,7 @@ export function createRequestHandler(
             },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          { gzipAllowed, headOnly: method === 'HEAD', headers: extraHeaders },
         );
       } else {
         status = 500;
@@ -119,7 +123,7 @@ export function createRequestHandler(
             error: { code: 'internal_error', message: 'An unexpected error occurred.', details: {} },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          { gzipAllowed, headOnly: method === 'HEAD', headers: extraHeaders },
         );
       }
     }

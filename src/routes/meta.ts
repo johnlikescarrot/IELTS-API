@@ -1,26 +1,37 @@
 /**
- * Service routes: discovery, health, OpenAPI document and documentation.
+ * Service routes: discovery, health, OpenAPI document, manifest and documentation.
  */
 
 import { corpusStats } from '../data/corpus.js';
+import { practiceStats } from '../data/practice.js';
+import { themeStats } from '../data/themes.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
+import { getManifest } from '../lib/manifest.js';
 import { openApiDocument } from '../lib/openapi.js';
 import { CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME, API_VERSION } from '../version.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
+import type { JsonValue } from '../types.js';
 
 /** Summary of the datasets behind the API. */
 function datasetSummary(): Record<string, number> {
   const words = vocabularyStats();
   const corpus = corpusStats();
+  const themes = themeStats();
+  const practice = practiceStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
     cambridgeVolumes: words.volumes,
     corpusFiles: corpus.filesInRepository,
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
+    themes: themes.themes,
+    themePrompts: themes.totalPrompts,
+    practiceUnits: practice.totalUnits,
+    practiceDeclaredUnits: practice.declaredUnits,
+    practiceStrategies: practice.strategiesCount,
   };
 }
 
@@ -51,6 +62,7 @@ export function createMetaRoutes(
         endpoints: {
           documentation: '/docs',
           openapi: '/openapi.json',
+          manifest: '/manifest.json',
           health: '/health',
           api: '/v1',
         },
@@ -85,7 +97,9 @@ export function createMetaRoutes(
         uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
         datasets: datasetSummary(),
       },
-      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index'] },
+      meta: {
+        checks: ['process', 'vocabulary-dataset', 'corpus-index', 'theme-bank', 'practice-catalogue'],
+      },
     };
   }
 
@@ -96,6 +110,18 @@ export function createMetaRoutes(
       raw: {
         contentType: 'application/json; charset=utf-8',
         body: `${JSON.stringify(openApiDocument(routes, base, API_VERSION), null, 2)}\n`,
+      },
+    };
+  }
+
+  /** Machine-readable research provenance manifest. */
+  function manifest(): HandlerResult {
+    return {
+      data: getManifest() as unknown as JsonValue,
+      meta: {
+        generatedBy: SERVICE_NAME,
+        version: API_VERSION,
+        schema: 'manifest.v1',
       },
     };
   }
@@ -132,6 +158,13 @@ export function createMetaRoutes(
       versioned: false,
       summary: 'OpenAPI 3.1 document generated from the live route table.',
       handler: openapi,
+    },
+    {
+      method: 'GET',
+      path: '/manifest.json',
+      versioned: false,
+      summary: 'Machine-readable research provenance and checksum manifest.',
+      handler: manifest,
     },
     {
       method: 'GET',

@@ -4,7 +4,7 @@ import { startTestServer } from '../helpers/server.js';
 import { DOMAIN_ROUTES } from '../../src/routes/index.js';
 
 import type { TestServer } from '../helpers/server.js';
-import type { RouteInfo } from '../../src/types.js';
+import type { ResearchManifest, RouteInfo } from '../../src/types.js';
 
 let server: TestServer;
 
@@ -31,6 +31,7 @@ describe('GET /', () => {
     expect(response.data.licenses).toEqual({ code: 'MIT', data: 'CC BY 4.0' });
     expect(response.data.datasets.vocabularyWords).toBe(4174);
     expect(response.data.endpoints.documentation).toBe('/docs');
+    expect(response.data.endpoints.manifest).toBe('/manifest.json');
     expect(response.meta.count).toBe(DOMAIN_ROUTES.length);
   });
 });
@@ -50,7 +51,11 @@ describe('GET /health', () => {
     const response = await server.json<{ status: string; datasets: Record<string, number> }>('/health');
     expect(response.data.status).toBe('ok');
     expect(response.data.datasets.corpusFiles).toBe(404);
+    expect(response.data.datasets.themes).toBe(50);
+    expect(response.data.datasets.practiceUnits).toBe(1852);
     expect(response.meta.checks).toContain('vocabulary-dataset');
+    expect(response.meta.checks).toContain('theme-bank');
+    expect(response.meta.checks).toContain('practice-catalogue');
   });
 });
 
@@ -65,6 +70,18 @@ describe('GET /openapi.json', () => {
   });
 });
 
+describe('GET /manifest.json', () => {
+  it('serves the research provenance manifest', async () => {
+    const response = await server.json<ResearchManifest>('/manifest.json');
+    expect(response.status).toBe(200);
+    expect(response.data.manifestVersion).toBe(1);
+    expect(response.data.api.name).toBe('ielts-api');
+    expect(response.data.datasets.vocabulary?.records).toBe(4174);
+    expect(response.data.datasets.practice?.records).toBe(1852);
+    expect(response.meta.schema).toBe('manifest.v1');
+  });
+});
+
 describe('GET /docs', () => {
   it('serves the documentation page', async () => {
     const response = await fetch(`${server.base}/docs`);
@@ -73,5 +90,7 @@ describe('GET /docs', () => {
     expect(response.headers.get('content-type')).toContain('text/html');
     expect(body).toContain('IELTS API');
     expect(body).toContain('/v1/vocabulary');
+    expect(body).toContain('/v1/practice');
+    expect(body).toContain('/v1/themes');
   });
 });

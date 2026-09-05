@@ -3,18 +3,19 @@ message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
 version: 1.0.0
-date-released: '2026-09-04'
+date-released: '2026-09-05'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
-  Cambridge IELTS volumes 1-22 vocabulary lists, condensed analytic band
+  Cambridge IELTS volumes 1-22 vocabulary lists, 50 high-frequency themes with
+  Task 2 essay prompts, a metadata catalogue of 1,852 practice units across Reading
+  and Listening, 17 task-family strategy guides, condensed analytic band
   descriptors for Speaking and Writing across bands 0-9, indicative score
-  concordances for CEFR, TOEFL iBT, the Cambridge English Scale, PTE Academic
-  and the Duolingo English Test, Writing and Speaking task banks, and a curated
-  index of an open IELTS research corpus. Every endpoint is free of charge,
-  requires no authentication, returns a uniform JSON envelope with a stable
-  ETag, and is covered by a test suite with 100% statement, branch, function
-  and line coverage. The API is designed for reproducible second-language
+  concordances and raw-to-band conversion, Writing and Speaking task banks, and a
+  curated index and reproducible SHA-256 manifest of an open IELTS research corpus.
+  Every endpoint is free of charge, requires no authentication, returns a uniform
+  JSON envelope with a stable ETag, and is covered by a test suite with 100% statement,
+  branch, function and line coverage. The API is designed for reproducible second-language
   assessment research: responses are deterministic, versioned and citable.
 keywords:
   - IELTS
@@ -23,6 +24,7 @@ keywords:
   - vocabulary
   - band descriptors
   - score concordance
+  - practice curriculum
   - open data
   - REST API
   - TypeScript
@@ -57,6 +59,12 @@ references:
     title: '1-22yas.xlsx: Cambridge IELTS volumes 1-22 vocabulary lists'
     url: 'https://github.com/zhengyishiming/IELTS/blob/main/1-22yas.xlsx'
     year: 2024
+  - type: dataset
+    authors:
+      - name: 'ngoclong1209'
+    title: 'UPGRADE-YOUR-IELTS-SKILLS: open IELTS practice curriculum and study set'
+    url: 'https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS'
+    year: 2026
   - type: manual
     authors:
       - name: 'British Council'

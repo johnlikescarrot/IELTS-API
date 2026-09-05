@@ -113,6 +113,15 @@ export type ConversionEntry = {
 /** Supported IELTS-equivalent scales. */
 export type ConversionTarget = 'cefr' | 'toefl-ibt' | 'cambridge-english-scale' | 'pte-academic' | 'duolingo';
 
+/** Raw score to band conversion result. */
+export type RawToBandResult = {
+  rawScore: number;
+  skill: 'listening' | 'reading';
+  module: 'academic' | 'general-training';
+  band: BandScore;
+  range: [number, number];
+};
+
 /* -------------------------------------------------------------------------- */
 /* Tasks, topics and resources                                                */
 /* -------------------------------------------------------------------------- */
@@ -189,7 +198,159 @@ export type Resource = {
 };
 
 /* -------------------------------------------------------------------------- */
-/* Research corpus                                                            */
+/* Themes                                                                     */
+/* -------------------------------------------------------------------------- */
+
+/** A high-frequency IELTS theme derived from the upstream study set. */
+export type IeltsTheme = {
+  /** Stable identifier (`th-001`). */
+  id: string;
+  /** Relative frequency rank (1-50). */
+  rank: number;
+  /** Theme name. */
+  name: string;
+  /** Thematic category slug. */
+  category: string;
+  /** Display group. */
+  group: string;
+  /** Skills supported by this theme. */
+  skills: Skill[];
+  /** Writing Task 2 question families this theme fits. */
+  questionTypes: EssayQuestionType[];
+  /** Core vocabulary keywords for this theme. */
+  keywords: string[];
+  /** Three realistic, original Task 2 essay prompts on this theme. */
+  prompts: [string, string, string];
+};
+
+/** Dataset-level provenance for the theme bank. */
+export type ThemeMeta = {
+  name: string;
+  source: string;
+  sourceUrl: string;
+  themes: number;
+  categories: number;
+  skills: number;
+  license: string;
+  attribution: string;
+  note: string;
+};
+
+/** Aggregate statistics about the theme bank. */
+export type ThemeStats = {
+  themes: number;
+  categories: number;
+  totalPrompts: number;
+  meanPrompts: number;
+  bySkill: Record<string, number>;
+  byCategory: Record<string, number>;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Practice Catalogue & Strategies                                            */
+/* -------------------------------------------------------------------------- */
+
+/** Collections in the IELTS practice catalogue. */
+export type PracticeCollection = 'reading-basic' | 'reading-full' | 'listening-basic' | 'listening-full';
+
+/** Curricular level designation for practice units. */
+export type PracticeLevel = 'A1_A2' | 'B1_B2' | 'C1_C2' | 'Basic' | 'Intermediate' | 'Advanced' | 'FullTest';
+
+/** A single practice unit in the curriculum metadata catalogue. */
+export type PracticeUnit = {
+  /** Stable identifier (e.g. `reading-basic-a1-a2-001`, `reading-full-001`, `listening-full-083`). */
+  id: string;
+  /** IELTS skill (reading or listening). */
+  skill: 'reading' | 'listening';
+  /** Practice collection this unit belongs to. */
+  collection: PracticeCollection;
+  /** Number of the lesson or test within its collection. */
+  unitNumber: number;
+  /** Curricular level tag. */
+  level: PracticeLevel;
+  /** Descriptive title for this unit. */
+  title: string;
+  /** Whether working audio media is available for this unit. */
+  hasAudio: boolean;
+  /** Whether question-strategy metadata exists for this unit. */
+  hasStrategy: boolean;
+  /** Path in the upstream repository tree. */
+  sourcePath: string;
+};
+
+/** Metadata for the practice catalogue. */
+export type PracticeMeta = {
+  name: string;
+  source: string;
+  sourceUrl: string;
+  totalUnits: number;
+  declaredUnits: number;
+  missingUnits: number;
+  collections: number;
+  license: string;
+  attribution: string;
+  note: string;
+};
+
+/** Task family strategy guidance for Reading and Listening. */
+export type PracticeStrategy = {
+  /** Unique strategy slug (e.g. `true-false-not-given`, `multiple-choice`). */
+  id: string;
+  /** IELTS skill. */
+  skill: 'reading' | 'listening';
+  /** Official question type name. */
+  name: string;
+  /** Cognitive / task category. */
+  category: string;
+  /** Detailed description of the question type. */
+  description: string;
+  /** Official IELTS format reference URL. */
+  officialUrl: string;
+  /** Recommended step-by-step procedure. */
+  recommendedSteps: string[];
+  /** High-score tips. */
+  tips: string[];
+  /** Common candidate pitfalls. */
+  pitfalls: string[];
+  /** Suggested time budget in minutes. */
+  suggestedMinutes: number;
+};
+
+/** Step in the 6-step IELTS study framework. */
+export type StudyStep = {
+  /** Step number (1-6). */
+  step: number;
+  /** Step name. */
+  name: string;
+  /** Recommended time allocation. */
+  targetTime: string;
+  /** Core learning objective. */
+  objective: string;
+  /** Concrete actions. */
+  actions: string[];
+  /** Expected deliverable or outcome. */
+  output: string;
+};
+
+/** Aggregate statistics about the practice catalogue. */
+export type PracticeStats = {
+  totalUnits: number;
+  declaredUnits: number;
+  missingUnits: number;
+  bySkill: Record<string, number>;
+  byCollection: Record<string, number>;
+  byLevel: Record<string, number>;
+  audioAvailability: {
+    withAudio: number;
+    missingAudio: number;
+    notApplicable: number;
+  };
+  strategiesCount: number;
+  studyFrameworkSteps: number;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Research corpus & Provenance                                               */
 /* -------------------------------------------------------------------------- */
 
 /** One file of the upstream research corpus. */
@@ -223,6 +384,41 @@ export type CorpusStats = {
   byCategory: Record<string, number>;
   bySkill: Record<string, number>;
   byFormat: Record<string, number>;
+};
+
+/** Dataset entry in the research provenance manifest. */
+export type ManifestDataset = {
+  id: string;
+  path: string;
+  sha256: string;
+  records: number;
+  source: {
+    url: string;
+    snapshot: string;
+  };
+  license: string;
+  note: string;
+};
+
+/** Stable machine-readable provenance manifest. */
+export type ResearchManifest = {
+  manifestVersion: 1;
+  api: {
+    name: string;
+    version: string;
+    repository: string;
+    license: string;
+    docsUrl: string;
+  };
+  datasets: Record<string, ManifestDataset>;
+  review: {
+    upstream: string;
+    commit: string;
+    reviewedDate: string;
+    unitsObserved: number;
+    unitsDeclared: number;
+    notes: string[];
+  };
 };
 
 /* -------------------------------------------------------------------------- */

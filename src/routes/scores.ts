@@ -4,9 +4,9 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
-import { assertBand, calculateOverall } from '../lib/band.js';
+import { assertBand, calculateOverall, rawScoreToBand } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { getEnum, getNumber, getOptionalInt, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -107,6 +107,31 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Convert a raw score (0-40) into an indicative IELTS band score. */
+function rawToBandHandler(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const rawScore = getOptionalInt(params, 'raw', 0, 40);
+  if (rawScore === undefined) {
+    throw badRequest('Parameter "raw" is required (integer 0-40).', { parameter: 'raw' });
+  }
+  const skill = getEnum(params, 'skill', ['listening', 'reading'] as const);
+  if (skill === undefined) {
+    throw badRequest('Parameter "skill" must be "listening" or "reading".', {
+      parameter: 'skill',
+      allowed: 'listening,reading',
+    });
+  }
+  const module = getEnum(params, 'module', ['academic', 'general-training'] as const) ?? 'academic';
+  const result = rawScoreToBand(rawScore, skill, module);
+  return {
+    data: result,
+    meta: {
+      note: 'Raw score concordances are indicative and may vary slightly across specific Cambridge test administrations.',
+      rawRange: result.range,
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -129,5 +154,12 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Map a score on another scale back to an indicative IELTS band.',
     handler: interpret,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw-to-band',
+    versioned: true,
+    summary: 'Convert a raw score (0-40) to an indicative IELTS band score for Listening or Reading.',
+    handler: rawToBandHandler,
   },
 ];

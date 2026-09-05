@@ -6,6 +6,8 @@ import {
   getInt,
   getIsoDate,
   getNumber,
+  getOptionalBoolean,
+  getOptionalInt,
   getString,
   requireString,
   toParams,
@@ -57,6 +59,24 @@ describe('getInt', () => {
   it('rejects out-of-range values', () => {
     expect(() => getInt({ limit: '0' }, 'limit', 1, 100, 20)).toThrow(/between 1 and 100/);
     expect(() => getInt({ limit: '101' }, 'limit', 1, 100, 20)).toThrow(/between 1 and 100/);
+  });
+});
+
+describe('getOptionalInt', () => {
+  it('returns undefined when absent', () => {
+    expect(getOptionalInt({}, 'unit', 1, 100)).toBeUndefined();
+  });
+
+  it('parses valid integer', () => {
+    expect(getOptionalInt({ unit: '42' }, 'unit', 1, 100)).toBe(42);
+  });
+
+  it('rejects non-integer string', () => {
+    expect(() => getOptionalInt({ unit: 'abc' }, 'unit', 1, 100)).toThrow(/must be an integer/);
+  });
+
+  it('rejects out-of-range integer', () => {
+    expect(() => getOptionalInt({ unit: '150' }, 'unit', 1, 100)).toThrow(/between 1 and 100/);
   });
 });
 
@@ -115,6 +135,21 @@ describe('getBoolean', () => {
 
   it('rejects anything else', () => {
     expect(() => getBoolean({ verbose: 'maybe' }, 'verbose', true)).toThrow(/must be a boolean/);
+  });
+});
+
+describe('getOptionalBoolean', () => {
+  it('returns undefined when absent', () => {
+    expect(getOptionalBoolean({}, 'flag')).toBeUndefined();
+  });
+
+  it('accepts truthy and falsy values', () => {
+    expect(getOptionalBoolean({ flag: 'true' }, 'flag')).toBe(true);
+    expect(getOptionalBoolean({ flag: '0' }, 'flag')).toBe(false);
+  });
+
+  it('rejects invalid boolean strings', () => {
+    expect(() => getOptionalBoolean({ flag: 'maybe' }, 'flag')).toThrow(/must be a boolean/);
   });
 });
 

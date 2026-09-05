@@ -13,7 +13,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 4 September 2026
+date: 5 September 2026
 bibliography: paper.bib
 ---
 
@@ -22,14 +22,17 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships five kinds of data: a 4,174-headword vocabulary dataset derived from
+JSON envelope. The service ships eight kinds of data: a 4,174-headword vocabulary dataset derived from
 the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking and
-Writing across bands 0-9; indicative score concordances between IELTS and five other scales; original
-Writing and Speaking task banks built on the question families and word lists that recur in IELTS
-preparation material [@coxhead2000]; and a curated metadata index of an open IELTS research corpus.
-Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
-support — so a response archived today can be re-fetched and diffed years later, which is the
-practical requirement for reproducible corpus and assessment research.
+Writing across bands 0-9; indicative score concordances between IELTS and five other scales, alongside
+a 0-40 raw-to-band conversion engine; 50 high-frequency IELTS themes with Writing Task 2 essay prompts;
+a comprehensive metadata catalogue of 1,852 practice units across Reading and Listening; 17 task-family
+strategy guides and a 6-step study methodology [@upgradeielts]; original Writing and Speaking task banks
+built on recurring IELTS question families [@coxhead2000]; and a curated metadata index and reproducible
+SHA-256 provenance manifest of the open IELTS research corpus. Responses are deterministic — seeded
+sampling, stable identifiers, ETags and conditional-request support — so a response archived today can
+be re-fetched and diffed years later, which is the practical requirement for reproducible corpus and
+assessment research.
 
 # Statement of need
 
@@ -40,20 +43,24 @@ proprietary e-book containers. Researchers who need IELTS data therefore hand-bu
 that cannot be cited, versioned or reproduced, and the resulting datasets die with the project that
 produced them.
 
-Existing public material also suffers from a discoverability problem that this project quantifies.
-The open corpus this work builds on (`zhengyishiming/IELTS`, 404 files, 713 MB of IELTS-relevant
-material) contains, alongside its IELTS content, a larger volume of semiconductor textbooks, Chinese
-pop music and cryptocurrency books. Only 76 of the 404 files (18.8%) are IELTS or English-learning
-material — an unfiltered crawler treats a lithography textbook as IELTS training data. [@ieltscorpus]
+Existing public material also suffers from a discoverability and licensing audit problem that this
+project quantifies. The open corpus this work builds on (`zhengyishiming/IELTS`, 404 files, 713 MB of
+IELTS-relevant material) contains, alongside its IELTS content, a larger volume of semiconductor
+textbooks, Chinese pop music and cryptocurrency books. Only 76 of the 404 files (18.8%) are IELTS or
+English-learning material [@ieltscorpus]. Similarly, the open `UPGRADE-YOUR-IELTS-SKILLS` study set
+contains 1,852 observed practice units across four learning collections, but features missing assets
+(Reading Test 105 is absent, and audio is missing for Listening Full Tests 83, 85, and 88) [@upgradeielts].
 
-The API addresses three concrete needs:
+The API addresses four concrete needs:
 
 1. **A citable target.** Datasets and code are released with `CITATION.cff`, `codemeta.json` and a
    Zenodo-ready metadata file, so a paper can cite a _version_ rather than a URL that may vanish.
 2. **A reusable data layer.** The vocabulary dataset carries phonetics, part-of-speech-tagged senses
    and Cambridge volume provenance, so it can be used for lexical coverage studies, item difficulty
    modelling or material generation without re-deriving it.
-3. **A service that does not gate access.** No API key, no registration, no per-key rate limiting and
+3. **Practice catalogue & task strategy guidance.** Systematic metadata for 1,852 practice units,
+   17 official question family strategies, and high-frequency theme analysis.
+4. **A service that does not gate access.** No API key, no registration, no per-key rate limiting and
    no CORS restrictions, so the API is usable from a browser, a notebook or an offline archive
    snapshot.
 
@@ -75,20 +82,30 @@ descriptors are deliberately _not_ reproduced: this keeps the artefact redistrib
 licence, and the API states on every page that researchers needing the authoritative wording must cite
 the published descriptors [@ieltsdescriptors].
 
-**Concordances.** Indicative mappings between IELTS bands and the CEFR, TOEFL iBT, the Cambridge
+**Concordances and raw-score conversion.** Indicative mappings between IELTS bands and the CEFR, TOEFL iBT, the Cambridge
 English Scale, PTE Academic and the Duolingo English Test, compiled from the providers' own published
-comparison tables [@coe2001]. Each response carries the provider, the source URL, the provenance and an explicit
-caveat that receiving institutions apply their own rules.
+comparison tables [@coe2001]. A dedicated raw-to-band endpoint converts raw scores (0-40) into band
+estimates for Academic Reading, General Training Reading, and Listening. Each response carries the
+provider, the source URL, the provenance and an explicit caveat that receiving institutions apply their own rules.
+
+**High-frequency theme bank.** 50 ranked themes across 11 categories derived from the open
+`UPGRADE-YOUR-IELTS-SKILLS` repository [@upgradeielts], each tagged with supported skills, Writing
+Task 2 question families, core lexical keywords, and three realistic original essay prompts.
+
+**Practice catalogue & task strategies.** Metadata inventory of 1,852 observed practice units
+(1,232 Reading Basic across A1-A2, B1-B2, C1-C2; 314 Reading Full Tests; 102 Listening Basic across
+Basic, Intermediate, Advanced; 204 Listening Full Tests), 17 task-family strategies (11 Academic Reading,
+6 Listening), and a 6-step study methodology.
 
 **Task banks.** 111 original Writing Task 2 prompts across 15 thematic categories and the five
 recurring question families (opinion, discussion, advantages/disadvantages, problem/solution,
 two-part), 80 Speaking items across Parts 1-3, and 10 Writing Task 1 task families with response
 structure and timing guidance.
 
-**Corpus index.** Metadata — path, normalised title, category, skill, format, size, blob SHA-1 —
-for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file repository. No
-upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
-is a descriptive act over metadata.
+**Corpus index & provenance manifest.** Metadata — path, normalised title, category, skill, format,
+size, blob SHA-1 — for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file
+repository and deterministic SHA-256 checksums across all datasets. No upstream binary is mirrored: the
+upstream files are third-party copyrighted material, and the index is a descriptive act over metadata.
 
 # Design
 
@@ -100,17 +117,16 @@ Responses use a single envelope, `{ "status", "data", "meta" }`, so any endpoint
 uniformly. Collections paginate with `limit` and `offset` and report `total` and `hasMore`; errors
 return a machine-readable code and the offending parameter with its allowed range. The OpenAPI 3.1
 document is generated from the live route table, so documentation cannot drift from the
-implementation. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
-reproducible stimulus for longitudinal studies rather than a novelty.
+implementation.
 
 # Quality control
 
-The test suite (295 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (344 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
-integration re-derives the vocabulary dataset from the upstream workbook and fails if the committed
-dataset has drifted, which guards against silent data rot.
+integration re-derives the vocabulary dataset from the upstream workbook and validates dataset
+checksums on every push.
 
 # Availability
 
@@ -121,9 +137,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 # Acknowledgements
 
-This work builds on the open corpus assembled by `zhengyishiming`; the author of that corpus is cited
-in `CITATION.cff` and in every response that draws on it. IELTS is a jointly owned trademark of the
-British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
-with and unendorsed by the IELTS partners.
+This work builds on the open datasets assembled by `zhengyishiming` and `ngoclong1209`; the authors
+are cited in `CITATION.cff` and in every response that draws on their work. IELTS is a jointly owned
+trademark of the British Council, IDP: IELTS Australia and Cambridge Assessment English; this project
+is unaffiliated with and unendorsed by the IELTS partners.
 
 # References

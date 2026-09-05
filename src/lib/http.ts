@@ -24,8 +24,8 @@ export const DEFAULT_MAX_AGE_SECONDS = 300;
 export const COMMON_HEADERS: Record<string, string> = {
   'access-control-allow-origin': '*',
   'access-control-allow-methods': 'GET, HEAD, OPTIONS',
-  'access-control-allow-headers': 'accept, accept-encoding, if-none-match',
-  'access-control-expose-headers': 'etag, x-response-time, x-request-id',
+  'access-control-allow-headers': 'content-type, accept, accept-encoding, if-none-match',
+  'access-control-expose-headers': 'etag, x-response-time, x-request-id, x-endpoint',
   'access-control-max-age': '86400',
   'x-content-type-options': 'nosniff',
   'x-robots-tag': 'index, follow',
@@ -62,10 +62,46 @@ export function acceptsGzip(header: string | undefined): boolean {
   if (header === undefined) {
     return false;
   }
-  return header
-    .toLowerCase()
-    .split(',')
-    .some((token) => token.trim().split(';')[0] === 'gzip');
+  const tokens = header.toLowerCase().split(',');
+  for (const token of tokens) {
+    const parts = token.trim().split(';');
+    const encoding = parts[0]?.trim();
+    if (encoding === 'gzip' || encoding === '*') {
+      let q = 1.0;
+      for (let i = 1; i < parts.length; i += 1) {
+        const item = parts[i]!.trim();
+        const equalsIndex = item.indexOf('=');
+        if (equalsIndex !== -1) {
+          const k = item.slice(0, equalsIndex).trim();
+          const v = item.slice(equalsIndex + 1).trim();
+          if (k === 'q') {
+            const parsed = Number.parseFloat(v);
+            q = Number.isNaN(parsed) ? 1.0 : parsed;
+          }
+        }
+      }
+      if (q > 0) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/**
+ * Determine if a client's `if-none-match` header matches the response ETag.
+ *
+ * @param ifNoneMatch - Client header value.
+ * @param etag - Response ETag.
+ */
+export function matchesIfNoneMatch(ifNoneMatch: string | undefined, etag: string): boolean {
+  if (ifNoneMatch === undefined) {
+    return false;
+  }
+  const clean = (tag: string) => tag.trim().replace(/^W\//, '');
+  const target = clean(etag);
+  const candidates = ifNoneMatch.split(',').map((t) => t.trim());
+  return candidates.some((candidate) => candidate === '*' || clean(candidate) === target);
 }
 
 /** The encoded body plus the headers needed to describe it. */
@@ -144,7 +180,7 @@ export function writeResponse(res: ServerResponse, options: ResponseOptions): nu
     etag,
     'cache-control': options.cacheControl ?? `public, max-age=${DEFAULT_MAX_AGE_SECONDS}`,
   };
-  if (options.ifNoneMatch !== undefined && options.ifNoneMatch === etag) {
+  if (matchesIfNoneMatch(options.ifNoneMatch, etag)) {
     res.writeHead(304, headers);
     res.end();
     return 0;

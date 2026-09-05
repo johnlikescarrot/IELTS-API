@@ -6,6 +6,16 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- **High-Frequency Theme Bank (`/v1/themes`, `/v1/themes/:id`)**: 50 curated themes across 11 master groups (Education, Environment, Technology, Society & Culture, Health, Work, Government & Law, Media, Globalisation, Science & Arts, Family & Youth) equipped with subtopics, core keywords, and authentic Writing Task 2 prompts.
+- **Task-Family Strategy Guides (`/v1/strategies`, `/v1/strategies/:id`)**: 17 comprehensive strategy guides covering 11 Academic Reading question types and 6 Listening question types, alongside a 6-step active learning methodology.
+- **Practice Curriculum Catalogue (`/v1/practice`, `/v1/practice/summary`, `/v1/practice/:id`)**: 1,852 verified practice units catalogued from `UPGRADE-YOUR-IELTS-SKILLS` (Reading Basic A1-A2, B1-B2, C1-C2; Listening Basic; Reading Full Tests; Listening Full Tests).
+- **Raw Score to Band Conversion (`/v1/scores/raw-to-band`)**: Comprehensive 40-question score conversion tables and query calculator for Academic Reading, General Training Reading, and Listening.
+- **Dataset Manifest & Integrity Verification (`/manifest.json`, `docs/manifest.json`)**: Deterministic SHA-256 cryptographic digests generated across all core dataset files.
+- **Extended Test Suite & 100% Coverage**: 34 test files, 344 unit tests with 100% statement, branch, function, and line coverage enforced.
+- **Enhanced CI & Super-Linter Workflows**: Multi-node CI matrix (Node.js 20.19.0 & 22.x), strict path-based Super-Linter workflow with ESLint 9 flat config, and manifest verification.
+
 ## [1.0.0] - 2026-09-04
 
 First citable release.

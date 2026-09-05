@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestServer } from '../helpers/server.js';
 
 import type { TestServer } from '../helpers/server.js';
+import type { RawToBandResult } from '../../src/types.js';
 
 let server: TestServer;
 
@@ -130,5 +131,40 @@ describe('GET /v1/scores/interpret', () => {
 
   it('rejects unknown scales', async () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/scores/raw-to-band', () => {
+  it('converts raw scores for listening and reading', async () => {
+    const resListening = await server.json<RawToBandResult>('/v1/scores/raw-to-band?raw=35&skill=listening');
+    expect(resListening.status).toBe(200);
+    expect(resListening.data.band).toBe(8.0);
+    expect(resListening.data.skill).toBe('listening');
+
+    const resReadingAcad = await server.json<RawToBandResult>(
+      '/v1/scores/raw-to-band?raw=35&skill=reading&module=academic',
+    );
+    expect(resReadingAcad.status).toBe(200);
+    expect(resReadingAcad.data.band).toBe(8.0);
+
+    const resReadingGen = await server.json<RawToBandResult>(
+      '/v1/scores/raw-to-band?raw=37&skill=reading&module=general-training',
+    );
+    expect(resReadingGen.status).toBe(200);
+    expect(resReadingGen.data.band).toBe(8.0);
+  });
+
+  it('validates raw score and skill parameters', async () => {
+    const resNoRaw = await server.json('/v1/scores/raw-to-band?skill=listening');
+    expect(resNoRaw.status).toBe(400);
+
+    const resBadRaw = await server.json('/v1/scores/raw-to-band?raw=45&skill=listening');
+    expect(resBadRaw.status).toBe(400);
+
+    const resNoSkill = await server.json('/v1/scores/raw-to-band?raw=30');
+    expect(resNoSkill.status).toBe(400);
+
+    const resBadSkill = await server.json('/v1/scores/raw-to-band?raw=30&skill=speaking');
+    expect(resBadSkill.status).toBe(400);
   });
 });

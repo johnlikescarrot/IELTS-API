@@ -39,11 +39,37 @@ export function requireString(params: QueryParams, key: string): string {
   return value;
 }
 
-/** Read an integer parameter constrained to an inclusive range. */
+/** Read an integer parameter constrained to an inclusive range with a fallback. */
 export function getInt(params: QueryParams, key: string, min: number, max: number, fallback: number): number {
   const raw = getString(params, key);
   if (raw === undefined) {
     return fallback;
+  }
+  if (!/^[+-]?\d+$/.test(raw)) {
+    throw badRequest(`Parameter "${key}" must be an integer.`, { parameter: key, received: raw });
+  }
+  const parsed = Number.parseInt(raw, 10);
+  if (parsed < min || parsed > max) {
+    throw badRequest(`Parameter "${key}" must be between ${min} and ${max}.`, {
+      parameter: key,
+      received: raw,
+      min: String(min),
+      max: String(max),
+    });
+  }
+  return parsed;
+}
+
+/** Read an optional integer parameter constrained to an inclusive range. */
+export function getOptionalInt(
+  params: QueryParams,
+  key: string,
+  min: number,
+  max: number,
+): number | undefined {
+  const raw = getString(params, key);
+  if (raw === undefined) {
+    return undefined;
   }
   if (!/^[+-]?\d+$/.test(raw)) {
     throw badRequest(`Parameter "${key}" must be an integer.`, { parameter: key, received: raw });
@@ -107,6 +133,22 @@ export function getBoolean(params: QueryParams, key: string, fallback: boolean):
   const raw = getString(params, key);
   if (raw === undefined) {
     return fallback;
+  }
+  const normalised = raw.toLowerCase();
+  if (['1', 'true', 'yes', 'on'].includes(normalised)) {
+    return true;
+  }
+  if (['0', 'false', 'no', 'off'].includes(normalised)) {
+    return false;
+  }
+  throw badRequest(`Parameter "${key}" must be a boolean.`, { parameter: key, received: raw });
+}
+
+/** Read an optional boolean parameter. */
+export function getOptionalBoolean(params: QueryParams, key: string): boolean | undefined {
+  const raw = getString(params, key);
+  if (raw === undefined) {
+    return undefined;
   }
   const normalised = raw.toLowerCase();
   if (['1', 'true', 'yes', 'on'].includes(normalised)) {

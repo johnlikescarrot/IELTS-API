@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { isRawResult, matchRoute, splitPath } from '../../src/lib/route.js';
+import { HttpError } from '../../src/lib/errors.js';
 
 import type { RouteDefinition } from '../../src/lib/route.js';
 
@@ -37,6 +38,11 @@ describe('matchRoute', () => {
   it('decodes escaped path parameters', () => {
     const match = matchRoute(routes, ['v1', 'vocabulary', 'carbon%20dioxide']);
     expect(match?.params.word).toBe('carbon dioxide');
+  });
+
+  it('throws badRequest for malformed percent-encoding in path parameters', () => {
+    expect(() => matchRoute(routes, ['v1', 'vocabulary', '%E0%A4%A'])).toThrow(HttpError);
+    expect(() => matchRoute(routes, ['v1', 'vocabulary', '%E0%A4%A'])).toThrow(/Malformed path parameter/);
   });
 
   it('prefers literal routes registered first', () => {

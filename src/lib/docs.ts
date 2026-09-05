@@ -8,6 +8,8 @@
 
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
+import { themeStats } from '../data/themes.js';
+import { practiceStats } from '../data/practice.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -48,6 +50,8 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const themes = themeStats();
+  const practice = practiceStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -86,14 +90,17 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
 <p>No API key. No registration. No rate limiting by key. Every response carries an ETag and open CORS headers.</p>
 <pre><code>curl -s "https://ielts-api.example/v1/vocabulary?q=environment&amp;limit=3"
 curl -s "https://ielts-api.example/v1/scores/overall?listening=7&amp;reading=6.5&amp;writing=6&amp;speaking=7"
-curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
+curl -s "https://ielts-api.example/v1/practice?skill=reading&amp;level=C1_C2"
+curl -s "https://ielts-api.example/v1/themes/random?count=3"</code></pre>
 
 <h2>Datasets</h2>
 <ul>
   <li><strong>${words.toLocaleString('en-US')} headwords</strong> extracted from the Cambridge IELTS 1&ndash;22 vocabulary lists, with phonetics, senses and morpheme hints.</li>
+  <li><strong>${practice.totalUnits.toLocaleString('en-US')} practice units</strong> across 4 collections (Reading Basic, Reading Full Tests, Listening Basic, Listening Full Tests) with ${practice.strategiesCount} task-family strategies and the 6-step study methodology.</li>
+  <li><strong>${themes.themes} high-frequency IELTS themes</strong> across ${themes.categories} categories with ${themes.totalPrompts} Task 2 essay prompts and keywords.</li>
   <li><strong>${corpus.ieltsRelevantFiles} of ${corpus.filesInRepository} upstream files</strong> indexed from the open research corpus (${(corpus.coverageRatio * 100).toFixed(1)}% IELTS-relevant); only metadata is published.</li>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
-  <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
+  <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test, plus raw-to-band conversion (0&ndash;40).</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
 </ul>
 
@@ -132,6 +139,8 @@ ${service.map(routeRow).join('\n')}
     <tr><td class="path">order</td><td>collections</td><td><code>asc</code> or <code>desc</code>.</td></tr>
     <tr><td class="path">match</td><td><code>/v1/vocabulary</code></td><td><code>contains</code>, <code>prefix</code> or <code>exact</code>.</td></tr>
     <tr><td class="path">volume</td><td><code>/v1/vocabulary</code></td><td>Comma-separated Cambridge IELTS volumes, 1&ndash;22.</td></tr>
+    <tr><td class="path">skill</td><td><code>/v1/practice</code>, <code>/v1/themes</code></td><td>IELTS skill (<code>reading</code>, <code>listening</code>, <code>writing</code>, <code>speaking</code>).</td></tr>
+    <tr><td class="path">collection</td><td><code>/v1/practice</code></td><td>Practice collection (<code>reading-basic</code>, <code>reading-full</code>, etc.).</td></tr>
   </tbody>
 </table>
 
@@ -150,7 +159,7 @@ and the archived Zenodo release both carry full metadata.</p>
   <p class="meta">Code licensed under MIT; datasets under CC BY 4.0. Band descriptors are original condensed
   paraphrases written for this project and are not the official IELTS wording. Score concordances are indicative
   and compiled from the providers&rsquo; own published comparison tables.</p>
-  <p class="meta"><a href="/openapi.json">OpenAPI 3.1 document</a> &middot; <a href="/health">health</a> &middot;
+  <p class="meta"><a href="/openapi.json">OpenAPI 3.1 document</a> &middot; <a href="/manifest.json">provenance manifest</a> &middot; <a href="/health">health</a> &middot;
   <a href="${escapeHtml(repository)}">source repository</a></p>
 </footer>
 </body>

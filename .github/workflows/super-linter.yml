@@ -25,21 +25,34 @@ jobs:
   super-linter:
     name: Lint the whole codebase
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install the repository ESLint configuration dependencies
+        run: npm ci
+
       - name: Run super-linter
-        uses: super-linter/super-linter/slim@v8.3.1
+        uses: super-linter/super-linter/slim@47984f49b4e87383eed97890fe2dca6063bbd9c3 # v8.3.1
         env:
           DEFAULT_BRANCH: main
-          DEFAULT_WORKSPACE: ${{ github.workspace }}
           VALIDATE_ALL_CODEBASE: true
           # The generated datasets are machine-written: never lint them.
-          FILTER_REGEX_EXCLUDE: .*(data/|coverage/|dist/).*
+          # Exclude root generated data, not src/data or test/data.
+          FILTER_REGEX_EXCLUDE: '(^|/)(node_modules|coverage|dist|super-linter-output)/|^(/github/workspace/)?data/'
+          MULTI_STATUS: false
+          ENABLE_GITHUB_ACTIONS_STEP_SUMMARY: true
+          ENABLE_SUPER_LINTER_OUTPUT: true
           # Languages enabled for this repository.
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_TYPESCRIPT_ES: true
@@ -58,8 +71,21 @@ jobs:
           # extraction scripts are standalone Python utilities with their own
           # formatting.
           # Linter configuration files.
-          LINTER_RULES_PATH: /
+          LINTER_RULES_PATH: .
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Preserve Super-Linter diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: super-linter-diagnostics
+          path: |
+            super-linter.log
+            super-linter-output/
+          retention-days: 7
+          if-no-files-found: warn

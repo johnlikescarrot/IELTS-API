@@ -6,6 +6,8 @@
  */
 
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { PRACTICE_COLLECTIONS, PRACTICE_LEVELS, PRACTICE_SKILLS } from '../data/practice.js';
+import { THEME_CATEGORIES, THEME_SKILLS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
@@ -123,6 +125,28 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
   ],
+  '/v1/scores/raw-to-band': [
+    {
+      name: 'raw',
+      in: 'query',
+      required: true,
+      description: 'Raw score (0-40).',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+    {
+      name: 'skill',
+      in: 'query',
+      required: true,
+      description: 'IELTS skill.',
+      schema: { type: 'string', enum: ['listening', 'reading'] },
+    },
+    {
+      name: 'module',
+      in: 'query',
+      description: 'IELTS module for Reading (academic or general-training).',
+      schema: { type: 'string', enum: ['academic', 'general-training'], default: 'academic' },
+    },
+  ],
   '/v1/topics/writing': [
     QUERY,
     { name: 'category', in: 'query', schema: { type: 'string', enum: [...WRITING_CATEGORIES] } },
@@ -135,6 +159,44 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     { name: 'part', in: 'query', schema: { type: 'integer', enum: [1, 2, 3] } },
     LIMIT,
     OFFSET,
+  ],
+  '/v1/themes': [
+    QUERY,
+    { name: 'category', in: 'query', schema: { type: 'string', enum: [...THEME_CATEGORIES] } },
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...THEME_SKILLS] } },
+    { name: 'type', in: 'query', schema: { type: 'string', enum: [...ESSAY_QUESTION_TYPES] } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/themes/random': [
+    { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 3 } },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds return identical samples.',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/practice': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
+    { name: 'collection', in: 'query', schema: { type: 'string', enum: [...PRACTICE_COLLECTIONS] } },
+    { name: 'level', in: 'query', schema: { type: 'string', enum: [...PRACTICE_LEVELS] } },
+    { name: 'hasAudio', in: 'query', schema: { type: 'boolean' } },
+    { name: 'unitNumber', in: 'query', schema: { type: 'integer', minimum: 1 } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/practice/random': [
+    { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 5 } },
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
+    { name: 'collection', in: 'query', schema: { type: 'string', enum: [...PRACTICE_COLLECTIONS] } },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds return identical samples.',
+      schema: { type: 'string' },
+    },
   ],
   '/v1/tasks/writing': [{ name: 'module', in: 'query', schema: { type: 'string', enum: [...TASK_MODULES] } }],
   '/v1/corpus/items': [
@@ -253,8 +315,9 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'descriptors, score concordances, Writing and Speaking task banks, high-frequency',
+        'themes, practice test and curriculum metadata catalogue (1,852 units), Reading &',
+        'Listening task-family strategies, and open IELTS research corpus index.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
