@@ -4791,6 +4791,7 @@
                     },
                     "data": {
                       "type": "array",
+                      "maxItems": 100,
                       "items": {
                         "$ref": "#/components/schemas/PracticeUnit"
                       }
@@ -5324,6 +5325,7 @@
                     },
                     "data": {
                       "type": "array",
+                      "maxItems": 50,
                       "items": {
                         "$ref": "#/components/schemas/PracticeUnit"
                       }
@@ -6097,6 +6099,7 @@
                     },
                     "data": {
                       "type": "array",
+                      "maxItems": 11,
                       "items": {
                         "$ref": "#/components/schemas/ReceptiveTask"
                       }
@@ -6358,6 +6361,7 @@
                     },
                     "data": {
                       "type": "array",
+                      "maxItems": 6,
                       "items": {
                         "$ref": "#/components/schemas/ReceptiveTask"
                       }

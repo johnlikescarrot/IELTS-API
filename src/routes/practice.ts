@@ -121,7 +121,7 @@ export const practiceRoutes: readonly RouteDefinition[] = [
     response: {
       contentType: 'application/json',
       schema: envelopeSchema(
-        { type: 'array', items: { $ref: '#/components/schemas/PracticeUnit' } },
+        { type: 'array', maxItems: 100, items: { $ref: '#/components/schemas/PracticeUnit' } },
         { $ref: '#/components/schemas/PracticeMeta' },
       ),
     },
@@ -149,7 +149,7 @@ export const practiceRoutes: readonly RouteDefinition[] = [
     response: {
       contentType: 'application/json',
       schema: envelopeSchema(
-        { type: 'array', items: { $ref: '#/components/schemas/PracticeUnit' } },
+        { type: 'array', maxItems: 50, items: { $ref: '#/components/schemas/PracticeUnit' } },
         { $ref: '#/components/schemas/PracticeMeta' },
       ),
     },

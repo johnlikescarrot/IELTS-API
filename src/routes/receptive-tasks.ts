@@ -12,7 +12,11 @@ export const receptiveTaskRoutes: readonly RouteDefinition[] = PRACTICE_SKILLS.m
   versioned: true,
   response: {
     contentType: 'application/json',
-    schema: envelopeSchema({ type: 'array', items: { $ref: '#/components/schemas/ReceptiveTask' } }),
+    schema: envelopeSchema({
+      type: 'array',
+      maxItems: findReceptiveTasks(skill).length,
+      items: { $ref: '#/components/schemas/ReceptiveTask' },
+    }),
   },
   summary: `Original ${skill} question-family guidance with authoritative format references.`,
   handler: (context) => {

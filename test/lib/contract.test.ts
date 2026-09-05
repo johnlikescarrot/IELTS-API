@@ -93,6 +93,22 @@ describe('the real OpenAPI contract', () => {
   });
 
   it.each([
+    ['/v1/practice', '/v1/practice?limit=100', 100],
+    ['/v1/practice/sample', '/v1/practice/sample?seed=bounds&count=50', 50],
+    ['/v1/tasks/reading', '/v1/tasks/reading', 11],
+    ['/v1/tasks/listening', '/v1/tasks/listening', 6],
+  ])('bounds the response array for %s at its real maximum', async (path, request, maximum) => {
+    const schema = contract.paths[path]!.get.responses['200']!.content!['application/json']!.schema;
+    expect(schema).toMatchObject({ properties: { data: { maxItems: maximum } } });
+    const response = await server.json(request);
+    expect(response.data).toHaveLength(maximum);
+    const check = ajv.compile(schema);
+    expect(check(response), JSON.stringify(check.errors)).toBe(true);
+    const data = response.data as unknown[];
+    expect(check({ ...response, data: [...data, data[0]] })).toBe(false);
+  });
+
+  it.each([
     ['/v1/practice', '/v1/practice?limit=2'],
     ['/v1/practice', '/v1/practice?offset=9999'],
     ['/v1/practice/stats', '/v1/practice/stats'],
