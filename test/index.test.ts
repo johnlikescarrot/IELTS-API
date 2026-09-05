@@ -34,6 +34,13 @@ describe('the package entry point', () => {
     expect(typeof api.matchRoute).toBe('function');
     expect(typeof api.paginate).toBe('function');
     expect(typeof api.sendJson).toBe('function');
+    expect(typeof api.analyseTarget).toBe('function');
+    expect(typeof api.citationBundle).toBe('function');
+    expect(typeof api.analyseEssay).toBe('function');
+    expect(typeof api.buildStudyPlan).toBe('function');
+    expect(typeof api.fleschReadingEase).toBe('function');
+    expect(typeof api.datasetRecords).toBe('function');
+    expect(typeof api.bandForRaw).toBe('function');
     expect(typeof api.badRequest).toBe('function');
     expect(api.COMMON_HEADERS['access-control-allow-origin']).toBe('*');
   });
@@ -47,6 +54,9 @@ describe('the package entry point', () => {
     expect(api.CONVERSION_TARGETS).toContain('cefr');
     expect(api.allEntries().length).toBe(4174);
     expect(api.corpusStats().filesInRepository).toBe(404);
+    expect(api.RAW_SCORE_PAPERS).toContain('reading-general');
+    expect(api.DATASET_IDS).toContain('vocabulary');
+    expect(api.CITATION_FORMATS).toContain('bibtex');
   });
 
   it('exports the build constants', () => {

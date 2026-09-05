@@ -65,7 +65,9 @@ export function createMetaRoutes(
         datasets: datasetSummary(),
         citation: {
           cff: `${REPOSITORY_URL}/blob/main/CITATION.cff`,
-          note: 'Please cite this API when you use it in research.',
+          endpoint: '/v1/cite',
+          provenance: '/v1/datasets',
+          note: 'Please cite this API when you use it in research; /v1/cite renders BibTeX, APA, MLA, Chicago and RIS.',
         },
       },
       meta: { count: routes.length },

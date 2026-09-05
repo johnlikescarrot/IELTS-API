@@ -102,6 +102,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
   <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
   <li><strong>Response frameworks</strong> for Writing Task&nbsp;2 and Speaking Parts&nbsp;2&ndash;3: ordered stage plans with cue language and pitfalls, cross-linked to the task banks.</li>
+  <li><strong>Raw-score conversion tables</strong> out of 40 for Listening, Academic Reading and General Training Reading, with the marks needed for the next band.</li>
   <li><strong>${materials.indexedFiles.toLocaleString('en-US')} study-material files</strong> indexed from a ${materials.filesInRepository.toLocaleString('en-US')}-file self-study collection (recall banks, question banks, templates, vocabulary; metadata only).</li>
 </ul>
 
@@ -144,8 +145,11 @@ ${service.map(routeRow).join('\n')}
 </table>
 
 <h2>Citing this API</h2>
-<p>If you use this API in research, please cite it; the <code>CITATION.cff</code> file in the repository
-and the archived Zenodo release both carry full metadata.</p>
+<p>If you use this API in research, please cite it. <a href="/v1/cite">/v1/cite</a> renders the citation in
+BibTeX, APA, MLA, Chicago and RIS (<code>?format=bibtex</code> returns plain text), and
+<a href="/v1/datasets">/v1/datasets</a> publishes the provenance, licence and SHA-256 digest of every dataset
+behind a response. The <code>CITATION.cff</code> file in the repository and the archived Zenodo release both
+carry full metadata.</p>
 <pre><code>@software{ielts_api,
   title  = {IELTS API: a free, no-authentication REST API for IELTS preparation research},
   author = {IELTS API contributors},

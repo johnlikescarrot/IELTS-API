@@ -520,3 +520,94 @@ python3 scripts/extract_materials.py tree.json data/materials.json
 The script is standard library only and deterministic: the same tree always produces byte-identical
 output. The continuous-integration workflow re-derives the index from the upstream tree on every run
 and fails if the committed file disagrees.
+
+## Part V — score arithmetic and verifiability
+
+Parts I to IV described datasets. This part describes two things that are not datasets: the
+arithmetic the API performs on scores, and the machinery that makes a response citable and
+checkable after the fact.
+
+### 23. Raw-score conversion
+
+The Listening and Reading papers are marked out of 40. The band is then read off a published,
+paper-specific conversion table. Three tables exist, and confusing them is the single most common
+error in candidate-facing IELTS material:
+
+| Band | Listening | Academic Reading | General Training Reading |
+| ---: | --------: | ---------------: | -----------------------: |
+|    9 |     39–40 |            39–40 |                       40 |
+|    8 |     35–36 |            35–36 |                    37–38 |
+|    7 |     30–31 |            30–32 |                    34–35 |
+|    6 |     23–25 |            23–26 |                    30–31 |
+|    5 |     16–17 |            15–18 |                    23–26 |
+|    4 |     10–12 |            10–12 |                    15–18 |
+
+Two properties follow directly from the table and are worth stating because they are frequently
+misreported:
+
+- **General Training Reading is markedly stricter.** 30 marks is band 7 on Academic Reading and
+  band 6 on General Training Reading — a full band for identical raw performance. The reason is
+  construct-related, not arbitrary: the General Training texts are less demanding, so the same raw
+  score evidences less ability.
+- **The bands are not equally spaced in raw marks.** On Academic Reading the step from band 6 to
+  band 7 spans seven marks (23 → 30) while the step from band 8 to band 9 spans four (35 → 39). Raw
+  scores are therefore not an interval scale, and a difference of "two marks" means different
+  things at different points of the scale. Studies that average raw scores across bands should say
+  so explicitly.
+
+**Threats to validity.** Live IELTS tests are _equated_: each version is statistically adjusted so
+that a band means the same thing across versions, which moves the raw-score boundary by a mark or
+two either way. The tables published here come from official practice material and are therefore
+_indicative_. `/v1/scores/raw` repeats that caveat in the `meta` of every response, and reports raw
+scores below the lowest published row as unmatched rather than extrapolating a band the partners
+never published.
+
+### 24. Target planning
+
+The overall band is the mean of the four components rounded to the nearest half band, with means
+ending in .25 or .75 rounded **up**. Because each component is drawn from a nineteen-value grid
+(0 to 9 in half steps), the question "what do I need in each paper?" has an exact answer rather
+than a heuristic one.
+
+`/v1/scores/target` computes it by search rather than by algebra. For each component it takes the
+lowest grid value that, holding the other three fixed, makes the rounded mean reach the target. The
+search is exact, deterministic, and — the reason it is preferred to inverting the rounding rule in
+closed form — trivially auditable: a reader can verify any route by recomputing four means.
+
+Three findings the endpoint makes visible:
+
+- **A half-band overall is usually one half-band somewhere.** From a sum of 26.5 (reporting 6.5),
+  the smallest sum that reports 7.0 is 27. Any single component can supply that half point, so the
+  "cheapest route" is often a tie broken by report order — which is itself the useful result: the
+  candidate should choose the paper they can move fastest, not the one an algorithm names.
+- **Single-component routes run out quickly.** From four 5.0s, no single component can reach an
+  overall 7.0 even at band 9: the required sum is 27, and 15 + 9 = 24. The endpoint reports every
+  route as unachievable and falls back to a balanced lift.
+- **The balanced lift is deliberately coarse.** It raises every component by the same number of
+  half bands, ceiling-rounded, so it always reaches or overshoots the target. It is a floor on the
+  work required, not an optimal allocation; `/v1/study/plan` weights hours by gap size for that.
+
+### 25. Provenance and verifiability
+
+A cited API response is only reproducible if a reader can establish which data produced it.
+`/v1/datasets` publishes, for every dataset the API serves: the upstream source and URL, whether the
+dataset was _extracted_ from an upstream artefact, _compiled_ from published tables, or written as
+_original_ material for this project; the licence; the live record count; the endpoints that serve
+it; the extraction script that regenerates it; and, for the four datasets shipped as JSON files, the
+**SHA-256 digest and byte size of the file the running process loaded**.
+
+The digest is computed from disk at first use rather than baked in at build time. This is a
+deliberate choice: it means the value describes the running deployment, so a mismatch between a
+cited response and an archived file is detectable rather than silently papered over by a constant
+compiled into the bundle.
+
+`/v1/cite` closes the loop on the other side. It renders the work metadata into BibTeX, APA 7,
+MLA 9, Chicago author-date and RIS, with a caller-supplied access date. The endpoint exists because
+citation friction is real: a reader who has to leave the response, find the repository, open
+`CITATION.cff` and hand-translate it into their bibliography style will frequently just not cite.
+
+**Threats to validity.** The digest verifies the _file_, not the _derivation_: a reader who wants to
+verify that `data/vocabulary.json` really follows from the upstream workbook must re-run the
+extraction script, which the continuous-integration workflow does on every push. The DOI shipped in
+the citation metadata is a placeholder until a release is deposited; the endpoint says so, and
+callers should substitute the version DOI of the release they actually used.

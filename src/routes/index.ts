@@ -6,6 +6,8 @@
  */
 
 import { bandRoutes } from './bands.js';
+import { citeRoutes } from './cite.js';
+import { datasetRoutes } from './datasets.js';
 import { corpusRoutes } from './corpus.js';
 import { frameworkRoutes } from './frameworks.js';
 import { materialRoutes } from './materials.js';
@@ -35,6 +37,8 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...studyRoutes,
   ...materialRoutes,
   ...resourceRoutes,
+  ...datasetRoutes,
+  ...citeRoutes,
 ];
 
 /** Every route served by the API. */
