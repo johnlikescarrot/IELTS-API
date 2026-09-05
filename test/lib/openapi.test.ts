@@ -41,7 +41,7 @@ describe('openApiDocument', () => {
   });
 
   it('declares path parameters for parameterised routes', () => {
-    const parameters = document.paths['/v1/vocabulary/:word']?.get.parameters ?? [];
+    const parameters = document.paths['/v1/vocabulary/{word}']?.get.parameters ?? [];
     expect(parameters).toEqual([{ name: 'word', in: 'path', required: true, schema: { type: 'string' } }]);
   });
 

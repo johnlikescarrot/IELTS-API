@@ -5,6 +5,8 @@
  * from the implementation: adding a route automatically documents it.
  */
 
+import { READING_LEVELS, READING_TOPICS } from '../data/reading.js';
+import { READING_SCHEMAS } from './reading-openapi.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
@@ -29,8 +31,25 @@ const OFFSET = {
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
 
+const READING_FILTERS = [
+  QUERY,
+  { name: 'level', in: 'query', schema: { type: 'string', enum: [...READING_LEVELS] } },
+  { name: 'topic', in: 'query', schema: { type: 'string', enum: [...READING_TOPICS] } },
+];
+
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
+  '/v1/reading': [...READING_FILTERS, LIMIT, { ...OFFSET, schema: { ...OFFSET.schema, maximum: 1000 } }],
+  '/v1/reading/random': [
+    ...READING_FILTERS,
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Reproducible within a dataset SHA-256; default is fixed.',
+      schema: { type: 'string', default: 'ielts-api-reading' },
+    },
+    { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 6, default: 1 } },
+  ],
   '/v1/vocabulary': [
     QUERY,
     {
@@ -172,19 +191,35 @@ const ENVELOPE = {
 
 const ERROR = {
   type: 'object',
-  required: ['status', 'error'],
+  required: ['status', 'data', 'meta'],
   properties: {
-    status: { type: 'integer' },
-    error: {
+    status: { type: 'integer', minimum: 400, maximum: 599 },
+    data: { type: 'null' },
+    meta: {
       type: 'object',
-      required: ['code', 'message'],
+      required: ['version', 'error'],
       properties: {
-        code: { type: 'string' },
-        message: { type: 'string' },
-        details: { type: 'object', additionalProperties: { type: 'string' } },
+        version: { type: 'string' },
+        error: {
+          type: 'object',
+          required: ['code', 'message', 'details'],
+          properties: {
+            code: { type: 'string' },
+            message: { type: 'string' },
+            details: { type: 'object', additionalProperties: { type: 'string' } },
+          },
+        },
       },
     },
   },
+};
+
+const READING_RESPONSES: Record<string, JsonValue> = {
+  '/v1/reading': { type: 'array', items: { $ref: '#/components/schemas/ReadingSummary' } },
+  '/v1/reading/stats': { $ref: '#/components/schemas/ReadingStats' },
+  '/v1/reading/random': { type: 'array', items: { $ref: '#/components/schemas/ReadingExercise' } },
+  '/v1/reading/:id': { $ref: '#/components/schemas/ReadingExercise' },
+  '/v1/reading/:id/grade': { $ref: '#/components/schemas/ReadingGrade' },
 };
 
 /** Path parameters, e.g. `:word` in `/v1/vocabulary/:word`. */
@@ -212,39 +247,85 @@ export function openApiDocument(
   serverUrl: string,
   version: string,
 ): JsonValue {
-  const paths: Record<string, JsonValue> = {};
+  const paths: Record<string, Record<string, JsonValue>> = {};
   for (const route of routes) {
     if (route.path === '/openapi.json' || route.path === '/docs') {
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
-      get: {
-        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
-        summary: route.summary,
-        tags: route.versioned ? ['v1'] : ['service'],
-        parameters,
-        responses: {
-          '200': {
-            description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
-          },
-          '304': { description: 'Not modified (ETag matched).' },
-          '400': {
-            description: 'Invalid parameters.',
-            content: { 'application/json': { schema: ERROR } },
-          },
-          '404': {
-            description: 'Not found.',
-            content: { 'application/json': { schema: ERROR } },
-          },
+    const path = route.path.replace(/:([^/]+)/g, '{$1}');
+    const method = route.method.toLowerCase();
+    const isPost = route.method === 'POST';
+    const responseSchema = {
+      ...ENVELOPE,
+      properties: { ...ENVELOPE.properties, data: READING_RESPONSES[route.path] ?? ENVELOPE.properties.data },
+    };
+    paths[path] ??= {};
+    paths[path][method] = {
+      operationId: `${method}_${route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '')}`,
+      summary: route.summary,
+      tags: route.versioned ? ['v1'] : ['service'],
+      parameters,
+      ...(route.path === '/v1/reading/:id/grade'
+        ? {
+            requestBody: {
+              required: true,
+              content: {
+                'application/json': {
+                  schema: { $ref: '#/components/schemas/ReadingSubmission' },
+                  example: {
+                    answers: [
+                      { questionId: 'q1', answer: 'B' },
+                      { questionId: 'q5', answer: 'seven' },
+                    ],
+                  },
+                },
+              },
+            },
+          }
+        : {}),
+      responses: {
+        '200': {
+          description: 'Successful response.',
+          content: { 'application/json': { schema: responseSchema } },
         },
+        ...(isPost ? {} : { '304': { description: 'Not modified (ETag matched).' } }),
+        '400': {
+          description: 'Invalid parameters or JSON submission.',
+          content: { 'application/json': { schema: ERROR } },
+        },
+        '404': { description: 'Not found.', content: { 'application/json': { schema: ERROR } } },
+        '405': {
+          description: 'Method not allowed; see the Allow header.',
+          content: { 'application/json': { schema: ERROR } },
+        },
+        '500': {
+          description: 'Unexpected server error.',
+          content: { 'application/json': { schema: ERROR } },
+        },
+        ...(isPost
+          ? {
+              '408': {
+                description: 'Request body deadline exceeded.',
+                content: { 'application/json': { schema: ERROR } },
+              },
+              '413': {
+                description: 'JSON body exceeds 16384 UTF-8 bytes.',
+                content: { 'application/json': { schema: ERROR } },
+              },
+              '415': {
+                description: 'Use uncompressed application/json with UTF-8 encoding.',
+                content: { 'application/json': { schema: ERROR } },
+              },
+            }
+          : {}),
       },
     };
   }
 
   return {
     openapi: '3.1.0',
+    security: [],
     info: {
       title: 'IELTS API',
       version,
@@ -254,7 +335,7 @@ export function openApiDocument(
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
         'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'of the open IELTS research corpus, plus original reading exercises with stateless feedback.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
@@ -270,7 +351,7 @@ export function openApiDocument(
     ],
     paths,
     components: {
-      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR },
+      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR, ...READING_SCHEMAS },
     },
     externalDocs: {
       description: 'Source code, citation metadata and data provenance',

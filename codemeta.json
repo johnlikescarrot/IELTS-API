@@ -3,10 +3,9 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks and an indexed open research corpus.",
+  "description": "A free, no-authentication TypeScript API with vocabulary, analytic band descriptors, score concordances, task banks, corpus metadata and original reading practice with stateless, reproducible feedback. The original reading collection is uncalibrated.",
   "version": "1.0.0",
   "dateCreated": "2026-09-04",
-  "datePublished": "2026-09-04",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",
@@ -14,7 +13,7 @@
       "url": "https://www.typescriptlang.org/"
     }
   ],
-  "runtimePlatform": "Node.js >= 20.10",
+  "runtimePlatform": "Node.js >= 20.19.0",
   "operatingSystem": ["Linux", "macOS", "Windows"],
   "codeRepository": "https://github.com/johnlikescarrot/IELTS-API",
   "url": "https://github.com/johnlikescarrot/IELTS-API",
@@ -29,7 +28,9 @@
     "score concordance",
     "open data",
     "REST API",
-    "TypeScript"
+    "TypeScript",
+    "reading comprehension",
+    "reproducibility"
   ],
   "author": [
     {
@@ -45,7 +46,8 @@
     {
       "@type": "ScholarlyArticle",
       "name": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-      "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/paper/paper.md"
+      "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/paper/paper.md",
+      "creativeWorkStatus": "Draft; not peer-reviewed"
     }
   ],
   "isAccessibleForFree": true,
@@ -59,6 +61,16 @@
         "@type": "Person",
         "name": "zhengyishiming"
       }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "UPGRADE-YOUR-IELTS-SKILLS",
+      "url": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/tree/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c",
+      "creator": {
+        "@type": "Person",
+        "name": "ngoclong1209"
+      },
+      "description": "Structural inspiration, not a source of redistributed exercise content."
     }
   ]
 }

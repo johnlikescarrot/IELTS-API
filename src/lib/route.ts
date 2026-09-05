@@ -2,6 +2,8 @@
  * Routing primitives shared by the route table and the request dispatcher.
  */
 
+import { badRequest } from './errors.js';
+
 import type { JsonValue, RouteInfo } from '../types.js';
 
 /** Everything a handler needs to produce a response. */
@@ -10,6 +12,8 @@ export interface RouteContext {
   url: URL;
   /** Path parameters extracted by the router. */
   params: Record<string, string>;
+  /** Parsed JSON body for POST routes; absent for read-only requests. */
+  body?: unknown;
 }
 
 /** A handler result rendered as a JSON envelope. */
@@ -81,12 +85,15 @@ export interface RouteMatch {
  *
  * @param routes - Candidate routes.
  * @param segments - Requested path segments.
+ * @param method - Optional HTTP method filter; omit to discover allowed methods.
  */
 export function matchRoute(
   routes: readonly RouteDefinition[],
   segments: readonly string[],
+  method?: string,
 ): RouteMatch | undefined {
   for (const route of routes) {
+    if (method !== undefined && route.method !== method) continue;
     const template = splitPath(route.path);
     if (template.length !== segments.length) {
       continue;
@@ -97,7 +104,11 @@ export function matchRoute(
       const expected = template[index] as string;
       const actual = segments[index] as string;
       if (expected.startsWith(':')) {
-        params[expected.slice(1)] = decodeURIComponent(actual);
+        try {
+          params[expected.slice(1)] = decodeURIComponent(actual);
+        } catch {
+          throw badRequest('Path parameters must use valid UTF-8 percent encoding.');
+        }
         continue;
       }
       if (expected !== actual) {

@@ -10,6 +10,8 @@ indent_size = 2
 
 [*.md]
 trim_trailing_whitespace = false
+# Numbered-list continuations need three spaces; Markdown/Prettier own indentation.
+indent_size = unset
 
 [data/**.json]
 insert_final_newline = true

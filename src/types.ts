@@ -249,7 +249,7 @@ export type ApiResponse = {
 /** Description of an exposed route, used for discovery and OpenAPI. */
 export type RouteInfo = {
   /** HTTP method. */
-  method: 'GET';
+  method: 'GET' | 'POST';
   /** Path template. */
   path: string;
   /** Short summary. */

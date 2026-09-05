@@ -2,13 +2,14 @@
  * Service routes: discovery, health, OpenAPI document and documentation.
  */
 
+import { readingStats } from '../data/reading.js';
 import { corpusStats } from '../data/corpus.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
 import { CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME, API_VERSION } from '../version.js';
 
-import type { RouteContext, HandlerResult } from '../lib/route.js';
+import type { HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
 
 /** Summary of the datasets behind the API. */
@@ -21,6 +22,8 @@ function datasetSummary(): Record<string, number> {
     cambridgeVolumes: words.volumes,
     corpusFiles: corpus.filesInRepository,
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
+    readingExercises: readingStats().exercises,
+    readingQuestions: readingStats().questions,
   };
 }
 
@@ -85,13 +88,13 @@ export function createMetaRoutes(
         uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
         datasets: datasetSummary(),
       },
-      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index'] },
+      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index', 'original-reading'] },
     };
   }
 
   /** The OpenAPI 3.1 document, served without the response envelope. */
-  function openapi(context: RouteContext): HandlerResult {
-    const base = `${context.url.origin}/`;
+  function openapi(): HandlerResult {
+    const base = '/';
     return {
       raw: {
         contentType: 'application/json; charset=utf-8',

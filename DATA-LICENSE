@@ -42,6 +42,13 @@ the upstream files themselves, which remain the property of their respective
 copyright holders and are never redistributed by this project. The corpus index
 in `data/corpus.json` publishes metadata only.
 
+The original fictional reading materials in src/data/reading-content.ts are
+AI-assisted original writing released under CC BY 4.0 to the extent the project
+holds rights. No passages, prompts, answers, audio or code from
+ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS are redistributed. That repository informed
+a structural review only; its publicly visible files do not establish an open
+licence. See docs/UPSTREAM-REVIEW.md for the pinned review and limitations.
+
 The band descriptors in `src/data/bands.ts` are original condensed paraphrases
 written for this project. They are not the official IELTS band descriptors,
 which are published by the British Council, IDP: IELTS Australia and Cambridge

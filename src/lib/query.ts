@@ -144,7 +144,7 @@ export function getIsoDate(params: QueryParams, key: string, fallback: string): 
  * @param url - Request URL.
  */
 export function toParams(url: URL): QueryParams {
-  const params: QueryParams = {};
+  const params: QueryParams = Object.create(null) as QueryParams;
   for (const key of new Set(url.searchParams.keys())) {
     const values = url.searchParams.getAll(key);
     params[key] = values.length > 1 ? values : (values[0] as string);

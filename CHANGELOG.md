@@ -6,6 +6,28 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added
+
+- Original reading practice: six fictional passages, 36 questions, three editorial levels,
+  searchable discovery, deterministic sampling, content SHA-256 and stateless POST grading.
+- Paragraph-grounded feedback, declared answer variants, word-limit enforcement and strict submission validation.
+- Commit-pinned review of `ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`, with observed inventory,
+  licensing/access boundaries and no redistribution of upstream content.
+- OpenAPI 3.1 validation, live reading request/response schema tests, snapshot drift checks,
+  real chunked-body and disconnect regression tests, and citation metadata validation in CI.
+- Research reuse, offline JSONL export and responsible citation/archival guidance.
+
+### Fixed
+
+- Official Super-Linter uses the repository's ESLint configuration and dependencies, scans
+  `src/data` rather than accidentally excluding it, and runs from the container's workspace.
+- Method-aware routing, browser POST preflight, per-path Allow headers, bounded UTF-8 JSON ingestion,
+  no-store grading/errors, bodyless HEAD errors and privacy-preserving request logging.
+- OpenAPI uses `{parameter}` path templates, accurate error envelopes, POST request bodies and
+  a relative server URL compatible with HTTPS reverse proxies.
+- Removed the placeholder DOI and invalid Citation File Format fields/types; removed unverified
+  archive/publication claims and marked the manuscript as a draft.
+
 ## [1.0.0] - 2026-09-04
 
 First citable release.

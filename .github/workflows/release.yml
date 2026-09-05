@@ -1,8 +1,8 @@
 name: release
 
 # Cutting a tag publishes a citable, archived release. Zenodo mints a DOI for
-# every tag once the repository is enabled there; the CITATION.cff identifier
-# is updated automatically by the Zenodo integration.
+# every tag once the repository is enabled there. Maintainers must verify the
+# public record and update CITATION.cff themselves; this workflow does not mint a DOI.
 
 on:
   push:
@@ -40,25 +40,25 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Export research artifacts without starting a server
+        run: |
+          node --input-type=module - <<'JS'
+          import { writeFileSync } from 'node:fs';
+          import { API_VERSION, DOMAIN_ROUTES, READING_DATASET, openApiDocument, readingEntry, searchReading } from './dist/index.js';
+          const writeJson = (path, data) => writeFileSync(path, JSON.stringify(data, null, 2) + '\n');
+          writeJson('docs/openapi.json', openApiDocument(DOMAIN_ROUTES, '/', API_VERSION));
+          writeJson('reading-practice.json', { meta: READING_DATASET, entries: searchReading().map(({ id }) => readingEntry(id)) });
+          JS
+
       - name: Create the GitHub release
         if: startsWith(github.ref, 'refs/tags/v')
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          test "${GITHUB_REF_NAME}" = "v$(node -p 'JSON.parse(require("fs").readFileSync("package.json")).version')"
           gh release create "${GITHUB_REF_NAME}" \
             --title "${GITHUB_REF_NAME}" \
             --generate-notes \
             --verify-tag \
-            README.md CITATION.cff codemeta.json .zenodo.json
-
-      - name: Refresh the archived OpenAPI snapshot
-        if: startsWith(github.ref, 'refs/tags/v')
-        run: |
-          node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
-          SERVER_PID=$!
-          for attempt in $(seq 1 20); do
-            if curl -fsS "http://127.0.0.1:4010/openapi.json" -o docs/openapi.json; then break; fi
-            sleep 0.5
-          done
-          kill "${SERVER_PID}"
-          test -s docs/openapi.json
+            README.md CITATION.cff codemeta.json .zenodo.json DATA-LICENSE \
+            docs/openapi.json reading-practice.json

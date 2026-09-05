@@ -39,7 +39,9 @@ Useful commands:
 2. Add query parameters to `PARAMETERS` in `src/lib/openapi.ts` so the OpenAPI document stays
    complete; it is generated from the live route table, so the route appears automatically but its
    parameters do not.
-3. Add tests: the happy path, every filter, every default, and every error branch.
+3. Add tests: the happy path, every filter, every default, and every error branch. POST handlers
+   receive a bounded parsed `context.body`; they must validate it before scoring, stay stateless,
+   and never log or persist submitted answers. Document request and response schemas.
 4. Update `README.md` (endpoint table, dataset table if the data changed).
 
 ## Adding data
@@ -73,3 +75,20 @@ descriptor text must remain an original paraphrase, never the official wording.
 - [ ] Coverage is still 100%, per file.
 - [ ] `README.md` updated if behaviour or data changed.
 - [ ] No new runtime dependency.
+
+## Original reading materials and research metadata
+
+The six original reading exercises are authored in `src/data/reading-content.ts`, not extracted
+from unlicensed sources. Keep IDs stable, update `READING_DATASET.version` when changing content,
+and ensure every accepted variant satisfies its word limit and every evidence reference exists.
+Editorial levels are not CEFR or IELTS calibrations. Do not claim a validated assessment or learning
+effect from code coverage. Read [the upstream review](docs/UPSTREAM-REVIEW.md) and
+[research reuse guidance](docs/RESEARCH-REUSE.md) before expanding the collection.
+
+Validate citation metadata with `cffconvert --validate` (CI installs `cffconvert==2.0.0`). Only insert
+real, verified identifiers and release dates. Do not invent a DOI, venue, author affiliation or
+Scholar-indexing claim. All changes still require a PR and the official Super-Linter check.
+
+Super-Linter still runs Checkov. Only `CKV_OPENAPI_4` and `CKV_OPENAPI_5` (requiring authentication
+schemes) are excepted in `.checkov.yaml`, because every endpoint is deliberately public. This is not
+an exemption from request validation, size/deadline limits, privacy controls or other security checks.

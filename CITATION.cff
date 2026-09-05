@@ -3,19 +3,20 @@ message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
 version: 1.0.0
-date-released: '2026-09-04'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
   Cambridge IELTS volumes 1-22 vocabulary lists, condensed analytic band
   descriptors for Speaking and Writing across bands 0-9, indicative score
   concordances for CEFR, TOEFL iBT, the Cambridge English Scale, PTE Academic
-  and the Duolingo English Test, Writing and Speaking task banks, and a curated
-  index of an open IELTS research corpus. Every endpoint is free of charge,
-  requires no authentication, returns a uniform JSON envelope with a stable
-  ETag, and is covered by a test suite with 100% statement, branch, function
-  and line coverage. The API is designed for reproducible second-language
-  assessment research: responses are deterministic, versioned and citable.
+  and the Duolingo English Test, Writing and Speaking task banks, a curated
+  corpus index, and six original fictional reading exercises with 36 questions.
+  Reading practice includes stateless feedback, paragraph evidence, explicit
+  matching rules and content hashes. Every endpoint is free of charge and
+  requires no authentication. A per-file 100% statement, branch, function and
+  line coverage gate checks executable TypeScript. The small reading collection
+  has not been psychometrically calibrated. Cite the actual software commit
+  and dataset hash used; no DOI or peer-reviewed publication is claimed.
 keywords:
   - IELTS
   - English for Academic Purposes
@@ -33,25 +34,27 @@ authors:
   - name: 'The IELTS API contributors'
     website: 'https://github.com/johnlikescarrot/IELTS-API'
 identifiers:
-  - type: doi
-    value: '10.5281/zenodo.0000000'
-    description: 'Zenodo DOI minted for the archived release; replace with the DOI of the version you used.'
   - type: url
     value: 'https://github.com/johnlikescarrot/IELTS-API'
     description: 'Source repository.'
 repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
 url: 'https://github.com/johnlikescarrot/IELTS-API'
-related-software:
-  - reference: ielts-corpus
-    type: usesData
 references:
-  - type: dataset
+  - type: software
+    authors:
+      - name: 'ngoclong1209'
+    title: 'UPGRADE-YOUR-IELTS-SKILLS'
+    url: 'https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS'
+    commit: 'ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c'
+    year: 2026
+    notes: 'Structural inspiration only; no passages, questions, audio or code are redistributed.'
+  - type: data
     authors:
       - name: 'zhengyishiming'
     title: 'IELTS: an open corpus of IELTS preparation materials'
     url: 'https://github.com/zhengyishiming/IELTS'
     year: 2024
-  - type: dataset
+  - type: data
     authors:
       - name: 'zhengyishiming'
     title: '1-22yas.xlsx: Cambridge IELTS volumes 1-22 vocabulary lists'
@@ -71,10 +74,10 @@ references:
         given-names: 'Averil'
     title: 'A new academic word list'
     journal: 'TESOL Quarterly'
-    volume: 34
-    issue: 2
-    start: 213
-    end: 238
+    volume: '34'
+    issue: '2'
+    start: '213'
+    end: '238'
     year: 2000
     doi: '10.2307/3587951'
 preferred-citation:

@@ -32,3 +32,7 @@ export * from './data/topics.js';
 export * from './data/vocabulary.js';
 export { API_VERSION, CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME } from './version.js';
 export type * from './types.js';
+
+export * from './data/reading.js';
+export * from './lib/reading.js';
+export type * from './reading-types.js';

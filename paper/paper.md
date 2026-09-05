@@ -13,23 +13,28 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 4 September 2026
+date: 5 September 2026
 bibliography: paper.bib
 ---
+
+<!-- markdownlint-disable MD025 -->
+<!-- JOSS-style manuscripts use top-level headings for each section. -->
+
+**Draft manuscript. Not peer-reviewed, accepted by a journal, or assigned a verified DOI.**
 
 # Summary
 
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships five kinds of data: a 4,174-headword vocabulary dataset derived from
+JSON envelope. The service ships several data families: a 4,174-headword vocabulary dataset derived from
 the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking and
 Writing across bands 0-9; indicative score concordances between IELTS and five other scales; original
 Writing and Speaking task banks built on the question families and word lists that recur in IELTS
-preparation material [@coxhead2000]; and a curated metadata index of an open IELTS research corpus.
-Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
-support — so a response archived today can be re-fetched and diffed years later, which is the
-practical requirement for reproducible corpus and assessment research.
+preparation material [@coxhead2000]; a curated metadata index of an IELTS research corpus; and a small, original reading collection with stateless feedback.
+Explicit seeds, stable identifiers, content hashes and ETags support reproducible stimuli within a
+pinned version. Researchers must archive the exact material used; a mutable deployment, health
+uptime or an unseeded sample is not a permanent research record.
 
 # Statement of need
 
@@ -90,34 +95,62 @@ for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
 is a descriptive act over metadata.
 
+**Original reading practice.** Six fictional, AI-assisted original passages contain 36 questions,
+equally divided among single-choice, true/false/not-given and short-answer families. Two exercises
+per editorial difficulty label support small practice demonstrations. A structural review of
+`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS` [@upgradeielts] informed discovery and feedback design, not
+content extraction. Its pinned tree contains 1,232 basic reading records but only 314 numbered full
+reading test directories, despite a name promising 315; it also documents paid login and device
+binding. No upstream exercise text, answers, audio, code or credentials are redistributed. The
+complete methods and limitations of this review are in `docs/UPSTREAM-REVIEW.md`.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
-compression are implemented directly on `node:http` and `node:zlib`. This removes supply-chain risk,
-keeps cold start under a second, and means the code an auditor reads is the code that runs.
+compression are implemented directly on `node:http` and `node:zlib`. This reduces the runtime dependency surface; it does not eliminate security risks in Node.js,
+development dependencies, deployment infrastructure or application code.
 
 Responses use a single envelope, `{ "status", "data", "meta" }`, so any endpoint can be parsed
 uniformly. Collections paginate with `limit` and `offset` and report `total` and `hasMore`; errors
 return a machine-readable code and the offending parameter with its allowed range. The OpenAPI 3.1
-document is generated from the live route table, so documentation cannot drift from the
-implementation. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
+document is generated from the live route table. Schema tests compare reading responses with the
+documented contract and check the archived snapshot, rather than assuming generation prevents all drift. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
 reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (295 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook and fails if the committed
 dataset has drifted, which guards against silent data rot.
 
+Reading submissions are JSON POST bodies, limited to 16 KiB and a ten-second read deadline. The
+server validates the entire submission before grading, rejects duplicate/unknown question IDs and
+unexpected fields, and returns explanations with paragraph evidence. It collects no learner identity,
+does not persist answers, and omits request bodies and query strings from application logs. Grading
+and error responses are not cached. The published matching rules and answer variants allow an
+independent implementation to reproduce results.
+
+# Limitations and evaluation needs
+
+The reading collection is synthetic, small and not psychometrically calibrated. Neither the editorial
+levels nor practice percentages have a validated relationship with CEFR levels or IELTS bands. The
+answer keys are public, so it is not a secure examination system. Independent teacher review,
+learner studies with appropriate ethical oversight, and passage-level evaluation partitions are
+needed before claims about learning or assessment validity can be made. Code coverage is not evidence
+of such validity. The older vocabulary glosses also retain unresolved upstream provenance; an open
+licence on project annotations does not establish rights in underlying third-party material.
+
 # Availability
 
 Source, datasets, citation metadata and CI configuration are released at
 <https://github.com/johnlikescarrot/IELTS-API> under the MIT licence for code and CC BY 4.0 for data.
 Citation metadata is published in Citation File Format [@citationfileformat] and CodeMeta
-[@codemeta], and tagged releases are archived on Zenodo [@zenodo], which mints a versioned DOI.
+[@codemeta]. Zenodo metadata is prepared for a future archival deposit [@zenodo], but this repository
+does not currently claim a verified DOI. A real release and archive record must be checked before
+adding an identifier. Researchers using an unreleased checkout should cite its Git commit and content hash.
 
 # Acknowledgements
 

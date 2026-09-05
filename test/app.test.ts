@@ -109,6 +109,29 @@ describe('the handler with a minimal request', () => {
 });
 
 describe('error handling', () => {
+  it('handles custom 405 errors that do not supply Allow details', async () => {
+    const instance = await startTestServer({
+      routes: [
+        {
+          method: 'GET',
+          path: '/custom',
+          summary: 'custom error',
+          versioned: false,
+          handler: () => {
+            throw new HttpError(405, 'method_not_allowed', 'Custom restriction');
+          },
+        },
+      ],
+    });
+    try {
+      const response = await instance.request('/custom');
+      expect(response.status).toBe(405);
+      expect(response.headers.get('allow')).toBe('GET, HEAD, OPTIONS');
+    } finally {
+      await instance.close();
+    }
+  });
+
   const start = async (routes: Parameters<typeof createRequestHandler>[0]) => {
     const custom = await startApiServer('127.0.0.1', 0, routes);
     return custom;

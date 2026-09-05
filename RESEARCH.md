@@ -2,7 +2,9 @@
 
 This document records how the datasets behind the IELTS API were derived from the open corpus
 [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS). It is written so that a reviewer
-can reproduce, criticise or extend every step.
+can reproduce, criticise or extend every step. The separate, commit-pinned review of
+[`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](docs/UPSTREAM-REVIEW.md) informs the original Reading
+addition described in section 7; it is not the source of the legacy vocabulary dataset.
 
 **Corpus snapshot:** commit `a9e2d6c9a070eecea6ffaa6f15b2a00c1c7b938c` (2 September 2024, "Add files
 via upload"), 78 commits, single branch `main`, 404 blobs, no tags, no licence file.
@@ -94,8 +96,8 @@ Extraction (`scripts/extract_vocabulary.py`, standard library only):
 5. **Normalise phonetics** to slash-delimited transcriptions (4,172 of 4,174 entries carry one).
 6. **Keep morpheme hints** where published — 164 entries carry pedagogical etymologies such as
    `hydro(water);gen(create)`, which are useful for morphology-aware NLP work.
-7. Emit stable identifiers (`w00001` … `w04174`) assigned after sorting by headword, so identifiers
-   never move between releases.
+7. Emit stable identifiers (`w00001` … `w04174`) assigned after sorting by headword. These IDs are stable for the pinned snapshot; adding a
+   headword can shift later IDs, so record the dataset snapshot when comparing releases.
 
 | Property                                    |                        Value |
 | ------------------------------------------- | ---------------------------: |
@@ -159,3 +161,33 @@ python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 
 The commit SHA recorded in `data/corpus.json` identifies the exact snapshot; re-running against a
 different commit is expected to change the item count and the coverage ratio.
+
+## 7. Original reading practice and stateless feedback
+
+The [upstream review](docs/UPSTREAM-REVIEW.md) identified useful patterns: level-based discovery,
+separate drills and full tests, and a practice/review cycle with explanations. It also identified
+licensing uncertainty, a paid-login model, inconsistent file representations and differences between
+promised and observed test counts. None of that platform's exercise content or code is imported.
+
+The addition in `src/data/reading-content.ts` is six fictional, AI-assisted original passages with
+36 questions: 12 single-choice, 12 true/false/not-given and 12 short-answer items. There are two
+exercises per editorial difficulty label, spanning community, transport, environment, education,
+science and technology. Every solution has accepted variants, an explanation and one-based paragraph
+evidence. These are inspectable practice materials, not learner-derived observations or expert-validated
+IELTS assessments.
+
+`/v1/reading` provides discovery, `/v1/reading/random` seeded sampling, and
+`POST /v1/reading/:id/grade` deterministic feedback. Normal views separate solutions from questions;
+source exports and grading deliberately reveal the answer keys for independent review. One mark is
+awarded per question; omitted questions count as unanswered. Matching uses NFC, lowercasing and
+collapsed whitespace while preserving punctuation and accents. Short-answer word limits count
+whitespace-delimited tokens. There is no fuzzy matching, partial credit or band prediction.
+
+Each response records a dataset version and a SHA-256 over all authored records, including solutions.
+Submissions are bounded and stateless; the application does not log bodies or query strings and does
+not collect learner/device identifiers. A hosting provider can still have its own logging policy.
+
+The collection is small, synthetic and uncalibrated. Unit tests verify implementation behaviour,
+schema conformance, key consistency and evidence references, not pedagogical validity or learning
+gains. See [research reuse](docs/RESEARCH-REUSE.md) for evaluation limitations, passage-level splits,
+offline export and accurate citation/archival guidance.

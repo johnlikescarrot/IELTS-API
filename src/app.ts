@@ -1,13 +1,8 @@
-/**
- * The request dispatcher.
- *
- * Everything between the socket and the route handlers lives here: method
- * checking, route matching, error translation, ETag negotiation, compression
- * and request logging. Handlers stay pure and trivially testable.
- */
+/** Request dispatch, bounded POST ingestion, CORS, cache controls and error translation. */
 
-import { HttpError, methodNotAllowed, notFound } from './lib/errors.js';
-import { acceptsGzip, sendJson, writeResponse } from './lib/http.js';
+import { HttpError, badRequest, notFound } from './lib/errors.js';
+import { readJsonBody } from './lib/body.js';
+import { COMMON_HEADERS, acceptsGzip, sendJson, writeResponse } from './lib/http.js';
 import { isRawResult, matchRoute, splitPath } from './lib/route.js';
 import { ROUTES } from './routes/index.js';
 import { API_VERSION } from './version.js';
@@ -20,97 +15,110 @@ import type { JsonValue } from './types.js';
 export interface AppOptions {
   /** Route table to serve; defaults to the full API. */
   routes?: readonly RouteDefinition[];
-  /** Whether to log each request to stdout. */
+  /** Whether to log method, path, status and duration (never query strings or bodies). */
   log?: boolean;
   /** Version reported in response metadata. */
   version?: string;
 }
 
-/**
- * Create the `node:http` request listener.
- *
- * @param options - Application options.
- */
+/** Create the node:http listener. POST submissions are stateless and never cached. */
 export function createRequestHandler(
   options: AppOptions = {},
-): (req: IncomingMessage, res: ServerResponse) => void {
+): (req: IncomingMessage, res: ServerResponse) => Promise<void> {
   const routes = options.routes ?? ROUTES;
   const version = options.version ?? API_VERSION;
   const log = options.log ?? false;
 
-  return (req, res) => {
+  return async (req, res) => {
     const started = process.hrtime.bigint();
     const method = (req.method ?? 'GET').toUpperCase();
-    const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
+    // A fixed parsing origin avoids trusting Host or proxy forwarding headers.
+    let url = new URL('http://localhost/');
     const gzipAllowed = acceptsGzip(req.headers['accept-encoding']);
-    const ifNoneMatch = req.headers['if-none-match'];
-    let status = 200;
+    const headOnly = method === 'HEAD';
+    const isPost = method === 'POST';
+    const ifNoneMatch = isPost ? undefined : req.headers['if-none-match'];
+    const cacheControl = isPost ? 'no-store' : undefined;
+    let allow = 'OPTIONS';
 
     try {
-      if (method === 'OPTIONS') {
-        res.writeHead(204, {
-          'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, HEAD, OPTIONS',
-          'access-control-max-age': '86400',
+      const target = req.url ?? '/';
+      if (!target.startsWith('/') || target.startsWith('//')) {
+        throw badRequest('Use an origin-relative request target.');
+      }
+      try {
+        url = new URL(target, url);
+      } catch {
+        throw badRequest('The request target is not a valid URL.');
+      }
+      if (url.origin !== 'http://localhost') {
+        throw badRequest('The request target must not specify another origin.');
+      }
+      const segments = splitPath(url.pathname);
+      const pathRoutes = routes.filter((route) => matchRoute([route], segments) !== undefined);
+      if (pathRoutes.length === 0) {
+        throw notFound(`No endpoint matches ${url.pathname}.`, {
+          path: url.pathname,
+          documentation: '/docs',
         });
+      }
+      const methods: string[] = pathRoutes.map((route) => route.method);
+      if (methods.includes('GET')) methods.push('HEAD');
+      methods.push('OPTIONS');
+      allow = [...new Set(methods)].join(', ');
+
+      if (method === 'OPTIONS') {
+        res.writeHead(204, { ...COMMON_HEADERS, allow, 'access-control-allow-methods': allow });
         res.end();
-      } else if (method !== 'GET' && method !== 'HEAD') {
-        throw methodNotAllowed();
       } else {
-        const match = matchRoute(routes, splitPath(url.pathname));
+        const match = matchRoute(pathRoutes, segments, headOnly ? 'GET' : method);
         if (match === undefined) {
-          throw notFound(`No endpoint matches ${url.pathname}.`, {
-            path: url.pathname,
-            documentation: '/docs',
+          throw new HttpError(405, 'method_not_allowed', 'This method is not supported by this endpoint.', {
+            allow,
           });
         }
-        const result = match.route.handler({ url, params: match.params });
+        const body = isPost ? await readJsonBody(req) : undefined;
+        const result = match.route.handler({ url, params: match.params, body });
+        const responseOptions = { gzipAllowed, ifNoneMatch, headOnly, cacheControl };
         if (isRawResult(result)) {
           writeResponse(res, {
             status: 200,
             contentType: result.raw.contentType,
             body: result.raw.body,
-            gzipAllowed,
-            ifNoneMatch,
-            headOnly: method === 'HEAD',
+            ...responseOptions,
           });
         } else {
-          status = 200;
           const meta: Record<string, JsonValue> = {
             endpoint: match.route.path,
             version,
             ...(result.meta ?? {}),
           };
           sendJson(res, 200, result.data, meta, {
-            gzipAllowed,
-            ifNoneMatch,
-            headOnly: method === 'HEAD',
+            ...responseOptions,
             headers: { 'x-endpoint': match.route.path },
           });
         }
       }
     } catch (error) {
       const httpError = error instanceof HttpError ? error : undefined;
+      const headers: Record<string, string> = { 'x-endpoint': url.pathname };
+      if (isPost) headers.connection = 'close';
+      if (httpError?.status === 405) headers.allow = httpError.details.allow ?? allow;
+      const errorOptions = { gzipAllowed, headOnly, cacheControl: 'no-store', headers };
       if (httpError !== undefined) {
-        status = httpError.status;
         sendJson(
           res,
           httpError.status,
           null,
           {
-            error: {
-              code: httpError.code,
-              message: httpError.message,
-              details: httpError.details,
-            },
+            error: { code: httpError.code, message: httpError.message, details: httpError.details },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          errorOptions,
         );
       } else {
-        status = 500;
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`ielts-api: unhandled error at ${url.pathname}: ${message}`);
+        // Do not include thrown messages: an embedder's error may contain submitted answers.
+        console.error(`ielts-api: unhandled error at ${url.pathname}`);
         sendJson(
           res,
           500,
@@ -119,14 +127,14 @@ export function createRequestHandler(
             error: { code: 'internal_error', message: 'An unexpected error occurred.', details: {} },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          errorOptions,
         );
       }
     }
 
     if (log) {
       const elapsed = Number(process.hrtime.bigint() - started) / 1e6;
-      console.log(`${method} ${url.pathname}${url.search} ${status} ${elapsed.toFixed(2)}ms`);
+      console.log(`${method} ${url.pathname} ${res.statusCode} ${elapsed.toFixed(2)}ms`);
     }
   };
 }

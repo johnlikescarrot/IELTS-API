@@ -7,6 +7,7 @@
  */
 
 import { vocabularyStats } from '../data/vocabulary.js';
+import { readingStats } from '../data/reading.js';
 import { corpusStats } from '../data/corpus.js';
 
 import type { RouteDefinition } from './route.js';
@@ -27,10 +28,15 @@ export function escapeHtml(value: string): string {
 
 /** One row of the endpoint table. */
 function routeRow(route: RouteDefinition): string {
+  const path = escapeHtml(route.path);
+  const target =
+    route.method === 'GET' && !route.path.includes(':')
+      ? `<a class="path" href="${path}">${path}</a>`
+      : `<code class="path">${path}</code>`;
   return [
     '    <tr>',
     `      <td><span class="badge">${escapeHtml(route.method)}</span></td>`,
-    `      <td><a class="path" href="${escapeHtml(route.path)}">${escapeHtml(route.path)}</a></td>`,
+    `      <td>${target}</td>`,
     `      <td>${escapeHtml(route.summary)}</td>`,
     '    </tr>',
   ].join('\n');
@@ -48,6 +54,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const reading = readingStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -60,7 +67,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   @media (prefers-color-scheme: dark) { :root { --fg: #e8eaf0; --bg: #12151a; --muted: #9aa4b2; --line: #262b33; --accent: #6cb6ff; } }
   * { box-sizing: border-box; }
   body { margin: 0 auto; max-width: 62rem; padding: 2rem 1.25rem 4rem; background: var(--bg); color: var(--fg);
-         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+          font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
   h1 { font-size: 2rem; margin: 0 0 .25rem; }
   h2 { font-size: 1.25rem; margin: 2.5rem 0 .75rem; border-bottom: 1px solid var(--line); padding-bottom: .35rem; }
   p.lede { color: var(--muted); margin-top: 0; }
@@ -73,7 +80,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   th { color: var(--muted); font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .04em; }
   a { color: var(--accent); }
   .badge { font-size: .72rem; font-weight: 700; border: 1px solid var(--accent); color: var(--accent);
-           padding: .1rem .35rem; border-radius: 4px; }
+            padding: .1rem .35rem; border-radius: 4px; }
   .path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; }
   .meta { color: var(--muted); font-size: .9rem; }
   ul { padding-left: 1.2rem; }
@@ -83,7 +90,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
 <body>
 <h1>IELTS API</h1>
 <p class="lede">A free, open, no-authentication REST API for IELTS preparation research. Version ${escapeHtml(version)}.</p>
-<p>No API key. No registration. No rate limiting by key. Every response carries an ETag and open CORS headers.</p>
+<p>No API key. No registration. No rate limiting by key. Read endpoints support ETags and open CORS headers. Grading responses are never cached.</p>
 <pre><code>curl -s "https://ielts-api.example/v1/vocabulary?q=environment&amp;limit=3"
 curl -s "https://ielts-api.example/v1/scores/overall?listening=7&amp;reading=6.5&amp;writing=6&amp;speaking=7"
 curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
@@ -94,6 +101,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>${corpus.ieltsRelevantFiles} of ${corpus.filesInRepository} upstream files</strong> indexed from the open research corpus (${(corpus.coverageRatio * 100).toFixed(1)}% IELTS-relevant); only metadata is published.</li>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
+  <li><strong>${reading.exercises} original reading exercises and ${reading.questions} questions</strong> with explanations, paragraph evidence and stateless feedback. Difficulty labels are editorial, not validated CEFR levels.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
 </ul>
 
@@ -112,6 +120,21 @@ ${versioned.map(routeRow).join('\n')}
 ${service.map(routeRow).join('\n')}
   </tbody>
 </table>
+
+<h2>Original reading practice</h2>
+<p>Browse <a href="/v1/reading">the catalogue</a>, fetch a passage, then submit answers as JSON.
+Omitted questions receive no mark. Feedback includes accepted variants and paragraph evidence.
+This small, fictional, AI-assisted collection is open practice, not a secure or calibrated IELTS test.</p>
+<pre><code>POST /v1/reading/library-of-things/grade
+Content-Type: application/json
+
+{"answers":[{"questionId":"q1","answer":"B"},{"questionId":"q5","answer":"seven"}]}</code></pre>
+<p>The example earns 2 of 6 marks (33.33%), not an IELTS band. Matching uses NFC Unicode,
+lowercasing and collapsed whitespace; punctuation and accents are preserved. Short answers must meet
+the question's word limit. Bodies are limited to 16 KiB and 10 seconds; each answer to 256 Unicode code points.</p>
+<p>No learner identity, device tracking, cookies or answer persistence. Application logs omit query
+strings and bodies; hosting providers can apply their own policies. Source and grading feedback expose
+answer keys intentionally. Record the returned dataset SHA-256, version and seed for reproducibility.</p>
 
 <h2>Response envelope</h2>
 <p>Every JSON response uses the same envelope, so clients can parse any endpoint uniformly:</p>
@@ -137,7 +160,7 @@ ${service.map(routeRow).join('\n')}
 
 <h2>Citing this API</h2>
 <p>If you use this API in research, please cite it; the <code>CITATION.cff</code> file in the repository
-and the archived Zenodo release both carry full metadata.</p>
+carries citation metadata. Archival metadata is prepared, but no verified DOI or peer-reviewed publication is claimed.</p>
 <pre><code>@software{ielts_api,
   title  = {IELTS API: a free, no-authentication REST API for IELTS preparation research},
   author = {IELTS API contributors},
@@ -150,6 +173,7 @@ and the archived Zenodo release both carry full metadata.</p>
   <p class="meta">Code licensed under MIT; datasets under CC BY 4.0. Band descriptors are original condensed
   paraphrases written for this project and are not the official IELTS wording. Score concordances are indicative
   and compiled from the providers&rsquo; own published comparison tables.</p>
+  <p class="meta">The original reading materials are CC BY 4.0; this does not grant rights to third-party source materials. See the repository for provenance and research limitations.</p>
   <p class="meta"><a href="/openapi.json">OpenAPI 3.1 document</a> &middot; <a href="/health">health</a> &middot;
   <a href="${escapeHtml(repository)}">source repository</a></p>
 </footer>

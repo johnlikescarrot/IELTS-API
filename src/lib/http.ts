@@ -23,9 +23,9 @@ export const DEFAULT_MAX_AGE_SECONDS = 300;
 /** CORS and content headers applied to every response. */
 export const COMMON_HEADERS: Record<string, string> = {
   'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, HEAD, OPTIONS',
-  'access-control-allow-headers': 'accept, accept-encoding, if-none-match',
-  'access-control-expose-headers': 'etag, x-response-time, x-request-id',
+  'access-control-allow-methods': 'GET, HEAD, POST, OPTIONS',
+  'access-control-allow-headers': 'accept, content-type, if-none-match',
+  'access-control-expose-headers': 'etag, x-endpoint',
   'access-control-max-age': '86400',
   'x-content-type-options': 'nosniff',
   'x-robots-tag': 'index, follow',

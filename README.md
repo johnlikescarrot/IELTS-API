@@ -20,15 +20,19 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is built on an open corpus: [`zhengyishiming/IELTS`][corpus]. See
-[RESEARCH.md](RESEARCH.md) for the corpus analysis and the dataset construction methodology, and
-[paper/paper.md](paper/paper.md) for the short research paper.
+The legacy vocabulary and corpus index derive from [`zhengyishiming/IELTS`][corpus].
+The new original Reading collection is informed by a pinned structural review of
+[`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](docs/UPSTREAM-REVIEW.md), without copying its
+questions, audio or login system. See [RESEARCH.md](RESEARCH.md) for methodology and
+[paper/paper.md](paper/paper.md) for the **draft, not peer-reviewed** manuscript.
 
 ## Quick start
 
 ```bash
-npx ielts-api                 # or: npm install -g ielts-api
-# ielts-api 1.0.0 listening on http://0.0.0.0:3000
+npm ci
+npm run build
+npm start
+# Listens on 0.0.0.0:3000; no account or external service is needed.
 ```
 
 ```bash
@@ -42,11 +46,11 @@ curl -s "http://localhost:3000/v1/scores/overall?listening=7&reading=6.5&writing
 curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
 ```
 
-Open <http://localhost:3000/docs> for the interactive documentation and
+Open <http://localhost:3000/docs> for the human-readable documentation and
 `/openapi.json` for the OpenAPI 3.1 document.
 
 ```js
-import { startApiServer, searchVocabulary, calculateOverall } from 'ielts-api';
+import { startApiServer, searchVocabulary, calculateOverall } from './dist/index.js';
 
 const server = await startApiServer('0.0.0.0', 3000);
 // ...or use the library without a server:
@@ -66,6 +70,10 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Writing Task 1 families         |                                10 task families | `/v1/tasks/writing`     | Original compilation                                              |
 | Free resources                  |                                    27 resources | `/v1/resources`         | Original catalogue (free + no login only)                         |
 | Research corpus index           |                        76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                   |
+
+Original reading materials: **6 fictional passages, 36 questions**, two exercises per editorial
+level (`foundation`, `intermediate`, `advanced`). These are AI-assisted original writing under
+CC BY 4.0, not official IELTS questions or a calibrated CEFR/band benchmark.
 
 ## Endpoints
 
@@ -97,6 +105,11 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/corpus/stats`      | Corpus statistics                                                                                 |
 | GET    | `/v1/corpus/items`      | Search the corpus index                                                                           |
 | GET    | `/v1/resources`         | Free preparation resources (`type`, `q`)                                                          |
+| GET    | `/v1/reading`           | Original reading catalogue (`q`, `level`, `topic`, `limit`, `offset`)                             |
+| GET    | `/v1/reading/stats`     | Actual counts, dataset version and content SHA-256                                                |
+| GET    | `/v1/reading/random`    | Seeded sampling (`seed`, `count`, `q`, `level`, `topic`)                                          |
+| GET    | `/v1/reading/:id`       | A passage and questions, without solutions                                                        |
+| POST   | `/v1/reading/:id/grade` | Stateless feedback, accepted variants and paragraph evidence                                      |
 
 ### Worked examples
 
@@ -136,6 +149,37 @@ GET /v1/vocabulary?q=hydro&match=prefix&limit=2
 }
 ```
 
+### Original reading practice and feedback
+
+```bash
+curl -s 'http://localhost:3000/v1/reading?level=foundation'
+curl -s 'http://localhost:3000/v1/reading/random?seed=study-2026&count=2'
+curl -s 'http://localhost:3000/v1/reading/library-of-things'
+curl -s -X POST 'http://localhost:3000/v1/reading/library-of-things/grade' \
+  -H 'Content-Type: application/json' \
+  --data '{"answers":[{"questionId":"q1","answer":"B"},{"questionId":"q5","answer":"seven"}]}'
+```
+
+That submission earns **2 of 6 marks (33.33%)**; four omitted questions are unanswered. Feedback
+includes accepted answers, an explanation and one-based paragraph references for every question.
+The percentage is **not an IELTS band score**. Single-choice questions accept option IDs; true/false
+questions accept `TRUE`, `FALSE` or `NOT GIVEN`; short answers accept only the listed variants.
+
+- NFC Unicode normalization, lowercasing and collapsed whitespace; punctuation and accents are preserved.
+- One mark per question, no fuzzy matching or partial credit; short-answer limits count whitespace-separated words.
+- No accounts, cookies, device IDs, answer persistence or third-party calls. Application logs omit
+  request bodies and query strings; deployment providers may have their own logging policies.
+- JSON bodies are limited to **16 KiB**, **10 seconds**, and **256 Unicode code points per answer**.
+  Unknown/duplicate question IDs and unexpected fields are rejected before grading. Browser CORS
+  preflight permits `Content-Type`; POST and error responses use `Cache-Control: no-store`.
+- Public views omit solutions, but source and grading feedback expose them intentionally. This is
+  open practice, **not a secure exam service**.
+- Sampling is without replacement and returns fewer items if the filtered pool is smaller than
+  `count`. Record the dataset version, SHA-256 and seed to reproduce a selection.
+
+See [research reuse](docs/RESEARCH-REUSE.md) for offline JSONL export, limitations, responsible
+experiment design and the citation/archival checklist.
+
 ## Reproducible data pipeline
 
 Both datasets are regenerated from source with standard-library-only Python:
@@ -151,12 +195,12 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 295 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). Zero runtime dependencies; schema-validated HTTP contracts.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
-- **Deterministic responses** — ETags, conditional-request support and seeded sampling make every
-  response reproducible and archivable.
+- **Reproducible stimuli** — ETags, explicit seeds and content hashes support archival comparisons
+  within a pinned version. Health uptime and unseeded vocabulary samples are not fixed stimuli.
 
 ```bash
 npm install
@@ -175,7 +219,8 @@ Configuration: `--port` / `PORT`, `--host` / `HOST`, `--silent`, `--help`, `--ve
 
 ## Citing this project
 
-If you use the API or the datasets, please cite it — citations are what keep the project free.
+If you use the API or datasets in research, please cite the actual version and commit used.
+Citation is scholarly attribution, not a condition for free API access.
 
 ```bibtex
 @software{ielts_api,
@@ -189,7 +234,9 @@ If you use the API or the datasets, please cite it — citations are what keep t
 ```
 
 Machine-readable citation metadata: [`CITATION.cff`](CITATION.cff), [`codemeta.json`](codemeta.json),
-[`.zenodo.json`](.zenodo.json). Tagged releases are archived on Zenodo, which mints a versioned DOI.
+[`.zenodo.json`](.zenodo.json). The Zenodo file is an archival template; **no verified DOI is currently
+claimed**. A maintainer must enable archiving and verify a real record before advertising one.
+See [responsible citation and Google Scholar guidance](docs/RESEARCH-REUSE.md).
 
 Please also cite the upstream corpus the vocabulary dataset was derived from:
 
@@ -211,7 +258,10 @@ Please also cite the upstream corpus the vocabulary dataset was derived from:
   you need the authoritative text.
 - **Score concordances:** indicative values compiled from the providers' own published comparison
   tables. Receiving institutions apply their own rules.
-- **Upstream files:** never redistributed. `/v1/corpus` publishes metadata only.
+- **Upstream corpus files:** `/v1/corpus` publishes metadata only; the legacy vocabulary dataset is
+  separately derived from a workbook with unresolved gloss provenance.
+- **Original Reading:** independently authored passages, questions and explanations under CC BY 4.0.
+  No material from the reviewed learning platform is rehosted or unlocked.
 
 IELTS is a jointly owned trademark of the British Council, IDP: IELTS Australia and Cambridge
 Assessment English. This project is not affiliated with, endorsed by, or connected to the IELTS

@@ -21,7 +21,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ['20.19.0', '22.x']
+        node: ['20.19.0', '22.x', '24.x']
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -85,7 +85,7 @@ jobs:
           node dist/cli.js --help
           node dist/cli.js --port 4010 --silent --host 127.0.0.1 &
           SERVER_PID=$!
-          for attempt in $(seq 1 20); do
+          for _attempt in $(seq 1 20); do
             if curl -fsS "http://127.0.0.1:4010/health" > /tmp/health.json; then break; fi
             sleep 0.5
           done
@@ -125,3 +125,34 @@ jobs:
       - name: Validate the JSON datasets
         run: |
           python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); print('datasets are valid JSON')"
+
+  research-metadata:
+    name: Validate citation metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate Citation File Format and version consistency
+        run: |
+          python3 -m pip install cffconvert==2.0.0
+          cffconvert --validate
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          from ruamel.yaml import YAML
+          citation = YAML(typ='safe').load(Path('CITATION.cff').read_text())
+          package = json.loads(Path('package.json').read_text())
+          codemeta = json.loads(Path('codemeta.json').read_text())
+          assert citation['version'] == package['version'] == codemeta['version']
+          assert citation['preferred-citation']['version'] == package['version']
+          assert not any('zenodo.0000000' in entry['value'] for entry in citation['identifiers'])
+          print('Citation schema and software versions agree; no placeholder DOI.')
+          PY

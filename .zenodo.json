@@ -1,6 +1,6 @@
 {
   "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
+  "description": "Metadata prepared for archiving IELTS API source code and datasets: a free, no-auth TypeScript service, including original reading practice and stateless feedback. This template does not establish that an archive record or DOI exists. Code: MIT; original reading materials and project-owned dataset annotations: CC BY 4.0; underlying third-party rights remain with their owners.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
@@ -17,7 +17,9 @@
     "band descriptors",
     "score concordance",
     "open data",
-    "REST API"
+    "REST API",
+    "reading comprehension",
+    "reproducibility"
   ],
   "license": "other-open",
   "related_identifiers": [
