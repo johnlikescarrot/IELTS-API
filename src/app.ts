@@ -16,6 +16,10 @@ import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { RouteDefinition } from './lib/route.js';
 import type { JsonValue } from './types.js';
 
+function sanitizeForLog(value: string): string {
+  return value.replace(/[\r\n]/g, '');
+}
+
 /** Options for {@link createRequestHandler}. */
 export interface AppOptions {
   /** Route table to serve; defaults to the full API. */
@@ -126,7 +130,9 @@ export function createRequestHandler(
 
     if (log) {
       const elapsed = Number(process.hrtime.bigint() - started) / 1e6;
-      console.log(`${method} ${url.pathname}${url.search} ${status} ${elapsed.toFixed(2)}ms`);
+      const safePathname = sanitizeForLog(url.pathname);
+      const safeSearch = sanitizeForLog(url.search);
+      console.log(`${method} ${safePathname}${safeSearch} ${status} ${elapsed.toFixed(2)}ms`);
     }
   };
 }
