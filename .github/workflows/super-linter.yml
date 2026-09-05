@@ -128,7 +128,7 @@ jobs:
               echo
               echo '</details>'
               echo
-            done < <(find . -maxdepth 3 \( -name 'super-linter*.log' -o -name '*summary*.md' \) -type f 2>/dev/null | head -20)
+            done < <(find . -maxdepth 3 \( -name 'super-linter-parallel-stdout-*' -o -name 'super-linter-parallel-stderr-*' -o -name '*summary*.md' \) -type f 2>/dev/null | head -20)
           } > "${report}" 2>&1
           cat "${report}" >> "${GITHUB_STEP_SUMMARY}"
           if [ -n "${PR_NUMBER}" ]; then
