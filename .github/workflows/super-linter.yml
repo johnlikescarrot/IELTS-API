@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   group: super-linter-${{ github.ref }}
@@ -92,6 +93,30 @@ jobs:
               printf '\n===== %s =====\n' "${logfile##*/}"
               cat "${logfile}"
             done
+
+      - name: Comment linter findings
+        if: ${{ failure() && steps.super_linter.outcome == 'failure' && github.event_name == 'pull_request' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
+          out="${{ github.workspace }}/super-linter-output"
+          body="$(mktemp)"
+          {
+            echo '### super-linter findings'
+            echo '```text'
+            cat "${out}/super-linter-summary.md" 2>/dev/null || true
+            for f in "${out}"/super-linter/super-linter-parallel-std*; do
+              case "${f}" in *CHECKOV*|*GITLEAKS*) continue ;; esac
+              if [ -s "${f}" ]; then
+                printf '\n===== %s =====\n' "${f##*/}"
+                tail -c 4000 "${f}"
+              fi
+            done
+            echo '```'
+          } >> "${body}"
+          gh pr comment "${PR_NUMBER}" --body-file "${body}" --repo "${GITHUB_REPOSITORY}"
 
       - name: Upload linter output
         if: ${{ failure() && steps.super_linter.outcome == 'failure' }}
