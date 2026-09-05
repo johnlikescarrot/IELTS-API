@@ -111,9 +111,6 @@ jobs:
           {
             echo '### super-linter findings'
             echo '```text'
-            echo "--- inventory ---"
-            find "${out}" -type f 2>/dev/null | head -50 || true
-            echo "--- summary ---"
             cat "${out}/super-linter-summary.md" 2>/dev/null || true
             for f in "${out}"/super-linter/super-linter-parallel-std* "${out}"/super-linter/*.log; do
               case "${f}" in *CHECKOV*|*GITLEAKS*) continue ;; esac
