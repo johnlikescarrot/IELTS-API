@@ -8,7 +8,10 @@
 
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
+import { paraphraseStats, scenarioStats } from '../data/listeningWords.js';
 import { practiceStats } from '../data/practiceTests.js';
+import { recallStats } from '../data/writingRecall.js';
+import { speakingBankStats } from '../data/speakingBank.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -50,6 +53,10 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const words = vocabularyStats().words;
   const corpus = corpusStats();
   const practice = practiceStats();
+  const paraphrases = paraphraseStats();
+  const listening = scenarioStats();
+  const recall = recallStats();
+  const speaking = speakingBankStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -99,6 +106,10 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
   <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
   <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
+  <li><strong>A derived listening vocabulary resource</strong>: ${paraphrases.groups} same-meaning replacement groups (${paraphrases.terms} terms), ${listening.scenarios} scenario lexical fields (${listening.scenarioTerms} terms) and ${listening.discourseClasses} discourse-relation classes (${listening.discourseMarkers} markers). Word lists only; no layout or prose from the source handouts.</li>
+  <li><strong>${recall.prompts} crowd-recalled Writing Task&nbsp;2 prompts</strong> from the December 2024 &ndash; January 2025 computer-based season, with normalised question types, themes, difficulty ratings and recurrence counts (recall reports, not an official release).</li>
+  <li><strong>The September&ndash;December 2025 speaking season in structure</strong>: ${speaking.deckCards} classified Part&nbsp;2 cue cards, ${speaking.part1Topics} Part&nbsp;1 topic sets and ${speaking.part3FollowUps} Part&nbsp;3 follow-up counts. Titles identify the cards; prompt texts stay upstream.</li>
+  <li><strong>Rhetorical move structures</strong> for Writing Task&nbsp;1 (static and dynamic) and the Task&nbsp;2 concession&ndash;rebuttal essay, with companion lexical inventories.</li>
 </ul>
 
 <h2>Versioned endpoints</h2>

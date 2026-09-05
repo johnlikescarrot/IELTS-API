@@ -1,0 +1,797 @@
+{
+  "meta": {
+    "name": "Speaking question-season structure, September-December 2025",
+    "repository": "https://github.com/Oxidaner/ielts",
+    "upstreamFiles": {
+      "deck": "口语/2025年9-12月口语Part2按四大类分类新题+保留题.docx",
+      "bank": "口语/神奇题库.md"
+    },
+    "license": "unlicensed third-party study material; derived structure only",
+    "attribution": "Deck and question bank compiled by the upstream study group.",
+    "note": "Cue-card prompt texts, 'you should say' bullets and model answers are not redistributed: cards are represented by their short titles and classification only. Titles are kept in the source language as identifiers."
+  },
+  "season": {
+    "start": "2025-09-01",
+    "end": "2025-12-31",
+    "label": "2025年9-12月 (September-December 2025)",
+    "rotation": "The IELTS speaking bank rotates worldwide every January, May and September; within a season some cards are newly introduced and others are retained from the previous season, which is the distinction the upstream deck records."
+  },
+  "stats": {
+    "deckCards": 76,
+    "bankCards": 22,
+    "titleMatches": 10,
+    "byCategory": {
+      "person": 16,
+      "object": 25,
+      "event": 26,
+      "place": 9
+    },
+    "byStatus": {
+      "new": 27,
+      "retained": 49
+    },
+    "part1Topics": 18,
+    "part1Questions": 79,
+    "part3FollowUps": 111
+  },
+  "part1Topics": [
+    {
+      "id": "p1-01",
+      "name": "Machine",
+      "questions": 6
+    },
+    {
+      "id": "p1-02",
+      "name": "Phone",
+      "questions": 4
+    },
+    {
+      "id": "p1-03",
+      "name": "Crowded place",
+      "questions": 4
+    },
+    {
+      "id": "p1-04",
+      "name": "Praise",
+      "questions": 5
+    },
+    {
+      "id": "p1-05",
+      "name": "Memory",
+      "questions": 4
+    },
+    {
+      "id": "p1-06",
+      "name": "Borrow",
+      "questions": 4
+    },
+    {
+      "id": "p1-07",
+      "name": "Shoes",
+      "questions": 4
+    },
+    {
+      "id": "p1-08",
+      "name": "Patience",
+      "questions": 5
+    },
+    {
+      "id": "p1-09",
+      "name": "Photograph",
+      "questions": 5
+    },
+    {
+      "id": "p1-10",
+      "name": "Advertisement",
+      "questions": 4
+    },
+    {
+      "id": "p1-11",
+      "name": "Flowers",
+      "questions": 5
+    },
+    {
+      "id": "p1-12",
+      "name": "Being busy",
+      "questions": 5
+    },
+    {
+      "id": "p1-13",
+      "name": "Fruit and vegetable",
+      "questions": 4
+    },
+    {
+      "id": "p1-14",
+      "name": "Public places",
+      "questions": 3
+    },
+    {
+      "id": "p1-15",
+      "name": "Staying up",
+      "questions": 4
+    },
+    {
+      "id": "p1-16",
+      "name": "Cooking",
+      "questions": 4
+    },
+    {
+      "id": "p1-17",
+      "name": "Museum",
+      "questions": 5
+    },
+    {
+      "id": "p1-18",
+      "name": "Rules",
+      "questions": 4
+    }
+  ],
+  "part2Cards": [
+    {
+      "id": "sb-001",
+      "titleZh": "钦佩的有创造力的人",
+      "promptLine": "Describe a creative person (e.g. an artist, a musician, etc.) you admire",
+      "category": "person",
+      "status": "new"
+    },
+    {
+      "id": "sb-002",
+      "titleZh": "在家族企业工作的人",
+      "promptLine": "Describe a person you know who enjoys working for a family business (e.g. a shop,etc)",
+      "category": "person",
+      "status": "new"
+    },
+    {
+      "id": "sb-003",
+      "titleZh": "重要的好朋友",
+      "promptLine": "Describe a good friend who is important to youYou should say:Who he/she isHow/where you got to know him/herHow long you have known each otherAnd explain why he/she is important to you",
+      "category": "person",
+      "status": "new"
+    },
+    {
+      "id": "sb-004",
+      "titleZh": "擅长音乐的朋友",
+      "promptLine": "Describe a friend of yours who is good at music/singing",
+      "category": "person",
+      "status": "new"
+    },
+    {
+      "id": "sb-005",
+      "titleZh": "钦佩的运动员",
+      "promptLine": "Describe a sportsperson you admire",
+      "category": "person",
+      "status": "new"
+    },
+    {
+      "id": "sb-006",
+      "titleZh": "有用的书",
+      "promptLine": "Describe a book you read that you found useful",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-007",
+      "titleZh": "想多了解的野生动物",
+      "promptLine": "Describe a wild animal that you want to know more about",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-008",
+      "titleZh": "家中老物件",
+      "promptLine": "Describe an important old thing that your family has kept for a long time",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-009",
+      "titleZh": "和亲友享受的晚餐",
+      "promptLine": "Describe a great dinner you and your friend or family members enjoyed",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-010",
+      "titleZh": "传统故事",
+      "promptLine": "Describe an interesting traditional story",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-011",
+      "titleZh": "感兴趣的科学领域",
+      "promptLine": "Describe an area/subject of science (Biology, Robotics, etc.)that you are interested in and would like to learn more about",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-012",
+      "titleZh": "学习朋友的好习惯",
+      "promptLine": "Describe a habit your friend has and you want to develop",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-013",
+      "titleZh": "想提升的天赋",
+      "promptLine": "Describe a natural talent (sports, music, etc.) you would like to improve",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-014",
+      "titleZh": "童年喜欢的玩具",
+      "promptLine": "Describe a toy you liked in your childhood",
+      "category": "object",
+      "status": "new"
+    },
+    {
+      "id": "sb-015",
+      "titleZh": "想再去一次的远途旅行",
+      "promptLine": "Describe a long journey you had and would like to take again",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-016",
+      "titleZh": "弄坏东西",
+      "promptLine": "Describe a time when you broke something",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-017",
+      "titleZh": "别人帮助下做的决定",
+      "promptLine": "Describe an important decision made with the help of other people",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-018",
+      "titleZh": "突然停电",
+      "promptLine": "Describe a time when the electricity suddenly went off at where you live",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-019",
+      "titleZh": "第一次尝试的兴奋活动",
+      "promptLine": "Describe an exciting activity you have tried for the first time",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-020",
+      "titleZh": "购物服务",
+      "promptLine": "Describe a time when you received good service from a staff member in a shop",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-021",
+      "titleZh": "等待特别事情",
+      "promptLine": "Describe a time when you waited for something special",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-022",
+      "titleZh": "社交媒体趣事",
+      "promptLine": "Describe a time you saw something interesting on social media",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-023",
+      "titleZh": "第一次用外语",
+      "promptLine": "Describe the time when you first talked with others in a foreign language",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-024",
+      "titleZh": "迷路",
+      "promptLine": "Describe a time when you lost your way",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-025",
+      "titleZh": "别人向你道歉",
+      "promptLine": "Describe a time when someone apologized to you",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-026",
+      "titleZh": "旅途中有趣的建筑(雅思哥下架)",
+      "promptLine": "Describe an interesting building you saw during a trip",
+      "category": "event",
+      "status": "new"
+    },
+    {
+      "id": "sb-027",
+      "titleZh": "自然之地",
+      "promptLine": "Describe a natural place (e.g. park, mountain)",
+      "category": "place",
+      "status": "new"
+    },
+    {
+      "id": "sb-028",
+      "titleZh": "聊得来的有趣老人",
+      "promptLine": "Describe an old person who has an interesting life and you enjoy talking to him/her",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-029",
+      "titleZh": "劝你的人",
+      "promptLine": "Describe a person who persuaded you to do something and you were happy about it",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-030",
+      "titleZh": "不同文化的朋友",
+      "promptLine": "Describe a person from a different cultural background with whom you enjoy spending time",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-031",
+      "titleZh": "由不喜欢到喜欢的朋友",
+      "promptLine": "Describe a person you disliked at first but ended up being friends with",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-032",
+      "titleZh": "会打扮的朋友",
+      "promptLine": "Describe a friend of yours who is well dressed and is good at dressing up",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-033",
+      "titleZh": "激励你做有趣事情的人",
+      "promptLine": "Describe a person who inspired you to do something interesting",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-034",
+      "titleZh": "发小",
+      "promptLine": "Describe a friend from your childhood",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-035",
+      "titleZh": "侍花弄果之人",
+      "promptLine": "Describe a person you know who loves to grow plants (e.g. vegetables/fruits/flowers etc.",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-036",
+      "titleZh": "喜欢的歌手",
+      "promptLine": "Describe a singer you like",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-037",
+      "titleZh": "奇装异服的人",
+      "promptLine": "Describe a person who you think wears unusual clothes",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-038",
+      "titleZh": "聪明的人",
+      "promptLine": "Describe an intelligent person you know",
+      "category": "person",
+      "status": "retained"
+    },
+    {
+      "id": "sb-039",
+      "titleZh": "天空中所见",
+      "promptLine": "Describe a time when you saw something in the sky (e.g., flying kites, birds, sunset, etc.)",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-040",
+      "titleZh": "想作为观众看的体育赛事",
+      "promptLine": "Describe a sports event you would like to watch",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-041",
+      "titleZh": "想尝试的户外运动",
+      "promptLine": "Describe an outdoor sport you would like to try for the first time",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-042",
+      "titleZh": "有名产品的广告",
+      "promptLine": "Describe an advertisement which introduced a product you have seen",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-043",
+      "titleZh": "二手物品网站",
+      "promptLine": "Describe a website that sells second-hand items",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-044",
+      "titleZh": "健康文章",
+      "promptLine": "Describe an article on health you read in a magazine or on the Internet",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-045",
+      "titleZh": "有趣小说/故事",
+      "promptLine": "Describe a story or novel you have read that you found interesting",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-046",
+      "titleZh": "想再看的电影",
+      "promptLine": "Describe a movie you watched recently and would like to watch again",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-047",
+      "titleZh": "印象深刻的英语课",
+      "promptLine": "Describe an impressive English lesson you had and enjoyed",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-048",
+      "titleZh": "让你自豪的照片",
+      "promptLine": "Describe a photo you took that you are proud of",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-049",
+      "titleZh": "喜欢的节目",
+      "promptLine": "Describe a program you like to watch",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-050",
+      "titleZh": "漂亮物品",
+      "promptLine": "Describe an object that you think is beautiful",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-051",
+      "titleZh": "教别人的技能",
+      "promptLine": "Describe a skill (e.g. driving, cooking, etc.) that you think you can teach other people",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-052",
+      "titleZh": "搞笑电影",
+      "promptLine": "Describe a film that made you laugh",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-053",
+      "titleZh": "努力实现的目标",
+      "promptLine": "Describe a goal you set that you tried your best to achieve",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-054",
+      "titleZh": "想参观有趣但不寻常建筑",
+      "promptLine": "Describe an unusual but interesting building you would like to visit",
+      "category": "object",
+      "status": "retained"
+    },
+    {
+      "id": "sb-055",
+      "titleZh": "和他人一起计划活动",
+      "promptLine": "Describe a time when you and some other people made a plan to do an activity",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-056",
+      "titleZh": "有趣且印象深刻的谈话",
+      "promptLine": "Describe an impressive conversation you had that you remember well",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-057",
+      "titleZh": "校外学到的重要事情",
+      "promptLine": "Describe an important thing you learned (not at school or college)",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-058",
+      "titleZh": "决意等待",
+      "promptLine": "Describe a time you made a decision to wait for something",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-059",
+      "titleZh": "克服困难终成功",
+      "promptLine": "Describe a difficult thing you did and succeeded",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-060",
+      "titleZh": "收钱做礼物",
+      "promptLine": "Describe a time when you received money as a gift",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-061",
+      "titleZh": "塑料废品",
+      "promptLine": "Describe a time when you saw a lot of plastic waste (e.g. in a park, on the beach etc.)",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-062",
+      "titleZh": "失约",
+      "promptLine": "Describe a time when you forgot/missed an appointment",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-063",
+      "titleZh": "信息搜索",
+      "promptLine": "Describe a time when you needed to search for information",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-064",
+      "titleZh": "分享",
+      "promptLine": "Describe a time when you had to share something with others",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-065",
+      "titleZh": "糟糕购物",
+      "promptLine": "Describe a problem you had while shopping online or in a store",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-066",
+      "titleZh": "争论",
+      "promptLine": "Describe a disagreement you had with someone",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-067",
+      "titleZh": "朋友的争执",
+      "promptLine": "Describe an argument that two of your friends had",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-068",
+      "titleZh": "熊孩子",
+      "promptLine": "Describe a time when you saw children behaving badly in public",
+      "category": "event",
+      "status": "retained"
+    },
+    {
+      "id": "sb-069",
+      "titleZh": "安静的地方",
+      "promptLine": "Describe a quiet place you like to go",
+      "category": "place",
+      "status": "retained"
+    },
+    {
+      "id": "sb-070",
+      "titleZh": "户外活动之地",
+      "promptLine": "Describe a place you went to and the outdoor activity/activities you did there",
+      "category": "place",
+      "status": "retained"
+    },
+    {
+      "id": "sb-071",
+      "titleZh": "看到动物的地方",
+      "promptLine": "Describe a place where you saw animals",
+      "category": "place",
+      "status": "retained"
+    },
+    {
+      "id": "sb-072",
+      "titleZh": "想再去一次的城市",
+      "promptLine": "Describe a city that you have been to and would like to visit again",
+      "category": "place",
+      "status": "retained"
+    },
+    {
+      "id": "sb-073",
+      "titleZh": "商店",
+      "promptLine": "Describe a shop/store you often visit",
+      "category": "place",
+      "status": "retained"
+    },
+    {
+      "id": "sb-074",
+      "titleZh": "向游客推荐本国旅游地",
+      "promptLine": "Describe a place in your country or part of your country that you would like to recommend to visitors/travelers",
+      "category": "place",
+      "status": "retained"
+    },
+    {
+      "id": "sb-075",
+      "titleZh": "常去的熟人之家",
+      "promptLine": "Describe the home of someone you know well and that you often visit",
+      "category": "place",
+      "status": "retained"
+    },
+    {
+      "id": "sb-076",
+      "titleZh": "受欢迎的运动场所",
+      "promptLine": "Describe a popular place for sports (e.g. a stadium) that you’ve been to",
+      "category": "place",
+      "status": "retained"
+    }
+  ],
+  "part2BankIndex": [
+    {
+      "id": "p2-01",
+      "titleZh": "想再去的长途旅行",
+      "titleEn": "A long journey you want to take again",
+      "followUps": 5
+    },
+    {
+      "id": "p2-02",
+      "titleZh": "感兴趣的科学领域",
+      "titleEn": "An interesting area of science",
+      "followUps": 5
+    },
+    {
+      "id": "p2-03",
+      "titleZh": "家中老物件",
+      "titleEn": "An old object in your home",
+      "followUps": 7
+    },
+    {
+      "id": "p2-04",
+      "titleZh": "停电",
+      "titleEn": "A power outage",
+      "followUps": 5
+    },
+    {
+      "id": "p2-05",
+      "titleZh": "有趣的传统故事",
+      "titleEn": "An interesting traditional story",
+      "followUps": 7
+    },
+    {
+      "id": "p2-06",
+      "titleZh": "喜欢的歌手",
+      "titleEn": "A singer you like",
+      "followUps": 6
+    },
+    {
+      "id": "p2-07",
+      "titleZh": "看到动物的地方",
+      "titleEn": "A place where you saw animals",
+      "followUps": 5
+    },
+    {
+      "id": "p2-08",
+      "titleZh": "和朋友的一次晚餐",
+      "titleEn": "A dinner you had with a friend",
+      "followUps": 3
+    },
+    {
+      "id": "p2-09",
+      "titleZh": "有用的书",
+      "titleEn": "A useful book",
+      "followUps": 3
+    },
+    {
+      "id": "p2-10",
+      "titleZh": "穿着不寻常的人",
+      "titleEn": "A person with unusual clothes",
+      "followUps": 6
+    },
+    {
+      "id": "p2-11",
+      "titleZh": "别人帮助下做的重要决定",
+      "titleEn": "An important decision made with help",
+      "followUps": 6
+    },
+    {
+      "id": "p2-12",
+      "titleZh": "安静的地方",
+      "titleEn": "A quiet place",
+      "followUps": 6
+    },
+    {
+      "id": "p2-13",
+      "titleZh": "社交媒体趣事",
+      "titleEn": "Something interesting on social media",
+      "followUps": 4
+    },
+    {
+      "id": "p2-14",
+      "titleZh": "想尝试的户外运动",
+      "titleEn": "An outdoor sport you want to try",
+      "followUps": 2
+    },
+    {
+      "id": "p2-15",
+      "titleZh": "令你发笑的电影",
+      "titleEn": "A movie that made you laugh",
+      "followUps": 6
+    },
+    {
+      "id": "p2-16",
+      "titleZh": "劝你的人",
+      "titleEn": "Someone who persuaded you",
+      "followUps": 5
+    },
+    {
+      "id": "p2-17",
+      "titleZh": "等待特殊事情",
+      "titleEn": "Waiting for something special",
+      "followUps": 4
+    },
+    {
+      "id": "p2-18",
+      "titleZh": "制定过的目标",
+      "titleEn": "A goal you've set",
+      "followUps": 6
+    },
+    {
+      "id": "p2-19",
+      "titleZh": "教别人的技能",
+      "titleEn": "A skill you can teach others",
+      "followUps": 4
+    },
+    {
+      "id": "p2-20",
+      "titleZh": "经常去的商店",
+      "titleEn": "A store you often go to",
+      "followUps": 6
+    },
+    {
+      "id": "p2-21",
+      "titleZh": "向你道歉的人",
+      "titleEn": "A person who apologized to you",
+      "followUps": 4
+    },
+    {
+      "id": "p2-22",
+      "titleZh": "有创造力的人",
+      "titleEn": "A creative person",
+      "followUps": 6
+    }
+  ]
+}

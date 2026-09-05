@@ -1,0 +1,2606 @@
+{
+  "meta": {
+    "name": "IELTS listening scenario vocabulary and paraphrase groups (derived)",
+    "repository": "https://github.com/Oxidaner/ielts",
+    "upstreamFiles": {
+      "paraphrases": "听力/Sherry雅思听力同意替换2025(1).pdf",
+      "scenarios": "听力/Sherry听力场景词汇2025(1).pdf"
+    },
+    "license": "unlicensed third-party teaching material; word lists only, no layout or prose",
+    "attribution": "Word lists compiled by the preparer 'Sherry' (英语老师Sherry); English glosses are original to this project.",
+    "note": "The source PDFs are teaching handouts distributed through the upstream study collection. Only the word lists and their grouping are retained: the sheet layout, introduction prose and per-page watermarks are dropped, and term strings are kept verbatim (including the source's spacing quirks and its verb numbering gap from 29 to 39).",
+    "glossCoverage": {
+      "groups": 79,
+      "glossed": 79
+    },
+    "sourceIrregularities": {
+      "verbNumberSequenceGaps": [
+        39
+      ],
+      "note": "The paraphrase sheet numbers the verb groups 1-29 then jumps to 39."
+    }
+  },
+  "paraphrases": {
+    "mechanisms": [
+      {
+        "id": "word-family",
+        "name": "Word-family substitution",
+        "description": "A word is replaced by a derivative of the same root across parts of speech: confidence becomes confident or confidently; vary becomes various, variety or a variety of.",
+        "example": "confidence -> confident -> confidently"
+      },
+      {
+        "id": "cross-pos",
+        "name": "Cross-part-of speech equivalence",
+        "description": "Words of different parts of speech stand in for each other on the strength of meaning alone: an adjective such as essential can surface as the modal must or have to, the verb require or the noun necessity.",
+        "example": "essential -> must / require / necessity"
+      },
+      {
+        "id": "polarity",
+        "name": "Affirmation and negation",
+        "description": "A positive formulation is replaced by the negation of its opposite: surprising is heard as not realise or didn't expect that; lack as not enough.",
+        "example": "surprising -> not expect that"
+      },
+      {
+        "id": "hyponymy",
+        "name": "Hypernym and hyponym",
+        "description": "A general term is replaced by a specific instance of it, or the reverse: color becomes red; animal becomes tiger.",
+        "example": "animal -> tiger"
+      },
+      {
+        "id": "abstract-concrete",
+        "name": "Abstract and concrete",
+        "description": "An abstract notion is replaced by the concrete activity that instantiates it: recreation becomes singing and dancing.",
+        "example": "recreation -> singing & dancing"
+      }
+    ],
+    "groups": [
+      {
+        "id": "verb-01",
+        "pos": "verb",
+        "sourceNumber": 1,
+        "sense": "预定",
+        "gloss": "to book; to reserve",
+        "terms": [
+          "book",
+          "reserve",
+          "booking",
+          "reservation"
+        ]
+      },
+      {
+        "id": "verb-02",
+        "pos": "verb",
+        "sourceNumber": 2,
+        "sense": "解决、处理、应对、加工",
+        "gloss": "to solve; to handle; to process",
+        "terms": [
+          "solve",
+          "deal with",
+          "cope with",
+          "handle",
+          "tackle",
+          "address",
+          "process",
+          "manage"
+        ]
+      },
+      {
+        "id": "verb-03",
+        "pos": "verb",
+        "sourceNumber": 3,
+        "sense": "导致、结果是",
+        "gloss": "to cause; to result in",
+        "terms": [
+          "cause",
+          "lead to",
+          "trigger",
+          "be responsible for",
+          "the result is…"
+        ]
+      },
+      {
+        "id": "verb-04",
+        "pos": "verb",
+        "sourceNumber": 4,
+        "sense": "论证、显示、展示、说明",
+        "gloss": "to demonstrate; to display; to illustrate",
+        "terms": [
+          "demonstrate",
+          "show",
+          "display",
+          "exhibit",
+          "illustrate"
+        ]
+      },
+      {
+        "id": "verb-05",
+        "pos": "verb",
+        "sourceNumber": 5,
+        "sense": "改变、调整、转变、适应、不同、修改",
+        "gloss": "to change; to adjust; to adapt",
+        "terms": [
+          "change",
+          "vary",
+          "various",
+          "variety",
+          "different",
+          "adjust",
+          "adjustable",
+          "adapt",
+          "alter",
+          "alternate",
+          "transform",
+          "shift",
+          "convert",
+          "amend",
+          "fix"
+        ]
+      },
+      {
+        "id": "verb-06",
+        "pos": "verb",
+        "sourceNumber": 6,
+        "sense": "找到、发现、识别",
+        "gloss": "to find; to discover; to identify",
+        "terms": [
+          "look for",
+          "find",
+          "discover",
+          "identify",
+          "realize",
+          "detect"
+        ]
+      },
+      {
+        "id": "verb-07",
+        "pos": "verb",
+        "sourceNumber": 7,
+        "sense": "建立、建造",
+        "gloss": "to build; to establish; to found",
+        "terms": [
+          "build",
+          "construct",
+          "establish",
+          "set up",
+          "found"
+        ]
+      },
+      {
+        "id": "verb-08",
+        "pos": "verb",
+        "sourceNumber": 8,
+        "sense": "购买、投资、消费",
+        "gloss": "to buy; to purchase; to invest",
+        "terms": [
+          "buy",
+          "purchase",
+          "invest",
+          "expend",
+          "cost"
+        ]
+      },
+      {
+        "id": "verb-09",
+        "pos": "verb",
+        "sourceNumber": 9,
+        "sense": "组织、运营、安排",
+        "gloss": "to organise; to run; to arrange",
+        "terms": [
+          "organize",
+          "run",
+          "arrange"
+        ]
+      },
+      {
+        "id": "verb-10",
+        "pos": "verb",
+        "sourceNumber": 10,
+        "sense": "关闭、禁止使用",
+        "gloss": "to close; to shut down; to bar access",
+        "terms": [
+          "close",
+          "not open",
+          "shut down",
+          "out of bounds"
+        ]
+      },
+      {
+        "id": "verb-11",
+        "pos": "verb",
+        "sourceNumber": 11,
+        "sense": "描述、介绍、引入",
+        "gloss": "to describe; to introduce; to present",
+        "terms": [
+          "describe",
+          "introduce",
+          "give details about",
+          "give information",
+          "about",
+          "illustrate",
+          "tell"
+        ]
+      },
+      {
+        "id": "verb-12",
+        "pos": "verb",
+        "sourceNumber": 12,
+        "sense": "装修、装饰、重建",
+        "gloss": "to renovate; to refurbish; to rebuild",
+        "terms": [
+          "redesign",
+          "redecorate",
+          "refurbish",
+          "renovate",
+          "rebuild",
+          "recreate",
+          "reconstruct"
+        ]
+      },
+      {
+        "id": "verb-13",
+        "pos": "verb",
+        "sourceNumber": 13,
+        "sense": "构成、组成",
+        "gloss": "to consist of; to be made up of",
+        "terms": [
+          "be made up of",
+          "consist of"
+        ]
+      },
+      {
+        "id": "verb-14",
+        "pos": "verb",
+        "sourceNumber": 14,
+        "sense": "允许、可以、同意",
+        "gloss": "to allow; to permit; to approve",
+        "terms": [
+          "allow",
+          "permit",
+          "agree",
+          "good idea",
+          "sounds a good option"
+        ]
+      },
+      {
+        "id": "verb-15",
+        "pos": "verb",
+        "sourceNumber": 15,
+        "sense": "限制、禁止、不允许",
+        "gloss": "to restrict; to prohibit; to ban",
+        "terms": [
+          "restrict",
+          "limit",
+          "forbid",
+          "prohibit",
+          "inhibit",
+          "not",
+          "allowed",
+          "ban",
+          "discourage",
+          "prevent"
+        ]
+      },
+      {
+        "id": "verb-16",
+        "pos": "verb",
+        "sourceNumber": 16,
+        "sense": "换地方、移动、换方向",
+        "gloss": "to relocate; to move; to reorient",
+        "terms": [
+          "relocate",
+          "reorient",
+          "move to another place",
+          "location"
+        ]
+      },
+      {
+        "id": "verb-17",
+        "pos": "verb",
+        "sourceNumber": 17,
+        "sense": "称为、叫作、标题是",
+        "gloss": "to be called; to be named; to be titled",
+        "terms": [
+          "called",
+          "named",
+          "known as",
+          "title is"
+        ]
+      },
+      {
+        "id": "verb-18",
+        "pos": "verb",
+        "sourceNumber": 18,
+        "sense": "联系、接触上、得到",
+        "gloss": "to contact; to connect with; to reach",
+        "terms": [
+          "contact",
+          "connect",
+          "catch",
+          "get hold of",
+          "have access",
+          "to",
+          "available"
+        ]
+      },
+      {
+        "id": "verb-19",
+        "pos": "verb",
+        "sourceNumber": 19,
+        "sense": "传递、讲授、发送",
+        "gloss": "to deliver; to send; to transmit",
+        "terms": [
+          "give",
+          "send",
+          "deliver"
+        ]
+      },
+      {
+        "id": "verb-20",
+        "pos": "verb",
+        "sourceNumber": 20,
+        "sense": "提交、下发",
+        "gloss": "to submit; to hand in; to distribute",
+        "terms": [
+          "hand in",
+          "submit",
+          "submission",
+          "hand out",
+          "give",
+          "distribute"
+        ]
+      },
+      {
+        "id": "verb-21",
+        "pos": "verb",
+        "sourceNumber": 21,
+        "sense": "开始、启动",
+        "gloss": "to start; to begin; to launch",
+        "terms": [
+          "start",
+          "begin",
+          "kick off",
+          "embark on"
+        ]
+      },
+      {
+        "id": "verb-22",
+        "pos": "verb",
+        "sourceNumber": 22,
+        "sense": "放弃、退出",
+        "gloss": "to give up; to quit; to withdraw",
+        "terms": [
+          "give up",
+          "stop",
+          "resign",
+          "quit",
+          "leave",
+          "would not bother"
+        ]
+      },
+      {
+        "id": "verb-23",
+        "pos": "verb",
+        "sourceNumber": 23,
+        "sense": "增加、上升、提高、延长、扩张、拓宽",
+        "gloss": "to increase; to rise; to expand",
+        "terms": [
+          "increase",
+          "growing",
+          "more",
+          "higher",
+          "level",
+          "improve",
+          "enhance",
+          "intensify",
+          "strengthen",
+          "widen",
+          "lengthen",
+          "expand",
+          "broaden"
+        ]
+      },
+      {
+        "id": "verb-24",
+        "pos": "verb",
+        "sourceNumber": 24,
+        "sense": "下降、降低、更低、缩短、缩小",
+        "gloss": "to decrease; to decline; to reduce",
+        "terms": [
+          "decline",
+          "decrease",
+          "reduce",
+          "drop",
+          "fall",
+          "less",
+          "fewer",
+          "lessen",
+          "lower",
+          "shorten",
+          "cut down",
+          "narrow"
+        ]
+      },
+      {
+        "id": "verb-25",
+        "pos": "verb",
+        "sourceNumber": 25,
+        "sense": "关注、焦点、擅长于",
+        "gloss": "to focus on; to specialise in",
+        "terms": [
+          "focus on",
+          "concentrate on",
+          "specialize in",
+          "be devoted to"
+        ]
+      },
+      {
+        "id": "verb-26",
+        "pos": "verb",
+        "sourceNumber": 26,
+        "sense": "调查、研究、观察、实验",
+        "gloss": "to research; to investigate; to observe",
+        "terms": [
+          "research",
+          "survey",
+          "investigate",
+          "observation",
+          "experiment"
+        ]
+      },
+      {
+        "id": "verb-27",
+        "pos": "verb",
+        "sourceNumber": 27,
+        "sense": "评估、测量、评判",
+        "gloss": "to assess; to evaluate; to measure",
+        "terms": [
+          "assess",
+          "evaluate",
+          "judge",
+          "measure",
+          "calculate"
+        ]
+      },
+      {
+        "id": "verb-28",
+        "pos": "verb",
+        "sourceNumber": 28,
+        "sense": "知道、意识到",
+        "gloss": "to know; to be aware of; to realise",
+        "terms": [
+          "be conscious of",
+          "be aware of",
+          "know",
+          "realize"
+        ]
+      },
+      {
+        "id": "verb-29",
+        "pos": "verb",
+        "sourceNumber": 29,
+        "sense": "担忧、担心、恐怕",
+        "gloss": "to worry; to fear; to be concerned",
+        "terms": [
+          "worry",
+          "concern",
+          "afraid",
+          "frighten"
+        ]
+      },
+      {
+        "id": "verb-39",
+        "pos": "verb",
+        "sourceNumber": 39,
+        "sense": "鼓励、刺激、给灵感",
+        "gloss": "to encourage; to motivate; to inspire",
+        "terms": [
+          "encourage",
+          "motivate",
+          "inspire",
+          "fire me up",
+          "spark"
+        ]
+      },
+      {
+        "id": "adj/adv-01",
+        "pos": "adj/adv",
+        "sourceNumber": 1,
+        "sense": "罕见、不同寻常、与众不同、独一无二、唯一、尤其",
+        "gloss": "rare; unusual; unique",
+        "terms": [
+          "rare",
+          "unusual",
+          "uncommon",
+          "unique",
+          "the only one",
+          "specialize in",
+          "in particular",
+          "distinct",
+          "single"
+        ]
+      },
+      {
+        "id": "adj/adv-02",
+        "pos": "adj/adv",
+        "sourceNumber": 2,
+        "sense": "多种多样的、不同种类的",
+        "gloss": "various; a range of; all sorts of",
+        "terms": [
+          "various",
+          "a range of",
+          "a variety of",
+          "different",
+          "all sorts of",
+          "wide variety of",
+          "incompatible"
+        ]
+      },
+      {
+        "id": "adj/adv-03",
+        "pos": "adj/adv",
+        "sourceNumber": 3,
+        "sense": "相同的、统一的、类似的:",
+        "gloss": "the same; identical; similar",
+        "terms": [
+          "same",
+          "uniform",
+          "identical",
+          "similar"
+        ]
+      },
+      {
+        "id": "adj/adv-04",
+        "pos": "adj/adv",
+        "sourceNumber": 4,
+        "sense": "好的、漂亮的、精彩的、吸引人的、有意思的、让人刮目相看的",
+        "gloss": "attractive; impressive; appealing",
+        "terms": [
+          "good",
+          "nice",
+          "beautiful",
+          "lovely",
+          "wonderful",
+          "marvelous",
+          "attractive",
+          "appealing",
+          "fascinating",
+          "impressive",
+          "gorgeous",
+          "magnificent"
+        ]
+      },
+      {
+        "id": "adj/adv-05",
+        "pos": "adj/adv",
+        "sourceNumber": 5,
+        "sense": "复杂的、全面的、综合的",
+        "gloss": "complex; comprehensive; thorough",
+        "terms": [
+          "complex",
+          "complicated",
+          "widest coverage",
+          "cover",
+          "everything",
+          "thorough",
+          "a range of",
+          "a variety of",
+          "all"
+        ]
+      },
+      {
+        "id": "adj/adv-06",
+        "pos": "adj/adv",
+        "sourceNumber": 6,
+        "sense": "高兴的、开心的、兴奋的",
+        "gloss": "happy; delighted; thrilled",
+        "terms": [
+          "exciting",
+          "happy",
+          "pleased",
+          "glad",
+          "delighted",
+          "satisfied",
+          "thrilling"
+        ]
+      },
+      {
+        "id": "adj/adv-07",
+        "pos": "adj/adv",
+        "sourceNumber": 7,
+        "sense": "难过的、伤心的、失望的",
+        "gloss": "unhappy; disappointed; let down",
+        "terms": [
+          "unhappy",
+          "sad",
+          "frustrated",
+          "disappointed",
+          "discouraged",
+          "demotivated",
+          "dissatisified",
+          "let down"
+        ]
+      },
+      {
+        "id": "adj/adv-08",
+        "pos": "adj/adv",
+        "sourceNumber": 8,
+        "sense": "生气的、愤怒的、不愿意的",
+        "gloss": "angry; irritated; reluctant",
+        "terms": [
+          "angry",
+          "irritating",
+          "unwilling",
+          "reluctant"
+        ]
+      },
+      {
+        "id": "adj/adv-09",
+        "pos": "adj/adv",
+        "sourceNumber": 9,
+        "sense": "惊讶、没想到、意料之外",
+        "gloss": "surprising; unexpected; astonishing",
+        "terms": [
+          "Surprise",
+          "not expect",
+          "not realize",
+          "taken aback",
+          "amazing",
+          "impressive",
+          "ridiculous",
+          "impossible"
+        ]
+      },
+      {
+        "id": "adj/adv-10",
+        "pos": "adj/adv",
+        "sourceNumber": 10,
+        "sense": "确定的、肯定的、自信的、显然的",
+        "gloss": "certainly; definitely; without doubt",
+        "terms": [
+          "definitely",
+          "absolutely",
+          "certainly",
+          "sure",
+          "of",
+          "course",
+          "why not",
+          "confident",
+          "obviously"
+        ]
+      },
+      {
+        "id": "adj/adv-11",
+        "pos": "adj/adv",
+        "sourceNumber": 11,
+        "sense": "怀疑的、犹豫的、不确定的、可能的",
+        "gloss": "sceptical; hesitant; uncertain",
+        "terms": [
+          "skeptical",
+          "suspicious",
+          "hesitate",
+          "unsure",
+          "not confident",
+          "possible",
+          "probable",
+          "who knows",
+          "unclear"
+        ]
+      },
+      {
+        "id": "adj/adv-12",
+        "pos": "adj/adv",
+        "sourceNumber": 12,
+        "sense": "简单的、容易的",
+        "gloss": "easy; simple; elementary",
+        "terms": [
+          "easy",
+          "simple",
+          "not hard",
+          "primary",
+          "elementary",
+          "low level"
+        ]
+      },
+      {
+        "id": "adj/adv-13",
+        "pos": "adj/adv",
+        "sourceNumber": 13,
+        "sense": "困难的、有挑战的",
+        "gloss": "difficult; demanding; challenging",
+        "terms": [
+          "difficult",
+          "hard",
+          "demanding",
+          "challenging",
+          "struggling",
+          "tough",
+          "not easy"
+        ]
+      },
+      {
+        "id": "adj/adv-14",
+        "pos": "adj/adv",
+        "sourceNumber": 14,
+        "sense": "危险的、不安全的、有危害的",
+        "gloss": "dangerous; unsafe; risky",
+        "terms": [
+          "dangerous",
+          "unsafe",
+          "risky",
+          "hazardous",
+          "harmful"
+        ]
+      },
+      {
+        "id": "adj/adv-15",
+        "pos": "adj/adv",
+        "sourceNumber": 15,
+        "sense": "大的、数量多的、体型大的",
+        "gloss": "big; huge; enormous; immense",
+        "terms": [
+          "big",
+          "huge",
+          "large",
+          "massive",
+          "enormous",
+          "immense",
+          "tremendous"
+        ]
+      },
+      {
+        "id": "adj/adv-16",
+        "pos": "adj/adv",
+        "sourceNumber": 16,
+        "sense": "小的、迷你的",
+        "gloss": "small; tiny; miniature",
+        "terms": [
+          "small",
+          "mini",
+          "miniature",
+          "tiny"
+        ]
+      },
+      {
+        "id": "adj/adv-17",
+        "pos": "adj/adv",
+        "sourceNumber": 17,
+        "sense": "最多、多达、最小、始于",
+        "gloss": "at most; up to; at minimum",
+        "terms": [
+          "maximum",
+          "up to",
+          "minimum",
+          "start from"
+        ]
+      },
+      {
+        "id": "adj/adv-18",
+        "pos": "adj/adv",
+        "sourceNumber": 18,
+        "sense": "具体的、详细的、某一特定的",
+        "gloss": "specific; detailed; particular",
+        "terms": [
+          "specific",
+          "detailed",
+          "individual",
+          "certain",
+          "some",
+          "in",
+          "particular"
+        ]
+      },
+      {
+        "id": "adj/adv-19",
+        "pos": "adj/adv",
+        "sourceNumber": 19,
+        "sense": "有限的、受限制的、缺少",
+        "gloss": "limited; restricted; scarce",
+        "terms": [
+          "limited",
+          "restricted",
+          "finite",
+          "only a few",
+          "lack",
+          "not",
+          "enough",
+          "little",
+          "rare"
+        ]
+      },
+      {
+        "id": "adj/adv-20",
+        "pos": "adj/adv",
+        "sourceNumber": 20,
+        "sense": "程度高的/大多数地",
+        "gloss": "to a high degree; mostly; mainly",
+        "terms": [
+          "too",
+          "very",
+          "pretty",
+          "most",
+          "majority",
+          "main",
+          "mainly"
+        ]
+      },
+      {
+        "id": "adj/adv-21",
+        "pos": "adj/adv",
+        "sourceNumber": 21,
+        "sense": "经常地、频率高",
+        "gloss": "often; regularly; frequently",
+        "terms": [
+          "usually",
+          "often",
+          "regular",
+          "frequently",
+          "high frequency"
+        ]
+      },
+      {
+        "id": "adj/adv-22",
+        "pos": "adj/adv",
+        "sourceNumber": 22,
+        "sense": "突然地、快速的、迅速地",
+        "gloss": "sudden; rapid; abrupt",
+        "terms": [
+          "Suddenly",
+          "quickly",
+          "abrupt",
+          "rapidly"
+        ]
+      },
+      {
+        "id": "adj/adv-23",
+        "pos": "adj/adv",
+        "sourceNumber": 23,
+        "sense": "必须、基本、要求",
+        "gloss": "essential; necessary; required",
+        "terms": [
+          "essential",
+          "must",
+          "have to",
+          "basic",
+          "necessary",
+          "necessity",
+          "require",
+          "request"
+        ]
+      },
+      {
+        "id": "adj/adv-24",
+        "pos": "adj/adv",
+        "sourceNumber": 24,
+        "sense": "优于、比……好、超过、优先",
+        "gloss": "better; superior; preferred",
+        "terms": [
+          "better",
+          "superior",
+          "superiority",
+          "more……",
+          "priority"
+        ]
+      },
+      {
+        "id": "adj/adv-25",
+        "pos": "adj/adv",
+        "sourceNumber": 25,
+        "sense": "当地的、本国的、本土的",
+        "gloss": "local; regional; native",
+        "terms": [
+          "local",
+          "regional",
+          "native",
+          "home-grown",
+          "domestic"
+        ]
+      },
+      {
+        "id": "adj/adv-26",
+        "pos": "adj/adv",
+        "sourceNumber": 26,
+        "sense": "有关的、相关联的",
+        "gloss": "related to; relevant to; concerning",
+        "terms": [
+          "about",
+          "related to",
+          "relevant",
+          "linked",
+          "connected",
+          "associated with",
+          "concerning",
+          "regarding"
+        ]
+      },
+      {
+        "id": "adj/adv-27",
+        "pos": "adj/adv",
+        "sourceNumber": 27,
+        "sense": "冷的、温度低的",
+        "gloss": "cold; chilled; below zero",
+        "terms": [
+          "cold",
+          "chilled",
+          "freezing",
+          "low temperature"
+        ]
+      },
+      {
+        "id": "adj/adv-28",
+        "pos": "adj/adv",
+        "sourceNumber": 28,
+        "sense": "现在、现阶段",
+        "gloss": "currently; at present; right now",
+        "terms": [
+          "currently",
+          "at present",
+          "at the moment",
+          "right now"
+        ]
+      },
+      {
+        "id": "adj/adv-29",
+        "pos": "adj/adv",
+        "sourceNumber": 29,
+        "sense": "以前、过去、以往、原来",
+        "gloss": "previously; in the past; used to",
+        "terms": [
+          "last term",
+          "year",
+          "used to",
+          "originally",
+          "previously"
+        ]
+      },
+      {
+        "id": "adj/adv-30",
+        "pos": "adj/adv",
+        "sourceNumber": 30,
+        "sense": "将来、以后、未来、将要",
+        "gloss": "in the future; planning to; about to",
+        "terms": [
+          "next year",
+          "future",
+          "plan to",
+          "hope to",
+          "intend to",
+          "be going to",
+          "be about to"
+        ]
+      },
+      {
+        "id": "noun-01",
+        "pos": "noun",
+        "sourceNumber": 1,
+        "sense": "动植物",
+        "gloss": "wildlife; plants; vegetation",
+        "terms": [
+          "wildlife",
+          "animals",
+          "plants",
+          "vegetation",
+          "trees",
+          "flowers"
+        ]
+      },
+      {
+        "id": "noun-02",
+        "pos": "noun",
+        "sourceNumber": 2,
+        "sense": "领导、老板、雇主",
+        "gloss": "manager; boss; employer",
+        "terms": [
+          "manager",
+          "boss",
+          "leader",
+          "employer"
+        ]
+      },
+      {
+        "id": "noun-03",
+        "pos": "noun",
+        "sourceNumber": 3,
+        "sense": "员工、雇员",
+        "gloss": "staff; workers; employees",
+        "terms": [
+          "staff",
+          "worker",
+          "individual",
+          "employee"
+        ]
+      },
+      {
+        "id": "noun-04",
+        "pos": "noun",
+        "sourceNumber": 4,
+        "sense": "公司、组织、机构",
+        "gloss": "company; organisation; corporation",
+        "terms": [
+          "company",
+          "organization",
+          "corporate"
+        ]
+      },
+      {
+        "id": "noun-05",
+        "pos": "noun",
+        "sourceNumber": 5,
+        "sense": "金钱、金融、财政、资本、投资、花费、价格、税收",
+        "gloss": "money; funding; expenditure; tax",
+        "terms": [
+          "money",
+          "fund",
+          "finance",
+          "cost",
+          "expenditure",
+          "capital",
+          "investment",
+          "sponsorship",
+          "expense",
+          "price",
+          "tax",
+          "taxation"
+        ]
+      },
+      {
+        "id": "noun-06",
+        "pos": "noun",
+        "sourceNumber": 6,
+        "sense": "优点、积极的",
+        "gloss": "benefit; advantage; positive side",
+        "terms": [
+          "benefit",
+          "advantage",
+          "plus",
+          "positive",
+          "potential"
+        ]
+      },
+      {
+        "id": "noun-07",
+        "pos": "noun",
+        "sourceNumber": 7,
+        "sense": "缺点、问题、消极的",
+        "gloss": "problem; drawback; negative side",
+        "terms": [
+          "problem",
+          "drawback",
+          "weak point",
+          "negative"
+        ]
+      },
+      {
+        "id": "noun-08",
+        "pos": "noun",
+        "sourceNumber": 8,
+        "sense": "空间、大小、容量",
+        "gloss": "space; room; capacity; volume",
+        "terms": [
+          "space",
+          "room",
+          "capacity",
+          "size",
+          "volume"
+        ]
+      },
+      {
+        "id": "noun-09",
+        "pos": "noun",
+        "sourceNumber": 9,
+        "sense": "休闲、娱乐",
+        "gloss": "leisure; entertainment; recreation",
+        "terms": [
+          "leisure",
+          "entertainment",
+          "recreation",
+          "amusement"
+        ]
+      },
+      {
+        "id": "noun-10",
+        "pos": "noun",
+        "sourceNumber": 10,
+        "sense": "入口、大门、通道",
+        "gloss": "entrance; gate; access",
+        "terms": [
+          "gate",
+          "door",
+          "entrance",
+          "access"
+        ]
+      },
+      {
+        "id": "noun-11",
+        "pos": "noun",
+        "sourceNumber": 11,
+        "sense": "人行道",
+        "gloss": "footpath; pavement; crossing",
+        "terms": [
+          "footpath",
+          "pavement",
+          "pedestrian crossing",
+          "zebra crossing"
+        ]
+      },
+      {
+        "id": "noun-12",
+        "pos": "noun",
+        "sourceNumber": 12,
+        "sense": "特点、特征",
+        "gloss": "feature; characteristic",
+        "terms": [
+          "feature",
+          "characteristic"
+        ]
+      },
+      {
+        "id": "noun-13",
+        "pos": "noun",
+        "sourceNumber": 13,
+        "sense": "地点、地方",
+        "gloss": "place; location; site",
+        "terms": [
+          "place",
+          "location",
+          "spot",
+          "site",
+          "position"
+        ]
+      },
+      {
+        "id": "noun-14",
+        "pos": "noun",
+        "sourceNumber": 14,
+        "sense": "环境、条件、周围",
+        "gloss": "environment; conditions; surroundings",
+        "terms": [
+          "environment",
+          "situation",
+          "condition",
+          "surrounding",
+          "circumstance"
+        ]
+      },
+      {
+        "id": "noun-15",
+        "pos": "noun",
+        "sourceNumber": 15,
+        "sense": "污染、有毒",
+        "gloss": "pollution; contamination; toxin",
+        "terms": [
+          "pollution",
+          "contamination",
+          "toxin",
+          "poison"
+        ]
+      },
+      {
+        "id": "noun-16",
+        "pos": "noun",
+        "sourceNumber": 16,
+        "sense": "方法、途径",
+        "gloss": "way; method; approach",
+        "terms": [
+          "way",
+          "method",
+          "approach",
+          "access"
+        ]
+      },
+      {
+        "id": "noun-17",
+        "pos": "noun",
+        "sourceNumber": 17,
+        "sense": "地区、区域",
+        "gloss": "area; region; zone",
+        "terms": [
+          "geographical area",
+          "region",
+          "location",
+          "place"
+        ]
+      },
+      {
+        "id": "noun-18",
+        "pos": "noun",
+        "sourceNumber": 18,
+        "sense": "山顶、顶峰",
+        "gloss": "summit; top; peak",
+        "terms": [
+          "summit",
+          "top",
+          "peak"
+        ]
+      },
+      {
+        "id": "noun-19",
+        "pos": "noun",
+        "sourceNumber": 19,
+        "sense": "顺序、次序、排位",
+        "gloss": "sequence; order; ranking",
+        "terms": [
+          "sequence",
+          "order",
+          "rank"
+        ]
+      }
+    ],
+    "stats": {
+      "groups": 79,
+      "terms": 459,
+      "byPos": {
+        "verb": 30,
+        "adj/adv": 30,
+        "noun": 19
+      }
+    }
+  },
+  "scenarios": [
+    {
+      "id": "personal-details",
+      "nameZh": "个人信息",
+      "name": "Personal details and form-filling",
+      "typicalSections": [
+        1
+      ],
+      "categories": [
+        {
+          "nameZh": "通用",
+          "name": "通用",
+          "terms": [
+            "Name",
+            "age",
+            "nationality",
+            "Sex(male",
+            "female)",
+            "Title(Mr",
+            "Miss",
+            "Mrs",
+            "Doctor)",
+            "Passport number",
+            "postcode",
+            "Major",
+            "course enrolled in",
+            "present course",
+            "General Level of English: basic",
+            "intermediate",
+            "advanced",
+            "Occupation: dentist",
+            "engineer",
+            "project manager",
+            "accountant",
+            "charity worker",
+            "lawyer",
+            "doctor",
+            "hairdresser",
+            "Emergency contact: parents",
+            "relative",
+            "uncle",
+            "aunt",
+            "roommate",
+            "cousin",
+            "brother-in-law"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "housing",
+      "nameZh": "住房场景词汇",
+      "name": "Housing and accommodation",
+      "typicalSections": [
+        1,
+        2
+      ],
+      "categories": [
+        {
+          "nameZh": "住宿类型",
+          "name": "accommodation types",
+          "terms": [
+            "Home-stay",
+            "host family",
+            "single",
+            "double",
+            "triple",
+            "four bedroom",
+            "bedsit",
+            "en suite",
+            "Hall of residence",
+            "flat",
+            "apartment",
+            "house"
+          ]
+        },
+        {
+          "nameZh": "地点",
+          "name": "location",
+          "terms": [
+            "Present",
+            "current",
+            "previous address",
+            "length of time in Australia",
+            "Preferred location",
+            "near center or out of the town",
+            "suburb",
+            "outskirts"
+          ]
+        },
+        {
+          "nameZh": "交通",
+          "name": "transport",
+          "terms": [
+            "Transport",
+            "bus route",
+            "bus stop",
+            "train",
+            "tram",
+            "cycling",
+            "helmet",
+            "helicopter"
+          ]
+        },
+        {
+          "nameZh": "房源",
+          "name": "accommodation providers",
+          "terms": [
+            "Real estate",
+            "Student Accommodation Center",
+            "housing coordinator"
+          ]
+        },
+        {
+          "nameZh": "习惯",
+          "name": "habits and preferences",
+          "terms": [
+            "Catering arrangement",
+            "special diet",
+            "vegetarian",
+            "allergic",
+            "like seafood",
+            "no red meat",
+            "no",
+            "smoking",
+            "no drinking"
+          ]
+        },
+        {
+          "nameZh": "兴趣爱好",
+          "name": "hobbies and household",
+          "terms": [
+            "Hobby",
+            "family preferences",
+            "pet",
+            "children",
+            "older people",
+            "adult",
+            "mature",
+            "teenagers"
+          ]
+        },
+        {
+          "nameZh": "房屋设施",
+          "name": "fixtures and facilities",
+          "terms": [
+            "Facilities",
+            "furniture",
+            "hot water",
+            "air conditioner",
+            "carpeted",
+            "curtain",
+            "Garden",
+            "swimming pool",
+            "garage",
+            "parking",
+            "balcony",
+            "terrace",
+            "yard"
+          ]
+        },
+        {
+          "nameZh": "房租及付款方式",
+          "name": "rent and payment",
+          "terms": [
+            "Rent",
+            "deposit",
+            "phone bill",
+            "on a monthly basis",
+            "cash",
+            "check",
+            "credit card",
+            "debit card"
+          ]
+        },
+        {
+          "nameZh": "租住时间",
+          "name": "length and start of stay",
+          "terms": [
+            "Intended length of stay",
+            "when it is available",
+            "preferred moving time or starting date"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vehicles",
+      "nameZh": "汽车场景词汇",
+      "name": "Cars and vehicle enquiries",
+      "typicalSections": [
+        1,
+        2
+      ],
+      "categories": [
+        {
+          "nameZh": "通用",
+          "name": "通用",
+          "terms": [
+            "Car enquiry",
+            "insurance",
+            "annual cost",
+            "Vehicle",
+            "van",
+            "make",
+            "manufacturer",
+            "model",
+            "brake",
+            "headlight",
+            "wheel",
+            "windscreen",
+            "seat belt",
+            "tire",
+            "steering wheel",
+            "higher seats",
+            "engine size",
+            "size of engine: 1.4 liters",
+            "type of gears: manual",
+            "automatic",
+            "Preferred colour",
+            "mileage",
+            "condition",
+            "safety"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "banking",
+      "nameZh": "银行场景词汇",
+      "name": "Banking",
+      "typicalSections": [
+        1
+      ],
+      "categories": [
+        {
+          "nameZh": "通用",
+          "name": "通用",
+          "terms": [
+            "Open a bank account: current account",
+            "deposit account",
+            "Joint account",
+            "applicant",
+            "application form",
+            "identity",
+            "security reason",
+            "Opening sum",
+            "bank statement",
+            "exchange rate",
+            "Transfer",
+            "request",
+            "pound",
+            "dollar",
+            "euro"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tourism",
+      "nameZh": "旅游场景词汇",
+      "name": "Tourism and excursions",
+      "typicalSections": [
+        1,
+        2
+      ],
+      "categories": [
+        {
+          "nameZh": "通用",
+          "name": "通用",
+          "terms": [
+            "Guided tours",
+            "missed departure",
+            "travel agency",
+            "customer’s reference number",
+            "Maximum group size",
+            "book in advance",
+            "notice board",
+            "brochure",
+            "tourist attraction",
+            "Tour cost",
+            "insurance",
+            "deposit",
+            "cancellation",
+            "whale watching",
+            "ride a bike",
+            "bush walking",
+            "Opening time",
+            "personal belongings",
+            "cottage",
+            "cabin",
+            "Gift shop",
+            "Ticket Office",
+            "Café"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "transport",
+      "nameZh": "交通场景词汇",
+      "name": "Transport and tickets",
+      "typicalSections": [
+        1,
+        2
+      ],
+      "categories": [
+        {
+          "nameZh": "通用",
+          "name": "通用",
+          "terms": [
+            "Transportation : hire a car",
+            "cab",
+            "greyhound bus",
+            "minibus",
+            "coach",
+            "airport shuttle",
+            "Passenger",
+            "depart from",
+            "transport from",
+            "travel from",
+            "pedestrian",
+            "Railway station",
+            "airport",
+            "essential",
+            "attraction",
+            "Distance",
+            "Price of a first class ticket",
+            "reserve a seat",
+            "seat reservation",
+            "Type of ticket: single",
+            "one way",
+            "return ticket"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "places",
+      "nameZh": "常考地点词",
+      "name": "Frequently examined places",
+      "typicalSections": [
+        1,
+        2
+      ],
+      "categories": [
+        {
+          "nameZh": "通用",
+          "name": "通用",
+          "terms": [
+            "1. Library",
+            "market",
+            "Café",
+            "restaurant",
+            "hotel",
+            "hostel",
+            "castle",
+            "museum",
+            "church",
+            "tower",
+            "2. cinema",
+            "theater",
+            "gym",
+            "stadium",
+            "studio",
+            "lounge",
+            "3. garden",
+            "town",
+            "kitchen",
+            "garage",
+            "fountain",
+            "mountain",
+            "hill",
+            "bank",
+            "4. beach",
+            "tent",
+            "camping",
+            "campsite",
+            "5. Art Gallery",
+            "Theme Park",
+            "Amusement Park",
+            "6. City Center",
+            "City Garden",
+            "City Council",
+            "7. Hall of Residence",
+            "Main Hall",
+            "Town Hall",
+            "Garden Hall",
+            "Concert Hall",
+            "8. Department Store",
+            "Tourist Office",
+            "Opera House"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "employment",
+      "nameZh": "找工作场景词",
+      "name": "Employment and job applications",
+      "typicalSections": [
+        1
+      ],
+      "categories": [
+        {
+          "nameZh": "通用",
+          "name": "通用",
+          "terms": [
+            "Job applicant",
+            "candidate",
+            "type of work required",
+            "vacancy for",
+            "position available",
+            "duties",
+            "Waiter",
+            "waitress",
+            "cook",
+            "chef",
+            "kitchen hand",
+            "kitchen assistant",
+            "cleaner",
+            "Secretary",
+            "an office assistant",
+            "cashier",
+            "receptionist",
+            "answer the phone",
+            "Lifting heavy items",
+            "watering the plants",
+            "HR",
+            "personnel department",
+            "recruit",
+            "Advertisement for temporary",
+            "permanent staff",
+            "Uniform",
+            "dress code: casual",
+            "jeans",
+            "jacket",
+            "cap",
+            "apron",
+            "vest",
+            "dark trousers",
+            "Shift",
+            "day off",
+            "total week pay",
+            "starting date",
+            "Qualities required: first-aid certificate",
+            "driving license",
+            "communication",
+            "personality",
+            "Experience",
+            "training",
+            "business skills",
+            "office skills",
+            "typing",
+            "Work permit",
+            "reference",
+            "referees",
+            "CV",
+            "resume",
+            "Extra benefit",
+            "time of interview",
+            "branch"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "membership-sports-medical",
+      "nameZh": "会员/运动/医疗场景词汇",
+      "name": "Membership, sports and medical",
+      "typicalSections": [
+        1,
+        2
+      ],
+      "categories": [
+        {
+          "nameZh": "通用",
+          "name": "通用",
+          "terms": [
+            "Sports center",
+            "sports club",
+            "gym",
+            "fitness center",
+            "fitness suite",
+            "keep-fit studio",
+            "Soccer club",
+            "Health Center",
+            "clinic",
+            "registration",
+            "Membership type: gold",
+            "silver",
+            "bronze",
+            "full-time",
+            "off-peak",
+            "weekends",
+            "single",
+            "joint",
+            "family",
+            "Minimum joining age",
+            "joining fee",
+            "annual",
+            "monthly subscription fee",
+            "Facilities available: restaurant",
+            "salad bar",
+            "running machine",
+            "Sports: yoga",
+            "swimming",
+            "tennis",
+            "golf",
+            "badminton",
+            "hiking",
+            "cycling",
+            "jogging",
+            "kick boxing",
+            "Personal assessment",
+            "trainer",
+            "instructor",
+            "fitness level",
+            "plan",
+            "photo card",
+            "Health problem: heart disease",
+            "asthma",
+            "cold",
+            "fever",
+            "cough",
+            "sore throat",
+            "Sports injury: back",
+            "neck",
+            "elbow",
+            "shoulder",
+            "sprained knee",
+            "ankle",
+            "waist",
+            "wrist",
+            "Treatment: an ice pack",
+            "X-ray",
+            "surgery",
+            "therapy",
+            "acupuncture",
+            "tablets",
+            "capsule",
+            "vitamin"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "map-tasks",
+      "nameZh": "地图题",
+      "name": "Map and plan tasks",
+      "typicalSections": [
+        2
+      ],
+      "categories": [
+        {
+          "nameZh": "地图题做题方法",
+          "name": "map-task method",
+          "terms": [
+            "看坐标，辨方向。",
+            "定位置，明起点。",
+            "找特殊，循路线。"
+          ]
+        },
+        {
+          "nameZh": "地点词汇",
+          "name": "layout and venue vocabulary",
+          "terms": [
+            "Layout",
+            "Plan",
+            "Entrance",
+            "exit",
+            "bend",
+            "corridor",
+            "Car park",
+            "yard",
+            "toilet",
+            "foyer",
+            "Ticket Office",
+            "Gift Shop",
+            "Information Center",
+            "Information Desk",
+            "Reception Block",
+            "Path",
+            "arrow",
+            "Traffic lights",
+            "roundabout",
+            "Crossroads",
+            "junction",
+            "intersection---交叉路口",
+            "Pedestrian crossing",
+            "zebra crossing",
+            "pavement",
+            "footpath ---人行道"
+          ]
+        },
+        {
+          "nameZh": "特殊建筑物",
+          "name": "distinctive structures",
+          "terms": [
+            "Circular",
+            "square",
+            "rectangular area",
+            "U shape",
+            "fence",
+            "boundary",
+            "Lake",
+            "tracks",
+            "tower",
+            "pond"
+          ]
+        },
+        {
+          "nameZh": "方位词",
+          "name": "position and direction words",
+          "terms": [
+            "Bottom",
+            "top",
+            "beyond",
+            "in front of",
+            "arranged in a half circle",
+            "Left",
+            "right side",
+            "right hand corner",
+            "to the left by the entrance gate",
+            "on your left",
+            "On one side",
+            "on the other (side)",
+            "Behind the school",
+            "next to the post office",
+            "be situated in",
+            "parallel",
+            "joint",
+            "Across",
+            "opposite",
+            "facing the church"
+          ]
+        },
+        {
+          "nameZh": "路线",
+          "name": "route instructions",
+          "terms": [
+            "Go around the sharp corner",
+            "go straight",
+            "go along",
+            "go down",
+            "go up",
+            "go towards",
+            "Turn right",
+            "turn left",
+            "pass it",
+            "Go across",
+            "go over",
+            "cross the bridge"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "course-assignment",
+      "nameZh": "S3 课程及作业场景词汇",
+      "name": "Course and assignment work (Section 3)",
+      "typicalSections": [
+        3
+      ],
+      "categories": [
+        {
+          "nameZh": "Course",
+          "name": "course vocabulary",
+          "terms": []
+        },
+        {
+          "nameZh": "Course feedback",
+          "name": "course feedback",
+          "terms": [
+            "course delivery",
+            "teaching standard",
+            "course organization",
+            "outline",
+            "syllabus",
+            "handouts",
+            "worksheet",
+            "student support"
+          ]
+        },
+        {
+          "nameZh": "Course Consultant",
+          "name": "course consultant",
+          "terms": [
+            "workshop",
+            "seminar",
+            "compulsory",
+            "required",
+            "optional",
+            "selective",
+            "study skill",
+            "strategy",
+            "time management",
+            "intensive",
+            "qualification",
+            "diploma",
+            "degree"
+          ]
+        },
+        {
+          "nameZh": "Course assessment",
+          "name": "course assessment",
+          "terms": [
+            "evaluate",
+            "exam",
+            "test",
+            "quiz",
+            "attendance",
+            "absence",
+            "lab-work",
+            "field trip",
+            "format (written work",
+            "oral work)",
+            "score",
+            "grade",
+            "mark",
+            "criteria-criterion",
+            "4.Case Study",
+            "tutorial",
+            "group discussion",
+            "tutor",
+            "professor",
+            "lecture-lecturer",
+            "mentor",
+            "University career officer"
+          ]
+        },
+        {
+          "nameZh": "Assignment",
+          "name": "assignment vocabulary",
+          "terms": []
+        },
+        {
+          "nameZh": "Paper/ thesis/ essay/ dissertation",
+          "name": "long written work",
+          "terms": [
+            "outline",
+            "design plan",
+            "proposal",
+            "first draft",
+            "final draft",
+            "hand in",
+            "submit",
+            "deadline",
+            "due day",
+            "extension",
+            "medical reason",
+            "compassionate reason",
+            "revise",
+            "rewrite",
+            "literature review",
+            "abstract",
+            "summary",
+            "reference",
+            "bibliography"
+          ]
+        },
+        {
+          "nameZh": "library",
+          "name": "library",
+          "terms": []
+        },
+        {
+          "nameZh": "Materials & resources",
+          "name": "materials and resources",
+          "terms": [
+            "Textbooks",
+            "newspaper",
+            "periodicals",
+            "journal articles",
+            "current",
+            "back issue",
+            "magazines",
+            "Laptop",
+            "computers",
+            "printer",
+            "photocopier",
+            "loan time",
+            "Policy: renew",
+            "overdue books pay the fine",
+            "recalled books"
+          ]
+        },
+        {
+          "nameZh": "Presentation",
+          "name": "presentations",
+          "terms": [
+            "power point",
+            "slides",
+            "visual",
+            "images",
+            "graphics",
+            "figure",
+            "data",
+            "statistics",
+            "audio",
+            "video",
+            "sound",
+            "audience",
+            "interact",
+            "eye contact",
+            "body language"
+          ]
+        },
+        {
+          "nameZh": "Research",
+          "name": "research methods",
+          "terms": [
+            "study",
+            "survey",
+            "investigate",
+            "collect data",
+            "sort",
+            "analyze-analysis",
+            "way",
+            "method",
+            "approach: observation",
+            "telephone interview",
+            "face -to -face interview",
+            "questionnaire",
+            "subject",
+            "respondent",
+            "participant"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "academic-lecture",
+      "nameZh": "Section 4 词汇",
+      "name": "Academic lecture content (Section 4)",
+      "typicalSections": [
+        4
+      ],
+      "categories": [
+        {
+          "nameZh": "Verb.",
+          "name": "core verbs",
+          "terms": [
+            "escape",
+            "research",
+            "persuade",
+            "repeat it",
+            "repeated",
+            "investigate",
+            "survey",
+            "complete"
+          ]
+        },
+        {
+          "nameZh": "Adj.",
+          "name": "core adjectives",
+          "terms": [
+            "flexible",
+            "complex",
+            "intact",
+            "social",
+            "economical",
+            "political",
+            "survival",
+            "harmful",
+            "dangerous",
+            "risky",
+            "secure-security",
+            "safe-safety",
+            "comprehensive",
+            "technical"
+          ]
+        },
+        {
+          "nameZh": "Plant/vegetation",
+          "name": "plants and vegetation",
+          "terms": []
+        },
+        {
+          "nameZh": "Tree",
+          "name": "trees",
+          "terms": [
+            "pine",
+            "willow",
+            "palm",
+            "oak",
+            "gum tree",
+            "leaves",
+            "branch",
+            "trunk",
+            "root",
+            "bark",
+            "2.Flower",
+            "grass",
+            "seeds",
+            "stem",
+            "coral",
+            "seaweed",
+            "kelp",
+            "3.Blossom",
+            "pollinate",
+            "evaporation",
+            "respiration",
+            "photosynthesis",
+            "4.Crop",
+            "grain",
+            "rice",
+            "wheat",
+            "barley",
+            "corn",
+            "maize"
+          ]
+        },
+        {
+          "nameZh": "Animal &wildlife &creature & species& Environment",
+          "name": "animals, wildlife and environment",
+          "terms": []
+        },
+        {
+          "nameZh": "Mammal",
+          "name": "mammals",
+          "terms": [
+            "cattle",
+            "sheep",
+            "horse",
+            "elephant",
+            "fox",
+            "herds",
+            "livestock",
+            "tiger",
+            "kangaroo",
+            "koala",
+            "wombat",
+            "camel"
+          ]
+        },
+        {
+          "nameZh": "Primate",
+          "name": "primates",
+          "terms": [
+            "ape",
+            "monkey",
+            "chimpanzee",
+            "gorilla",
+            "experiment",
+            "tool"
+          ]
+        },
+        {
+          "nameZh": "Reptile",
+          "name": "reptiles",
+          "terms": [
+            "lizard",
+            "snake",
+            "crocodile",
+            "dinosaur",
+            "turtle",
+            "claw",
+            "lung",
+            "tongue",
+            "kidney"
+          ]
+        },
+        {
+          "nameZh": "Amphibian",
+          "name": "amphibians",
+          "terms": [
+            "frog"
+          ]
+        },
+        {
+          "nameZh": "Marine animals",
+          "name": "marine animals",
+          "terms": [
+            "whale",
+            "dolphin",
+            "shark",
+            "urchin",
+            "lobster",
+            "coral",
+            "Fish: fin",
+            "gill",
+            "scale",
+            "tail",
+            "bladder"
+          ]
+        },
+        {
+          "nameZh": "Bird",
+          "name": "birds",
+          "terms": [
+            "eagle",
+            "hawk",
+            "falcon",
+            "crow",
+            "owl",
+            "parrot",
+            "wing",
+            "feather",
+            "beak"
+          ]
+        },
+        {
+          "nameZh": "Insect",
+          "name": "insects",
+          "terms": [
+            "ant",
+            "bee",
+            "beetle",
+            "fruit fly",
+            "fire ant",
+            "butterfly",
+            "pesticide"
+          ]
+        },
+        {
+          "nameZh": "Microbes",
+          "name": "microbes and disease",
+          "terms": [
+            "cell",
+            "gene",
+            "virus",
+            "disease",
+            "bacteria",
+            "antibiotics",
+            "epidemic",
+            "infection",
+            "parasite"
+          ]
+        },
+        {
+          "nameZh": "behavior",
+          "name": "animal behaviour",
+          "terms": [
+            "survival",
+            "forage",
+            "feeding",
+            "predator",
+            "prey",
+            "habitat selection",
+            "competitor",
+            "rival",
+            "Migration",
+            "reproduction",
+            "mating",
+            "female&male",
+            "young&adult",
+            "breeding",
+            "hibernation",
+            "Mature",
+            "extinction",
+            "conservation",
+            "proliferate",
+            "endangered",
+            "invasion species",
+            "10.Communication",
+            "navigation: sense of hearing",
+            "auditory",
+            "smell",
+            "vision",
+            "sight",
+            "touching"
+          ]
+        },
+        {
+          "nameZh": "Others",
+          "name": "other topics",
+          "terms": [
+            "intelligence",
+            "cognition",
+            "ecosystem",
+            "humid",
+            "moist"
+          ]
+        },
+        {
+          "nameZh": "Material &chemistry",
+          "name": "materials and chemistry",
+          "terms": []
+        },
+        {
+          "nameZh": "Metal",
+          "name": "metals",
+          "terms": [
+            "gold",
+            "silver",
+            "bronze",
+            "copper",
+            "brass",
+            "iron",
+            "tin",
+            "zinc",
+            "stainless steel",
+            "mercury",
+            "lead",
+            "heavy metals",
+            "2.Toxin",
+            "poison",
+            "solid",
+            "liquid",
+            "gas",
+            "waterproof",
+            "soundproof",
+            "lightproof"
+          ]
+        },
+        {
+          "nameZh": "Textile",
+          "name": "textiles",
+          "terms": [
+            "fabric",
+            "cloth",
+            "cotton",
+            "silk",
+            "wool",
+            "fiber",
+            "fur",
+            "nylon",
+            "leather",
+            "feather"
+          ]
+        },
+        {
+          "nameZh": "Building",
+          "name": "building materials",
+          "terms": [
+            "soil",
+            "erosion",
+            "sandstone",
+            "concrete",
+            "cement",
+            "plaster",
+            "lime",
+            "ceramic",
+            "pottery",
+            "clay",
+            "volcanic ash",
+            "foam",
+            "tile",
+            "marble",
+            "5.Plastic",
+            "glass",
+            "paper",
+            "wood",
+            "rubber",
+            "timber"
+          ]
+        },
+        {
+          "nameZh": "Fuel",
+          "name": "fuels",
+          "terms": [
+            "fossil fuel",
+            "gas",
+            "oil",
+            "coal",
+            "firewood",
+            "gasoline",
+            "petrol",
+            "fertilizer",
+            "mineral"
+          ]
+        },
+        {
+          "nameZh": "Gas",
+          "name": "gases and agriculture",
+          "terms": [
+            "oxygen",
+            "carbon dioxide",
+            "monoxide",
+            "irrigation system",
+            "salt",
+            "flooding"
+          ]
+        },
+        {
+          "nameZh": "Shape",
+          "name": "shapes",
+          "terms": [
+            "circle",
+            "circular",
+            "square",
+            "rectangular",
+            "diamond",
+            "triangle",
+            "round",
+            "straight",
+            "curved",
+            "string",
+            "lead"
+          ]
+        },
+        {
+          "nameZh": "Business &Marketing &Technology",
+          "name": "business, marketing and technology",
+          "terms": [
+            "1.Company",
+            "organization",
+            "corporate",
+            "2.Competition&cooperation",
+            "follower &leader",
+            "supply &demand",
+            "3.Employee",
+            "staff",
+            "worker",
+            "individual-employer",
+            "manager",
+            "leader",
+            "boss",
+            "4.Money",
+            "fund",
+            "finance",
+            "capital",
+            "budget",
+            "expense",
+            "expenditure",
+            "cost",
+            "low-risk",
+            "investment",
+            "tax",
+            "taxation",
+            "interest rate",
+            "5.Market share",
+            "illegal profit",
+            "innovation",
+            "sale",
+            "retail",
+            "outlets",
+            "promotion",
+            "实验类文章结构 experiment、research、survey、investigation",
+            "Researcher-where（laboratory、wild）-purpose、aim、goal",
+            "Hypothesis、theory、assumption",
+            "Tool、equipment、stage、phase、step、subject",
+            "Way、method、approach",
+            "Conclusion-problem、limitation-inconclusive",
+            "Rule out the other possibilities",
+            "雅思听力逻辑关系词"
+          ]
+        }
+      ]
+    }
+  ],
+  "discourseMarkers": [
+    {
+      "id": "adversative",
+      "name": "Adversative (contrast)",
+      "nameZh": "转折关系",
+      "pattern": "A but B",
+      "markers": [
+        "But",
+        "however",
+        "yet",
+        "whereas",
+        "in fact",
+        "as a matter of fact",
+        "by contrast",
+        "while",
+        "despite on",
+        "on the other hand"
+      ]
+    },
+    {
+      "id": "concessive",
+      "name": "Concessive",
+      "nameZh": "让步关系",
+      "pattern": "A although B",
+      "markers": [
+        "Although",
+        "though",
+        "rather than"
+      ]
+    },
+    {
+      "id": "causal",
+      "name": "Causal",
+      "nameZh": "因果关系",
+      "pattern": "A because B",
+      "markers": [
+        "Because",
+        "so",
+        "since",
+        "as",
+        "therefore",
+        "consequently",
+        "thus"
+      ]
+    },
+    {
+      "id": "additive",
+      "name": "Additive (coordination)",
+      "nameZh": "并列关系",
+      "pattern": "A and B",
+      "markers": [
+        "And",
+        "or",
+        "as well as",
+        "also",
+        "either…or",
+        "neither…nor…",
+        "not only…but also"
+      ]
+    },
+    {
+      "id": "sequential",
+      "name": "Sequential",
+      "nameZh": "表顺序或序列关系的词",
+      "pattern": "first, second, and then",
+      "markers": [
+        "First",
+        "second",
+        "and then",
+        "another"
+      ]
+    },
+    {
+      "id": "enumerative",
+      "name": "Enumerative and supplementary",
+      "nameZh": "其他表示列举增补关系的",
+      "pattern": "besides, moreover, in addition",
+      "markers": [
+        "And",
+        "besides",
+        "moreover",
+        "in addition to",
+        "what’s more",
+        "also",
+        "such as",
+        "like",
+        "similarly"
+      ]
+    },
+    {
+      "id": "explanatory",
+      "name": "Explanatory and emphatic",
+      "nameZh": "表解释或强调关系的",
+      "pattern": "refer to, I mean, that is to say",
+      "markers": [
+        "Refer to",
+        "I mean",
+        "that is to say",
+        "another way of saying",
+        "equally"
+      ]
+    },
+    {
+      "id": "conclusive",
+      "name": "Conclusive (closing a passage)",
+      "nameZh": "表归纳结论性的",
+      "pattern": "in conclusion, to sum up",
+      "markers": [
+        "In conclusion",
+        "in summary",
+        "lastly",
+        "finally",
+        "to sum up",
+        "in short",
+        "as a result",
+        "altogether",
+        "overall"
+      ]
+    }
+  ],
+  "stats": {
+    "scenarios": 12,
+    "scenarioTerms": 790,
+    "discourseClasses": 8,
+    "discourseMarkers": 54
+  }
+}

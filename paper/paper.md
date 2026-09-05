@@ -124,7 +124,44 @@ sentences are.
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
-# Design
+**Listening vocabulary.** A third upstream collection [@ieltsstudy] — a personal dump of
+Chinese-market preparation material — contains two listening handouts whose word lists this work
+derives into a machine-readable resource. The paraphrase handout's 79 sense groups (459 terms
+across verb, adjective/adverb and noun sections) are kept verbatim with original English sense
+glosses, and its five-mechanism replacement typology (word-family, cross-part-of-speech,
+polarity, hyponymy, abstract-concrete) is published as a classification with original
+descriptions; the scenario handout contributes 12 listening scenarios with 790 nested lexical
+items and 8 discourse-relation classes with 54 signal markers. Word lists are facts, and only
+facts are kept: no handout text, example sentence or explanation is redistributed.
+
+**Recalled writing prompts.** The same collection's recall workbook ("机经") records 235 annotated
+rows from computer-delivered Writing Task 2 sessions between 2024-12-01 and 2025-01-31, which
+collapse to 232 unique prompts, three of them recalled twice. Each prompt carries the preparer's
+question type normalised onto the five canonical essay families, a verbatim theme label with an
+English gloss and, where an unambiguous counterpart exists, a cross-reference into the theme
+taxonomy; the compiler's difficulty stars are parsed by content rather than by column, and the
+cleaning audit (`skippedRows`, secondary-theme counts, column list) is published in the dataset
+metadata. The aggregate is, to this project's knowledge, the only open quantification of a
+computer-delivered IELTS writing season: opinion essays dominate at 51.7% (92 of 232
+agree/disagree plus 28 positive-negative), education (56), daily life (45) and technology (40) lead
+the themes. The dataset metadata states the construct validity caveat in plain text: recall
+frequency is a property of the recall community, not of the live examination.
+
+**Speaking season structure.** The deck classifying the September-December 2025 speaking season is
+extracted as structure only: 76 Part 2 cue cards represented by short titles and prompt first
+lines, classified along the two axes the preparation market tracks — the four canonical content
+categories (16 person, 25 object, 26 event, 9 place) and rotation status (27 new, 49 retained) —
+plus 18 Part 1 topic sets with 79 questions and, from the companion crowd bank, 22 further Part 2
+cards with 111 counted Part 3 follow-up questions; ten title-level cross-references link the two
+sources. Season-rotation structure of this kind is what makes within-season and cross-season
+comparison studies possible without reproducing a single copyrighted cue card.
+
+**Rhetorical move structures.** The collection's writing framesheets teach two Task 1 paragraphing
+algorithms — static charts grouped by magnitude and narrated as ranking, dynamic charts grouped by
+trajectory and narrated as trends — and one Task 2 concession-rebuttal macro-structure reusable
+across the opinion, discussion and advantage/disadvantage families. These are encoded as three
+move structures with ordered moves and companion lexical inventories, in the tradition of
+genre-based move analysis [@swales1990], with all wording original to this project.
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
 compression are implemented directly on `node:http` and `node:zlib`. This removes supply-chain risk,
@@ -139,13 +176,16 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (341 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (425 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
-integration re-derives the vocabulary dataset from the upstream workbook, and revalidates the
+integration re-derives the vocabulary dataset from the upstream workbook, revalidates the
 internal consistency of the practice-test index (question counts, type normalisation and provenance),
-failing if the committed data has drifted — which guards against silent data rot.
+and re-derives the three study-collection datasets from five upstream blobs pinned by SHA-1,
+failing if the committed data has drifted — which guards against silent data rot. The OpenAPI
+document is regenerated from the live route table in the same job and the build fails if the
+published document is stale.
 
 # Availability
 
@@ -156,9 +196,11 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 # Acknowledgements
 
-This work builds on the open corpus assembled by `zhengyishiming` and on the practice collection
-assembled by `ngoclong1209`; both are cited in `CITATION.cff` and in every response that draws on
-them. IELTS is a jointly owned trademark of the
+This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
+assembled by `ngoclong1209` and on the study-material collection assembled by `Oxidaner`; all three
+are cited in `CITATION.cff` and in every response that draws on them. The derived listening
+vocabulary, recall index and season structure keep only unprotectable structure — word lists,
+classifications, counts — and credit the preparers whose classroom material made them legible. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

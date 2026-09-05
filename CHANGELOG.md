@@ -6,6 +6,62 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+Third dataset family: the study-material collection
+[`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) — a large Chinese-language dump of IELTS
+preparation material (listening handouts, recalled exam prompts, speaking decks) — is studied and
+folded in as four derived, non-substitutive datasets. As with the earlier families, no source
+document is redistributed: word lists, classification structure and the short factual record of
+recalled prompts only.
+
+### Added
+
+- **Listening vocabulary resource** (`data/listening-words.json`): 79 same-meaning replacement
+  ("paraphrase") groups with 459 interchangeable terms across verb, adjective/adverb and noun
+  sections, each with an original English sense gloss; a five-mechanism paraphrase typology
+  (word-family, cross-part-of-speech, polarity, hyponymy, abstract-concrete); 12 listening
+  scenarios with nested lexical fields (790 terms); and 8 discourse-relation classes with 54 signal
+  markers. Endpoints: `/v1/paraphrases`, `/v1/paraphrases/mechanisms`, `/v1/paraphrases/:id`,
+  `/v1/scenarios`, `/v1/scenarios/discourse-markers`, `/v1/scenarios/discourse-markers/:id`,
+  `/v1/scenarios/:id`.
+- **Recalled writing-prompt index** (`data/writing-recall.json`): 232 unique Writing Task 2 prompts
+  crowd-recalled from computer-delivered sessions between 2024-12-01 and 2025-01-31 (235 rows), each
+  with the preparer's question type normalised onto the canonical essay families, a verbatim theme
+  label with an English gloss and a cross-reference to the theme groups of `/v1/topics/themes`,
+  difficulty stars, and recurrence counts (3 prompts recalled twice). Endpoints:
+  `/v1/writing/recall`, `/v1/writing/recall/:id`.
+- **Speaking question-season structure** (`data/speaking-bank.json`): the September-December 2025
+  season with 76 Part 2 cue cards classified by the four canonical content categories (16 person /
+  25 object / 26 event / 9 place) and rotation status (27 new / 49 retained), 18 Part 1 topic sets
+  with 79 questions, the 22-card crowd-bank Part 2 index with 111 Part 3 follow-up counts, and 10
+  title-level cross-references between deck and bank. Endpoints: `/v1/speaking/bank`,
+  `/v1/speaking/bank/cue-cards`, `/v1/speaking/bank/cue-cards/:id`, `/v1/speaking/bank/part3`.
+- **Rhetorical move structures**: three reusable writing structures — Task 1 static-chart
+  comparison, Task 1 dynamic-chart trend narration, and the Task 2 concession-rebuttal essay
+  reusable across the opinion, discussion and advantage/disadvantage families — each with ordered
+  moves, guidance and a companion lexical inventory. Endpoints: `/v1/writing/move-structures`,
+  `/v1/writing/move-structures/:id`.
+- `scripts/_pdfmin.py`: a standard-library-only PDF text extractor for the FlateDecode +
+  Identity-H + RC4 (revision 4, empty user password) subset that office software emits, including
+  ToUnicode CMap parsing and advance widths read from the embedded TrueType `hmtx` table — the
+  extraction pipeline needs no poppler, no pypdf and no pip install.
+- `scripts/extract_listening_words.py`, `scripts/extract_writing_recall.py`,
+  `scripts/extract_speaking_bank.py`: deterministic, standard-library-only derivation of the three
+  new datasets, with content-classified cell parsing for the mis-aligned recall workbook.
+- `scripts/gen-openapi.mts`: regenerates `docs/openapi.json` from the live route table; CI now
+  fails when the published document is stale.
+- RESEARCH.md Part III: the study-collection analysis, the paraphrase mechanism typology, the
+  season-rotation findings and the threats to validity (recall bias in particular).
+
+### Changed
+
+- The OpenAPI document, the README dataset and endpoint tables, the `/docs` front page and the
+  dataset index cover the new datasets and routes.
+- CI re-derives all six datasets from pinned upstream blobs and fails on drift.
+- Test suite grown to 425 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection

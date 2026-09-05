@@ -122,9 +122,59 @@ jobs:
           print(f"dataset reproducible: {regenerated['meta']['words']} words")
           PY
 
+      # The study-skill datasets are derived from pinned blobs of the
+      # Oxidaner/ielts study-material collection (commit 738c6082):
+      # paraphrase handout, scenario handout, writing-recall workbook,
+      # speaking deck and speaking bank. A moved or edited upstream file
+      # fails loudly here, which is the point: the committed datasets must
+      # stay byte-reproducible from their sources.
+      - name: Re-derive the study-skill datasets from the upstream collection
+        run: |
+          fetch_blob() {
+            curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+              -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+              "https://api.github.com/repos/Oxidaner/ielts/git/blobs/$1" -o "$2"
+          }
+          fetch_blob ffb74719ca2294780fc8ab8933e9f35a9e4502a2 /tmp/paraphrases.pdf
+          fetch_blob 54f3b0c8bf5ca55fe0b8e1cfac15a436938901e8 /tmp/scenarios.pdf
+          fetch_blob a0ded41f6b50a487d6ac4f6cd4dab34b33b9a1fa /tmp/writing-recall.xlsx
+          fetch_blob 087a2e478ee712ab86a910686b3b1125d388bb79 /tmp/speaking-deck.docx
+          fetch_blob 28a27e2e827e9536d75546c5d15b1a3ed713b12d /tmp/speaking-bank.md
+          python3 scripts/extract_listening_words.py /tmp/paraphrases.pdf /tmp/scenarios.pdf /tmp/listening-words.json
+          python3 scripts/extract_writing_recall.py /tmp/writing-recall.xlsx /tmp/writing-recall.json
+          python3 scripts/extract_speaking_bank.py /tmp/speaking-deck.docx /tmp/speaking-bank.md /tmp/speaking-bank.json
+          python3 - <<'PY'
+          import json
+          for name in ('listening-words', 'writing-recall', 'speaking-bank'):
+              committed = json.load(open(f'data/{name}.json'))
+              regenerated = json.load(open(f'/tmp/{name}.json'))
+              assert committed == regenerated, f'data/{name}.json is out of date'
+              print(f'{name}.json reproducible')
+          PY
+
+      - name: Regenerate the OpenAPI document and verify it is current
+        run: |
+          npm ci
+          npx tsx scripts/gen-openapi.mts
+          git diff --exit-code docs/openapi.json || {
+            echo '::error::docs/openapi.json is stale; run `npx tsx scripts/gen-openapi.mts` and commit'
+            git diff docs/openapi.json | head -40
+            exit 1
+          }
+
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); print('datasets are valid JSON')"
+          python3 - <<'PY'
+          import json
+
+          datasets = (
+              'vocabulary', 'corpus', 'practice-tests',
+              'listening-words', 'writing-recall', 'speaking-bank',
+          )
+          for name in datasets:
+              json.load(open(f'data/{name}.json'))
+          print(f'{len(datasets)} datasets are valid JSON')
+          PY
 
       - name: Check the practice-test index for internal consistency
         run: |

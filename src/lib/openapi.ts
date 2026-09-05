@@ -6,8 +6,11 @@
  */
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
+import { CARD_CATEGORIES, CARD_STATUSES } from '../data/speakingBank.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { PARAPHRASE_PARTS_OF_SPEECH } from '../data/listeningWords.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
+import { RECALL_FAMILIES, RECALL_THEMES, RECALL_TYPES } from '../data/writingRecall.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
@@ -223,6 +226,97 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/paraphrases': [
+    QUERY,
+    {
+      name: 'pos',
+      in: 'query',
+      description: 'Part-of-speech section of the source sheet.',
+      schema: { type: 'string', enum: [...PARAPHRASE_PARTS_OF_SPEECH] },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['id', 'terms'], default: 'id' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/scenarios': [
+    QUERY,
+    {
+      name: 'section',
+      in: 'query',
+      description: 'Listening section the scenario typically occurs in.',
+      schema: { type: 'integer', enum: [1, 2, 3, 4] },
+    },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/scenarios/:id': [QUERY],
+  '/v1/writing/recall': [
+    QUERY,
+    {
+      name: 'type',
+      in: 'query',
+      description: 'Normalised recalled question type.',
+      schema: { type: 'string', enum: [...RECALL_TYPES] },
+    },
+    {
+      name: 'family',
+      in: 'query',
+      description: 'Essay family of the normalised type.',
+      schema: { type: 'string', enum: [...RECALL_FAMILIES] },
+    },
+    {
+      name: 'theme',
+      in: 'query',
+      description: 'Thematic label, verbatim from the source sheet.',
+      schema: { type: 'string', enum: [...RECALL_THEMES] },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['id', 'difficulty', 'occurrences'], default: 'id' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/writing/move-structures': [
+    {
+      name: 'applies-to',
+      in: 'query',
+      description: 'Substring match against the families a structure serves.',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/speaking/bank': [QUERY],
+  '/v1/speaking/bank/cue-cards': [
+    QUERY,
+    {
+      name: 'category',
+      in: 'query',
+      description: 'Content category of the cue card.',
+      schema: { type: 'string', enum: [...CARD_CATEGORIES] },
+    },
+    {
+      name: 'status',
+      in: 'query',
+      description: 'Rotation status inside the season.',
+      schema: { type: 'string', enum: [...CARD_STATUSES] },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['id', 'prompt'], default: 'id' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/speaking/bank/part3': [QUERY],
 };
 
 /** The shared JSON envelope schema. */
@@ -321,7 +415,13 @@ export function openApiDocument(
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, a structure and readability',
-        'index of 1,702 practice tests, and an index of the open IELTS research corpus.',
+        'index of 1,702 practice tests, an index of the open IELTS research corpus,',
+        'a derived listening vocabulary resource (79 paraphrase groups, 12 scenario',
+        'lexical fields, 8 discourse-relation classes), a crowd-recalled Writing',
+        'Task 2 prompt index from the Dec 2024 - Jan 2025 computer-based season',
+        '(232 prompts), the September-December 2025 speaking question-season',
+        'structure (76 classified cue cards), and rhetorical move structures for',
+        'the writing paper.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

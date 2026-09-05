@@ -3,14 +3,15 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Three independent upstream collections are analysed:
 
-| Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
-| [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| Part                                                 | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                              |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)               | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                                 |
+| [Part II](#part-ii--the-practice-test-collection)    | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                            |
+| [Part III](#part-iii--the-study-material-collection) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, ~450 MB     | the listening vocabulary resource, the recalled writing-prompt index, the speaking season structure and the move structures |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+None of the three collections is redistributed. All three are indexed, measured and cited.
 
 ## Part I — the research corpus
 
@@ -328,3 +329,120 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 
 The script is standard library only and deterministic: the same tree and the same files always
 produce byte-identical output.
+
+## Part III — the study-material collection
+
+### 13. What the collection contains
+
+[`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) is a personal study dump in the classic
+Chinese-preparation style: roughly 450 MB of PDF, DOCX and XLSX files across three directories —
+作文 (writing), 口语 (speaking) and 听力 (listening) — assembled from teachers' handouts, crowd
+question banks and exam-recall ("机经") sheets. Nothing in it is machine-readable in its published
+form, and everything in it is unlicensed third-party teaching material. It is nonetheless a
+research-grade record of how the preparation market teaches the test, and of what candidates
+believed the test was asking between December 2024 and December 2025.
+
+Four extractions fold it into the API, each keeping only what copyright does not protect — word
+lists, classification structure, and the short factual record of recalled prompts:
+
+| Extraction                      | Upstream files                                                             | Dataset                     |
+| ------------------------------- | -------------------------------------------------------------------------- | --------------------------- |
+| Listening vocabulary            | two "IELTS Listening Words" handouts by the preparer Sherry                | `data/listening-words.json` |
+| Recalled Writing Task 2 prompts | `2024.12.1-2025.1.31 BC机考大作文机经整理by橙.xlsx`                        | `data/writing-recall.json`  |
+| Speaking season structure       | the 2025-09/12 classification deck and the crowd question bank             | `data/speaking-bank.json`   |
+| Rhetorical move structures      | the Task 1 chart framesheets and the Task 2 concession-rebuttal framesheet | encoded in TypeScript       |
+
+### 14. The listening vocabulary resource
+
+The two handouts are word lists, and word lists are facts. The paraphrase handout organises
+interchangeable expressions into sense groups under three part-of-speech headings; the extraction
+keeps all **79 groups** (30 verb, 30 adjective/adverb, 19 noun) with **459 terms**, verbatim,
+including the source's spacing quirks and its numbering gap from verb 29 to verb 39. Each group
+carries an English sense gloss written for this project, so a non-Chinese-reading researcher can use
+the resource; the glosses are marked as original translations in the dataset metadata. The
+handout's own introduction classifies the replacements into five mechanisms — word-family
+substitution, cross-part-of-speech equivalence, affirmation/negation, hypernym/hyponym, and
+abstract/concrete — which the API publishes as a typology with original descriptions.
+
+The scenario handout maps the listening paper's recurrent situations (form-filling, housing,
+banking, travel, employment, course work, Section 4 lectures, map tasks). The extraction keeps
+**12 scenarios**, their nested lexical fields (**790 terms**), each scenario's typical sections, and
+the handout's final page: **8 discourse-relation classes** (adversative, concessive, causal,
+additive, sequential, enumerative, explanatory, conclusive) with **54 signal markers**, kept
+verbatim, including the source's "despite on" typo.
+
+### 15. The recalled writing-prompt index
+
+The recall workbook records 235 annotated rows from computer-delivered sessions between 2024-12-01
+and 2025-01-31, which collapse to **232 unique prompts** (three prompts were recalled twice —
+already a small recurrence signal inside a single two-month window). The sheet's header row promises
+date, score and the four writing criteria, but no row uses them: the compiler stopped annotating
+after the difficulty column, and the difficulty stars land in either the "Secondary Theme" or the
+"Difficulty" column depending on the row. The parser therefore classifies trailing cells by
+content — a run of ★ is a rating, a thematic label is a secondary theme — and publishes the audit
+trail (`skippedRows`, `withSecondaryTheme`, column list) in the dataset metadata.
+
+Two normalisations make the index joinable with the rest of the API. The preparer's question-type
+labels (`agree`, `positive`, `advantage`, `Discuss Both Sides`, `Double Question`) are mapped onto
+five canonical types and then onto the essay families of `/v1/topics/writing`; the thematic labels
+(教育类, 环境类, …) keep their verbatim form and gain an English gloss plus a cross-reference to the
+theme groups of `/v1/topics/themes` where an unambiguous counterpart exists (`政府类`, `媒体类` and
+`语言类` have none, and are published with a `null` group rather than a forced match).
+
+The headline distribution over the 232 unique prompts: 51.7% are opinion essays (92
+agree/disagree plus 28 positive-negative), 26.3% discuss both views, 14.2% are two-part questions
+and 7.8% advantage/disadvantage; education (56), daily life (45), technology (40), environment (30)
+and economy (30) lead the themes; the difficulty mode is ★★ (92 prompts). `stats` additionally
+publishes the same tallies over all 235 rows, repeats included.
+
+### 16. The speaking question-season structure
+
+The deck classifies every Part 2 cue card of the September–December 2025 season along the two axes
+the preparation market actually tracks: the four canonical content categories (person, object,
+event, place) and rotation status (newly introduced vs. retained). The extraction keeps **76
+cards** — 16 person, 25 object, 26 event, 9 place; 27 new, 49 retained — represented by their short
+titles and prompt first lines only. The companion crowd bank contributes **18 Part 1 topic sets**
+(79 questions) and, for its 22 Part 2 cards, **111 Part 3 follow-up questions** counted per card.
+Ten cards appear in both sources by title, which gives a small validation overlap: the deck and the
+bank agree that the season's centre of gravity is objects and events, with places sharply
+under-represented among new cards.
+
+### 17. The rhetorical move structures
+
+The writing framesheets teach two Task 1 paragraphing algorithms — static charts are grouped by
+magnitude and narrated as ranking; dynamic charts are grouped by trajectory and narrated as trends —
+and one Task 2 macro-structure, concession–rebuttal, reusable across the agree/disagree,
+advantage/disadvantage and discuss-both-views families. The API encodes these as three move
+structures with ordered moves, original guidance wording and companion lexical inventories, in the
+tradition of genre-based move analysis. All wording is original to this project; the structures
+describe the pedagogy, they do not reproduce the framesheets.
+
+### 18. Threats to validity (Part III)
+
+- **Recall is not the test.** 机经 collections under-report (not every question is recalled,
+  remembered or submitted) and over-sample (recalled sessions cluster in high-volume test centres
+  and weeks). Every frequency computed over `/v1/writing/recall` is a property of the recall
+  community, not of the live examination; the dataset metadata says so in `note`.
+- **Preparer judgements, not measurements.** The difficulty stars and thematic labels are one
+  compiler's judgements. They are published verbatim with an audit trail, not endorsed.
+- **Titles as identifiers.** Speaking cards are keyed by their Chinese short titles; deck and bank
+  titles are matched exactly, so the 10 cross-references are a lower bound on the true overlap.
+- **Unlicensed upstream.** The handouts circulate without licence terms. The derivation keeps only
+  unprotectable structure — word lists, classifications, counts — and every dataset carries the
+  provenance and the preparer's attribution.
+- **The snapshot is mutable.** The upstream repository has no tags; CI pins five blob SHAs at commit
+  `738c6082` and re-derives the three datasets byte-identically on every push.
+
+### 19. Reproducing Part III
+
+```bash
+# Fetch the five pinned files of the upstream collection (blob SHAs in .github/workflows/ci.yml).
+python3 scripts/extract_listening_words.py paraphrases.pdf scenarios.pdf data/listening-words.json
+python3 scripts/extract_writing_recall.py writing-recall.xlsx data/writing-recall.json
+python3 scripts/extract_speaking_bank.py speaking-deck.docx speaking-bank.md data/speaking-bank.json
+```
+
+The PDF extraction needs no external tooling: `scripts/_pdfmin.py` implements the RC4 (revision 4,
+empty user password) decryption, the ToUnicode CMap parsing and the TrueType `hmtx` width lookup
+that these office-exported PDFs require, in standard-library Python. Every script is deterministic;
+the same inputs always produce byte-identical output, which is what CI asserts.

@@ -3,8 +3,8 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, and an indexed open research corpus.",
-  "version": "1.1.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a derived listening vocabulary resource (79 paraphrase sense groups, 12 scenario lexical fields, 8 discourse-relation classes), an index of 232 crowd-recalled computer-based Writing Task 2 prompts from the December 2024 to January 2025 season, the classification structure of the September to December 2025 speaking question season, and three rhetorical move structures for the writing paper.",
+  "version": "1.2.0",
   "dateCreated": "2026-09-04",
   "datePublished": "2026-09-05",
   "programmingLanguage": [
@@ -32,7 +32,11 @@
     "CEFR",
     "open data",
     "REST API",
-    "TypeScript"
+    "TypeScript",
+    "paraphrase",
+    "move analysis",
+    "question recall",
+    "scenario vocabulary"
   ],
   "author": [
     {

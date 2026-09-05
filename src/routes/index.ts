@@ -8,12 +8,16 @@
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
 import { createMetaRoutes } from './meta.js';
+import { paraphraseRoutes } from './paraphrases.js';
 import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
+import { scenarioRoutes } from './scenarios.js';
 import { scoreRoutes } from './scores.js';
+import { speakingBankRoutes } from './speakingBank.js';
 import { testRoutes } from './tests.js';
 import { topicRoutes } from './topics.js';
 import { vocabularyRoutes } from './vocabulary.js';
+import { writingRecallRoutes } from './writingRecall.js';
 
 import type { RouteDefinition } from '../lib/route.js';
 
@@ -27,6 +31,10 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...testRoutes,
   ...corpusRoutes,
   ...resourceRoutes,
+  ...paraphraseRoutes,
+  ...scenarioRoutes,
+  ...writingRecallRoutes,
+  ...speakingBankRoutes,
 ];
 
 /** Every route served by the API. */

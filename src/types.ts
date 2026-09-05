@@ -455,3 +455,197 @@ export type RouteInfo = {
   /** Whether the route is part of the versioned `/v1` contract. */
   versioned: boolean;
 };
+
+/* -------------------------------------------------------------------------- */
+/* Writing move structures                                                    */
+/* -------------------------------------------------------------------------- */
+
+/** Task variants a move structure applies to. */
+export type MoveStructureId =
+  'writing-task-1-static' | 'writing-task-1-dynamic' | 'writing-task-2-concession-rebuttal';
+
+/** One rhetorical move: what it does and how to execute it. */
+export type RhetoricalMove = {
+  /** Stable move label. */
+  label: string;
+  /** What the move accomplishes in the answer. */
+  purpose: string;
+  /** How to execute the move, as ordered guidance. */
+  guidance: string[];
+};
+
+/** One lexical field of the move structure's companion inventory. */
+export type LexiconField = {
+  /** Category of the field (e.g. "rise verbs"). */
+  category: string;
+  /** Items of the field. */
+  items: string[];
+};
+
+/** One reusable rhetorical structure. */
+export type MoveStructure = {
+  /** Stable identifier. */
+  id: MoveStructureId;
+  /** Human-readable name. */
+  name: string;
+  /** Question families the structure serves. */
+  appliesTo: string[];
+  /** When to choose this structure. */
+  description: string;
+  /** Ordered moves of the structure. */
+  moves: RhetoricalMove[];
+  /** Companion lexical inventory, when the structure has one. */
+  lexicon?: LexiconField[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Listening vocabulary resource                                              */
+/* -------------------------------------------------------------------------- */
+
+/** Part of speech of a paraphrase group, as published in the source sheet. */
+export type ParaphrasePos = 'verb' | 'adj/adv' | 'noun';
+
+/** One same-meaning replacement group of the listening paraphrase resource. */
+export type ParaphraseGroup = {
+  /** Stable identifier (`verb-01`, `adj/adv-17`, `noun-05`). */
+  id: string;
+  /** Part-of-speech section the group appears under. */
+  pos: ParaphrasePos;
+  /** Number the group carries in the source sheet (gaps preserved). */
+  sourceNumber: number;
+  /** Chinese sense label of the group, verbatim from the source. */
+  sense: string;
+  /** English gloss of the sense, translated for this project (required of every group). */
+  gloss: string;
+  /** Interchangeable terms of the group, verbatim from the source. */
+  terms: string[];
+};
+
+/** One paraphrase mechanism the source sheet's introduction describes. */
+export type ParaphraseMechanism = {
+  id: string;
+  name: string;
+  description: string;
+  example: string;
+};
+
+/** One lexical category inside a listening scenario. */
+export type ScenarioCategory = {
+  /** Chinese label of the category, verbatim from the source. */
+  nameZh: string;
+  /** English name (original translation or the source label). */
+  name: string;
+  /** Terms of the lexical field, verbatim from the source. */
+  terms: string[];
+};
+
+/** One listening scenario with its lexical fields. */
+export type ListeningScenario = {
+  /** Stable identifier (`housing`, `banking`, `map-tasks`, ...). */
+  id: string;
+  /** Chinese section header, verbatim from the source. */
+  nameZh: string;
+  /** English scenario name, translated for this project. */
+  name: string;
+  /** Listening sections the scenario typically occurs in (1-4). */
+  typicalSections: number[];
+  /** Lexical fields of the scenario, in source order. */
+  categories: ScenarioCategory[];
+};
+
+/** One discourse-relation class with its signal markers. */
+export type DiscourseClass = {
+  /** Stable identifier (`adversative`, `causal`, ...). */
+  id: string;
+  /** English class name. */
+  name: string;
+  /** Chinese class label, verbatim from the source. */
+  nameZh: string;
+  /** The relation pattern the class realises (e.g. "A but B"). */
+  pattern: string;
+  /** Signal words and phrases, verbatim from the source. */
+  markers: string[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Recalled writing tasks                                                     */
+/* -------------------------------------------------------------------------- */
+
+/** Recalled question-type label, normalised from the upstream preparer's tags. */
+export type RecallType =
+  'agree-disagree' | 'positive-negative' | 'advantage-disadvantage' | 'discuss-both-views' | 'two-part';
+
+/** Essay family a recalled prompt belongs to (matches `/v1/topics/writing`). */
+export type RecallFamily = 'opinion' | 'discussion' | 'advantages-disadvantages' | 'two-part';
+
+/** One recalled Writing Task 2 prompt with its preparer annotations. */
+export type RecalledPrompt = {
+  /** Stable identifier (`wr-001`, ...). */
+  id: string;
+  /** Prompt text as recalled, whitespace-normalised. */
+  prompt: string;
+  /** Question-type label exactly as annotated upstream. */
+  rawType: string;
+  /** Normalised question type. */
+  type: RecallType;
+  /** Essay family of the normalised type. */
+  family: RecallFamily;
+  /** Thematic label, verbatim from the source. */
+  theme: string;
+  /** English gloss of the theme, translated for this project. */
+  themeGloss: string;
+  /** Theme group of `/v1/topics/themes` when the theme bank has a counterpart. */
+  themeGroup: string | null;
+  /** Secondary thematic label when the preparer recorded one. */
+  secondaryTheme: string | null;
+  /** Preparer difficulty rating in stars (1-3); unrated rows are excluded upstream. */
+  difficulty: number;
+  /** How many upstream rows recalled this prompt. */
+  occurrences: number;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Speaking question-season structure                                         */
+/* -------------------------------------------------------------------------- */
+
+/** Rotation status of a Part 2 cue card inside its season. */
+export type CardStatus = 'new' | 'retained';
+
+/** Content category of a Part 2 cue card (the four canonical kinds). */
+export type CardCategory = 'person' | 'object' | 'event' | 'place';
+
+/** One Part 1 topic set of the season's question bank. */
+export type SpeakingPart1Topic = {
+  /** Stable identifier (`p1-01`, ...). */
+  id: string;
+  /** Topic name, verbatim from the source bank. */
+  name: string;
+  /** Number of questions the topic set carries in the source bank. */
+  questions: number;
+};
+
+/** One Part 2 cue card of the season, classified. */
+export type SpeakingCard = {
+  /** Stable identifier (`sb-001`, ...). */
+  id: string;
+  /** Chinese short title that names the card, verbatim from the deck. */
+  titleZh: string;
+  /** First line of the cue ("Describe ..."), the card's key phrase. */
+  promptLine: string;
+  /** Content category of the card. */
+  category: CardCategory;
+  /** Rotation status of the card inside the season. */
+  status: CardStatus;
+};
+
+/** One Part 2 card of the crowd bank with its Part 3 follow-up count. */
+export type SpeakingBankCard = {
+  /** Stable identifier (`p2-01`, ...). */
+  id: string;
+  /** Chinese short title, matching the deck's key where possible. */
+  titleZh: string;
+  /** English title as parenthesised in the bank. */
+  titleEn: string;
+  /** Number of Part 3 follow-up questions listed for the card. */
+  followUps: number;
+};

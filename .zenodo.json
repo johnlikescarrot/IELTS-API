@@ -10,17 +10,24 @@
     }
   ],
   "keywords": [
-    "IELTS",
+    "CEFR",
     "English for Academic Purposes",
-    "second language assessment",
-    "vocabulary",
+    "IELTS",
+    "REST API",
     "band descriptors",
-    "score concordance",
+    "discourse markers",
+    "genre analysis",
+    "move analysis",
+    "open data",
+    "paraphrase",
+    "question recall",
     "question types",
     "readability",
-    "CEFR",
-    "open data",
-    "REST API"
+    "scenario vocabulary",
+    "score concordance",
+    "second language assessment",
+    "test preparation market",
+    "vocabulary"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -36,6 +43,11 @@
     },
     {
       "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/Oxidaner/ielts",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }
