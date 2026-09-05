@@ -6,6 +6,39 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+Third upstream collection: the self-study exam-recall archive
+[`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) is analysed and indexed. As with the other
+two collections, only derived structure and metadata are published — no cue-card wording, question
+text, passage, transcript, audio or answer value is redistributed.
+
+### Added
+
+- **Exam-season recall index** (`data/exam-recall.json`, 423 items): 18 Speaking Part 1 topics
+  (79 questions), all 76 Speaking Part 2 cue cards of the Sep-Dec 2025 season classified
+  (people / objects / events / places) and flagged new (27) vs. retained (49), 323 recalled reading
+  passages with part and recurrence tier across five seasonal snapshot collections, and 6 recalled
+  listening test sets (240 answers counted, 24 audio tracks) — each with bilingual titles where
+  published and full upstream provenance (path, blob SHA-1, permalink). Endpoints: `/v1/recall`,
+  `/v1/recall/stats`, `/v1/recall/items`, `/v1/recall/:id`.
+- `scripts/extract_exam_recall.py`: standard-library-only, deterministic extraction of the index
+  from the upstream tree listing, the seasonal speaking bank, the Part 2 category document and the
+  six listening answer keys.
+- `RESEARCH.md` Part III: the collection analysis (2,385 blobs, 93% of them PDFs and audio), the
+  seasonal speaking-bank census, the reading recurrence tiers and snapshot redundancy, the
+  listening key inventory, and the threats to validity that apply to all of it.
+- CI re-derives `data/exam-recall.json` from the live upstream collection on every push and fails
+  if the committed dataset has drifted; a consistency step cross-checks the index totals.
+
+### Changed
+
+- `/` and `/health` report the recall dataset sizes; `/docs` lists the new dataset and quick
+  reference parameters.
+- The OpenAPI document, the README dataset table, the endpoint index and the citation metadata
+  (`CITATION.cff`, `codemeta.json`, `.zenodo.json`) cover the new collection.
+- Test suite grown to 366 tests, still at 100% statement, branch, function and line coverage per file.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection
@@ -77,6 +110,7 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

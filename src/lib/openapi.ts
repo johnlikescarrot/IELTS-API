@@ -6,6 +6,13 @@
  */
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
+import {
+  RECALL_CATEGORIES,
+  RECALL_KINDS,
+  RECALL_SKILLS,
+  RECALL_STATUSES,
+  RECALL_TIERS,
+} from '../data/recall.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
@@ -217,6 +224,65 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/recall/items': [
+    QUERY,
+    {
+      name: 'kind',
+      in: 'query',
+      description: 'Comma-separated entry kinds.',
+      schema: { type: 'string', enum: [...RECALL_KINDS] },
+    },
+    {
+      name: 'skill',
+      in: 'query',
+      description: 'Comma-separated skills.',
+      schema: { type: 'string', enum: [...RECALL_SKILLS] },
+    },
+    {
+      name: 'collection',
+      in: 'query',
+      description: 'Comma-separated upstream collections.',
+      schema: { type: 'string' },
+    },
+    {
+      name: 'tier',
+      in: 'query',
+      description: 'Comma-separated recurrence tiers.',
+      schema: { type: 'string', enum: [...RECALL_TIERS] },
+    },
+    {
+      name: 'category',
+      in: 'query',
+      description: 'Comma-separated cue-card categories.',
+      schema: { type: 'string', enum: [...RECALL_CATEGORIES] },
+    },
+    {
+      name: 'status',
+      in: 'query',
+      description: 'Comma-separated cue-card statuses.',
+      schema: { type: 'string', enum: [...RECALL_STATUSES] },
+    },
+    {
+      name: 'season',
+      in: 'query',
+      description: 'Comma-separated exam-season labels.',
+      schema: { type: 'string' },
+    },
+    {
+      name: 'part',
+      in: 'query',
+      description: 'Comma-separated parts (1-3).',
+      schema: { type: 'string', example: '1,2' },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['id', 'title', 'questions', 'part'], default: 'id' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },
@@ -321,7 +387,9 @@ export function openApiDocument(
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, a structure and readability',
-        'index of 1,702 practice tests, and an index of the open IELTS research corpus.',
+        'index of 1,702 practice tests, an index of the open IELTS research corpus,',
+        'and an exam-season recall index of 423 items derived from a third open',
+        'self-study collection (metadata only).',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

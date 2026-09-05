@@ -32,7 +32,9 @@ IELTS preparation material [@coxhead2000]; a canonical taxonomy of the thirteen 
 Listening question types, onto which 65 free-text annotation labels are normalised, carrying the
 frequency of each family observed in 27,225 practice questions; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of two open IELTS collections.
+metadata indexes of three open IELTS collections, including an exam-season recall index of 423
+items: a seasonal speaking bank, recalled reading passages labelled by recurrence tier, and
+recalled listening tests [@ieltsrecall].
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -124,6 +126,23 @@ sentences are.
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
+**Exam-season recall index.** A third upstream collection [@ieltsrecall] is a candidate's archive of
+exam recall (机经) material: what test-takers remember from real sittings, organised by skill and by
+season. Of its 2,385 files, 93% are PDFs and audio; the machine-readable layer is five Markdown
+files and eight text files. The extraction pipeline indexes that layer into 423 items: 18 Speaking
+Part 1 topics (79 questions) and all 76 Speaking Part 2 cue cards of the September-December 2025
+season — classified into the four cue-card categories and split into cards that are new in the
+season (27) versus retained from earlier ones (49); 323 recalled reading passages across five
+overlapping monthly snapshot collections, each labelled with its passage part (P1-P3) and recurrence
+tier (197 high, 100 next, 26 unrated); and six recalled listening test sets of 40 answers each, the
+only ones upstream that ship machine-readable answer keys. Two properties make the index useful for
+research. First, it quantifies the _stability_ of the speaking bank: only 35.5% of cue cards rotate
+per season, and events dominate the new cards while places barely rotate. Second, it exposes the
+snapshot redundancy of reading recall: the same passage recurs across up to four monthly
+collections, which the index records as collection provenance instead of silently merging. As with
+the other collections, only derived structure and metadata are published — titles, counts,
+categories and provenance; never cue-card wording, question text, passages or answer values.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
@@ -139,13 +158,14 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (341 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (366 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
-integration re-derives the vocabulary dataset from the upstream workbook, and revalidates the
-internal consistency of the practice-test index (question counts, type normalisation and provenance),
-failing if the committed data has drifted — which guards against silent data rot.
+integration re-derives the vocabulary dataset from the upstream workbook and the exam-recall index
+from the live recall collection, and revalidates the internal consistency of the practice-test index
+(question counts, type normalisation and provenance), failing if the committed data has drifted —
+which guards against silent data rot.
 
 # Availability
 
@@ -156,9 +176,10 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 # Acknowledgements
 
-This work builds on the open corpus assembled by `zhengyishiming` and on the practice collection
-assembled by `ngoclong1209`; both are cited in `CITATION.cff` and in every response that draws on
-them. IELTS is a jointly owned trademark of the
+This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
+assembled by `ngoclong1209`, and on the exam-recall archive assembled by `Oxidaner`; all three are
+cited in `CITATION.cff` and in every response that draws on them. IELTS is a jointly owned
+trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

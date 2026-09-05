@@ -3,10 +3,11 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, and an indexed open research corpus.",
-  "version": "1.1.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, and an exam-season recall index of 423 items.",
+  "version": "1.2.0",
   "dateCreated": "2026-09-04",
   "datePublished": "2026-09-05",
+  "dateModified": "2026-09-05",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",
@@ -30,6 +31,7 @@
     "question types",
     "readability",
     "CEFR",
+    "exam recall",
     "open data",
     "REST API",
     "TypeScript"
@@ -61,6 +63,24 @@
       "creator": {
         "@type": "Person",
         "name": "zhengyishiming"
+      }
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "UPGRADE YOUR IELTS SKILLS: a practice-test collection",
+      "url": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+      "creator": {
+        "@type": "Person",
+        "name": "ngoclong1209"
+      }
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "ielts: a self-study archive of IELTS exam recall material",
+      "url": "https://github.com/Oxidaner/ielts",
+      "creator": {
+        "@type": "Person",
+        "name": "Oxidaner"
       }
     }
   ]

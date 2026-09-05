@@ -3,14 +3,15 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Three independent upstream collections are analysed:
 
 | Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
 | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
 | [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
 | [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| [Part III](#part-iii--the-exam-recall-collection) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the exam-season recall index                                                     |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+No collection is redistributed. All three are indexed, measured and cited.
 
 ## Part I — the research corpus
 
@@ -328,3 +329,159 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 
 The script is standard library only and deterministic: the same tree and the same files always
 produce byte-identical output.
+
+## Part III — the exam-recall collection
+
+**Collection snapshot:** [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) ("自学笔记",
+self-study notes), commit `738c60828118f8f9d720e548b73245dd0fe70a30` (20 November 2025), 72 commits,
+single branch `main`, 2,385 blobs, no licence file.
+
+### 13. What the collection actually contains
+
+Where Part I is a flat dump of books and Part II is a subscription product, this collection is a
+candidate's working archive of **exam recall** (机经) — material remembered from real sittings and
+shared in study groups, organised by skill:
+
+| Directory | Skill     | Character                                             |
+| --------- | --------- | ----------------------------------------------------- |
+| `阅读/`   | reading   | 1,623 files: recalled passages in five HTML snapshots |
+| `听力/`   | listening | 722 files: audio, question PDFs, six answer keys      |
+| `作文/`   | writing   | 27 files: templates and vocabulary PDFs               |
+| `口语/`   | speaking  | 8 files: two machine-readable seasonal banks          |
+| `经验/`   | reports   | 2 files: experience reports                           |
+| root      | general   | 3 files: README, a link list, a personal roadmap note |
+
+The format mix tells the story: **1,282 PDFs and 370 MP3s out of 2,385 files**. Only 5 Markdown
+files and 8 text files are directly machine-readable; everything else is scanned material, audio or
+Office documents. 5.09 GB of bytes, and the analytically useful surface fits in under 300 KB.
+
+A second, qualitative observation: the collection is personal. The root carries a Java-to-AI career
+roadmap (`ai_dev_roadmap.md`) and a list of preparation websites (`网站链接.txt`) that belong to the
+owner's study workflow rather than to any exam content. The index classifies them as `general` and
+does not treat them as data.
+
+### 14. The seasonal speaking bank
+
+Two upstream files describe the **September-December 2025 speaking season**:
+
+1. `口语/神奇题库.md` (20,868 bytes) — the "question bank": 18 Part 1 topics with 79 questions, and
+   22 Part 2 cue cards each with bilingual titles and 121 Part 3 follow-up questions in total.
+2. `口语/2025年9-12月口语Part2按四大类分类新题+保留题.docx` (26,540 bytes) — the full Part 2 card
+   list for the season, classified into the four canonical cue-card categories and split into cards
+   that are **new** this season versus **retained** from earlier ones.
+
+The DOCX parses cleanly with a standard-library paragraph walk: section headers (`新题` / `保留题`),
+category headers (`人物` / `事物` / `事件` / `地点`) and card titles are distinguishable because
+titles are the only Chinese lines outside the known headers — cue-card wording itself is English.
+The result is the season's complete card census:
+
+| Category | New | Retained | All |
+| -------- | --: | -------: | --: |
+| people   |   5 |       11 |  16 |
+| objects  |   9 |       16 |  25 |
+| events   |  12 |       14 |  26 |
+| places   |   1 |        8 |   9 |
+| **All**  |  27 |       49 |  76 |
+
+Two findings follow. First, **the Part 2 bank is mostly stable**: only 27 of 76 cards (35.5%) are
+new in the season; candidates preparing with a previous season's bank keep 64.5% of their material.
+Second, **events dominate the new cards** (12 of 27) while places barely rotate (1 new of 9). The
+API publishes titles, categories, statuses and counts — the cue-card wording in the DOCX is exam
+content and is deliberately not redistributed.
+
+### 15. The reading snapshots and their recurrence tiers
+
+The `阅读/` tree holds **336 recalled reading passages as HTML**, organised as five overlapping
+snapshot collections:
+
+| Collection     | Season  | Articles | Organisation                                 |
+| -------------- | ------- | -------: | -------------------------------------------- |
+| `zyz-aug-2025` | 2025-08 |       68 | tiered folders plus a dated 22-article batch |
+| `beta-0-5-1`   | (beta)  |       87 | tiered folders                               |
+| `sept-2025`    | 2025-09 |       81 | P1/P2/P3 folders, 高频/次高频 tiers          |
+| `zyz-oct-2025` | 2025-10 |       81 | P1/P2/P3 folders with numbered articles      |
+| `zyz-nov-2025` | 2025-11 |        6 | loose passages and a single tiered folder    |
+
+The snapshots are **redundant by design**: each month re-uploads the current high-recurrence set, so
+the same passage (say, _A Brief History of Tea_) appears in four collections with identical blob
+content and slightly divergent file names. The index keeps one item per upstream file and records
+the collection, so the duplication is measurable instead of silently merged. Of the 336 HTML files,
+11 are `_comprehensive_backup` duplicates and 2 are the beta collection's web-application
+scaffolding; the remaining **323 are indexed**.
+
+Two structural facets survive normalisation:
+
+- **Part** — every passage is labelled P1, P2 or P3 from its path (96 / 104 / 123 articles).
+- **Tier** — the recurrence label recorded in the folder names: 197 `high` (高频), 100 `next`
+  (次高频), 26 unrated. The `background` (背景) tier that the collection's folder names advertise
+  (`[88篇+8背景]`, `[182篇+32背景]`) never materialises as HTML in the tree — background articles
+  exist only as PDFs there — which the index reports honestly rather than inventing.
+
+Titles are derived from the article directory or file name, split into English and Chinese parts at
+the first CJK character, with upstream noise markers (`【高】`, `(躺)`, `(网页由…制作)`, date stamps,
+`✅`) stripped. No passage text is read, indexed or served.
+
+### 16. The listening recall sets
+
+The listening material is dominated by audio: 370 MP3 files across the `小黑屋` drill sections, the
+`nmll` part 3/4 packs and six complete recalled tests. Only those six tests ship a
+machine-readable answer key (`听力/听力/keys_*.txt`):
+
+| Set     | Answers | Audio tracks | Question paper          |
+| ------- | ------: | -----------: | ----------------------- |
+| TE2.2   |      40 |            4 | `听力/听力/2.2.pdf`     |
+| TE2.3   |      40 |            4 | `听力/听力/2.3.pdf`     |
+| TE2.4   |      40 |            4 | `听力/听力/2.4.pdf`     |
+| TE2.5   |      40 |            4 | `听力/听力/2.5.pdf`     |
+| TE2.6   |      40 |            4 | `听力/听力/2.6.pdf`     |
+| 241123L |      40 |            4 | `听力/听力/241123L.pdf` |
+
+The index records each set's structure — 40 answers counted from the key file, 4 audio tracks, the
+question-paper blob SHA-1 and permalink. **Answer values are never published**: counting them is
+metadata; serving them would redistribute exam content. The 241123L naming convention (a sitting
+date: 2024-11-23) is preserved as-is.
+
+### 17. What the API publishes from Part III
+
+- `/v1/recall`, `/v1/recall/stats`, `/v1/recall/items`, `/v1/recall/:id` — 423 indexed items:
+  18 speaking topics, 76 seasonal cue cards, 323 recalled reading passages and 6 recalled listening
+  tests, each with bilingual titles (where published), part, tier, category, status, season, counts
+  and full upstream provenance (path, blob SHA-1, permalink).
+- Repository-level structure for all 2,385 upstream files: size, format mix and skill mix.
+- `scripts/extract_exam_recall.py`: standard-library-only, deterministic extraction from the GitHub
+  tree listing plus the three machine-readable speaking/listening blobs.
+
+### 18. Threats to validity (Part III)
+
+- **Recall is memory, not record.** Exam recall is what candidates remember after a sitting; it is
+  unverified and lossy by nature. The index measures the collection's _structure_, which is factual,
+  and never implies the recalled content is accurate or complete.
+- **Titles are heuristic.** Bilingual titles are split at the first CJK character after stripping
+  upstream noise markers; a handful of titles keep imperfect boundaries, and every item carries its
+  raw upstream path so a reviewer can re-derive them.
+- **Tiers and seasons come from folder names.** The recurrence tier and season labels are the
+  collection's own claims, recorded verbatim into `high` / `next` / `background` and ISO-style season
+  strings; nothing is re-rated here.
+- **The snapshot is mutable.** The upstream repository has no tags and is actively edited; the
+  commit SHA in `data/exam-recall.json` and the per-file blob SHA-1s pin the analysis, and CI
+  re-derives the dataset from the live tree and fails if the committed index has drifted.
+- **Licensing.** The collection carries no licence; the index therefore publishes only derived
+  structure and metadata under CC BY 4.0 with attribution, and no upstream text, audio or answer
+  value. Cue-card wording, question text, passages and answer values stay with their owners.
+
+### 19. Reproducing Part III
+
+```bash
+curl -sL "https://api.github.com/repos/Oxidaner/ielts/git/trees/main?recursive=1" -o tree.json
+
+# Fetch the three machine-readable inputs and the six listening keys via the blob API
+# (each blob's URL is in tree.json; use `Accept: application/vnd.github.v3.raw`).
+#   口语/神奇题库.md                                          -> speaking-bank.md
+#   口语/2025年9-12月口语Part2按四大类分类新题+保留题.docx      -> part2-categories.docx
+#   听力/听力/keys_2.2.txt ... keys_241123L.txt               -> keys/
+
+python3 scripts/extract_exam_recall.py tree.json speaking-bank.md part2-categories.docx keys/ data/exam-recall.json
+```
+
+The script is standard library only and deterministic: the same tree and the same blobs always
+produce byte-identical output, which is exactly what CI verifies on every push.

@@ -9,6 +9,7 @@
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 import { practiceStats } from '../data/practiceTests.js';
+import { recallStats } from '../data/recall.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -50,6 +51,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const words = vocabularyStats().words;
   const corpus = corpusStats();
   const practice = practiceStats();
+  const recall = recallStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -99,6 +101,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
   <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
   <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
+  <li><strong>${recall.indexedItems.toLocaleString('en-US')} exam-recall items</strong> indexed from a third open self-study collection &mdash; ${recall.speaking.cueCards} seasonal Speaking Part&nbsp;2 cue cards (new vs. retained), ${recall.speaking.part1Topics} Speaking Part&nbsp;1 topics, ${recall.reading.articles} recalled reading passages by recurrence tier, and ${recall.listening.testSets} recalled listening tests (structure and metadata only).</li>
 </ul>
 
 <h2>Versioned endpoints</h2>
@@ -136,6 +139,7 @@ ${service.map(routeRow).join('\n')}
     <tr><td class="path">order</td><td>collections</td><td><code>asc</code> or <code>desc</code>.</td></tr>
     <tr><td class="path">match</td><td><code>/v1/vocabulary</code></td><td><code>contains</code>, <code>prefix</code> or <code>exact</code>.</td></tr>
     <tr><td class="path">volume</td><td><code>/v1/vocabulary</code></td><td>Comma-separated Cambridge IELTS volumes, 1&ndash;22.</td></tr>
+    <tr><td class="path">kind, skill, collection, tier, category, status, season, part</td><td><code>/v1/recall/items</code></td><td>Comma-separated exam-recall facets.</td></tr>
   </tbody>
 </table>
 
@@ -153,7 +157,8 @@ and the archived Zenodo release both carry full metadata.</p>
 <footer>
   <p class="meta">Code licensed under MIT; datasets under CC BY 4.0. Band descriptors are original condensed
   paraphrases written for this project and are not the official IELTS wording. Score concordances are indicative
-  and compiled from the providers&rsquo; own published comparison tables.</p>
+  and compiled from the providers&rsquo; own published comparison tables. The exam-recall index publishes upstream
+  titles, counts, categories and provenance only &mdash; never cue-card wording, question text, passages or answers.</p>
   <p class="meta"><a href="/openapi.json">OpenAPI 3.1 document</a> &middot; <a href="/health">health</a> &middot;
   <a href="${escapeHtml(repository)}">source repository</a></p>
 </footer>
