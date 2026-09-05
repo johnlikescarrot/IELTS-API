@@ -62,7 +62,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   @media (prefers-color-scheme: dark) { :root { --fg: #e8eaf0; --bg: #12151a; --muted: #9aa4b2; --line: #262b33; --accent: #6cb6ff; } }
   * { box-sizing: border-box; }
   body { margin: 0 auto; max-width: 62rem; padding: 2rem 1.25rem 4rem; background: var(--bg); color: var(--fg);
-         font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
+        font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; }
   h1 { font-size: 2rem; margin: 0 0 .25rem; }
   h2 { font-size: 1.25rem; margin: 2.5rem 0 .75rem; border-bottom: 1px solid var(--line); padding-bottom: .35rem; }
   p.lede { color: var(--muted); margin-top: 0; }
@@ -75,7 +75,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   th { color: var(--muted); font-weight: 600; font-size: .85rem; text-transform: uppercase; letter-spacing: .04em; }
   a { color: var(--accent); }
   .badge { font-size: .72rem; font-weight: 700; border: 1px solid var(--accent); color: var(--accent);
-           padding: .1rem .35rem; border-radius: 4px; }
+          padding: .1rem .35rem; border-radius: 4px; }
   .path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .9em; }
   .meta { color: var(--muted); font-size: .9rem; }
   ul { padding-left: 1.2rem; }
