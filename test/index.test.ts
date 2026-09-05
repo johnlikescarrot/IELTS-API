@@ -47,6 +47,8 @@ describe('the package entry point', () => {
     expect(api.CONVERSION_TARGETS).toContain('cefr');
     expect(api.allEntries().length).toBe(4174);
     expect(api.corpusStats().filesInRepository).toBe(404);
+    expect(api.practiceStats().items).toBe(1804);
+    expect(api.practiceItemTypes()).toHaveLength(14);
   });
 
   it('exports the build constants', () => {

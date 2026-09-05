@@ -13,20 +13,26 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 4 September 2026
+date: 5 September 2026
 bibliography: paper.bib
 ---
+
+<!-- The JOSS paper format requires each section to be a top-level heading, so
+     markdownlint's single-title rule is disabled for this file only. -->
+<!-- markdownlint-disable MD025 -->
 
 # Summary
 
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships five kinds of data: a 4,174-headword vocabulary dataset derived from
+JSON envelope. The service ships six kinds of data: a 4,174-headword vocabulary dataset derived from
 the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking and
 Writing across bands 0-9; indicative score concordances between IELTS and five other scales; original
 Writing and Speaking task banks built on the question families and word lists that recur in IELTS
-preparation material [@coxhead2000]; and a curated metadata index of an open IELTS research corpus.
+preparation material [@coxhead2000]; a curated metadata index of an open IELTS research corpus; and a
+metadata index of an open CEFR-graded practice corpus — 1,804 listening and reading items with
+lengths, question counts and a normalised item-type taxonomy [@practicecorpus].
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -90,6 +96,19 @@ for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
 is a descriptive act over metadata.
 
+**Practice corpus index.** The open practice corpus [@practicecorpus] publishes 1,804 machine-readable
+items in four series: 102 graded listening lessons (Basic/Intermediate/Advanced), 201 listening full
+tests, 1,232 CEFR-graded reading lessons (A1-A2: 198, B1-B2: 374, C1-C2: 660) and 269 reading full
+tests. The index records stable identifiers, level lanes, reading-prompt lengths, question counts,
+availability flags and per-item-type frequencies — 15,558 questions folded from ~94 raw type labels
+into 49 normalised labels and 14 curated task families. The derived layer documents the corpus
+itself: measured passage lengths are not monotone across CEFR bands (253.7 / 244.3 / 277.6 words),
+the "full tests" average 23.1 (listening) and 11.0 (reading) questions against the official 40, and
+series coverage is exposed as
+`published / advertised` ratios (0.9853 and 0.8540) so studies can weight by availability. Upstream
+passages, questions and audio are never redistributed, and the repository's operational workbook —
+which contains learner names and device identifiers — is excluded from the pipeline by design.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
@@ -105,12 +124,12 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (295 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (322 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
-integration re-derives the vocabulary dataset from the upstream workbook and fails if the committed
-dataset has drifted, which guards against silent data rot.
+integration re-derives the vocabulary and practice-corpus datasets from the pinned upstream sources
+and fails if the committed files have drifted, which guards against silent data rot.
 
 # Availability
 
@@ -121,8 +140,8 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 # Acknowledgements
 
-This work builds on the open corpus assembled by `zhengyishiming`; the author of that corpus is cited
-in `CITATION.cff` and in every response that draws on it. IELTS is a jointly owned trademark of the
+This work builds on the open corpora assembled by `zhengyishiming` and `ngoclong1209`; their authors
+are cited in `CITATION.cff` and in every response that draws on the material. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

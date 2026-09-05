@@ -30,6 +30,8 @@ describe('GET /', () => {
     expect(response.data.authentication).toBe('none');
     expect(response.data.licenses).toEqual({ code: 'MIT', data: 'CC BY 4.0' });
     expect(response.data.datasets.vocabularyWords).toBe(4174);
+    expect(response.data.datasets.practiceItems).toBe(1804);
+    expect(response.data.datasets.practiceQuestions).toBe(15558);
     expect(response.data.endpoints.documentation).toBe('/docs');
     expect(response.meta.count).toBe(DOMAIN_ROUTES.length);
   });
@@ -51,6 +53,7 @@ describe('GET /health', () => {
     expect(response.data.status).toBe('ok');
     expect(response.data.datasets.corpusFiles).toBe(404);
     expect(response.meta.checks).toContain('vocabulary-dataset');
+    expect(response.meta.checks).toContain('practice-index');
   });
 });
 

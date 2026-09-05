@@ -83,7 +83,7 @@ describe('request handling', () => {
     expect(response.headers.get('x-endpoint')).toBe('/v1/bands');
     const body = (await response.json()) as { meta: { endpoint: string; version: string } };
     expect(body.meta.endpoint).toBe('/v1/bands');
-    expect(body.meta.version).toBe('1.0.0');
+    expect(body.meta.version).toBe('1.1.0');
   });
 });
 

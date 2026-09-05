@@ -226,6 +226,142 @@ export type CorpusStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Open practice corpus                                                       */
+/* -------------------------------------------------------------------------- */
+
+/** The families of material indexed in the open practice corpus. */
+export type PracticeSeries = 'listening-102' | 'listening-204' | 'reading-1232' | 'reading-315';
+
+/** Whether an indexed item is a graded lesson or a complete test. */
+export type PracticeKind = 'lesson' | 'full-test';
+
+/** File-availability flags for one indexed upstream item. */
+export type PracticeFlags = {
+  /** An `audio.mp3` / `audio_N.mp3` file exists next to the item. */
+  audio: boolean;
+  /** A normalised `*_processed.json` variant exists next to the item. */
+  processed: boolean;
+  /** A `strategies.json` worked-guide file exists next to the item. */
+  strategies: boolean;
+};
+
+/** One indexed item of the open practice corpus (metadata only). */
+export type PracticeItem = {
+  /** Stable, unique identifier (upstream id where one exists). */
+  id: string;
+  /** Series the item belongs to. */
+  series: PracticeSeries;
+  /** IELTS skill the item practises. */
+  skill: Skill;
+  /** Graded lesson or complete test. */
+  kind: PracticeKind;
+  /** Level lane (`Basic`, `A1-A2`, ...), or `null` when ungraded. */
+  level: string | null;
+  /** Number within the series (per level for levelled series). */
+  number: number;
+  /** Word tokens in the reading prompt, or `null` when not applicable. */
+  words: number | null;
+  /** Number of questions, or `null` when the source does not expose them. */
+  questions: number | null;
+  /** Normalised item-type labels used by the questions of this item. */
+  types: string[];
+  /** Upstream file-availability flags. */
+  flags: PracticeFlags;
+  /** Path of the item's source file inside the upstream repository. */
+  upstreamPath: string;
+  /** Public URL of that file in the upstream repository. */
+  sourceUrl: string;
+};
+
+/** Facts about one series of the practice corpus. */
+export type PracticeSeriesFacts = {
+  /** Series identifier. */
+  id: PracticeSeries;
+  /** Skill the series practises. */
+  skill: Skill;
+  /** Item kind. */
+  kind: PracticeKind;
+  /** Directory of the series inside the upstream repository. */
+  upstreamPath: string;
+  /** Number of items the upstream project advertises. */
+  advertised: number;
+  /** Number of machine-readable items actually published. */
+  published: number;
+  /** Item numbers missing inside the published numbering range. */
+  gaps: number[];
+  /** `published / advertised`. */
+  coverageRatio: number;
+  /** Level lanes of the series, empty when ungraded. */
+  levels: string[];
+  /** Mean questions per item, or `null` when unknown. */
+  meanQuestions: number | null;
+  /** Mean words per item, or `null` when unknown. */
+  meanWords: number | null;
+  /** Items with an accompanying audio file. */
+  withAudio: number;
+  /** Items with a normalised `_processed.json` variant. */
+  withProcessed: number;
+  /** Items with a `strategies.json` worked guide. */
+  withStrategies: number;
+};
+
+/** Count/mean/median/min/max summary of an integer-valued measure. */
+export type PracticeMeasure = {
+  /** Number of items contributing. */
+  count: number;
+  /** Arithmetic mean, two decimals. */
+  mean: number;
+  /** Median, two decimals. */
+  median: number;
+  /** Minimum. */
+  min: number;
+  /** Maximum. */
+  max: number;
+};
+
+/** Aggregated statistics over the practice-corpus index. */
+export type PracticeStats = {
+  /** Indexed items. */
+  items: number;
+  /** Items per series. */
+  bySeries: Record<string, number>;
+  /** Items per skill. */
+  bySkill: Record<string, number>;
+  /** Items per kind. */
+  byKind: Record<string, number>;
+  /** Items per level lane. */
+  levels: Record<string, number>;
+  /** Reading-prompt lengths across all graded items. */
+  words: PracticeMeasure;
+  /** Reading-prompt lengths of the graded reading lessons, per CEFR band. */
+  wordsByLevel: Record<string, PracticeMeasure>;
+  /** Reading-prompt length histogram in 50-word buckets, keyed by lower edge. */
+  wordsHistogram: Record<string, number>;
+  /** Question counts. */
+  questions: { total: number; bySeries: Record<string, number> };
+  /** Item questions per normalised type label, most frequent first. */
+  typeFrequency: Record<string, number>;
+  /** Number of distinct normalised type labels observed upstream. */
+  normalisedTypeLabels: number;
+};
+
+/** One family of the curated item-type taxonomy. */
+export type PracticeItemType = {
+  /** Taxonomy identifier. */
+  id: string;
+  /** Human-readable task name. */
+  label: string;
+  /** Skills in which the task type officially occurs. */
+  skills: Skill[];
+  /** Original one-line description of what the candidate must do. */
+  description: string;
+  /** Normalised upstream labels folded into this family. */
+  aliases: string[];
+  /** Questions in the index carrying one of the aliases. */
+  occurrences: number;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

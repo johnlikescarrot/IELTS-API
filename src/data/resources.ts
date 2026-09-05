@@ -280,6 +280,17 @@ export const RESOURCES: readonly Resource[] = [
     license: 'Third-party material; metadata indexed under CC BY 4.0',
     description: 'Upstream corpus indexed by /v1/corpus; source of the vocabulary dataset.',
   },
+  {
+    id: 'source-practice-corpus',
+    name: 'Open IELTS practice corpus (upstream)',
+    url: 'https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS',
+    provider: 'ngoclong1209',
+    type: 'dataset',
+    free: true,
+    license: 'Third-party material; metadata indexed under CC BY 4.0',
+    description:
+      'Upstream practice corpus indexed by /v1/practice: graded listening, CEFR-graded reading and full tests.',
+  },
 ];
 
 /** Resource types available in {@link RESOURCES}. */

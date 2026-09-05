@@ -8,6 +8,7 @@
 
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
+import { practiceStats } from '../data/practice.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -48,6 +49,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const practice = practiceStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -95,6 +97,9 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
+  <li><strong>${practice.items.toLocaleString('en-US')} indexed practice items</strong> (${practice.questions.total.toLocaleString('en-US')} questions) from the open practice
+  corpus: four listening/reading series, CEFR-graded lessons, lengths and item-type frequencies; only derived
+  metadata is published.</li>
 </ul>
 
 <h2>Versioned endpoints</h2>
@@ -128,7 +133,7 @@ ${service.map(routeRow).join('\n')}
     <tr><td class="path">q</td><td>collections</td><td>Free-text search.</td></tr>
     <tr><td class="path">limit</td><td>collections</td><td>Page size, 1&ndash;100 (default 20, resources default 50).</td></tr>
     <tr><td class="path">offset</td><td>collections</td><td>Zero-based offset for pagination.</td></tr>
-    <tr><td class="path">sort</td><td><code>/v1/vocabulary</code>, <code>/v1/corpus/items</code></td><td>Sort key.</td></tr>
+    <tr><td class="path">sort</td><td><code>/v1/vocabulary</code>, <code>/v1/corpus/items</code>, <code>/v1/practice/lessons</code></td><td>Sort key.</td></tr>
     <tr><td class="path">order</td><td>collections</td><td><code>asc</code> or <code>desc</code>.</td></tr>
     <tr><td class="path">match</td><td><code>/v1/vocabulary</code></td><td><code>contains</code>, <code>prefix</code> or <code>exact</code>.</td></tr>
     <tr><td class="path">volume</td><td><code>/v1/vocabulary</code></td><td>Comma-separated Cambridge IELTS volumes, 1&ndash;22.</td></tr>

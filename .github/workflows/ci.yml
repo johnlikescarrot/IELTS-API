@@ -122,6 +122,30 @@ jobs:
           print(f"dataset reproducible: {regenerated['meta']['words']} words")
           PY
 
+      - name: Re-derive the practice-corpus index from the pinned upstream commit
+        run: |
+          COMMIT=$(python3 -c "import json; print(json.load(open('data/practice.json'))['meta']['commit'])")
+          curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/git/trees/${COMMIT}?recursive=1" \
+            -o /tmp/practice-tree.json
+          git clone --filter=blob:none --no-checkout --quiet \
+            https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS.git /tmp/practice-upstream
+          git -C /tmp/practice-upstream sparse-checkout init --no-cone
+          git -C /tmp/practice-upstream sparse-checkout set \
+            'Reading_1232_Basic/frontend/data/**/*.json' \
+            'Listening_204_FullTest/Test_*/Test_*.json' \
+            'Reading_315_FullTest/Test_*/Test_*.json'
+          git -C /tmp/practice-upstream checkout --quiet "${COMMIT}"
+          python3 scripts/extract_practice.py /tmp/practice-tree.json /tmp/practice-upstream /tmp/practice.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/practice.json'))
+          regenerated = json.load(open('/tmp/practice.json'))
+          assert committed == regenerated, 'data/practice.json is out of date'
+          print(f"dataset reproducible: {regenerated['stats']['items']} practice items")
+          PY
+
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); print('datasets are valid JSON')"
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice.json')); print('datasets are valid JSON')"

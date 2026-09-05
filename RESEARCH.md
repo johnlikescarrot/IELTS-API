@@ -1,8 +1,10 @@
 # Research notes: from an open file dump to a citable IELTS dataset
 
-This document records how the datasets behind the IELTS API were derived from the open corpus
-[`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS). It is written so that a reviewer
-can reproduce, criticise or extend every step.
+This document records how the datasets behind the IELTS API were derived from two open sources: the
+material corpus [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS) (sections 1-6) and
+the graded practice corpus
+[`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS)
+(section 7). It is written so that a reviewer can reproduce, criticise or extend every step.
 
 **Corpus snapshot:** commit `a9e2d6c9a070eecea6ffaa6f15b2a00c1c7b938c` (2 September 2024, "Add files
 via upload"), 78 commits, single branch `main`, 404 blobs, no tags, no licence file.
@@ -159,3 +161,74 @@ python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 
 The commit SHA recorded in `data/corpus.json` identifies the exact snapshot; re-running against a
 different commit is expected to change the item count and the coverage ratio.
+
+## 7. The open practice corpus (`/v1/practice`, v1.1.0)
+
+**Snapshot:** commit `ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c` of
+[`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS)
+(main, 3 July 2026). The repository is the public data dump behind a Vietnamese IELTS practice
+course: ~3.3 GB, dominated by lesson audio and HTML, with four machine-readable families.
+
+| Series                             | Advertised | Published (raw JSON or indexed lesson) | Normalised variant | Worked-strategy guide |
+| ---------------------------------- | ---------: | -------------------------------------: | -----------------: | --------------------: |
+| `listening-102` graded lessons     |        102 |                                    102 |                  – |                     – |
+| `listening-204` full tests         |        204 |                                    201 |                187 |                    19 |
+| `reading-1232` CEFR-graded lessons |      1,232 |                                  1,232 |                  – |                     – |
+| `reading-315` full tests           |        315 |                                    269 |                108 |                    18 |
+
+**Method.** `scripts/extract_practice.py` reads a GitHub tree listing (for file availability) and a
+blobless sparse clone containing only the practice JSON (for content). Per item it records: the
+upstream identifier (or a synthesised stable one), series, skill, kind, level lane, ordinal number,
+word tokens of the reading prompt (after stripping HTML tags), question count, the set of item-type
+labels, and three availability flags (`audio`, `processed`, `strategies`). No text is extracted from
+the upstream passages, questions, audio or HTML beyond these counts. Output is sorted and rounded
+deterministically, and CI re-derives the file from the pinned commit exactly as it does the
+vocabulary workbook.
+
+**Type normalisation.** Upstream question labels are free-form strings; ~94 raw spellings collapse to
+49 normalised labels (lower-case, `_` separators, `labelling` → `labeling`, plus a published alias
+table) and then to the 14 curated families exposed by `/v1/practice/types`. The long tail is an
+artefact of hand-maintained data, not of distinct task types: `short_answer` occurs as four
+spellings, and one title-cased `"True/False/Not Given"` floats beside 2,187 snake-case instances.
+Researchers should cite the normalised labels, never the raw ones. Exactly **one of the 15,558
+question objects is malformed** (not an object); it is counted in `questions` but contributes no
+type label, which is why the type frequencies sum to 15,557.
+
+**Findings.**
+
+1. **Grading is not implemented as length.** The series' own planning document promises 300-500-word
+   passages at A1-A2, yet the measured means are 253.7 (A1-A2), 244.3 (B1-B2) and 277.6 words
+   (C1-C2) — the middle band has the _shortest_ texts. The uniform 1,200-second time limit across
+   all 1,232 lessons shows grading is also absent from the pacing. Difficulty, if graded at all, is
+   carried lexically or structurally — a distinction that matters for any replication study using
+   this corpus.
+2. **"Full tests" are not full.** Official IELTS reading has 40 questions; the indexed
+   `reading-315` tests average 11.0 (max 47), and `listening-204` averages 23.1 questions (official:
+   40). Series coverage is likewise partial: `listening-204` skips tests 3, 34 and 51, and
+   `reading-315` publishes 269 of its advertised 315 with numbering ending at 311. The
+   `published / advertised` ratios (0.9853 and 0.8540) are exposed per series so downstream studies
+   can weight by availability instead of assuming the advertised size.
+3. **The corpus is lesson-shaped, not test-shaped.** 1,334 of the 1,804 items are short graded
+   lessons — where question counts are readable, the 1,232 CEFR reading lessons carry a mean of 6.4
+   questions each — and the CEFR ladder is dominated by the C1-C2 lane (660 of 1,232). As a
+   preparation resource that is fine; as a test blueprint it is skewed.
+
+**Ethics and exclusions.** The repository ships an operational workbook containing student names,
+device identifiers and per-lesson progress; the extraction pipeline never reads it and the index
+contains no personal data. The hosted course gates the same content behind a paid login, and the
+repository's own crawler scripts indicate the material was scraped from third-party commercial
+sites; consequently _no_ upstream passage, question text or title is redistributed here — only
+counts, lengths and identifiers, which are facts about the files, published under CC BY 4.0 with
+attribution to the upstream repository.
+
+**Reproducing.**
+
+```bash
+curl -sL "https://api.github.com/repos/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/git/trees/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c?recursive=1" -o tree.json
+git clone --filter=blob:none --no-checkout https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS.git checkout
+git -C checkout sparse-checkout init --no-cone
+git -C checkout sparse-checkout set 'Reading_1232_Basic/frontend/data/**/*.json' \
+  'Listening_204_FullTest/Test_*/Test_*.json' 'Reading_315_FullTest/Test_*/Test_*.json'
+git -C checkout checkout ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c
+python3 scripts/extract_practice.py tree.json checkout data/practice.json
+```

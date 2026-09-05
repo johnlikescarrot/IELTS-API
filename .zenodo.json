@@ -1,6 +1,6 @@
 {
   "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
+  "description": "Archived release of the IELTS API source code and datasets. v1.1.0 adds a metadata index of the open CEFR-graded practice corpus (1,804 items: graded listening lessons, listening and reading full tests, 1,232 graded reading lessons) served at /v1/practice. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
@@ -17,7 +17,11 @@
     "band descriptors",
     "score concordance",
     "open data",
-    "REST API"
+    "REST API",
+    "CEFR",
+    "practice corpus",
+    "item types",
+    "curriculum"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -28,6 +32,11 @@
     },
     {
       "identifier": "https://github.com/zhengyishiming/IELTS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }
