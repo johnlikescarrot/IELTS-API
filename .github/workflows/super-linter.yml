@@ -56,9 +56,10 @@ jobs:
           # every `vitest` import is unresolvable, and its `eslint-plugin-n` rules
           # assume a different runtime baseline — flagging `fetch` as experimental
           # even though this package requires Node >= 20.19, where it is stable.
-          # Enabling it here would report failures the code does not have.
-          VALIDATE_JAVASCRIPT_ES: false
-          VALIDATE_TYPESCRIPT_ES: false
+          # Enabling it here would report failures the code does not have, so
+          # JAVASCRIPT_ES and TYPESCRIPT_ES are simply omitted below. Note that
+          # super-linter refuses to start if VALIDATE_* mixes true and false, so
+          # unwanted linters must be left out rather than set to false.
           VALIDATE_JSON: true
           VALIDATE_YAML: true
           VALIDATE_MARKDOWN: true
