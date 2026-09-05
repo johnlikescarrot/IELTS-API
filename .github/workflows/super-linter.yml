@@ -80,6 +80,23 @@ jobs:
           CREATE_LOG_FILE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # GitHub's log service intermittently fails to store runner logs, and
+      # the artifact upload then fails with it. Surface the linter findings
+      # through the job summary as well, which stays readable from the API.
+      - name: Surface super-linter findings in the job summary
+        if: failure()
+        run: |
+          if [ -f super-linter.log ]; then
+            {
+              echo '### super-linter findings'
+              echo '```text'
+              grep -E '\[(ERROR|NOTICE)\]' super-linter.log | tail -200
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo 'super-linter failed and produced no log file' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       # Keep the linter log when the job fails: it is the only place that
       # records which linter complained and why.
       - name: Upload the super-linter log
