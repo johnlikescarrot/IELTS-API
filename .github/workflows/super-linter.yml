@@ -83,6 +83,17 @@ jobs:
             > /tmp/super-linter.log 2>&1 || status=1
           grep -qE "Failed linting|failed validation" /tmp/super-linter.log && status=1
           echo "super-linter exit status: $status" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$status" -ne 0 ]; then
+            # Surface the failure through check-run annotations: they are
+            # available through the Checks API even when the raw job log is
+            # not reachable.
+            grep -nE "ERROR|WARNING.*failed|Failed to validate|failed validation|❌" /tmp/super-linter.log \
+              | head -n 25 \
+              | sed -e 's/%/%25/g' -e 's/:/%3A/g' \
+              | while IFS= read -r line; do
+                  echo "::error title=super-linter::$line"
+                done
+          fi
           exit "$status"
 
       - name: Publish result summary
