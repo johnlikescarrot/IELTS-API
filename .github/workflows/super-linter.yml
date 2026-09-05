@@ -99,41 +99,42 @@ jobs:
 
       - name: Report the failures on the job summary and the pull request
         if: failure()
+        continue-on-error: true
+        shell: bash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          report=$(mktemp)
+          set +e
+          report="${RUNNER_TEMP}/super-linter-report.md"
           {
             echo '## super-linter findings'
             echo
-            echo '<details><summary>files produced by the run</summary>'
+            echo '<details><summary>artefacts produced by the run</summary>'
             echo
             echo '```text'
-            find . -maxdepth 3 -name 'super-linter*' -o -maxdepth 3 -name '*.md' -path '*summary*' | head -50
+            ls -laR super-linter-output 2>&1 | head -100
+            ls -la super-linter.log 2>&1
             echo '```'
             echo
             echo '</details>'
             echo
-            if [ -f super-linter-output/super-linter-summary.md ]; then
-              cat super-linter-output/super-linter-summary.md
-              echo
-            fi
-            for file in super-linter.log super-linter-output/*.log super-linter-output/*/*.log; do
-              [ -f "${file}" ] || continue
+            while IFS= read -r file; do
               echo "<details><summary>${file}</summary>"
               echo
               echo '```text'
-              tail -c 20000 "${file}"
+              tail -c 15000 "${file}" 2>&1
               echo '```'
               echo
               echo '</details>'
-            done
-          } > "${report}"
+              echo
+            done < <(find . -maxdepth 3 \( -name 'super-linter*.log' -o -name '*summary*.md' \) -type f 2>/dev/null | head -20)
+          } > "${report}" 2>&1
           cat "${report}" >> "${GITHUB_STEP_SUMMARY}"
           if [ -n "${PR_NUMBER}" ]; then
-            gh pr comment "${PR_NUMBER}" --body-file "${report}" || true
+            gh pr comment "${PR_NUMBER}" --body-file "${report}"
           fi
+          exit 0
 
       - name: Upload the super-linter output
         if: always()
