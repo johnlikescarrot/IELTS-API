@@ -77,6 +77,8 @@ jobs:
           # Keep the full log so a failure can be diagnosed from the artifact.
           SAVE_SUPER_LINTER_OUTPUT: true
           SAVE_SUPER_LINTER_SUMMARY: true
+          CREATE_LOG_FILE: true
+          LOG_FILE: super-linter.log
           # Linter configuration files live at the workspace root, next to the
           # configs they belong to (`.`, not `/`: with `/` super-linter never
           # finds `eslint.config.js` and silently falls back to its own
@@ -105,7 +107,19 @@ jobs:
           {
             echo '## super-linter findings'
             echo
-            for file in super-linter-output/*.log super-linter-output/**/*.log; do
+            echo '<details><summary>files produced by the run</summary>'
+            echo
+            echo '```text'
+            find . -maxdepth 3 -name 'super-linter*' -o -maxdepth 3 -name '*.md' -path '*summary*' | head -50
+            echo '```'
+            echo
+            echo '</details>'
+            echo
+            if [ -f super-linter-output/super-linter-summary.md ]; then
+              cat super-linter-output/super-linter-summary.md
+              echo
+            fi
+            for file in super-linter.log super-linter-output/*.log super-linter-output/*/*.log; do
               [ -f "${file}" ] || continue
               echo "<details><summary>${file}</summary>"
               echo
