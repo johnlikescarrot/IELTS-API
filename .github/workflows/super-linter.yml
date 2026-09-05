@@ -25,21 +25,36 @@ jobs:
   super-linter:
     name: Lint the whole codebase
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           fetch-depth: 0
           persist-credentials: false
 
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22.x'
+          cache: npm
+
+      - name: Install project lint dependencies
+        run: npm ci
+
       - name: Run super-linter
-        uses: super-linter/super-linter/slim@v8.3.1
+        uses: super-linter/super-linter/slim@47984f49b4e87383eed97890fe2dca6063bbd9c3 # v8.3.1
         env:
           DEFAULT_BRANCH: main
           DEFAULT_WORKSPACE: ${{ github.workspace }}
           VALIDATE_ALL_CODEBASE: true
+          # The job check is sufficient; do not require a write-capable status token.
+          MULTI_STATUS: false
+          CREATE_LOG_FILE: true
+          LOG_FILE: super-linter.log
+          SAVE_SUPER_LINTER_OUTPUT: true
           # The generated datasets are machine-written: never lint them.
-          FILTER_REGEX_EXCLUDE: .*(data/|coverage/|dist/).*
+          FILTER_REGEX_EXCLUDE: '(^|/)(node_modules|coverage|dist|super-linter-output)/|(^|/)data/(corpus|vocabulary)\.json$'
           # Languages enabled for this repository.
           VALIDATE_JAVASCRIPT_ES: true
           VALIDATE_TYPESCRIPT_ES: true
@@ -58,8 +73,22 @@ jobs:
           # extraction scripts are standalone Python utilities with their own
           # formatting.
           # Linter configuration files.
-          LINTER_RULES_PATH: /
+          LINTER_RULES_PATH: .
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report lint failures as a check annotation
+        if: failure()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          log = Path('super-linter.log')
+          if log.exists():
+              text = '\n'.join(log.read_text(errors='replace').splitlines()[-100:])
+              text = text.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
+              print(f'::error title=Super-Linter diagnostics::{text}')
+          PY
