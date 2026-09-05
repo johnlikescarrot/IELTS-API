@@ -1,0 +1,27 @@
+# Checkov configuration, used by super-linter (VALIDATE_CHECKOV).
+#
+# Two OpenAPI checks are skipped, and only these two. Both demand that the
+# document declare a `security` scheme:
+#
+#   CKV_OPENAPI_4  Ensure that the global security field has rules defined
+#   CKV_OPENAPI_5  Ensure that security operations is not empty
+#
+# They are correct for a private API and wrong for this one. This service is
+# deliberately free of authentication — that is its stated purpose and the
+# reason it can be cited and replayed from an archived URL years later. It
+# serves only public, openly licensed reference data over GET, holds no user
+# data, and has nothing to authorise. Declaring a security scheme to satisfy
+# the check would misdescribe the contract to every client that reads the
+# document.
+#
+# Everything else Checkov reports is treated as a real finding: the Dockerfile
+# and workflow checks are all enforced.
+skip-check:
+  - CKV_OPENAPI_4
+  - CKV_OPENAPI_5
+
+skip-path:
+  - node_modules
+  - coverage
+  - dist
+  - data
