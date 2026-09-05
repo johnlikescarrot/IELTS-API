@@ -16,6 +16,8 @@ on:
 
 permissions:
   contents: read
+  # Lets the report step explain a failing run right on the pull request.
+  pull-requests: write
 
 concurrency:
   group: super-linter-${{ github.ref }}
@@ -63,3 +65,24 @@ jobs:
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Machine-readable report in the workspace; posted by the next step.
+          OUTPUT_FORMAT: markdown
+          OUTPUT_FILE: .super-linter-report.md
+
+      - name: Publish the linting report on the pull request
+        if: failure() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if [ -f .super-linter-report.md ]; then
+            head -c 60000 .super-linter-report.md > /tmp/report.md
+          else
+            printf '%s\n' 'super-linter failed before writing a report; see the step log.' > /tmp/report.md
+          fi
+          {
+            printf '%s\n' '## super-linter report'
+            printf '%s\n' ''
+            cat /tmp/report.md
+          } > /tmp/report-comment.md
+          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/report-comment.md
