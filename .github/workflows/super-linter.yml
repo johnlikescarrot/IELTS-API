@@ -89,6 +89,11 @@ jobs:
             -e "GITHUB_REF=$GITHUB_REF" \
             -e "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
             -e "GITHUB_EVENT_PATH=/github/event.json" \
+            -e "GITHUB_EVENT_NAME=$GITHUB_EVENT_NAME" \
+            -e "GITHUB_BEFORE_SHA=$GITHUB_BEFORE_SHA" \
+            -e "GITHUB_ACTIONS=true" \
+            -e "GITHUB_WORKSPACE=/tmp/lint" \
+            -e "GITHUB_STEP_SUMMARY=/tmp/super-linter-step-summary.md" \
             "$SUPER_LINTER_IMAGE" \
             > /tmp/super-linter.log 2>&1 || status=1
           if grep -qE "Failed linting|failed validation" /tmp/super-linter.log; then status=1; fi
