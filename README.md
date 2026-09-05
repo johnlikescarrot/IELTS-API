@@ -27,6 +27,11 @@ redistributed: the API publishes derived, non-substitutive metadata and statisti
 [RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every dataset, and
 [paper/paper.md](paper/paper.md) for the short research paper.
 
+The API also analyses text, not just publishes it: `/v1/tools/readability` scores any passage with
+the Flesch formulas and places it next to the corpus group means, `/v1/tools/essay-profile` turns a
+writing sample into lexical, structural and theme measurements with descriptor-aligned hints, and
+`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule.
+
 ## Quick start
 
 ```bash
@@ -43,6 +48,12 @@ curl -s "http://localhost:3000/v1/scores/overall?listening=7&reading=6.5&writing
 
 # One headword, with phonetics, senses and morpheme hints
 curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
+
+# Flesch readability of any text, placed against the corpus groups
+curl -s "http://localhost:3000/v1/tools/readability?text=Dogs%20run%20fast.%20Cats%20sleep%20a%20lot."
+
+# A deterministic eight-week study plan towards band 7
+curl -s "http://localhost:3000/v1/study/plan?target=7&writing=6&speaking=6.5"
 
 # The 13 IELTS question types, ranked by how often they occur in 27,225 practice questions
 curl -s "http://localhost:3000/v1/question-types?skill=listening"
@@ -78,44 +89,49 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
 | Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
+| Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
+| Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
 
 ## Endpoints
 
 All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
 same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 
-| Method | Path                     | Description                                                                                       |
-| ------ | ------------------------ | ------------------------------------------------------------------------------------------------- |
-| GET    | `/`                      | Service index, dataset sizes, citation links                                                      |
-| GET    | `/v1`                    | List every versioned endpoint                                                                     |
-| GET    | `/health`                | Liveness and dataset availability                                                                 |
-| GET    | `/docs`                  | Human-readable documentation                                                                      |
-| GET    | `/openapi.json`          | OpenAPI 3.1 document generated from the live route table                                          |
-| GET    | `/v1/vocabulary`         | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
-| GET    | `/v1/vocabulary/stats`   | Dataset statistics                                                                                |
-| GET    | `/v1/vocabulary/random`  | Seeded random sample (`count`, `seed`)                                                            |
-| GET    | `/v1/vocabulary/daily`   | Deterministic entry for a date (`date`, `count`)                                                  |
-| GET    | `/v1/vocabulary/:word`   | Look up one headword                                                                              |
-| GET    | `/v1/bands`              | The band scale with indicative CEFR levels                                                        |
-| GET    | `/v1/bands/descriptors`  | Band descriptors (`set`, `criterion`, `band`)                                                     |
-| GET    | `/v1/bands/:band`        | One band, with the descriptors that bracket it                                                    |
-| GET    | `/v1/scores/overall`     | Overall band from the four components                                                             |
-| GET    | `/v1/scores/convert`     | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
-| GET    | `/v1/scores/interpret`   | Another scale back to an indicative IELTS band                                                    |
-| GET    | `/v1/topics/writing`     | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
-| GET    | `/v1/topics/speaking`    | Speaking Parts 1-3 (`part`, `q`)                                                                  |
-| GET    | `/v1/topics/themes`      | Recurring exam themes (`group`, `skill`, `q`)                                                     |
-| GET    | `/v1/tasks/writing`      | Writing Task 1 families (`module`)                                                                |
-| GET    | `/v1/question-types`     | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)          |
-| GET    | `/v1/question-types/:id` | One question type, with its traps and upstream label variants                                     |
-| GET    | `/v1/tests`              | Practice-test index: provenance, statistics, facets                                               |
-| GET    | `/v1/tests/stats`        | Question-type and readability statistics                                                          |
-| GET    | `/v1/tests/items`        | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)          |
-| GET    | `/v1/tests/:id`          | One indexed practice test or graded reading lesson                                                |
-| GET    | `/v1/corpus`             | Corpus metadata, statistics and facets                                                            |
-| GET    | `/v1/corpus/stats`       | Corpus statistics                                                                                 |
-| GET    | `/v1/corpus/items`       | Search the corpus index                                                                           |
-| GET    | `/v1/resources`          | Free preparation resources (`type`, `q`)                                                          |
+| Method | Path                      | Description                                                                                       |
+| ------ | ------------------------- | ------------------------------------------------------------------------------------------------- |
+| GET    | `/`                       | Service index, dataset sizes, citation links                                                      |
+| GET    | `/v1`                     | List every versioned endpoint                                                                     |
+| GET    | `/health`                 | Liveness and dataset availability                                                                 |
+| GET    | `/docs`                   | Human-readable documentation                                                                      |
+| GET    | `/openapi.json`           | OpenAPI 3.1 document generated from the live route table                                          |
+| GET    | `/v1/vocabulary`          | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
+| GET    | `/v1/vocabulary/stats`    | Dataset statistics                                                                                |
+| GET    | `/v1/vocabulary/random`   | Seeded random sample (`count`, `seed`)                                                            |
+| GET    | `/v1/vocabulary/daily`    | Deterministic entry for a date (`date`, `count`)                                                  |
+| GET    | `/v1/vocabulary/:word`    | Look up one headword                                                                              |
+| GET    | `/v1/bands`               | The band scale with indicative CEFR levels                                                        |
+| GET    | `/v1/bands/descriptors`   | Band descriptors (`set`, `criterion`, `band`)                                                     |
+| GET    | `/v1/bands/:band`         | One band, with the descriptors that bracket it                                                    |
+| GET    | `/v1/scores/overall`      | Overall band from the four components                                                             |
+| GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
+| GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                    |
+| GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
+| GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                  |
+| GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                     |
+| GET    | `/v1/tasks/writing`       | Writing Task 1 families (`module`)                                                                |
+| GET    | `/v1/question-types`      | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)          |
+| GET    | `/v1/question-types/:id`  | One question type, with its traps and upstream label variants                                     |
+| GET    | `/v1/tests`               | Practice-test index: provenance, statistics, facets                                               |
+| GET    | `/v1/tests/stats`         | Question-type and readability statistics                                                          |
+| GET    | `/v1/tests/items`         | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)          |
+| GET    | `/v1/tests/:id`           | One indexed practice test or graded reading lesson                                                |
+| GET    | `/v1/corpus`              | Corpus metadata, statistics and facets                                                            |
+| GET    | `/v1/corpus/stats`        | Corpus statistics                                                                                 |
+| GET    | `/v1/corpus/items`        | Search the corpus index                                                                           |
+| GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                |
+| GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)      |
+| GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)         |
+| GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                          |
 
 ### Worked examples
 
@@ -152,6 +168,76 @@ GET /v1/vocabulary?q=hydro&match=prefix&limit=2
     }
   ],
   "meta": { "total": 7, "limit": 2, "offset": 0, "hasMore": true, "match": "prefix" }
+}
+```
+
+**Essay profiling.** The profiler measures surface features only and maps them onto the four
+Writing criteria; every hint names its numbers, and `meta` repeats that hints are heuristics, not
+scores.
+
+```jsonc
+GET /v1/tools/essay-profile?text=Governments%20should%20invest%20in%20public%20transport.%20For%20example%2C%20...
+{
+  "status": 200,
+  "data": {
+    "task": "task2",
+    "length": { "words": 17, "minimumWords": 250, "meetsMinimum": false, ... },
+    "lexical": { "tokens": 17, "types": 17, "typeTokenRatio": 1, "rootTtr": 4.12,
+                 "headwordTokens": 2, "headwordCoverage": 0.12, ... },
+    "sentences": { "count": 2, "avgLength": 8.5, "stdDev": 2.5, "shortest": 6, "longest": 11 },
+    "themes": [{ "id": "th-06", "group": "environment",
+                 "name": "Climate change and global warming",
+                 "matchedKeywords": ["carbon footprint"], "occurrences": 1 }],
+    "hints": [
+      { "criterion": "task-response", "level": "watch",
+        "message": "17 words is under the 250-word minimum for task2; ..." },
+      ...
+    ],
+    "strengths": 0, "watches": 4
+  }
+}
+```
+
+**Study planning.** The planner weights the gaps into weekly hours, splits the weeks into
+foundation, practice and polish phases, and links every week to the endpoints that supply its
+material. Identical inputs always produce the identical schedule.
+
+```jsonc
+GET /v1/study/plan?target=7&writing=6&speaking=6.5&weeks=8&hoursPerWeek=10
+{
+  "status": 200,
+  "data": {
+    "inputs": { "target": 7, "weeks": 8, "hoursPerWeek": 10, "wordsPerDay": 10,
+                "providedComponents": ["writing", "speaking"],
+                "defaultedComponents": ["listening", "reading"] },
+    "current": { "components": { "listening": 5.5, "reading": 5.5, "writing": 6, "speaking": 6.5 },
+                 "overall": 6, "cefr": "B2" },
+    "target": { "band": 7, "cefr": "C1" },
+    "gaps": [
+      { "skill": "listening", "from": 5.5, "to": 7, "gap": 1.5, "share": 0.33, "hoursPerWeek": 3.3 },
+      ...
+    ],
+    "phases": [
+      { "name": "foundation", "fromWeek": 1, "toWeek": 4, "emphasis": "Technique and language building: ..." },
+      { "name": "practice", "fromWeek": 5, "toWeek": 7, "emphasis": "Timed practice: ..." },
+      { "name": "polish", "fromWeek": 8, "toWeek": 8, "emphasis": "Peak and polish: ..." }
+    ],
+    "weekly": [
+      { "week": 1, "phase": "foundation", "focus": "listening",
+        "hours": { "listening": 3.3, "reading": 3.3, "writing": 2.2, "speaking": 1.1 },
+        "themes": [{ "id": "th-07", "group": "environment", "name": "Air, water and plastic pollution" }, ...],
+        "practice": [
+          { "kind": "question-type", "name": "Drill: Multiple choice (more than one answer)",
+            "url": "/v1/question-types/multiple-choice-multiple-answer" },
+          ...
+        ],
+        "vocabulary": { "newWords": 50, "reviewWords": 20 },
+        "checkpoint": null },
+      ...
+    ],
+    "vocabulary": { "headwordsAvailable": 4174, "wordsPerDay": 10, "wordsPerWeek": 70, "headwordsOverPlan": 560 },
+    "notes": ["Components not supplied default to 5.5 (target − 1.5 bands); ...", ...]
+  }
 }
 ```
 
@@ -218,7 +304,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.1.0},
+  version = {1.2.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }

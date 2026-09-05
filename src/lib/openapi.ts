@@ -223,6 +223,82 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/tools/readability': [
+    {
+      name: 'text',
+      in: 'query',
+      required: true,
+      description: 'Text to analyse; at most 4,000 characters and at least one alphabetic word.',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/tools/essay-profile': [
+    {
+      name: 'text',
+      in: 'query',
+      required: true,
+      description: 'Writing sample to analyse; at most 4,000 characters and at least one alphabetic word.',
+      schema: { type: 'string' },
+    },
+    { name: 'task', in: 'query', schema: { type: 'string', enum: ['task1', 'task2'], default: 'task2' } },
+    {
+      name: 'limit',
+      in: 'query',
+      description: 'Maximum detected themes to report.',
+      schema: { type: 'integer', minimum: 1, maximum: 10, default: 5 },
+    },
+  ],
+  '/v1/study/plan': [
+    {
+      name: 'target',
+      in: 'query',
+      required: true,
+      description: 'Target overall band.',
+      schema: { type: 'number', minimum: 4, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'listening',
+      in: 'query',
+      description: 'Current listening band; defaults to target − 1.5.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'reading',
+      in: 'query',
+      description: 'Current reading band; defaults to target − 1.5.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'writing',
+      in: 'query',
+      description: 'Current writing band; defaults to target − 1.5.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'speaking',
+      in: 'query',
+      description: 'Current speaking band; defaults to target − 1.5.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'weeks',
+      in: 'query',
+      description: 'Plan length in weeks.',
+      schema: { type: 'integer', minimum: 1, maximum: 52, default: 8 },
+    },
+    {
+      name: 'hoursPerWeek',
+      in: 'query',
+      description: 'Study hours available per week.',
+      schema: { type: 'number', minimum: 1, maximum: 80, default: 10 },
+    },
+    {
+      name: 'wordsPerDay',
+      in: 'query',
+      description: 'New headwords to learn per day.',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+  ],
 };
 
 /** The shared JSON envelope schema. */

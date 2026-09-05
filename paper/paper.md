@@ -124,6 +124,17 @@ sentences are.
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
+**Analysis toolkit.** The same datasets also power three text-consuming endpoints. A readability
+analyser applies the Flesch formulas to any supplied text — alphabetic tokenisation, sentence
+splitting on terminators, vowel-group syllable estimation — and places the score next to the corpus
+group means above. An essay profiler measures type-token ratio, Guiraud's index, coverage against
+the Cambridge headword list, sentence-length spread, discourse-marker density and theme matches,
+and maps the measurements onto hints phrased after the four analytic criteria, at fixed published
+thresholds; the response states that the hints are teaching heuristics, not scores. A study planner
+composes the gap between a target band and current component scores into a deterministic
+week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
+pure functions of their inputs, so their outputs are as reproducible as the datasets.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
@@ -139,7 +150,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (341 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (437 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

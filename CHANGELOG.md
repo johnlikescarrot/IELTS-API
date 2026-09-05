@@ -6,6 +6,42 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+First capabilities that consume text as well as publish it: two deterministic text analysers and a
+study planner that composes every existing dataset into a week-by-week schedule. The API remains
+free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Readability analyser** (`GET /v1/tools/readability`): Flesch Reading Ease and Flesch-Kincaid
+  grade for any text (up to 4,000 characters) with the full counts behind them, an interpretive
+  label, and a corpus context that places the text next to the group means published by
+  `/v1/tests/stats` (full reading tests 43.5, graded lessons `A1-A2` 70.2, `B1-B2` 26.0,
+  `C1-C2` 5.0).
+- **Essay profiler** (`GET /v1/tools/essay-profile`): type-token ratio, Guiraud's root TTR,
+  long-word share, sentence-length spread, discourse-marker density, coverage against the 4,174
+  Cambridge headwords and recurring-theme detection through the Part II keyword sets, mapped onto
+  heuristic hints phrased after the four Writing band-descriptor criteria. Every threshold is
+  published and every hint names its numbers.
+- **Study planner** (`GET /v1/study/plan`): deterministic week-by-week plans from a target band,
+  optional component scores (defaulting to target − 1.5), a weekly hour budget and a vocabulary
+  rate. Gaps are weighted into hours, weeks are split into foundation, practice and polish phases,
+  and every week links to the endpoints that supply its material: question-type drills, graded
+  reading at the corpus-calibrated level, Task 2 categories, rotating speaking topics, two themes
+  per week, quarterly full mocks and a final review. Identical requests produce byte-identical
+  plans.
+- `RESEARCH.md` Part III: the toolkit methodology, the measurement definitions and the threats to
+  validity that apply to surface heuristics.
+
+### Changed
+
+- The OpenAPI document, the README endpoint table and `/docs` cover the three new routes.
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.2.0, and the
+  keyword lists now include text analysis, lexical diversity and study planning.
+- Test suite grown to 437 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection

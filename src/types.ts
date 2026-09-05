@@ -424,6 +424,239 @@ export type ExamTheme = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Text analysis and study planning                                           */
+/* -------------------------------------------------------------------------- */
+
+/** Band-descriptor criteria a heuristic hint can relate to. */
+export type DescriptorCriterion =
+  'task-response' | 'coherence-and-cohesion' | 'lexical-resource' | 'grammatical-range-and-accuracy';
+
+/** How urgently a heuristic hint applies. */
+export type HintLevel = 'strength' | 'watch';
+
+/** A descriptor-aligned heuristic observation about a candidate text. */
+export type ProfileHint = {
+  /** Descriptor criterion the observation relates to. */
+  criterion: DescriptorCriterion;
+  /** `strength` when the text clears the threshold, `watch` when it falls short. */
+  level: HintLevel;
+  /** Original, self-contained guidance. */
+  message: string;
+};
+
+/** Base counts and averages computed for any analysable text. */
+export type TextProfile = {
+  /** Characters received (before analysis). */
+  characters: number;
+  /** Running words (alphabetic tokens, numerals excluded). */
+  words: number;
+  /** Sentence count. */
+  sentences: number;
+  /** Non-empty paragraphs (separated by blank lines). */
+  paragraphs: number;
+  /** Mean sentence length in words. */
+  avgWordsPerSentence: number;
+  /** Mean word length in characters. */
+  avgWordLength: number;
+  /** Population standard deviation of sentence lengths in words. */
+  sentenceLengthStdDev: number;
+  /** Share of words with three or more syllables. */
+  longWordShare: number;
+  /** Mean syllables per word (heuristic count). */
+  syllablesPerWord: number;
+};
+
+/** Comparison of a text against the corpus groups indexed by `/v1/tests`. */
+export type CorpusContext = {
+  /** Corpus group with the mean reading ease closest to the text. */
+  group: string;
+  /** Mean Flesch Reading Ease of that group. */
+  meanReadingEase: number;
+  /** Absolute distance between the text and the group mean. */
+  distance: number;
+  /** Mean Flesch-Kincaid grade of that group. */
+  meanGrade: number;
+};
+
+/** Response of `/v1/tools/readability`. */
+export type ReadabilityReport = {
+  /** Text statistics. */
+  profile: TextProfile;
+  /** Flesch Reading Ease (higher is easier), rounded to 2 decimals. */
+  fleschReadingEase: number;
+  /** Flesch-Kincaid grade level, rounded to 2 decimals. */
+  fleschKincaidGrade: number;
+  /** Interpretive label for the reading-ease score. */
+  level: { label: string; description: string };
+  /** Nearest corpus group from the practice-test index. */
+  corpusContext: CorpusContext;
+};
+
+/** Lexical measures for one candidate text. */
+export type LexicalProfile = {
+  /** Running words. */
+  tokens: number;
+  /** Distinct lower-cased word forms. */
+  types: number;
+  /** Type-token ratio. */
+  typeTokenRatio: number;
+  /** Guiraud's root type-token ratio: `types / sqrt(tokens)`. */
+  rootTtr: number;
+  /** Share of tokens with three or more syllables. */
+  longWordShare: number;
+  /** Tokens found in the Cambridge IELTS headword list. */
+  headwordTokens: number;
+  /** `headwordTokens / tokens`. */
+  headwordCoverage: number;
+};
+
+/** Length measures for one candidate text. */
+export type LengthProfile = {
+  /** Words, sentences and paragraphs. */
+  words: number;
+  sentences: number;
+  paragraphs: number;
+  /** Minimum words the chosen task demands. */
+  minimumWords: number;
+  /** Whether the text meets the minimum. */
+  meetsMinimum: boolean;
+};
+
+/** A recurring theme detected in a candidate text. */
+export type ThemeMatch = {
+  /** Theme identifier (`th-01`). */
+  id: string;
+  /** Thematic group. */
+  group: string;
+  /** Theme name. */
+  name: string;
+  /** Keywords of the theme found in the text. */
+  matchedKeywords: string[];
+  /** Total occurrences of matched keywords. */
+  occurrences: number;
+};
+
+/** Response of `/v1/tools/essay-profile`. */
+export type EssayProfile = {
+  /** Task the text was written for. */
+  task: 'task1' | 'task2';
+  /** Length measures and the task minimum. */
+  length: LengthProfile;
+  /** Lexical diversity and headword coverage. */
+  lexical: LexicalProfile;
+  /** Sentence-length measures. */
+  sentences: { count: number; avgLength: number; stdDev: number; shortest: number; longest: number };
+  /** Recurring themes detected, strongest first. */
+  themes: ThemeMatch[];
+  /** Descriptor-aligned heuristic hints, strongest observations first. */
+  hints: ProfileHint[];
+  /** Number of `strength` hints. */
+  strengths: number;
+  /** Number of `watch` hints. */
+  watches: number;
+};
+
+/** Gap between a current component score and the target, with study hours. */
+export type StudyGap = {
+  /** Component. */
+  skill: Skill;
+  /** Current (or defaulted) band. */
+  from: number;
+  /** Target band. */
+  to: number;
+  /** `to - from`, clipped at 0. */
+  gap: number;
+  /** Share of weekly hours assigned to the component. */
+  share: number;
+  /** Weekly hours assigned to the component. */
+  hoursPerWeek: number;
+};
+
+/** One checkpoint inside the study plan. */
+export type StudyCheckpoint = {
+  /** `full-mock` or `final-review`. */
+  type: 'full-mock' | 'final-review';
+  /** What to sit and how to use the result. */
+  detail: string;
+};
+
+/** One study activity for a week. */
+export type StudyActivity = {
+  /** What kind of activity it is. */
+  kind: 'question-type' | 'practice-index' | 'writing-task' | 'speaking-part';
+  /** Display name. */
+  name: string;
+  /** Related API endpoint for the activity. */
+  url: string;
+};
+
+/** One week of the study plan. */
+export type StudyWeek = {
+  /** 1-based week number. */
+  week: number;
+  /** Phase the week belongs to. */
+  phase: 'foundation' | 'practice' | 'polish';
+  /** Component receiving the largest single block of practice this week. */
+  focus: Skill;
+  /** Weekly hours per component. */
+  hours: Record<Skill, number>;
+  /** Recurring themes to study this week. */
+  themes: { id: string; group: string; name: string }[];
+  /** Concrete activities, each linked to an endpoint. */
+  practice: StudyActivity[];
+  /** Vocabulary workload. */
+  vocabulary: { newWords: number; reviewWords: number };
+  /** Scheduled checkpoint, or `null`. */
+  checkpoint: StudyCheckpoint | null;
+};
+
+/** One phase of the study plan. */
+export type StudyPhase = {
+  /** Phase name. */
+  name: 'foundation' | 'practice' | 'polish';
+  /** First week of the phase (inclusive). */
+  fromWeek: number;
+  /** Last week of the phase (inclusive). */
+  toWeek: number;
+  /** What the phase emphasises. */
+  emphasis: string;
+};
+
+/** Response of `/v1/study/plan`. */
+export type StudyPlan = {
+  /** Validated and defaulted inputs. */
+  inputs: {
+    target: number;
+    weeks: number;
+    hoursPerWeek: number;
+    wordsPerDay: number;
+    /** Components supplied in the query string. */
+    providedComponents: Skill[];
+    /** Components filled with the default baseline. */
+    defaultedComponents: Skill[];
+  };
+  /** Current standing. */
+  current: { components: Record<Skill, number>; overall: number; cefr: string };
+  /** The target band and its CEFR level. */
+  target: { band: number; cefr: string };
+  /** Per-component gaps and weekly hours. */
+  gaps: StudyGap[];
+  /** Phase structure of the plan. */
+  phases: StudyPhase[];
+  /** Week-by-week schedule. */
+  weekly: StudyWeek[];
+  /** Vocabulary workload over the whole plan. */
+  vocabulary: {
+    headwordsAvailable: number;
+    wordsPerDay: number;
+    wordsPerWeek: number;
+    headwordsOverPlan: number;
+  };
+  /** Method notes. */
+  notes: string[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 
