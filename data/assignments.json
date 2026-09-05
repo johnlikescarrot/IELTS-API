@@ -1,0 +1,728 @@
+{
+  "meta": {
+    "name": "IELTS cohort assignment archive",
+    "repository": "https://github.com/msneloy/IELTS",
+    "commit": "db1064c36b6435b8a23adaf8e74c858476c38812",
+    "license": "See upstream repository; unpublished learner work by private individuals",
+    "attribution": "Assignment archive of the msneloy/IELTS repository",
+    "note": "Derived, non-substitutive metadata only: no essay, answer key or prompt is redistributed. Learner names in upstream file names are pseudonymised (see LEARNER_ALIASES in scripts/extract_assignments.py and RESEARCH.md Part V)."
+  },
+  "stats": {
+    "documents": 26,
+    "submissions": 24,
+    "instructorDocuments": 2,
+    "byTask": {
+      "task1": 20,
+      "task2": 4
+    },
+    "byGenre": {
+      "bar-chart": 2,
+      "essay": 4,
+      "grammar-exercise": 1,
+      "line-chart": 4,
+      "man-made-process": 3,
+      "map": 3,
+      "natural-process": 3,
+      "pie-chart": 3,
+      "prompt-list": 1,
+      "table": 2
+    },
+    "byLearner": {
+      "learner-1": 7,
+      "learner-2": 3,
+      "learner-3": 6,
+      "learner-4": 7,
+      "unattributed": 1
+    },
+    "byDate": {
+      "2022-08-11": 4,
+      "2022-08-12": 2,
+      "2022-08-15": 5,
+      "2022-08-19": 6,
+      "2022-08-21": 3,
+      "2022-08-27": 4
+    },
+    "totalWords": 8033,
+    "meanReadingEase": 59.11,
+    "firstDate": "2022-08-11",
+    "lastDate": "2022-08-27"
+  },
+  "items": [
+    {
+      "id": "a-2022-08-05-solution",
+      "date": "2022-08-05",
+      "kind": "instructor",
+      "task": null,
+      "genre": "grammar-exercise",
+      "learner": "instructor",
+      "title": "Solution.md",
+      "stats": {
+        "words": 357,
+        "sentences": 64,
+        "paragraphs": 9,
+        "avgWordsPerSentence": 5.58,
+        "sentenceLengthStdDev": 6.91,
+        "typeTokenRatio": 0.55,
+        "longWordShare": 0.11,
+        "fleschReadingEase": 84.34,
+        "fleschKincaidGrade": 2.88,
+        "linkersPer100Words": 0.0
+      },
+      "upstream": {
+        "path": "Assignments/22.08.05/Solution.md",
+        "sha": "0b316ac691a115c46f813214601a17a15e6bbdfb",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.05/Solution.md"
+      }
+    },
+    {
+      "id": "a-2022-08-11-mahmuda-12-08-22",
+      "date": "2022-08-11",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "line-chart",
+      "learner": "learner-2",
+      "title": "Mahmuda-12.08.22.md",
+      "stats": {
+        "words": 210,
+        "sentences": 13,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 16.15,
+        "sentenceLengthStdDev": 8.11,
+        "typeTokenRatio": 0.42,
+        "longWordShare": 0.16,
+        "fleschReadingEase": 51.45,
+        "fleschKincaidGrade": 10.1,
+        "linkersPer100Words": 2.86
+      },
+      "upstream": {
+        "path": "Assignments/22.08.11/Mahmuda-12.08.22.md",
+        "sha": "d221c699a6c63b8f56280fa3390e11e059c00b74",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.11/Mahmuda-12.08.22.md"
+      }
+    },
+    {
+      "id": "a-2022-08-11-riad-s-assignment",
+      "date": "2022-08-11",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "line-chart",
+      "learner": "learner-4",
+      "title": "Riad's Assignment.md",
+      "stats": {
+        "words": 196,
+        "sentences": 14,
+        "paragraphs": 2,
+        "avgWordsPerSentence": 14.0,
+        "sentenceLengthStdDev": 5.18,
+        "typeTokenRatio": 0.43,
+        "longWordShare": 0.18,
+        "fleschReadingEase": 53.21,
+        "fleschKincaidGrade": 9.32,
+        "linkersPer100Words": 1.02
+      },
+      "upstream": {
+        "path": "Assignments/22.08.11/Riad's Assignment.md",
+        "sha": "bd82298ec730e909b026bacf2d8363aa60e81a94",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.11/Riad%27s%20Assignment.md"
+      }
+    },
+    {
+      "id": "a-2022-08-11-emon",
+      "date": "2022-08-11",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "line-chart",
+      "learner": "learner-1",
+      "title": "emon",
+      "stats": {
+        "words": 174,
+        "sentences": 11,
+        "paragraphs": 5,
+        "avgWordsPerSentence": 15.82,
+        "sentenceLengthStdDev": 6.01,
+        "typeTokenRatio": 0.48,
+        "longWordShare": 0.1,
+        "fleschReadingEase": 62.91,
+        "fleschKincaidGrade": 8.41,
+        "linkersPer100Words": 0.57
+      },
+      "upstream": {
+        "path": "Assignments/22.08.11/emon",
+        "sha": "f925887fe3be5065bf4027245edfc2428190fd6b",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.11/emon"
+      }
+    },
+    {
+      "id": "a-2022-08-11-pranto-md-22-08",
+      "date": "2022-08-11",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "line-chart",
+      "learner": "learner-3",
+      "title": "pranto.md 22.08.11",
+      "stats": {
+        "words": 135,
+        "sentences": 9,
+        "paragraphs": 3,
+        "avgWordsPerSentence": 15.0,
+        "sentenceLengthStdDev": 4.47,
+        "typeTokenRatio": 0.45,
+        "longWordShare": 0.16,
+        "fleschReadingEase": 58.13,
+        "fleschKincaidGrade": 8.88,
+        "linkersPer100Words": 1.48
+      },
+      "upstream": {
+        "path": "Assignments/22.08.11/pranto.md 22.08.11",
+        "sha": "eba1a131dfa99385d37ac90c8bb3cda42d298983",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.11/pranto.md%2022.08.11"
+      }
+    },
+    {
+      "id": "a-2022-08-12-free-time-assignment",
+      "date": "2022-08-12",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "bar-chart",
+      "learner": "unattributed",
+      "title": "free time Assignment.md",
+      "stats": {
+        "words": 168,
+        "sentences": 9,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 18.67,
+        "sentenceLengthStdDev": 7.62,
+        "typeTokenRatio": 0.6,
+        "longWordShare": 0.14,
+        "fleschReadingEase": 57.46,
+        "fleschKincaidGrade": 9.88,
+        "linkersPer100Words": 1.19
+      },
+      "upstream": {
+        "path": "Assignments/22.08.12/free time Assignment.md",
+        "sha": "6b64a464b6ae9de89078bb7dc257616ea3a9c6e0",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.12/free%20time%20Assignment.md"
+      }
+    },
+    {
+      "id": "a-2022-08-12-pranto-barchart-22-08-12",
+      "date": "2022-08-12",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "bar-chart",
+      "learner": "learner-3",
+      "title": "pranto.barchart.22.08.12.md",
+      "stats": {
+        "words": 144,
+        "sentences": 6,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 24.0,
+        "sentenceLengthStdDev": 8.68,
+        "typeTokenRatio": 0.53,
+        "longWordShare": 0.17,
+        "fleschReadingEase": 41.48,
+        "fleschKincaidGrade": 13.44,
+        "linkersPer100Words": 2.78
+      },
+      "upstream": {
+        "path": "Assignments/22.08.12/pranto.barchart.22.08.12.md",
+        "sha": "09ad94098b0477f5c83f87208dee34021c2e4a71",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.12/pranto.barchart.22.08.12.md"
+      }
+    },
+    {
+      "id": "a-2022-08-15-mahmuda-table",
+      "date": "2022-08-15",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "table",
+      "learner": "learner-2",
+      "title": "Mahmuda(table).md",
+      "stats": {
+        "words": 191,
+        "sentences": 7,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 27.29,
+        "sentenceLengthStdDev": 9.71,
+        "typeTokenRatio": 0.42,
+        "longWordShare": 0.1,
+        "fleschReadingEase": 54.23,
+        "fleschKincaidGrade": 12.47,
+        "linkersPer100Words": 2.09
+      },
+      "upstream": {
+        "path": "Assignments/22.08.15/Mahmuda(table).md",
+        "sha": "ff4275e435ea52b524ebb997be9c22a0ef1dd8d3",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.15/Mahmuda%28table%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-15-mahmuda-pie-chart",
+      "date": "2022-08-15",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "pie-chart",
+      "learner": "learner-2",
+      "title": "Mahmuda.pie chart.md",
+      "stats": {
+        "words": 177,
+        "sentences": 12,
+        "paragraphs": 2,
+        "avgWordsPerSentence": 14.75,
+        "sentenceLengthStdDev": 5.63,
+        "typeTokenRatio": 0.43,
+        "longWordShare": 0.19,
+        "fleschReadingEase": 50.86,
+        "fleschKincaidGrade": 9.83,
+        "linkersPer100Words": 2.26
+      },
+      "upstream": {
+        "path": "Assignments/22.08.15/Mahmuda.pie chart.md",
+        "sha": "34d055737d58f79400656a82299658f39160fcf5",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.15/Mahmuda.pie%20chart.md"
+      }
+    },
+    {
+      "id": "a-2022-08-15-table-chart-by-riadul",
+      "date": "2022-08-15",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "table",
+      "learner": "learner-4",
+      "title": "Table Chart by riadul.md",
+      "stats": {
+        "words": 235,
+        "sentences": 14,
+        "paragraphs": 2,
+        "avgWordsPerSentence": 16.79,
+        "sentenceLengthStdDev": 6.61,
+        "typeTokenRatio": 0.49,
+        "longWordShare": 0.12,
+        "fleschReadingEase": 56.6,
+        "fleschKincaidGrade": 9.54,
+        "linkersPer100Words": 0.85
+      },
+      "upstream": {
+        "path": "Assignments/22.08.15/Table Chart by riadul.md",
+        "sha": "420cbeadac0877f7d5b920030a9ac104e3ff1806",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.15/Table%20Chart%20by%20riadul.md"
+      }
+    },
+    {
+      "id": "a-2022-08-15-household-expenditures-by-riadul",
+      "date": "2022-08-15",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "pie-chart",
+      "learner": "learner-4",
+      "title": "household expenditures by riadul.md",
+      "stats": {
+        "words": 191,
+        "sentences": 13,
+        "paragraphs": 6,
+        "avgWordsPerSentence": 14.69,
+        "sentenceLengthStdDev": 5.54,
+        "typeTokenRatio": 0.54,
+        "longWordShare": 0.16,
+        "fleschReadingEase": 53.28,
+        "fleschKincaidGrade": 9.48,
+        "linkersPer100Words": 1.57
+      },
+      "upstream": {
+        "path": "Assignments/22.08.15/household expenditures by riadul.md",
+        "sha": "151ae4123144cf6eb71e168c4f7e668028b43825",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.15/household%20expenditures%20by%20riadul.md"
+      }
+    },
+    {
+      "id": "a-2022-08-15-pie-chart-by-emon",
+      "date": "2022-08-15",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "pie-chart",
+      "learner": "learner-1",
+      "title": "pie chart by emon.md",
+      "stats": {
+        "words": 180,
+        "sentences": 13,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 13.85,
+        "sentenceLengthStdDev": 7.19,
+        "typeTokenRatio": 0.53,
+        "longWordShare": 0.18,
+        "fleschReadingEase": 53.19,
+        "fleschKincaidGrade": 9.28,
+        "linkersPer100Words": 1.11
+      },
+      "upstream": {
+        "path": "Assignments/22.08.15/pie chart by emon.md",
+        "sha": "7cfd09ebdd71cc69cb0709cb37703b1409a061b5",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.15/pie%20chart%20by%20emon.md"
+      }
+    },
+    {
+      "id": "a-2022-08-19-riad-map",
+      "date": "2022-08-19",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "map",
+      "learner": "learner-4",
+      "title": "Riad(Map).md",
+      "stats": {
+        "words": 175,
+        "sentences": 13,
+        "paragraphs": 6,
+        "avgWordsPerSentence": 13.46,
+        "sentenceLengthStdDev": 7.45,
+        "typeTokenRatio": 0.53,
+        "longWordShare": 0.17,
+        "fleschReadingEase": 62.65,
+        "fleschKincaidGrade": 7.87,
+        "linkersPer100Words": 0.57
+      },
+      "upstream": {
+        "path": "Assignments/22.08.19/Riad(Map).md",
+        "sha": "2befc23e5e4360fdd086793506fa6f863bc97ea9",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.19/Riad%28Map%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-19-emon-man-made-process",
+      "date": "2022-08-19",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "man-made-process",
+      "learner": "learner-1",
+      "title": "emon (man made process).md",
+      "stats": {
+        "words": 195,
+        "sentences": 14,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 13.93,
+        "sentenceLengthStdDev": 3.41,
+        "typeTokenRatio": 0.55,
+        "longWordShare": 0.07,
+        "fleschReadingEase": 71.65,
+        "fleschKincaidGrade": 6.73,
+        "linkersPer100Words": 0.51
+      },
+      "upstream": {
+        "path": "Assignments/22.08.19/emon (man made process).md",
+        "sha": "b698a0c52747468d0ce124f564c18f1e5ad5c0c1",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.19/emon%20%28man%20made%20process%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-19-emon-map",
+      "date": "2022-08-19",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "map",
+      "learner": "learner-1",
+      "title": "emon (map).md",
+      "stats": {
+        "words": 176,
+        "sentences": 10,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 17.6,
+        "sentenceLengthStdDev": 6.87,
+        "typeTokenRatio": 0.52,
+        "longWordShare": 0.14,
+        "fleschReadingEase": 63.03,
+        "fleschKincaidGrade": 8.84,
+        "linkersPer100Words": 1.14
+      },
+      "upstream": {
+        "path": "Assignments/22.08.19/emon (map).md",
+        "sha": "ec049c9e3072f7ed17348847e93485b664b3a9c5",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.19/emon%20%28map%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-19-pranto-map-22-08-19",
+      "date": "2022-08-19",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "map",
+      "learner": "learner-3",
+      "title": "pranto(map)22.08.19.md",
+      "stats": {
+        "words": 164,
+        "sentences": 10,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 16.4,
+        "sentenceLengthStdDev": 7.95,
+        "typeTokenRatio": 0.57,
+        "longWordShare": 0.15,
+        "fleschReadingEase": 54.52,
+        "fleschKincaidGrade": 9.73,
+        "linkersPer100Words": 1.83
+      },
+      "upstream": {
+        "path": "Assignments/22.08.19/pranto(map)22.08.19.md",
+        "sha": "2ff8bc6d5471d4501be7711c36414a8765841727",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.19/pranto%28map%2922.08.19.md"
+      }
+    },
+    {
+      "id": "a-2022-08-19-pranto-mmp-22-08-19",
+      "date": "2022-08-19",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "man-made-process",
+      "learner": "learner-3",
+      "title": "pranto, MMP,22.08.19.md",
+      "stats": {
+        "words": 167,
+        "sentences": 11,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 15.18,
+        "sentenceLengthStdDev": 4.78,
+        "typeTokenRatio": 0.5,
+        "longWordShare": 0.08,
+        "fleschReadingEase": 71.87,
+        "fleschKincaidGrade": 7.01,
+        "linkersPer100Words": 0.6
+      },
+      "upstream": {
+        "path": "Assignments/22.08.19/pranto, MMP,22.08.19.md",
+        "sha": "29ad8aa465c0954308a3db53f304d0f6af48993e",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.19/pranto%2C%20MMP%2C22.08.19.md"
+      }
+    },
+    {
+      "id": "a-2022-08-19-riad-man-made-process",
+      "date": "2022-08-19",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "man-made-process",
+      "learner": "learner-4",
+      "title": "riad(Man made process).md",
+      "stats": {
+        "words": 179,
+        "sentences": 9,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 19.89,
+        "sentenceLengthStdDev": 8.77,
+        "typeTokenRatio": 0.54,
+        "longWordShare": 0.12,
+        "fleschReadingEase": 59.51,
+        "fleschKincaidGrade": 9.9,
+        "linkersPer100Words": 1.12
+      },
+      "upstream": {
+        "path": "Assignments/22.08.19/riad(Man made process).md",
+        "sha": "aa9e741253df74c9ffed239c3104aab4aad0039f",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.19/riad%28Man%20made%20process%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-21-emon-natural-process",
+      "date": "2022-08-21",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "natural-process",
+      "learner": "learner-1",
+      "title": "emon (natural process).md",
+      "stats": {
+        "words": 151,
+        "sentences": 9,
+        "paragraphs": 4,
+        "avgWordsPerSentence": 16.78,
+        "sentenceLengthStdDev": 5.18,
+        "typeTokenRatio": 0.56,
+        "longWordShare": 0.11,
+        "fleschReadingEase": 70.47,
+        "fleschKincaidGrade": 7.6,
+        "linkersPer100Words": 1.32
+      },
+      "upstream": {
+        "path": "Assignments/22.08.21/emon (natural process).md",
+        "sha": "ccd9e02f003c8b311a4de236a221a92cee6da1b2",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.21/emon%20%28natural%20process%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-21-pranto-np-22-08-21",
+      "date": "2022-08-21",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "natural-process",
+      "learner": "learner-3",
+      "title": "pranto,NP,22.08.21.md",
+      "stats": {
+        "words": 150,
+        "sentences": 9,
+        "paragraphs": 3,
+        "avgWordsPerSentence": 16.67,
+        "sentenceLengthStdDev": 3.65,
+        "typeTokenRatio": 0.49,
+        "longWordShare": 0.08,
+        "fleschReadingEase": 76.55,
+        "fleschKincaidGrade": 6.72,
+        "linkersPer100Words": 1.33
+      },
+      "upstream": {
+        "path": "Assignments/22.08.21/pranto,NP,22.08.21.md",
+        "sha": "bda1f9c1e4eb2188d1e8cdfa2f21c3899d1eecef",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.21/pranto%2CNP%2C22.08.21.md"
+      }
+    },
+    {
+      "id": "a-2022-08-21-riad-natural-process",
+      "date": "2022-08-21",
+      "kind": "submission",
+      "task": "task1",
+      "genre": "natural-process",
+      "learner": "learner-4",
+      "title": "riad(natural process).md",
+      "stats": {
+        "words": 226,
+        "sentences": 15,
+        "paragraphs": 6,
+        "avgWordsPerSentence": 15.07,
+        "sentenceLengthStdDev": 7.36,
+        "typeTokenRatio": 0.49,
+        "longWordShare": 0.07,
+        "fleschReadingEase": 77.0,
+        "fleschKincaidGrade": 6.26,
+        "linkersPer100Words": 0.88
+      },
+      "upstream": {
+        "path": "Assignments/22.08.21/riad(natural process).md",
+        "sha": "cf15702f0640d6166560536f32a92ece8d899aa1",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.21/riad%28natural%20process%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-27-riad-essay",
+      "date": "2022-08-27",
+      "kind": "submission",
+      "task": "task2",
+      "genre": "essay",
+      "learner": "learner-4",
+      "title": "Riad(Essay).md",
+      "stats": {
+        "words": 2479,
+        "sentences": 151,
+        "paragraphs": 47,
+        "avgWordsPerSentence": 16.42,
+        "sentenceLengthStdDev": 7.02,
+        "typeTokenRatio": 0.3,
+        "longWordShare": 0.16,
+        "fleschReadingEase": 49.84,
+        "fleschKincaidGrade": 10.39,
+        "linkersPer100Words": 1.13
+      },
+      "upstream": {
+        "path": "Assignments/22.08.27/Riad(Essay).md",
+        "sha": "e5fb09a03584ebfbf333768cbc870c8ec4b4021b",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.27/Riad%28Essay%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-27-writing-task-2",
+      "date": "2022-08-27",
+      "kind": "instructor",
+      "task": "task2",
+      "genre": "prompt-list",
+      "learner": "instructor",
+      "title": "WRITING TASK 2.md",
+      "stats": {
+        "words": 218,
+        "sentences": 27,
+        "paragraphs": 1,
+        "avgWordsPerSentence": 8.07,
+        "sentenceLengthStdDev": 7.84,
+        "typeTokenRatio": 0.56,
+        "longWordShare": 0.14,
+        "fleschReadingEase": 65.92,
+        "fleschKincaidGrade": 6.07,
+        "linkersPer100Words": 0.0
+      },
+      "upstream": {
+        "path": "Assignments/22.08.27/WRITING TASK 2.md",
+        "sha": "3ac0aabbbe9fa84f5140842d1d8d8cc507030151",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.27/WRITING%20TASK%202.md"
+      }
+    },
+    {
+      "id": "a-2022-08-27-emon-essay-1",
+      "date": "2022-08-27",
+      "kind": "submission",
+      "task": "task2",
+      "genre": "essay",
+      "learner": "learner-1",
+      "title": "emon (essay-1).md",
+      "stats": {
+        "words": 275,
+        "sentences": 15,
+        "paragraphs": 5,
+        "avgWordsPerSentence": 18.33,
+        "sentenceLengthStdDev": 5.88,
+        "typeTokenRatio": 0.51,
+        "longWordShare": 0.13,
+        "fleschReadingEase": 54.71,
+        "fleschKincaidGrade": 10.18,
+        "linkersPer100Words": 1.45
+      },
+      "upstream": {
+        "path": "Assignments/22.08.27/emon (essay-1).md",
+        "sha": "5c7c6243df5be90e16b9180eff15e34747f0bce6",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.27/emon%20%28essay-1%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-27-emon-essay5",
+      "date": "2022-08-27",
+      "kind": "submission",
+      "task": "task2",
+      "genre": "essay",
+      "learner": "learner-1",
+      "title": "emon (essay5).md",
+      "stats": {
+        "words": 285,
+        "sentences": 18,
+        "paragraphs": 5,
+        "avgWordsPerSentence": 15.83,
+        "sentenceLengthStdDev": 7.21,
+        "typeTokenRatio": 0.47,
+        "longWordShare": 0.11,
+        "fleschReadingEase": 64.31,
+        "fleschKincaidGrade": 8.22,
+        "linkersPer100Words": 1.75
+      },
+      "upstream": {
+        "path": "Assignments/22.08.27/emon (essay5).md",
+        "sha": "1c357ec3d97d940e97877d878a884bc30deadebf",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.27/emon%20%28essay5%29.md"
+      }
+    },
+    {
+      "id": "a-2022-08-27-pranto-essay",
+      "date": "2022-08-27",
+      "kind": "submission",
+      "task": "task2",
+      "genre": "essay",
+      "learner": "learner-3",
+      "title": "pranto,essay.md",
+      "stats": {
+        "words": 835,
+        "sentences": 57,
+        "paragraphs": 17,
+        "avgWordsPerSentence": 14.65,
+        "sentenceLengthStdDev": 5.5,
+        "typeTokenRatio": 0.39,
+        "longWordShare": 0.19,
+        "fleschReadingEase": 49.72,
+        "fleschKincaidGrade": 9.96,
+        "linkersPer100Words": 1.08
+      },
+      "upstream": {
+        "path": "Assignments/22.08.27/pranto,essay.md",
+        "sha": "b250f4813739fef588926f3564da6d4098f4e215",
+        "url": "https://github.com/msneloy/IELTS/blob/main/Assignments/22.08.27/pranto%2Cessay.md"
+      }
+    }
+  ]
+}

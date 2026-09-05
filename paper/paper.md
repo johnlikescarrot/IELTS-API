@@ -7,6 +7,7 @@ tags:
   - vocabulary
   - readability
   - item types
+  - writing assessment
   - open data
   - REST API
 authors:
@@ -24,7 +25,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -33,11 +34,15 @@ Listening question types, onto which 65 free-text annotation labels are normalis
 frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
-1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of three open IELTS collections.
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; a
+surface-statistics index of the homework archive of a real 2022 preparation cohort
+[@ieltsassignments]; and curated metadata indexes of four open IELTS collections.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
-practical requirement for reproducible corpus and assessment research.
+practical requirement for reproducible corpus and assessment research. The service also consumes
+text, not only publishes it: it scores the readability of any passage, profiles any writing sample
+against the datasets, and estimates a heuristic band per writing criterion through published,
+auditable threshold rules.
 
 # Statement of need
 
@@ -126,16 +131,35 @@ sentences are.
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
-**Analysis toolkit.** The same datasets also power three text-consuming endpoints. A readability
+**Assignment archive.** A fourth upstream collection [@ieltsassignments] preserves something
+assessment research rarely obtains: the homework writing of an actual preparation cohort, folder by
+folder, with the prompt images that defined each task. The indexed snapshot covers one month
+(August 2022): 24 submissions — 20 Task 1 responses across seven visual genres (line chart, bar
+chart, table, pie chart, map, man-made process, natural process) and 4 Task 2 essays — by four
+learners, plus two teacher-authored documents. The index publishes, per document, the date, task,
+genre, a pseudonymous learner label, measured surface statistics (words, sentences, paragraphs,
+sentence-length spread, type-token ratio, long-word share, Flesch Reading Ease, Flesch-Kincaid
+grade, discourse-marker density) and full provenance; no essay, answer key or prompt is
+redistributed, and the learner names that appear in upstream file names are replaced by a fixed,
+documented pseudonym table.
+
+**Analysis toolkit.** The same datasets also power four text-consuming endpoints. A readability
 analyser applies the Flesch formulas to any supplied text — alphabetic tokenisation, sentence
 splitting on terminators, vowel-group syllable estimation — and places the score next to the corpus
 group means above. An essay profiler measures type-token ratio, Guiraud's index, coverage against
 the Cambridge headword list, sentence-length spread, discourse-marker density and theme matches,
 and maps the measurements onto hints phrased after the four analytic criteria, at fixed published
-thresholds; the response states that the hints are teaching heuristics, not scores. A study planner
+thresholds; the response states that the hints are teaching heuristics, not scores. A writing
+assessor turns the same measurements into a per-criterion band estimate: each of the four criteria
+starts from a published baseline of 6.5 and moves in half-band steps through a fixed catalogue of
+25 threshold rules, clamps to [4.0, 8.0], and the four estimates combine under the official IELTS
+rounding rule (.25/.75 means up). The response names every rule that fired, the observation that
+triggered it and its effect, and publishes every measurement behind them — the design trades power
+for auditability, and the disclaimer in every response states that the estimate is a teaching
+signal, not a score. A study planner
 composes the gap between a target band and current component scores into a deterministic
-week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
-pure functions of their inputs, so their outputs are as reproducible as the datasets.
+week-by-week schedule whose every activity links to the endpoint that publishes it. All of these
+are pure functions of their inputs, so their outputs are as reproducible as the datasets.
 
 # Design
 
@@ -152,13 +176,14 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (469 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (515 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
-study-materials index from the upstream tree, and revalidates the
-internal consistency of the practice-test index (question counts, type normalisation and provenance),
+study-materials index from the upstream tree, and revalidates the internal consistency of the
+practice-test index (question counts, type normalisation and provenance) and of the assignment
+index (document counts, pseudonym labels, provenance and statistics),
 failing if the committed data has drifted — which guards against silent data rot.
 
 # Availability

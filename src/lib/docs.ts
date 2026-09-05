@@ -10,6 +10,7 @@ import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
+import { assignmentStats } from '../data/assignments.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -52,6 +53,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const corpus = corpusStats();
   const practice = practiceStats();
   const materials = materialsStats();
+  const assignments = assignmentStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -103,6 +105,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
   <li><strong>Response frameworks</strong> for Writing Task&nbsp;2 and Speaking Parts&nbsp;2&ndash;3: ordered stage plans with cue language and pitfalls, cross-linked to the task banks.</li>
   <li><strong>${materials.indexedFiles.toLocaleString('en-US')} study-material files</strong> indexed from a ${materials.filesInRepository.toLocaleString('en-US')}-file self-study collection (recall banks, question banks, templates, vocabulary; metadata only).</li>
+  <li><strong>${assignments.submissions} learner writing submissions</strong> (${assignments.totalWords.toLocaleString('en-US')} words, ${Object.keys(assignments.byLearner).length - 1} learners, ${Object.keys(assignments.byDate).length} assignment days) indexed from a real coaching cohort's assignment archive with surface statistics per document (metadata only).</li>
 </ul>
 
 <h2>Versioned endpoints</h2>

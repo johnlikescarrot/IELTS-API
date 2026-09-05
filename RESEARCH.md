@@ -3,14 +3,16 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Four upstream collections are analysed (Part III needs none — it consumes arbitrary text):
 
-| Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
-| [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index (and, without upstream, the response frameworks)       |
+| [Part V](#part-v--the-assignment-archive-and-the-writing-assessment)            | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 627 blobs   | the cohort assignment archive and the writing-assessment heuristics              |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+None of the collections is redistributed. All are indexed, measured and cited.
 
 ## Part I — the research corpus
 
@@ -520,3 +522,118 @@ python3 scripts/extract_materials.py tree.json data/materials.json
 The script is standard library only and deterministic: the same tree always produces byte-identical
 output. The continuous-integration workflow re-derives the index from the upstream tree on every run
 and fails if the committed file disagrees.
+
+## Part V — the assignment archive and the writing assessment
+
+Part V does two connected things. It indexes a fourth upstream collection — the working archive of a
+2022 IELTS preparation cohort — and it adds the first capability that reads like an examiner:
+`/v1/assess/writing` turns the toolkit's measurements into a per-criterion band estimate with the
+IELTS rounding rule. The connection is deliberate: the archive documents the kind of writing the
+assessor is pointed at, and every statistic the archive publishes per document is one the assessor
+consumes per request.
+
+### 23. What the archive actually contains
+
+The upstream repository (`msneloy/IELTS`, snapshot commit `db1064c36b6435b8a23adaf8e74c858476c38812`,
+627 blobs) mixes Cambridge audio and PDFs with a small, unusual asset: an `Assignments/` tree with
+one folder per homework day in August 2022, holding the candidates' submitted writing next to the
+prompt images their teacher assigned (`Line_Chart.jpg`, `Bar_Chart.jpg`, `Pie_Chart.jpg`,
+`Table.jpg`, `MAP.jpeg`, `MAN-MADE PROCESS.jpg`, `NATURAL PROCESS.png`).
+
+The indexed snapshot contains 26 text documents in six dated folders:
+
+| Date       | Submissions | Genre(s) practised         |
+| ---------- | ----------: | -------------------------- |
+| 2022-08-05 |           — | (instructor grammar drill) |
+| 2022-08-11 |           4 | line chart                 |
+| 2022-08-12 |           2 | bar chart                  |
+| 2022-08-15 |           5 | table, pie chart           |
+| 2022-08-19 |           6 | map, man-made process      |
+| 2022-08-21 |           3 | natural process            |
+| 2022-08-27 |           4 | Task 2 essay               |
+
+That is 24 submissions (20 Task 1, 4 Task 2; one of them unattributed) by four identifiable
+learners, plus two teacher-authored documents (an article-usage answer key and the Task 2 prompt
+list) — 8,033 words across the 26 indexed documents. Learner production spans the full visual-genre
+range in three weeks — the sequence itself is evidence about what a coaching classroom actually
+drills, a trace assessment research rarely gets to see.
+
+### 24. Construction of the index
+
+`scripts/extract_assignments.py` (standard library only, deterministic) walks the upstream tree
+listing, reads each text document from a local checkout, and emits:
+
+- **Structure.** Date (from the folder name), kind (`submission` or `instructor`), task
+  (`task1`/`task2`, `null` for the grammar drill), and genre. Genre classification is three-stage
+  and published: filename keywords on word boundaries (`map`, `mmp`, `np`, `barchart`, `essay`, ...),
+  then text patterns for files whose name carries no hint (`circle diagram` → `pie-chart`), then the
+  folder's prompt image as a date-level fallback. Two instructor files are classified by exact name.
+- **Pseudonymous learner labels.** The upstream file names contain first names. The index replaces
+  them with `learner-1` … `learner-4`, mapped alphabetically from the upstream tokens
+  (`emon`, `mahmuda`, `pranto`, `riad`/`riadul`) — a fixed table, `LEARNER_ALIASES`, in the script.
+  The upstream path is still published as provenance; the pseudonymisation exists so that analyses
+  and citations never need to repeat the names, not to obscure the public source. One file names no
+  learner and is labelled `unattributed`.
+- **Surface statistics per document** (never the text): words, sentences, paragraphs, mean sentence
+  length, sentence-length standard deviation, type-token ratio, long-word share, Flesch Reading
+  Ease, Flesch-Kincaid grade, discourse markers per 100 words. The heuristics mirror
+  `src/lib/textstats.ts` exactly (same tokenisation, same vowel-group syllable estimator, same 18
+  discourse markers), so dataset columns and the analysis endpoints measure with one rule set.
+- **Provenance.** Upstream path, blob SHA-1, permalink, and the snapshot commit.
+
+### 25. The writing assessment: design
+
+`/v1/assess/writing` estimates a band per analytic criterion (Task Achievement for Task 1, Task
+Response for Task 2, Coherence and Cohesion, Lexical Resource, Grammatical Range and Accuracy) and
+combines them into an overall estimate. The design trades power for auditability:
+
+1. **Baseline.** Every criterion starts at 6.5 (`ASSESS_BASELINE`) — slightly above the midpoint of
+   the heuristic range, because a text that reaches the length minimum with paragraphs and
+   signposting is already a competent response.
+2. **Rules.** 25 rules (`ASSESSMENT_RULES`), each with a published threshold, an effect in half-band
+   steps, and an observation string that names the numbers that triggered it. Rules only ever move
+   an estimate down for a visible deficit (length below the minimum caps the criterion at 4.0 via a
+   −2.0 effect) or up for a visible strength.
+3. **Clamp.** Estimates are clamped to [4.0, 8.0] (`ASSESS_MIN`, `ASSESS_MAX`): heuristics never
+   report below the Band 4 floor (where reporting effectively stops) and never above Band 8 (no
+   surface measure can evidence the top bands).
+4. **Overall.** The four estimates are averaged and rounded with the official rule — nearest half
+   band, .25/.75 means up — by the same `roundBand` function `/v1/scores/overall` uses.
+5. **Evidence.** The response publishes every measurement the rules consumed (including two new
+   ones: distinct discourse markers, and complex-sentence share via a published 23-marker
+   subordination list), the corpus placement of the sample's readability, and the disclaimer.
+
+Rule thresholds reuse the toolkit's published constants where they exist (TTR 0.55/0.42 from 60
+words, headword coverage 0.30/0.12, more than 3 discourse markers per 100 words) so that
+`/v1/tools/essay-profile` hints and `/v1/assess/writing` estimates can never disagree about the same
+text. Identical requests produce byte-identical output.
+
+### 26. Threats to validity (Part V)
+
+- **Surface heuristics cannot judge meaning.** Task response quality, idea development, argument
+  progression and accuracy of the writing are invisible to word counts and marker lists. The
+  endpoint says so in every response; the estimates are teaching signals, not scores.
+- **One sample, one measurement pass.** Examiners mark live texts, not statistics over them;
+  heteroscedastic error in every proxy (syllables, sentence segmentation, subordination detection)
+  is documented in Part III and inherited here.
+- **The archive is tiny by design.** 24 submissions by four learners over three weeks: a case study,
+  useful for longitudinal illustration and for test texts, useless as an estimate of any population.
+- **Genre classification can err.** Filenames are hand-typed (`pranto.md 22.08.11`); the
+  three-stage rules are published precisely so misclassifications can be found. The unattributed
+  bar-chart response is classified by its folder's prompt image alone.
+- **Pseudonymisation is textual, not cryptographic.** The upstream paths retain the original names;
+  the labels exist to keep downstream citation clean, not to anonymise a public repository.
+- **The archive is mutable upstream.** Per-file blob SHA-1s and the snapshot commit pin the analysis;
+  the index must be re-derived after upstream changes, like every other collection.
+
+### 27. Reproducing Part V
+
+```bash
+curl -sL "https://api.github.com/repos/msneloy/IELTS/git/trees/main?recursive=1" -o tree.json
+git clone https://github.com/msneloy/IELTS upstream
+python3 scripts/extract_assignments.py tree.json ./upstream data/assignments.json
+```
+
+The continuous-integration workflow checks the committed index for internal consistency on every
+run. The assessment engine has no dataset of its own: it is exercised end-to-end by the test suite,
+which pins every rule's firing threshold in both directions.

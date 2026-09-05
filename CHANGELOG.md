@@ -6,6 +6,50 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-05
+
+The **assessment layer**: the API's first capability that produces a band score, and a fourth
+upstream collection that shows exactly what such scores are pointed at — the homework archive of a
+real IELTS preparation cohort. The API remains free, GET-only, authentication-free and
+dependency-free.
+
+### Added
+
+- **Writing assessor** (`GET /v1/assess/writing`): a transparent heuristic band estimate for any
+  Task 1 or Task 2 writing sample. Four criteria (Task Achievement / Task Response, Coherence and
+  Cohesion, Lexical Resource, Grammatical Range and Accuracy) each start from a published baseline
+  of 6.5 and move in half-band steps through a fixed catalogue of 25 threshold rules; estimates
+  clamp to [4.0, 8.0] and combine into an overall estimate with the official IELTS rounding rule
+  (.25/.75 means round up). The response names every rule that fired, the observation that
+  triggered it and its effect, publishes every measurement behind them (including two new ones:
+  distinct discourse markers and complex-sentence share over a published 23-marker subordination
+  list), places the sample against the corpus readability groups, and carries a disclaimer in every
+  response. Identical requests produce byte-identical estimates.
+- **Assignment-archive index** (`data/assignments.json`, 26 documents): a derived, non-substitutive
+  index of the `Assignments/` tree of [`msneloy/IELTS`](https://github.com/msneloy/IELTS) — one
+  month of homework writing (August 2022) from a real preparation cohort: 24 submissions (20
+  Task 1, 4 Task 2) by four pseudonymised learners across seven visual genres, plus two
+  teacher-authored documents. Per document: date, task, genre, learner label, measured surface
+  statistics (words, sentences, paragraphs, mean sentence length, sentence-length spread,
+  type-token ratio, long-word share, Flesch Reading Ease, Flesch-Kincaid grade, discourse-marker
+  density) and upstream provenance (path, blob SHA-1, permalink, snapshot commit). No essay, answer
+  key or prompt is redistributed. Endpoints: `/v1/assignments`, `/v1/assignments/stats`,
+  `/v1/assignments/items`.
+- `scripts/extract_assignments.py`: standard-library-only, deterministic extraction with a
+  published three-stage genre classifier and a fixed learner-pseudonymisation table.
+- `RESEARCH.md` Part V: the archive analysis, the index construction, the assessment design (all
+  25 rules with thresholds and effects) and the threats to validity.
+- CI now validates the assignment index for internal consistency on every run.
+
+### Changed
+
+- `/`, `/health`, `/docs` and `/openapi.json` report the new endpoints and dataset; the service
+  index adds the assignment counts.
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.3.0; keywords now
+  include writing assessment, automated scoring and learner corpus.
+- Test suite grown to 515 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.2.0] - 2026-09-05
 
 Two additions in one release: the **toolkit** — the first capabilities that consume text as well as

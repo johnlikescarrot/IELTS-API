@@ -739,6 +739,202 @@ export type ResponseFramework = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Assignment archive                                                         */
+/* -------------------------------------------------------------------------- */
+
+/** The IELTS writing task an assignment document addresses. */
+export type AssignmentTask = 'task1' | 'task2';
+
+/** Genre of an indexed assignment document. */
+export type AssignmentGenre =
+  | 'line-chart'
+  | 'bar-chart'
+  | 'table'
+  | 'pie-chart'
+  | 'map'
+  | 'man-made-process'
+  | 'natural-process'
+  | 'essay'
+  | 'grammar-exercise'
+  | 'prompt-list';
+
+/** Surface statistics measured for one assignment document. */
+export type AssignmentMetrics = {
+  /** Word tokens (alphabetic, lower-cased). */
+  words: number;
+  /** Sentences. */
+  sentences: number;
+  /** Blank-line-separated paragraphs. */
+  paragraphs: number;
+  /** Mean sentence length in words. */
+  avgWordsPerSentence: number;
+  /** Population standard deviation of sentence lengths. */
+  sentenceLengthStdDev: number;
+  /** Distinct tokens / tokens. */
+  typeTokenRatio: number;
+  /** Share of tokens with three or more syllables. */
+  longWordShare: number;
+  /** Flesch Reading Ease. */
+  fleschReadingEase: number;
+  /** Flesch-Kincaid grade. */
+  fleschKincaidGrade: number;
+  /** Discourse-marker occurrences per 100 words. */
+  linkersPer100Words: number;
+};
+
+/** One document in the indexed assignment archive. */
+export type AssignmentItem = {
+  /** Stable identifier (`a-2022-08-11-emon`). */
+  id: string;
+  /** Assignment date (`2022-08-11`), taken from the upstream folder name. */
+  date: string;
+  /** Whether the teacher or a candidate wrote the document. */
+  kind: 'submission' | 'instructor';
+  /** Writing task addressed; `null` for instructor material outside the tasks. */
+  task: AssignmentTask | null;
+  /** Visual or essay genre. */
+  genre: AssignmentGenre;
+  /** Pseudonymous learner label (`learner-1`), `unattributed` or `instructor`. */
+  learner: string;
+  /** Upstream file name. */
+  title: string;
+  /** Surface statistics measured from the text. */
+  stats: AssignmentMetrics;
+  /** Upstream provenance. */
+  upstream: {
+    /** Path inside the upstream repository. */
+    path: string;
+    /** Git blob SHA-1. */
+    sha: string;
+    /** Public URL of the file in the upstream repository. */
+    url: string;
+  };
+};
+
+/** Aggregated statistics about the assignment archive. */
+export type AssignmentCollectionStats = {
+  /** All indexed documents (submissions and instructor material). */
+  documents: number;
+  /** Candidate submissions. */
+  submissions: number;
+  /** Teacher-authored documents. */
+  instructorDocuments: number;
+  /** Submissions per writing task. */
+  byTask: Record<string, number>;
+  /** Documents per genre. */
+  byGenre: Record<string, number>;
+  /** Submissions per pseudonymous learner. */
+  byLearner: Record<string, number>;
+  /** Submissions per assignment date. */
+  byDate: Record<string, number>;
+  /** Total words across all indexed documents. */
+  totalWords: number;
+  /** Mean Flesch Reading Ease across submissions. */
+  meanReadingEase: number;
+  /** Earliest assignment date. */
+  firstDate: string;
+  /** Latest assignment date. */
+  lastDate: string;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Writing assessment                                                         */
+/* -------------------------------------------------------------------------- */
+
+/** The four writing criteria of the analytic band descriptors. */
+export type AssessmentCriterion =
+  | 'task-achievement'
+  | 'task-response'
+  | 'coherence-and-cohesion'
+  | 'lexical-resource'
+  | 'grammatical-range-and-accuracy';
+
+/** One published heuristic rule with the observation it produced. */
+export type AssessmentRuleResult = {
+  /** Stable rule identifier (`lr-ttr-low`). */
+  rule: string;
+  /** Observation that triggered the rule, naming its numbers. */
+  observation: string;
+  /** Delta applied to the criterion baseline, in half-band steps. */
+  effect: number;
+  /** What the rule measures and why the threshold sits where it does. */
+  note: string;
+};
+
+/** Heuristic band estimate for one writing criterion. */
+export type CriterionAssessment = {
+  /** Criterion assessed. */
+  criterion: AssessmentCriterion;
+  /** Criterion band estimate, a reportable half-band. */
+  estimate: number;
+  /** Baseline every criterion starts from. */
+  baseline: number;
+  /** The rules that fired, in evaluation order. */
+  rules: AssessmentRuleResult[];
+};
+
+/** Surface measurements behind an assessment, published for auditability. */
+export type AssessmentEvidence = {
+  /** Writing task the text was assessed against. */
+  task: 'task1' | 'task2';
+  /** Word tokens. */
+  words: number;
+  /** Minimum words the task requires. */
+  minimumWords: number;
+  /** Whether the text reaches the minimum. */
+  meetsMinimum: boolean;
+  /** Sentences. */
+  sentences: number;
+  /** Paragraphs. */
+  paragraphs: number;
+  /** Mean sentence length in words. */
+  avgWordsPerSentence: number;
+  /** Population standard deviation of sentence lengths. */
+  sentenceLengthStdDev: number;
+  /** Distinct tokens / tokens. */
+  typeTokenRatio: number;
+  /** Share of tokens with three or more syllables. */
+  longWordShare: number;
+  /** Share of tokens found in the Cambridge IELTS headword list. */
+  headwordCoverage: number;
+  /** Discourse-marker occurrences per 100 words. */
+  linkersPer100Words: number;
+  /** Distinct discourse markers used at least once. */
+  distinctLinkers: number;
+  /** Share of sentences containing a marker of subordination. */
+  complexSentenceShare: number;
+  /** Whether a Task 1 overview marker (`overall`) is present. */
+  overviewMarker: boolean;
+  /** Most strongly matching recurring exam theme, for Task 2 texts. */
+  themeMatched: string | null;
+  /** Flesch Reading Ease of the text. */
+  fleschReadingEase: number;
+};
+
+/** Deterministic heuristic band estimate for a writing sample. */
+export type WritingAssessment = {
+  /** Writing task the text was assessed against. */
+  task: 'task1' | 'task2';
+  /** Per-criterion estimates with the rules that produced them. */
+  criteria: CriterionAssessment[];
+  /** Overall estimate: IELTS rounding of the criterion mean. */
+  overall: {
+    /** Overall band estimate, a reportable half-band. */
+    estimate: number;
+    /** Unrounded mean of the four criterion estimates. */
+    mean: number;
+    /** Worked rounding explanation. */
+    explanation: string;
+  };
+  /** Every measurement the rules consumed. */
+  evidence: AssessmentEvidence;
+  /** Corpus placement of the text's readability, from `/v1/tests/stats`. */
+  corpusContext: CorpusContext;
+  /** What the estimate is and is not. */
+  disclaimer: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 
