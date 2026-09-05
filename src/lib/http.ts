@@ -30,6 +30,7 @@ export const COMMON_HEADERS: Record<string, string> = {
   'x-content-type-options': 'nosniff',
   'x-robots-tag': 'index, follow',
   'referrer-policy': 'no-referrer',
+  vary: 'accept-encoding',
 };
 
 /**
@@ -153,7 +154,6 @@ export function writeResponse(res: ServerResponse, options: ResponseOptions): nu
   headers['content-length'] = String(encoded.contentLength);
   if (encoded.contentEncoding !== null) {
     headers['content-encoding'] = encoded.contentEncoding;
-    headers['vary'] = 'accept-encoding';
   }
   if (options.headers !== undefined) {
     Object.assign(headers, options.headers);

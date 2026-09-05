@@ -123,6 +123,18 @@ describe('the committed practice inventory', () => {
   it('samples reproducibly, without replacement, with population capping', () => {
     const a = samplePractice('study-2026', 10);
     expect(a).toEqual(samplePractice('study-2026', 10));
+    expect(a.map((item) => item.id)).toEqual([
+      'listening-basic-intermediate-0029',
+      'listening-tests-0142',
+      'reading-basic-a1-a2-0118',
+      'reading-basic-b1-b2-0156',
+      'reading-basic-c1-c2-0478',
+      'reading-basic-c1-c2-0579',
+      'reading-tests-0161',
+      'reading-tests-0188',
+      'reading-tests-0225',
+      'reading-tests-0259',
+    ]);
     expect(a).not.toEqual(samplePractice('another-study', 10));
     expect(new Set(a.map((item) => item.id)).size).toBe(10);
     expect(a.map((item) => item.id)).toEqual(a.map((item) => item.id).sort());

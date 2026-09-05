@@ -22,6 +22,9 @@ All notable changes to this project are documented here. The format is based on
   unique operation IDs and a relative server URL that works behind HTTPS proxies.
 - Removed a placeholder DOI and invalid CFF fields/types; corrected unsupported Zenodo deposit
   claims and documented third-party licensing limitations.
+- Malformed URLs/Host headers and percent-encoded path parameters return 400 instead of escaping
+  the request handler or becoming 500s. CORS preflights permit ETag requests; all representations
+  declare encoding variance for shared caches.
 - Super-Linter uses pinned Actions, installed ESLint dependencies and the repository's flat config;
   the generated-data exclusion no longer hides `src/data/*.ts`.
 - Release workflow generates/verifies documentation before attaching it, and packages include

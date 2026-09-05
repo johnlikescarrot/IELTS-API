@@ -1955,6 +1955,7 @@
                           "properties": {
                             "collections": {
                               "type": "array",
+                              "maxItems": 4,
                               "items": { "$ref": "#/components/schemas/PracticeCollection" }
                             },
                             "stats": { "$ref": "#/components/schemas/PracticeStats" }
@@ -2182,7 +2183,11 @@
                     { "$ref": "#/components/schemas/ApiResponse" },
                     {
                       "properties": {
-                        "data": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeItem" } },
+                        "data": {
+                          "type": "array",
+                          "maxItems": 100,
+                          "items": { "$ref": "#/components/schemas/PracticeItem" }
+                        },
                         "meta": { "$ref": "#/components/schemas/PracticeMeta" }
                       }
                     }
@@ -2316,7 +2321,11 @@
                     { "$ref": "#/components/schemas/ApiResponse" },
                     {
                       "properties": {
-                        "data": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeItem" } },
+                        "data": {
+                          "type": "array",
+                          "maxItems": 50,
+                          "items": { "$ref": "#/components/schemas/PracticeItem" }
+                        },
                         "meta": { "$ref": "#/components/schemas/PracticeMeta" }
                       }
                     }
@@ -2922,9 +2931,14 @@
           },
           "sequence": { "type": "integer", "minimum": 1 },
           "sourcePath": { "type": "string" },
-          "assets": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeAsset" } },
+          "assets": {
+            "type": "array",
+            "maxItems": 8,
+            "items": { "$ref": "#/components/schemas/PracticeAsset" }
+          },
           "missingRoles": {
             "type": "array",
+            "maxItems": 8,
             "items": {
               "type": "string",
               "enum": [
@@ -2958,6 +2972,7 @@
           "expectedUnits": { "type": "integer", "minimum": 0 },
           "requiredRoles": {
             "type": "array",
+            "maxItems": 8,
             "items": {
               "type": "string",
               "enum": [
@@ -3041,9 +3056,17 @@
         "required": ["meta", "collections", "stats", "items"],
         "properties": {
           "meta": { "$ref": "#/components/schemas/PracticeMeta" },
-          "collections": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeCollection" } },
+          "collections": {
+            "type": "array",
+            "maxItems": 4,
+            "items": { "$ref": "#/components/schemas/PracticeCollection" }
+          },
           "stats": { "$ref": "#/components/schemas/PracticeStats" },
-          "items": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeItem" } }
+          "items": {
+            "type": "array",
+            "maxItems": 1852,
+            "items": { "$ref": "#/components/schemas/PracticeItem" }
+          }
         }
       }
     }

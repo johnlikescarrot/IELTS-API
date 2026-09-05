@@ -2,6 +2,8 @@
  * Routing primitives shared by the route table and the request dispatcher.
  */
 
+import { badRequest } from './errors.js';
+
 import type { JsonValue, RouteInfo } from '../types.js';
 
 /** Everything a handler needs to produce a response. */
@@ -97,7 +99,11 @@ export function matchRoute(
       const expected = template[index] as string;
       const actual = segments[index] as string;
       if (expected.startsWith(':')) {
-        params[expected.slice(1)] = decodeURIComponent(actual);
+        try {
+          params[expected.slice(1)] = decodeURIComponent(actual);
+        } catch {
+          throw badRequest('Malformed percent-encoding in path parameter.', { parameter: expected.slice(1) });
+        }
         continue;
       }
       if (expected !== actual) {

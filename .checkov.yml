@@ -1,0 +1,13 @@
+# This public read-only API intentionally has no authentication or credentials.
+# Keep security: [] truthful instead of inventing an unused auth scheme to pass
+# generic private-API rules. All other Checkov policies remain enabled.
+skip-check:
+  - CKV_OPENAPI_4 # Requiring global auth conflicts with the no-auth contract.
+  - CKV_OPENAPI_5 # Empty security explicitly documents anonymous access.
+# Generated build/test artefacts are not deployed infrastructure definitions.
+skip-path:
+  - node_modules
+  - coverage
+  - dist
+# Use the scanner's pinned local rules, without optional cloud guideline calls.
+skip-download: true

@@ -6,8 +6,8 @@
  * and request logging. Handlers stay pure and trivially testable.
  */
 
-import { HttpError, methodNotAllowed, notFound } from './lib/errors.js';
-import { acceptsGzip, sendJson, writeResponse } from './lib/http.js';
+import { HttpError, badRequest, methodNotAllowed, notFound } from './lib/errors.js';
+import { COMMON_HEADERS, acceptsGzip, sendJson, writeResponse } from './lib/http.js';
 import { isRawResult, matchRoute, splitPath } from './lib/route.js';
 import { ROUTES } from './routes/index.js';
 import { API_VERSION } from './version.js';
@@ -41,18 +41,20 @@ export function createRequestHandler(
   return (req, res) => {
     const started = process.hrtime.bigint();
     const method = (req.method ?? 'GET').toUpperCase();
-    const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
+    let url = new URL('http://localhost/');
     const gzipAllowed = acceptsGzip(req.headers['accept-encoding']);
     const ifNoneMatch = req.headers['if-none-match'];
     let status = 200;
 
     try {
+      try {
+        url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
+      } catch {
+        throw badRequest('Invalid request URL or Host header.');
+      }
       if (method === 'OPTIONS') {
-        res.writeHead(204, {
-          'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, HEAD, OPTIONS',
-          'access-control-max-age': '86400',
-        });
+        status = 204;
+        res.writeHead(status, COMMON_HEADERS);
         res.end();
       } else if (method !== 'GET' && method !== 'HEAD') {
         throw methodNotAllowed();

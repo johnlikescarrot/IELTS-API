@@ -211,6 +211,12 @@ describe('extractPractice', () => {
     expect(() => extractPractice(tree([entry]))).toThrow();
   });
 
+  it('rejects unsafe numeric sequences before creating ambiguous IDs', () => {
+    expect(() =>
+      extractPractice(tree([blob('Listening_102_Basic/Basic/Lesson_9007199254740992/audio.mp3')])),
+    ).toThrow(/Unsafe unit sequence/);
+  });
+
   it('rejects duplicate paths instead of silently replacing provenance', () => {
     expect(() => extractPractice(tree([fixtures[0], fixtures[0]]))).toThrow(/duplicate/i);
   });

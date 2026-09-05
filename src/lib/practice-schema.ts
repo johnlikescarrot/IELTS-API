@@ -21,10 +21,11 @@ const ROLE = {
     'image',
   ],
 };
-const ROLES = { type: 'array', items: ROLE, uniqueItems: true };
+const ROLES = { type: 'array', maxItems: 8, items: ROLE, uniqueItems: true };
 const SHA1 = { type: 'string', pattern: '^[a-f0-9]{40}$' };
 
 /** Shared definitions referenced by the practice response schemas. */
+// Export/asset bounds describe this pinned snapshot; update them with a new source snapshot.
 export const PRACTICE_SCHEMAS: Record<string, JsonValue> = {
   PracticeAsset: {
     type: 'object',
@@ -55,7 +56,7 @@ export const PRACTICE_SCHEMAS: Record<string, JsonValue> = {
       level: { type: 'string', enum: [...PRACTICE_LEVELS] },
       sequence: { type: 'integer', minimum: 1 },
       sourcePath: STRING,
-      assets: { type: 'array', items: { $ref: '#/components/schemas/PracticeAsset' } },
+      assets: { type: 'array', maxItems: 8, items: { $ref: '#/components/schemas/PracticeAsset' } },
       missingRoles: ROLES,
       structurallyComplete: { type: 'boolean' },
     },
@@ -139,9 +140,9 @@ export const PRACTICE_SCHEMAS: Record<string, JsonValue> = {
     required: ['meta', 'collections', 'stats', 'items'],
     properties: {
       meta: { $ref: '#/components/schemas/PracticeMeta' },
-      collections: { type: 'array', items: { $ref: '#/components/schemas/PracticeCollection' } },
+      collections: { type: 'array', maxItems: 4, items: { $ref: '#/components/schemas/PracticeCollection' } },
       stats: { $ref: '#/components/schemas/PracticeStats' },
-      items: { type: 'array', items: { $ref: '#/components/schemas/PracticeItem' } },
+      items: { type: 'array', maxItems: 1852, items: { $ref: '#/components/schemas/PracticeItem' } },
     },
   },
 };
@@ -154,7 +155,7 @@ function envelope(data: JsonValue): JsonValue {
     ],
   };
 }
-const ITEM_LIST = { type: 'array', items: { $ref: '#/components/schemas/PracticeItem' } };
+const ITEM_LIST = { type: 'array', maxItems: 100, items: { $ref: '#/components/schemas/PracticeItem' } };
 
 /** Actual successful response schemas, including the unwrapped archival export. */
 export const PRACTICE_RESPONSES: Record<string, JsonValue> = {
@@ -162,13 +163,13 @@ export const PRACTICE_RESPONSES: Record<string, JsonValue> = {
     type: 'object',
     required: ['collections', 'stats'],
     properties: {
-      collections: { type: 'array', items: { $ref: '#/components/schemas/PracticeCollection' } },
+      collections: { type: 'array', maxItems: 4, items: { $ref: '#/components/schemas/PracticeCollection' } },
       stats: { $ref: '#/components/schemas/PracticeStats' },
     },
   }),
   '/v1/practice/stats': envelope({ $ref: '#/components/schemas/PracticeStats' }),
   '/v1/practice/items': envelope(ITEM_LIST),
   '/v1/practice/items/:id': envelope({ $ref: '#/components/schemas/PracticeItem' }),
-  '/v1/practice/sample': envelope(ITEM_LIST),
+  '/v1/practice/sample': envelope({ ...ITEM_LIST, maxItems: 50 }),
   '/v1/practice/export': { $ref: '#/components/schemas/PracticeCatalog' },
 };

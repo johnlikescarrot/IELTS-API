@@ -83,7 +83,7 @@ jobs:
       - name: Surface lint failures in check annotations
         if: failure()
         run: |
-          python3 - <<'PY'
+          sudo python3 - <<'PY'
           from pathlib import Path
           log = Path('super-linter.log')
           if log.exists():

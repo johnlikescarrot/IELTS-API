@@ -206,6 +206,7 @@ export function extractPractice(input: unknown): PracticeCatalog {
     if (blob.mode === '120000') continue;
     const identity = classify(blob.path);
     if (identity === undefined) continue;
+    if (!Number.isSafeInteger(identity.sequence)) throw new Error(`Unsafe unit sequence: ${blob.path}`);
     const collection = COLLECTIONS.find((candidate) => candidate.id === identity.collection)!;
     const suffix = identity.level === 'unspecified' ? '' : `${identity.level}-`;
     const id = `${identity.collection}-${suffix}${String(identity.sequence).padStart(4, '0')}`;

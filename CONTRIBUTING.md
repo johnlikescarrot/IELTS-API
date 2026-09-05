@@ -61,6 +61,10 @@ Use the exact commit/tree in `PRACTICE_SOURCE`; never infer licensing from publi
 [the data card](docs/UPGRADE-YOUR-IELTS-SKILLS.md). All new executable TypeScript, including `scripts/`,
 must remain within the per-file 100% coverage gate. Synthetic fixtures must contain metadata only.
 
+Checkov remains enabled. Its two generic rules requiring authentication (`CKV_OPENAPI_4` and
+`CKV_OPENAPI_5`) are narrowly excepted in `.checkov.yml` because the public read-only API explicitly
+requires no auth. Do not add fake security schemes, or suppress unrelated checks, to make CI green.
+
 ## Data ethics
 
 The upstream corpus is third-party material. Publish **metadata only**; never commit an upstream
