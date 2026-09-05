@@ -7,3 +7,6 @@ MD041: false
 MD040: false
 MD033: false
 MD024: false
+# JOSS papers use a level-1 heading per section by convention (Summary,
+# Statement of need, References, ...), so a single top-level title is wrong here.
+MD025: false

@@ -18,6 +18,8 @@ permissions:
   contents: read
   # Needed so the run can attach its diagnostic output as an artifact.
   actions: read
+  # Needed so a failing run can report which files failed, on the pull request.
+  pull-requests: write
 
 concurrency:
   group: super-linter-${{ github.ref }}
@@ -90,6 +92,32 @@ jobs:
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report the failures on the job summary and the pull request
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          report=$(mktemp)
+          {
+            echo '## super-linter findings'
+            echo
+            for file in super-linter-output/*.log super-linter-output/**/*.log; do
+              [ -f "${file}" ] || continue
+              echo "<details><summary>${file}</summary>"
+              echo
+              echo '```text'
+              tail -c 20000 "${file}"
+              echo '```'
+              echo
+              echo '</details>'
+            done
+          } > "${report}"
+          cat "${report}" >> "${GITHUB_STEP_SUMMARY}"
+          if [ -n "${PR_NUMBER}" ]; then
+            gh pr comment "${PR_NUMBER}" --body-file "${report}" || true
+          fi
 
       - name: Upload the super-linter output
         if: always()
