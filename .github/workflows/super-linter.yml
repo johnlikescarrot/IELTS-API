@@ -16,6 +16,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 
 concurrency:
   group: super-linter-${{ github.ref }}
@@ -54,6 +55,9 @@ jobs:
           VALIDATE_ENV: true
           VALIDATE_GITLEAKS: true
           VALIDATE_CHECKOV: true
+          # Keep the findings as files so the report step below can read them.
+          SAVE_SUPER_LINTER_SUMMARY: true
+          SAVE_SUPER_LINTER_OUTPUT: true
           # Deliberately disabled: the code base is TypeScript-only and the
           # extraction scripts are standalone Python utilities with their own
           # formatting.
@@ -63,3 +67,33 @@ jobs:
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report findings
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          report=super-linter-report.md
+          {
+            echo '## super-linter findings'
+            echo
+            if [ -f super-linter-output/super-linter-summary.md ]; then
+              cat super-linter-output/super-linter-summary.md
+            fi
+            echo
+            for log in super-linter-output/super-linter/*.log; do
+              [ -f "$log" ] || continue
+              echo "<details><summary>$(basename "$log")</summary>"
+              echo
+              echo '```text'
+              tail -c 40000 "$log"
+              echo '```'
+              echo
+              echo '</details>'
+            done
+          } > "$report"
+          cat "$report" >> "$GITHUB_STEP_SUMMARY"
+          if [ -n "$PR_NUMBER" ]; then
+            gh pr comment "$PR_NUMBER" --body-file "$report" --repo "$GITHUB_REPOSITORY"
+          fi
