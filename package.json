@@ -1,7 +1,7 @@
 {
   "name": "ielts-api",
-  "version": "1.0.0",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks.",
+  "version": "1.1.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, and a Listening/Reading practice layer with CEFR-graded study plans.",
   "keywords": [
     "ielts",
     "api",
@@ -11,7 +11,10 @@
     "assessment",
     "second-language-acquisition",
     "open-data",
-    "typescript"
+    "typescript",
+    "listening",
+    "reading",
+    "cefr"
   ],
   "license": "MIT",
   "type": "module",

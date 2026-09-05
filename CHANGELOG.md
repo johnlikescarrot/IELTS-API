@@ -6,6 +6,28 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-05
+
+Receptive-skills practice layer: the API now covers Listening and Reading preparation in addition to
+vocabulary, bands, scores, Writing/Speaking tasks and the corpus index.
+
+### Added
+
+- **Practice layer** (`src/data/practice.ts`): 19 Listening and Reading question families (8
+  listening, 11 reading) with assessed sub-skills, ordered strategies, pitfalls and timing notes, all
+  original guidance text. Endpoints: `/v1/practice/question-types` (`skill`, `q`),
+  `/v1/practice/listening/sections` (the four Listening sections with the 30+10 minute timing model),
+  `/v1/practice/study-plans` (CEFR A1-C2 plans with focus areas, weekly volumes, session routines and
+  exit signals; `level` filter).
+- Structural analysis of the open practice platform
+  [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS)
+  recorded in `RESEARCH.md` (scale inventory, question-family taxonomy, study-plan shape). No
+  third-party passages, items, answers, audio or guidance text are reproduced; the layer is original
+  work modelled on the public test format.
+- Dataset summary (`/`, `/health`) now reports `practiceQuestionTypes`, `listeningSections` and
+  `studyPlanLevels`; OpenAPI parameters and description cover the new endpoints.
+- 21 new tests (316 total); 100% statement/branch/function/line coverage maintained per file.
+
 ## [1.0.0] - 2026-09-04
 
 First citable release.
@@ -35,5 +57,6 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

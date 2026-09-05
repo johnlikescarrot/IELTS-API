@@ -6,6 +6,7 @@
  */
 
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { PRACTICE_SKILLS, STUDY_LEVELS } from '../data/practice.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
@@ -157,6 +158,14 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/practice/question-types': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
+  ],
+  '/v1/practice/listening/sections': [],
+  '/v1/practice/study-plans': [
+    { name: 'level', in: 'query', schema: { type: 'string', enum: [...STUDY_LEVELS] } },
+  ],
 };
 
 /** The shared JSON envelope schema. */
@@ -253,7 +262,8 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, and an index',
+        'descriptors, score concordances, Writing and Speaking task banks, a Listening',
+        'and Reading practice layer with CEFR-graded study plans, and an index',
         'of the open IELTS research corpus.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',

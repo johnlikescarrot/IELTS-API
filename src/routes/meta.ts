@@ -3,6 +3,7 @@
  */
 
 import { corpusStats } from '../data/corpus.js';
+import { LISTENING_SECTIONS, PRACTICE_TYPES, STUDY_PLANS } from '../data/practice.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
@@ -21,6 +22,9 @@ function datasetSummary(): Record<string, number> {
     cambridgeVolumes: words.volumes,
     corpusFiles: corpus.filesInRepository,
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
+    practiceQuestionTypes: PRACTICE_TYPES.length,
+    listeningSections: LISTENING_SECTIONS.length,
+    studyPlanLevels: STUDY_PLANS.length,
   };
 }
 

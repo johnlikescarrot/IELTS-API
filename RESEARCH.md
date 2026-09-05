@@ -159,3 +159,62 @@ python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 
 The commit SHA recorded in `data/corpus.json` identifies the exact snapshot; re-running against a
 different commit is expected to change the item count and the coverage ratio.
+
+## 7. A second source: an open practice-test platform
+
+Version 1.1.0 adds a Listening and Reading practice layer. Its shape was informed by a structural
+analysis of a second open repository,
+[`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS)
+(created 23 June 2026, default branch `main`), analysed via the GitHub API in September 2026. The
+repository is a static practice-test platform (~6,300 files: HTML, JavaScript, Python, shell) served
+as a static site, fronted by a paid login ("Study Room", Google Apps Script backend). Only its
+_public structure_ was studied; nothing behind the login was accessed and no content files were
+copied.
+
+### 7.1 Scale inventory (structural facts)
+
+| Component                | Observed scale                                                                                                                    |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------------------- |
+| Graded listening lessons | 102 lessons (Basic / Intermediate / Advanced), each a template-built page plus audio                                              |
+| Listening full tests     | 204 tests, each with HTML, a sections/questions JSON file, a per-question strategies file and audio                               |
+| Reading full tests       | 315 tests                                                                                                                         |
+| Graded reading lessons   | 1,232 JSON lessons across A1-A2, B1-B2 and C1-C2 (passage + typed questions + answers + explanations), served by one SPA template |
+| Source documents         | 514 `.docx` files                                                                                                                 |
+| Tooling                  | ~50 Python scripts (crawlers, login injectors, static-site builders, Supabase importers)                                          |
+| Topic analysis           | A 50-topic frequency list for 2025-2026 across Reading, Writing, Speaking and Listening                                           |
+| Study planning           | A CEFR A1-C2 progression plan (11 Reading families x 6 levels) with a six-step session routine                                    |
+
+Two findings shaped the practice layer:
+
+- **Receptive-skills practice dominates self-study material.** The platform's volume is overwhelmingly
+  Listening and Reading tests, while this API's v1.0.0 covered only vocabulary, bands, scores and
+  productive-skills tasks. The practice layer closes that gap.
+- **Organisation by question family and CEFR level is the natural index.** The platform groups
+  material by task shape (completion, multiple choice, matching, labelling, short answer) and by
+  level (A1-C2); the API mirrors that organisation in machine-readable form
+  (`/v1/practice/question-types`, `/v1/practice/study-plans`).
+
+### 7.2 What was taken, and what was deliberately not
+
+Taken: the _idea_ of the taxonomy (which question families exist, which CEFR levels a plan spans,
+that a session routine has roughly six steps). Question-family names (e.g. "True/False/Not Given")
+are generic public test terminology, and the test timing model (four Listening sections,
+40 questions, 30 minutes of audio plus transfer time; 60-minute Reading test) follows the IELTS
+partners' published test descriptions.
+
+Not taken: every sampled artefact (a listening JSON, a reading lesson, a strategies file, a lesson
+page) contains third-party material — collected test passages, items, answers and guidance prose —
+much of it commercial. No passages, items, answers, audio, or third-party guidance text were
+reproduced. Every description, strategy step, pitfall, timing note and study plan served by the API
+is original work written for this project, published under CC BY 4.0 with the same "indicative,
+not authoritative" caveats as the band descriptors and concordances.
+
+### 7.3 Threats to validity specific to the practice layer
+
+- **Guidance is pedagogical, not official.** The strategies encode widely taught technique
+  (preview questions, predict answers, respect word limits); they are not the IELTS partners'
+  advice and must not be cited as such. Every response points at the official sources instead.
+- **The taxonomy follows the public format.** If the partners revise the test format, families or
+  timing change with it; the dataset records the format as published at the time of writing.
+- **Study plans assume self-study.** Weekly volumes and exit signals are calibrated for independent
+  learners practising 5-6 days a week; classroom or tutored learners will progress differently.

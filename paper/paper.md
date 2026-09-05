@@ -22,11 +22,13 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships five kinds of data: a 4,174-headword vocabulary dataset derived from
+JSON envelope. The service ships six kinds of data: a 4,174-headword vocabulary dataset derived from
 the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking and
 Writing across bands 0-9; indicative score concordances between IELTS and five other scales; original
 Writing and Speaking task banks built on the question families and word lists that recur in IELTS
-preparation material [@coxhead2000]; and a curated metadata index of an open IELTS research corpus.
+preparation material [@coxhead2000]; a Listening and Reading practice layer with question-family
+taxonomies, the four Listening sections and CEFR-graded study plans; and a curated metadata index
+of an open IELTS research corpus.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -45,6 +47,15 @@ The open corpus this work builds on (`zhengyishiming/IELTS`, 404 files, 713 MB o
 material) contains, alongside its IELTS content, a larger volume of semiconductor textbooks, Chinese
 pop music and cryptocurrency books. Only 76 of the 404 files (18.8%) are IELTS or English-learning
 material — an unfiltered crawler treats a lithography textbook as IELTS training data. [@ieltscorpus]
+
+A structural analysis of a second open source, the practice-test platform
+`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS` (102 graded listening lessons, 204 listening full tests,
+315 reading full tests, 1,232 graded reading lessons), confirms that receptive-skills practice
+dominates self-study material — yet it is exactly the material researchers cannot redistribute,
+because passages, items and audio are third-party copyrighted and often paywalled
+[@upgradeyourieltsskills]. The practice layer answers this by publishing the _organisation_ of that
+material (question families, section structure, CEFR-graded plans) as original, openly licensed
+guidance, without reproducing a single test item.
 
 The API addresses three concrete needs:
 
@@ -85,6 +96,14 @@ recurring question families (opinion, discussion, advantages/disadvantages, prob
 two-part), 80 Speaking items across Parts 1-3, and 10 Writing Task 1 task families with response
 structure and timing guidance.
 
+**Practice layer.** 19 receptive-skills question families (8 Listening, 11 Reading), each with
+assessed sub-skills, ordered strategy steps, pitfalls and timing notes; the four Listening sections
+with the public 30-minute-audio-plus-transfer timing model; and six CEFR-graded (A1-C2) study plans
+with reading and listening foci, weekly passage volumes, six-step session routines and observable
+exit signals. All guidance text is original work: no third-party passages, items, answers or audio
+are reproduced, and every response carries the caveat that the strategies are pedagogical technique,
+not official advice.
+
 **Corpus index.** Metadata — path, normalised title, category, skill, format, size, blob SHA-1 —
 for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file repository. No
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
@@ -105,7 +124,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (295 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (316 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

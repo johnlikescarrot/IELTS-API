@@ -226,6 +226,75 @@ export type CorpusStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Receptive-skills practice layer                                            */
+/* -------------------------------------------------------------------------- */
+
+/** Receptive skills covered by the practice layer. */
+export type PracticeSkill = 'listening' | 'reading';
+
+/** A CEFR level used by the graded study plans. */
+export type StudyLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+
+/**
+ * One receptive-skills question family.
+ *
+ * The families name the task shapes that recur across published IELTS
+ * Listening and Reading tests (for example note completion or
+ * True/False/Not Given). All guidance text is original work written for this
+ * project; no test items are reproduced.
+ */
+export type PracticeQuestionType = {
+  /** Stable identifier. */
+  id: string;
+  /** Receptive skill the family belongs to. */
+  skill: PracticeSkill;
+  /** Family name. */
+  name: string;
+  /** What the candidate is asked to do. */
+  description: string;
+  /** Sub-skills the family assesses. */
+  skillsAssessed: string[];
+  /** Recommended approach, as ordered steps. */
+  strategy: string[];
+  /** Typical pitfalls. */
+  pitfalls: string[];
+  /** Timing and answer-format guidance. */
+  timingNote: string;
+};
+
+/** One section of the IELTS Listening test. */
+export type ListeningSection = {
+  /** Section number (1-4). */
+  section: 1 | 2 | 3 | 4;
+  /** Conversational setting of the recording. */
+  setting: string;
+  /** Voices heard in the recording. */
+  voices: string;
+  /** Inclusive question-number range of the section. */
+  questionRange: [number, number];
+  /** What the section asks candidates to do. */
+  description: string;
+};
+
+/** A CEFR-graded study plan for the receptive skills. */
+export type StudyPlan = {
+  /** CEFR level the plan targets. */
+  level: StudyLevel;
+  /** Short proficiency label. */
+  label: string;
+  /** What reading practice should focus on at this level. */
+  readingFocus: string;
+  /** What listening practice should focus on at this level. */
+  listeningFocus: string;
+  /** Recommended receptive-skills passages per week, as `[min, max]`. */
+  weeklyPassages: [number, number];
+  /** Recommended routine for each practice session, as ordered steps. */
+  sessionRoutine: string[];
+  /** Observable signal that the learner is ready for the next level. */
+  exitSignal: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 
