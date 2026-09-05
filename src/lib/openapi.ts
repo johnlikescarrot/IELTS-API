@@ -256,10 +256,11 @@ export function openApiDocument(
     const path = route.path.replace(/:([^/]+)/g, '{$1}');
     const method = route.method.toLowerCase();
     const isPost = route.method === 'POST';
-    const responseSchema = {
-      ...ENVELOPE,
-      properties: { ...ENVELOPE.properties, data: READING_RESPONSES[route.path] ?? ENVELOPE.properties.data },
-    };
+    const payloadSchema = READING_RESPONSES[route.path];
+    const responseSchema: JsonValue =
+      payloadSchema === undefined
+        ? { $ref: '#/components/schemas/ApiResponse' }
+        : { ...ENVELOPE, properties: { ...ENVELOPE.properties, data: payloadSchema } };
     paths[path] ??= {};
     paths[path][method] = {
       operationId: `${method}_${route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '')}`,
@@ -292,30 +293,33 @@ export function openApiDocument(
         ...(isPost ? {} : { '304': { description: 'Not modified (ETag matched).' } }),
         '400': {
           description: 'Invalid parameters or JSON submission.',
-          content: { 'application/json': { schema: ERROR } },
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
         },
-        '404': { description: 'Not found.', content: { 'application/json': { schema: ERROR } } },
+        '404': {
+          description: 'Not found.',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
+        },
         '405': {
           description: 'Method not allowed; see the Allow header.',
-          content: { 'application/json': { schema: ERROR } },
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
         },
         '500': {
           description: 'Unexpected server error.',
-          content: { 'application/json': { schema: ERROR } },
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
         },
         ...(isPost
           ? {
               '408': {
                 description: 'Request body deadline exceeded.',
-                content: { 'application/json': { schema: ERROR } },
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
               },
               '413': {
                 description: 'JSON body exceeds 16384 UTF-8 bytes.',
-                content: { 'application/json': { schema: ERROR } },
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
               },
               '415': {
                 description: 'Use uncompressed application/json with UTF-8 encoding.',
-                content: { 'application/json': { schema: ERROR } },
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
               },
             }
           : {}),

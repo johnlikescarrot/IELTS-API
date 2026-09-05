@@ -126,20 +126,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -152,45 +139,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -200,45 +149,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -248,45 +159,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -296,45 +169,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -354,20 +189,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -380,45 +202,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -428,45 +212,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -476,45 +222,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -524,45 +232,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -601,20 +271,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -627,45 +284,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -675,45 +294,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -723,45 +304,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -771,45 +314,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -849,20 +354,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -875,45 +367,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -923,45 +377,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -971,45 +387,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1019,45 +397,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1086,20 +426,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1112,45 +439,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1160,45 +449,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1208,45 +459,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1256,45 +469,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1314,20 +489,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1340,45 +502,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1388,45 +512,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1436,45 +522,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1484,45 +532,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1577,20 +587,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1603,45 +600,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1651,45 +610,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1699,45 +620,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1747,45 +630,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1814,20 +659,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -1840,45 +672,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1888,45 +682,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1936,45 +692,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -1984,45 +702,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2091,20 +771,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -2117,45 +784,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2165,45 +794,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2213,45 +804,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2261,45 +814,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2340,20 +855,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -2366,45 +868,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2414,45 +878,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2462,45 +888,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2510,45 +898,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2586,20 +936,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -2612,45 +949,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2660,45 +959,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2708,45 +969,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2756,45 +979,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2876,20 +1061,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -2902,45 +1074,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2950,45 +1084,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -2998,45 +1094,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3046,45 +1104,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3142,20 +1162,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -3168,45 +1175,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3216,45 +1185,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3264,45 +1195,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3312,45 +1205,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3379,20 +1234,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -3405,45 +1247,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3453,45 +1257,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3501,45 +1267,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3549,45 +1277,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3607,20 +1297,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -3633,45 +1310,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3681,45 +1320,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3729,45 +1330,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3777,45 +1340,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3835,20 +1360,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -3861,45 +1373,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3909,45 +1383,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -3957,45 +1393,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4005,45 +1403,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4132,20 +1492,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -4158,45 +1505,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4206,45 +1515,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4254,45 +1525,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4302,45 +1535,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4398,20 +1593,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "data": {
-                      "description": "Response payload: an array for collections, an object for singletons."
-                    },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiResponse"
                 }
               }
             }
@@ -4424,45 +1606,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4472,45 +1616,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4520,45 +1626,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4568,45 +1636,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4702,45 +1732,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4750,45 +1742,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4798,45 +1752,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4846,45 +1762,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4930,45 +1808,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -4978,45 +1818,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5026,45 +1828,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5074,45 +1838,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5205,45 +1931,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5253,45 +1941,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5301,45 +1951,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5349,45 +1961,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5442,45 +2016,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5490,45 +2026,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5538,45 +2036,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5586,45 +2046,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5698,45 +2120,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5746,45 +2130,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5794,45 +2140,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5842,45 +2150,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5890,45 +2160,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5938,45 +2170,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
@@ -5986,45 +2180,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "required": ["status", "data", "meta"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "minimum": 400,
-                      "maximum": 599
-                    },
-                    "data": {
-                      "type": "null"
-                    },
-                    "meta": {
-                      "type": "object",
-                      "required": ["version", "error"],
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "error": {
-                          "type": "object",
-                          "required": ["code", "message", "details"],
-                          "properties": {
-                            "code": {
-                              "type": "string"
-                            },
-                            "message": {
-                              "type": "string"
-                            },
-                            "details": {
-                              "type": "object",
-                              "additionalProperties": {
-                                "type": "string"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "$ref": "#/components/schemas/ApiError"
                 }
               }
             }
