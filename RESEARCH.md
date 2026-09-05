@@ -159,3 +159,67 @@ python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 
 The commit SHA recorded in `data/corpus.json` identifies the exact snapshot; re-running against a
 different commit is expected to change the item count and the coverage ratio.
+
+## 7. A second corpus: the CEFR-levelled practice bank
+
+The vocabulary dataset is derived from a noisy corpus. To test whether a _self-consistent_ practice
+corpus changes what can be extracted, the API also indexes
+[`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice], a pool of IELTS/PTE practice material with
+1,232 levelled reading lessons, 314 full reading tests, 204 full listening tests, 102 basic
+listening lessons and their audio.
+
+**Snapshot:** commit `ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c` (3 July 2026), 5,545 blobs.
+
+### 7.1 Why this corpus is different
+
+The decisive structural difference from the first corpus is **homogeneity**. Keyword classification
+of `zhengyishiming/IELTS` leaves only 18.8% IELTS material, because the repository is a flat dump of
+unrelated subjects. `UPGRADE-YOUR-IELTS-SKILLS` is the opposite: it is a purpose-built practice
+platform, so almost every blob serves IELTS or PTE practice. The classification rules therefore do
+not need to separate IELTS material from noise; they only need to bucket the practice material by
+module and (where present) CEFR level.
+
+| Module                                 |     Items |
+| -------------------------------------- | --------: |
+| `reading-band` (A1-A2 / B1-B2 / C1-C2) |     1,232 |
+| `reading-full-test`                    |       314 |
+| `listening-full-test`                  |       204 |
+| `listening-basic`                      |       102 |
+| **Total**                              | **1,852** |
+
+The reading bank is levelled: 198 lessons at A1-A2, 374 at B1-B2, and 660 at C1-C2. It also carries
+its own question-types (`multiple_choice`, `true_false_not_given`, `matching_information`,
+`summary_completion`, `diagram_labelling`, and so on) in a per-lesson JSON schema, which is the
+source of the nine-type Academic Reading taxonomy the API documents.
+
+### 7.2 The Reading item bank
+
+Because the practice corpus is unlicensed third-party material, the API does **not** redistribute its
+passages or questions. Instead it publishes two derived artefacts:
+
+1. **A metadata index** (`data/practice.json`) of the 1,852 modules — path, title, CEFR level,
+   format, size, blob SHA-1 and a public URL. This records the research finding that a purpose-built
+   practice bank is nearly homogeneous and is in itself citable.
+2. **An original Reading item bank** (`data/reading.json`) — 12 passages and 48 questions calibrated
+   to the same CEFR levels and the same nine question types. These are original work, written for
+   the API, so the API can serve real, answerable Reading practice without depending on the
+   redistribution rights of the upstream corpus. Calibration, not copying, is the point: a researcher
+   can use the API to generate practice items that match the level and task type of the corpus while
+   the corpus remains behind its own licence.
+
+### 7.3 Reproducing this analysis
+
+```bash
+curl -sL -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+  "https://api.github.com/repos/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/git/trees/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c?recursive=1" \
+  -o practice-tree.json
+curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+  "https://api.github.com/repos/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/git/blobs/fc96bc4bcb074508debc0e57073b1adc2f38a373" \
+  -o reading-index.json
+python3 scripts/extract_practice.py practice-tree.json data/practice.json --reading-index reading-index.json
+```
+
+The commit SHA recorded in `data/practice.json` identifies the exact snapshot; re-running against a
+different commit changes the item count and the module breakdown.
+
+[practice]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS

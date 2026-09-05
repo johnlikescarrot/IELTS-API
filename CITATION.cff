@@ -7,15 +7,17 @@ date-released: '2026-09-04'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
-  Cambridge IELTS volumes 1-22 vocabulary lists, condensed analytic band
-  descriptors for Speaking and Writing across bands 0-9, indicative score
-  concordances for CEFR, TOEFL iBT, the Cambridge English Scale, PTE Academic
-  and the Duolingo English Test, Writing and Speaking task banks, and a curated
-  index of an open IELTS research corpus. Every endpoint is free of charge,
-  requires no authentication, returns a uniform JSON envelope with a stable
-  ETag, and is covered by a test suite with 100% statement, branch, function
-  and line coverage. The API is designed for reproducible second-language
-  assessment research: responses are deterministic, versioned and citable.
+  Cambridge IELTS volumes 1-22 vocabulary lists, an original CEFR-levelled
+  Reading item bank with an Academic Reading question-type taxonomy, condensed
+  analytic band descriptors for Speaking and Writing across bands 0-9,
+  indicative score concordances for CEFR, TOEFL iBT, the Cambridge English
+  Scale, PTE Academic and the Duolingo English Test, Writing and Speaking task
+  banks, and curated metadata indexes of two open IELTS corpora. Every endpoint
+  is free of charge, requires no authentication, returns a uniform JSON
+  envelope with a stable ETag, and is covered by a test suite with 100%
+  statement, branch, function and line coverage. The API is designed for
+  reproducible second-language assessment research: responses are
+  deterministic, versioned and citable.
 keywords:
   - IELTS
   - English for Academic Purposes
@@ -57,6 +59,12 @@ references:
     title: '1-22yas.xlsx: Cambridge IELTS volumes 1-22 vocabulary lists'
     url: 'https://github.com/zhengyishiming/IELTS/blob/main/1-22yas.xlsx'
     year: 2024
+  - type: dataset
+    authors:
+      - name: 'ngoclong1209'
+    title: 'Upgrade Your IELTS Skills: a CEFR-levelled IELTS/PTE practice corpus'
+    url: 'https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS'
+    year: 2026
   - type: manual
     authors:
       - name: 'British Council'

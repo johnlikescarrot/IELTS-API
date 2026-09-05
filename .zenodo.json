@@ -14,6 +14,7 @@
     "English for Academic Purposes",
     "second language assessment",
     "vocabulary",
+    "reading comprehension",
     "band descriptors",
     "score concordance",
     "open data",
@@ -28,6 +29,11 @@
     },
     {
       "identifier": "https://github.com/zhengyishiming/IELTS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }

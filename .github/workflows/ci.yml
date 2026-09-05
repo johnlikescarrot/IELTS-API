@@ -122,6 +122,39 @@ jobs:
           print(f"dataset reproducible: {regenerated['meta']['words']} words")
           PY
 
+      - name: Re-derive the practice corpus index from the upstream repository
+        run: |
+          curl -fsSL -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/git/trees/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c?recursive=1" \
+            -o /tmp/practice-tree.json
+          curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/git/blobs/fc96bc4bcb074508debc0e57073b1adc2f38a373" \
+            -o /tmp/reading-index.json
+          python3 scripts/extract_practice.py /tmp/practice-tree.json /tmp/practice.json --reading-index /tmp/reading-index.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/practice.json'))
+          regenerated = json.load(open('/tmp/practice.json'))
+          assert committed == regenerated, 'data/practice.json is out of date'
+          print(f"practice index reproducible: {regenerated['stats']['practiceItems']} items")
+          PY
+
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); print('datasets are valid JSON')"
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice.json')); print('datasets are valid JSON')"
+          python3 - <<'PY'
+          import json
+          reading = json.load(open('data/reading.json'))
+          levels = {'A1-A2', 'B1-B2', 'C1-C2'}
+          assert reading['meta']['license'] == 'CC BY 4.0'
+          ids = [item['id'] for item in reading['items']]
+          assert len(ids) == len(set(ids)), 'reading ids are not unique'
+          for item in reading['items']:
+              assert item['level'] in levels, item['id']
+              assert len(item['passage']) > 80, item['id']
+              assert len(item['questions']) > 0, item['id']
+              for q in item['questions']:
+                  assert q['answer'] and q['explanation'], item['id']
+          print(f"reading bank valid: {len(reading['items'])} items, {sum(len(i['questions']) for i in reading['items'])} questions")
+          PY

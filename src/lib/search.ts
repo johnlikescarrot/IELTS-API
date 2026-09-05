@@ -64,6 +64,11 @@ export function matchesAny<T>(values: readonly T[], filter: readonly T[] | undef
 /**
  * Split a comma-separated parameter into a list of lower-case tokens.
  *
+ * Comparison against an allow-list is case-insensitive: the canonical spelling
+ * from the allow-list is returned, so mixed-case facets such as the CEFR level
+ * `B1-B2` survive a client's lowercase input. When no allow-list is provided the
+ * tokens are lower-cased only.
+ *
  * @param raw - Raw parameter value (`education,technology`).
  * @param key - Parameter name used in error messages.
  * @param allowed - Permitted tokens; when provided, unknown tokens are rejected.
@@ -84,7 +89,15 @@ export function parseList(
     return undefined;
   }
   if (allowed !== undefined) {
-    const unknown = tokens.filter((token) => !allowed.includes(token));
+    const allowedLower = allowed.map((value) => value.toLowerCase());
+    const result = tokens.map((token) => {
+      const index = allowedLower.indexOf(token);
+      if (index === -1) {
+        return token;
+      }
+      return allowed[index] as string;
+    });
+    const unknown = tokens.filter((token) => !allowedLower.includes(token));
     if (unknown.length > 0) {
       throw badRequest(`Unknown value(s) for "${key}": ${unknown.join(', ')}.`, {
         parameter: key,
@@ -92,6 +105,7 @@ export function parseList(
         allowed: allowed.join(','),
       });
     }
+    return result;
   }
   return tokens;
 }

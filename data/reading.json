@@ -1,0 +1,752 @@
+{
+ "meta": {
+  "name": "Original CEFR-levelled Reading item bank",
+  "license": "CC BY 4.0",
+  "attribution": "Reading passages and questions are original work authored for the IELTS API.",
+  "note": "The items are calibrated to the CEFR reading levels (A1-A2, B1-B2, C1-C2) and the Academic Reading question-type taxonomy that recur in open IELTS preparation practice corpora. No third-party passage or question is reproduced.",
+  "inspiredBy": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+  "levels": [
+   "A1-A2",
+   "B1-B2",
+   "C1-C2"
+  ],
+  "questionTypes": [
+   "multiple-choice",
+   "true-false-not-given",
+   "yes-no-not-given",
+   "matching-information",
+   "matching-headings",
+   "summary-completion",
+   "sentence-completion",
+   "diagram-labelling",
+   "short-answer"
+  ]
+ },
+ "items": [
+  {
+   "id": "r_a1_001",
+   "level": "A1-A2",
+   "title": "The School Library",
+   "topic": "daily-life",
+   "wordCount": 138,
+   "passage": "The school library is a quiet place. It opens at eight in the morning and closes at four in the afternoon. Students go there to read books, to study, and to borrow stories for the weekend. There are many shelves with books about science, history, and travel. At the front of the library there is a desk where a librarian sits. She helps students find books and answers questions. On the wall, there is a large clock and a poster that says \"Please be quiet.\" Every student must bring a library card to take a book home. The card is small and yellow, and it has the student's name on it. Books can be kept for two weeks. If a book is late, the student pays a small fine. In the afternoon, the library is full, and many students work together at the long tables. It is a busy but peaceful place.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "multiple-choice",
+     "instructions": "Choose the correct letter, A, B, C or D.",
+     "text": "When does the school library close?",
+     "options": {
+      "A": "In the morning",
+      "B": "At four in the afternoon",
+      "C": "At eight at night",
+      "D": "At two in the afternoon"
+     },
+     "answer": "B",
+     "explanation": "The first paragraph states the library 'opens at eight in the morning and closes at four in the afternoon.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Every student must bring a library card to take a book home.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "TRUE",
+     "explanation": "The passage says 'Every student must bring a library card to take a book home.'"
+    },
+    {
+     "id": "q3",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Books can be kept for a whole month.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The passage says 'Books can be kept for two weeks.'"
+    },
+    {
+     "id": "q4",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN TWO WORDS from the passage.",
+     "text": "What colour is the library card?",
+     "options": {
+      "A": "yellow"
+     },
+     "answer": "yellow",
+     "explanation": "The passage describes 'a small and yellow' card."
+    }
+   ]
+  },
+  {
+   "id": "r_a1_002",
+   "level": "A1-A2",
+   "title": "A Day at the Market",
+   "topic": "daily-life",
+   "wordCount": 122,
+   "passage": "Every Saturday, Anna goes to the market with her mother. The market is near their house, and it is always noisy and colourful. There are many stalls with fresh fruit, vegetables, and fish. Anna likes the fruit stall best. She buys red apples and yellow bananas. Her mother buys rice, eggs, and a bottle of cooking oil. They also visit the flower stall, where Anna chooses a small bunch of white flowers for their kitchen. In the market, people talk loudly and laugh. The sellers call out the prices of their things. Anna's mother pays for everything with coins and small notes. It takes them an hour to buy all the food for the week. Then they walk home with heavy bags, and Anna is already hungry for lunch.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "multiple-choice",
+     "instructions": "Choose the correct letter, A, B, C or D.",
+     "text": "When does Anna go to the market?",
+     "options": {
+      "A": "Every Sunday",
+      "B": "Every Saturday",
+      "C": "Every Friday",
+      "D": "Every month"
+     },
+     "answer": "B",
+     "explanation": "The passage begins 'Every Saturday, Anna goes to the market with her mother.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Anna's mother pays for everything with coins and small notes.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "TRUE",
+     "explanation": "The passage says 'Anna's mother pays for everything with coins and small notes.'"
+    },
+    {
+     "id": "q3",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "The market is far away from Anna's house.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The passage says 'The market is near their house.'"
+    },
+    {
+     "id": "q4",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN TWO WORDS from the passage.",
+     "text": "What colour flowers does Anna choose?",
+     "options": {
+      "A": "white"
+     },
+     "answer": "white",
+     "explanation": "Anna chooses 'a small bunch of white flowers.'"
+    }
+   ]
+  },
+  {
+   "id": "r_a1_003",
+   "level": "A1-A2",
+   "title": "Learning to Ride a Bike",
+   "topic": "daily-life",
+   "wordCount": 135,
+   "passage": "Last summer, Sam learned to ride a bike. His father bought him a blue bike from a small shop. At first, Sam was afraid. He fell two times, but he did not cry. His father held the back of the bike and ran beside him. \"Look forward, not down,\" his father said. \"Use your feet to push.\" Sam tried again and again. After three days, his father let go of the bike, and Sam rode alone down the street. He was very happy and shouted with joy. He rode to the end of the road, turned around, and came back. His mother watched from the garden and clapped her hands. Now Sam rides his bike to school every morning. It is faster than walking, and it is more fun. He keeps his helmet on and always looks for cars.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "multiple-choice",
+     "instructions": "Choose the correct letter, A, B, C or D.",
+     "text": "Who bought Sam a bike?",
+     "options": {
+      "A": "His mother",
+      "B": "His friend",
+      "C": "His father",
+      "D": "His teacher"
+     },
+     "answer": "C",
+     "explanation": "The passage says 'His father bought him a blue bike from a small shop.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Sam cried when he fell off the bike.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The passage says 'He fell two times, but he did not cry.'"
+    },
+    {
+     "id": "q3",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Sam now rides his bike to school.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "TRUE",
+     "explanation": "The passage says 'Now Sam rides his bike to school every morning.'"
+    },
+    {
+     "id": "q4",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN TWO WORDS from the passage.",
+     "text": "What colour was Sam's bike?",
+     "options": {
+      "A": "blue"
+     },
+     "answer": "blue",
+     "explanation": "The passage says 'His father bought him a blue bike.'"
+    }
+   ]
+  },
+  {
+   "id": "r_a1_004",
+   "level": "A1-A2",
+   "title": "A Family Dinner",
+   "topic": "daily-life",
+   "wordCount": 128,
+   "passage": "In the evening, the Wang family sits together for dinner. Their table is round, and it stands in the middle of the kitchen. On the table there are plates of rice, a bowl of soup, fish, and green vegetables. Grandmother sits at the head of the table. She likes to talk about her day in the garden. Father works in an office, and he tells funny stories. Mother is a teacher, and she asks the children about their homework. The children, Lili and Ming, share news about school. During dinner, the family talks and laughs. They use chopsticks, and everyone takes food from the shared dishes. After the meal, Lili washes the plates while Ming dries them. Grandmother makes tea for everyone. For this family, dinner is not only about food; it is a time to be together.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "multiple-choice",
+     "instructions": "Choose the correct letter, A, B, C or D.",
+     "text": "Where does the family sit for dinner?",
+     "options": {
+      "A": "In the living room",
+      "B": "At a round table",
+      "C": "In a restaurant",
+      "D": "In the garden"
+     },
+     "answer": "B",
+     "explanation": "The passage says 'Their table is round, and it stands in the middle of the kitchen.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Father works in a hospital.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The passage says 'Father works in an office.'"
+    },
+    {
+     "id": "q3",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Grandmother sits at the head of the table.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "TRUE",
+     "explanation": "The passage says 'Grandmother sits at the head of the table.'"
+    },
+    {
+     "id": "q4",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN TWO WORDS from the passage.",
+     "text": "Who makes tea for everyone after the meal?",
+     "options": {
+      "A": "Grandmother"
+     },
+     "answer": "Grandmother",
+     "explanation": "The passage says 'Grandmother makes tea for everyone.'"
+    }
+   ]
+  },
+  {
+   "id": "r_b1_001",
+   "level": "B1-B2",
+   "title": "The Rise of Urban Beekeeping",
+   "topic": "environment",
+   "wordCount": 212,
+   "passage": "For most of history, honeybees were kept in the countryside, far from roads and factory smoke. In the past twenty years, however, a growing number of people have begun to keep hives on city rooftops, in small gardens, and even on balconies. This practice, called urban beekeeping, has become popular in cities from London to Tokyo. Supporters argue that bees help pollinate flowers and vegetables in parks and community gardens, and that honey produced close to home is fresher than anything from a supermarket.\n\nUrban beekeeping is not without difficulties. City bees face dangers that country bees often avoid, such as traffic, pesticides used in gardens, and a limited choice of flowers. A single hive may contain thousands of bees, and they need a steady supply of nectar throughout the warmer months. If there are not enough plants, the colony will be weak and may not survive the winter. For this reason, experienced beekeepers often choose a site near a park or a river, where there is more green space.\n\nMany cities have welcomed the trend. Some local governments now allow hives in public parks and offer short courses for beginners. Others are cautious, pointing out that not everyone is comfortable living near a hive. Most beekeepers agree that the greatest reward is not the honey itself but the chance to watch a complex, hard-working society at close hand. Urban beekeeping, they say, connects city dwellers to nature in a way that few other hobbies can.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "multiple-choice",
+     "instructions": "Choose the correct letter, A, B, C or D.",
+     "text": "According to the passage, why has urban beekeeping become popular?",
+     "options": {
+      "A": "Honey is healthier in cities",
+      "B": "Bees help pollinate plants and the honey is fresh",
+      "C": "Cities are warmer than the countryside",
+      "D": "Beekeepers earn a lot of money"
+     },
+     "answer": "B",
+     "explanation": "The opening paragraph says supporters argue that bees 'help pollinate flowers and vegetables' and that 'honey produced close to home is fresher.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "City bees face dangers that country bees often avoid.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "TRUE",
+     "explanation": "The second paragraph says 'City bees face dangers that country bees often avoid.'"
+    },
+    {
+     "id": "q3",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "All cities welcome urban beekeeping without any restrictions.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The last paragraph says 'Others are cautious, pointing out that not everyone is comfortable living near a hive.'"
+    },
+    {
+     "id": "q4",
+     "type": "sentence-completion",
+     "instructions": "Complete the sentence with NO MORE THAN TWO WORDS from the passage.",
+     "text": "A single hive may contain thousands of ____ .",
+     "options": {
+      "A": "bees"
+     },
+     "answer": "bees",
+     "explanation": "The passage says 'A single hive may contain thousands of bees.'"
+    }
+   ]
+  },
+  {
+   "id": "r_b1_002",
+   "level": "B1-B2",
+   "title": "Why We Forget",
+   "topic": "science",
+   "wordCount": 208,
+   "passage": "Forgetting is often seen as a failure of the memory, but scientists now believe that it is an essential part of how the brain works. If human beings remembered every detail of every day, the mind would be overwhelmed by information. Forgetting, therefore, is not simply a mistake; it is a way of clearing away what is no longer useful so that the brain can act quickly.\n\nOne well-known idea is that memory has three stages. First, information enters the mind for a very short time. If we pay attention, it passes into a second stage, where it can be held for a few minutes. Finally, with rehearsal and meaning, some memories become long-lasting. Most information never reaches this final stage. It fades, which is why a phone number that we hear once is usually gone within seconds.\n\nResearchers point out that sleep plays an important part in memory. During sleep, the brain sorts through the events of the day, strengthening some connections and weakening others. In this view, a good night's sleep helps us keep what matters and drop the rest. Forgetting is also linked to usefulness: we are more likely to remember a fact that we use often, and more likely to lose one that sits unused for years. Far from being a weakness, the ability to forget may be one of the reasons the human mind is so flexible.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "multiple-choice",
+     "instructions": "Choose the correct letter, A, B, C or D.",
+     "text": "What is the main idea of the first paragraph?",
+     "options": {
+      "A": "Forgetting is a sign of a damaged brain",
+      "B": "Forgetting is a useful and necessary process",
+      "C": "People should try to remember everything",
+      "D": "Memory improves with age"
+     },
+     "answer": "B",
+     "explanation": "The first paragraph says forgetting is 'an essential part of how the brain works' and a way of 'clearing away what is no longer useful.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Most information that enters the mind becomes a long-lasting memory.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The second paragraph says 'Most information never reaches this final stage.'"
+    },
+    {
+     "id": "q3",
+     "type": "yes-no-not-given",
+     "instructions": "Do the following statements agree with the claims of the writer? Write YES, NO or NOT GIVEN.",
+     "text": "Sleep helps the brain decide which memories to keep.",
+     "options": {
+      "YES": "The statement agrees with the claims of the writer.",
+      "NO": "The statement contradicts the claims of the writer.",
+      "NOT GIVEN": "It is impossible to say what the writer thinks about this."
+     },
+     "answer": "YES",
+     "explanation": "The last paragraph says 'During sleep, the brain sorts through the events of the day, strengthening some connections and weakening others.'"
+    },
+    {
+     "id": "q4",
+     "type": "sentence-completion",
+     "instructions": "Complete the sentence with NO MORE THAN TWO WORDS from the passage.",
+     "text": "We are more likely to lose a fact that sits ____ for years.",
+     "options": {
+      "A": "unused"
+     },
+     "answer": "unused",
+     "explanation": "The passage says 'we are more likely to lose one that sits unused for years.'"
+    }
+   ]
+  },
+  {
+   "id": "r_b1_003",
+   "level": "B1-B2",
+   "title": "The Changing Face of Work",
+   "topic": "society",
+   "wordCount": 216,
+   "passage": "The way people work has changed more in the past thirty years than in the previous century. A generation ago, many employees expected to stay with one company for their whole career. Today, it is common to change jobs every few years, to work for several employers at once, or to run a small business from home. New technology is largely responsible for this change. Faster computers, cheap video calls, and a worldwide internet mean that many tasks can be done from almost anywhere.\n\nWorking from home is one of the clearest signs of this shift. Some people say it saves them hours of travel and gives them more control over their day. Others complain that the line between work and home life disappears, and that they feel pressure to answer messages at all hours. Research suggests that the answer depends on the person and the job: routine tasks are often done well at home, while teamwork is sometimes easier when people are in the same room.\n\nThe jobs available are changing too. Positions that mainly involve physical repetition are disappearing, while roles that need judgement, creativity, and communication are growing. At the same time, the skills workers need must be updated throughout a career, not just at the beginning. Most experts agree that flexibility is now one of the most valuable qualities an employee can offer. In a world where the tools of work change quickly, the ability to learn a new one is often more important than the knowledge already held.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "matching-headings",
+     "instructions": "The passage has four paragraphs, A-D. Choose the correct heading.",
+     "text": "Which paragraph explains one of the downsides of working from home?",
+     "options": {
+      "A": "The way people work has changed more in the past thirty years.",
+      "B": "Working from home is one of the clearest signs of this shift.",
+      "C": "The jobs available are changing too.",
+      "D": "Most experts agree that flexibility is now one of the most valuable qualities."
+     },
+     "answer": "B",
+     "explanation": "The second paragraph ('Working from home') notes that 'the line between work and home life disappears' and workers 'feel pressure to answer messages at all hours.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "A generation ago, many employees expected to stay with one company for their whole career.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "TRUE",
+     "explanation": "The first paragraph says 'A generation ago, many employees expected to stay with one company for their whole career.'"
+    },
+    {
+     "id": "q3",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN THREE WORDS from the passage.",
+     "text": "What kind of tasks are often done well at home?",
+     "options": {
+      "A": "routine tasks"
+     },
+     "answer": "routine tasks",
+     "explanation": "The passage says 'routine tasks are often done well at home.'"
+    },
+    {
+     "id": "q4",
+     "type": "sentence-completion",
+     "instructions": "Complete the sentence with NO MORE THAN TWO WORDS from the passage.",
+     "text": "Most experts agree that ____ is now one of the most valuable qualities an employee can offer.",
+     "options": {
+      "A": "flexibility"
+     },
+     "answer": "flexibility",
+     "explanation": "The last paragraph says 'flexibility is now one of the most valuable qualities an employee can offer.'"
+    }
+   ]
+  },
+  {
+   "id": "r_b1_004",
+   "level": "B1-B2",
+   "title": "The Story of Tea",
+   "topic": "culture",
+   "wordCount": 201,
+   "passage": "Today tea is the second most popular drink in the world after water, but its history began in a single region. Most stories agree that tea was first drunk in China, where it was used for thousands of years as a medicine. It was probably a lucky accident: according to an old legend, a few leaves fell into a pot of boiling water, and the emperor liked the smell and the taste. However the drink began, by the eighth century tea was widely enjoyed, and books were being written about how to grow and prepare it.\n\nTea travelled slowly along trade routes to Japan, then to Europe. In the seventeenth century, Dutch and Portuguese traders brought it to European ports, where it was very expensive. In Britain, tea quickly became fashionable among the rich, and soon the government taxed it heavily. High taxes and a trade that was controlled by one company led to conflict, and in the eighteenth century this trade helped to shape the political history of several countries.\n\nToday the tea plant is grown in many warm, wet countries, and the leaves are processed in different ways to make green, black, and other varieties. An important point is that all these teas come from the same plant; the difference is in how the leaves are treated after they are picked. Tea is more than a drink. In many cultures it is a symbol of hospitality, a reason to pause, and a way for friends and strangers to sit together.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "matching-information",
+     "instructions": "The passage has four paragraphs, A-D. Which paragraph contains the following information?",
+     "text": "an example of how tea became part of political conflict",
+     "options": {
+      "A": "Today tea is the second most popular drink.",
+      "B": "Tea travelled slowly along trade routes.",
+      "C": "Today the tea plant is grown in many warm, wet countries.",
+      "D": "Tea is more than a drink."
+     },
+     "answer": "B",
+     "explanation": "The second paragraph describes how 'the government taxed it heavily' and 'this trade helped to shape the political history of several countries.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Green and black tea come from two completely different plants.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The last paragraph says 'all these teas come from the same plant.'"
+    },
+    {
+     "id": "q3",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Tea was first drunk in Japan.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The first paragraph says 'tea was first drunk in China.'"
+    },
+    {
+     "id": "q4",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN ONE WORD from the passage.",
+     "text": "In which century did Dutch and Portuguese traders bring tea to European ports?",
+     "options": {
+      "A": "seventeenth"
+     },
+     "answer": "seventeenth",
+     "explanation": "The second paragraph says 'In the seventeenth century, Dutch and Portuguese traders brought it to European ports.'"
+    }
+   ]
+  },
+  {
+   "id": "r_c1_001",
+   "level": "C1-C2",
+   "title": "The Economics of Attention",
+   "topic": "technology",
+   "wordCount": 286,
+   "passage": "For most of economic history, the scarce resource was material: land, fuel, or labour. In the digital age, a different resource has become the object of intense competition. Attention, the limited capacity to focus on one thing at a time, is now bought and sold on a global scale. Every second of a person's day is a piece of a finite supply, and firms have learned that the most profitable strategy is not simply to offer a better product but to capture a larger share of this supply.\n\nThe shift has been driven by a change in the economics of distribution. In the twentieth century, a broadcaster could reach millions of people, but the number of messages was small; scarcity lay in the channel. Today the channel is effectively unlimited, and the problem is the reverse. With an endless stream of content, the customer's attention has become the bottleneck, and platforms compete by designing interfaces that hold it for longer. This is why the most successful products are engineered around reward, unpredictability, and the fear of missing out.\n\nCritics argue that the pursuit of attention can damage the public good. Journalism, for example, has traditionally rewarded depth and accuracy; online, the incentives often favour the quick, the shocking, and the divisive, because these are the stories that attract clicks. The result, it is claimed, is a public conversation that is more fragmented and less reliable. Defenders of the model respond that attention is not the enemy of quality. They point out that a wider audience, reached cheaply, can support creators who could not have survived under the old gatekeepers, and that readers are freer than ever to choose whom to follow.\n\nThe debate is unlikely to be settled by principles alone. Attention is a market, and like every market it is shaped by rules, incentives, and the choices of its participants. Whatever one's view, it is no longer possible to understand modern media or politics without treating human attention as a resource that can be measured, allocated, and fought over.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "matching-information",
+     "instructions": "The passage has four paragraphs, A-D. Which paragraph contains the following information?",
+     "text": "a reason why online incentives often favour 'the quick, the shocking'",
+     "options": {
+      "A": "For most of economic history, the scarce resource was material.",
+      "B": "The shift has been driven by a change in the economics of distribution.",
+      "C": "Critics argue that the pursuit of attention can damage the public good.",
+      "D": "The debate is unlikely to be settled by principles alone."
+     },
+     "answer": "C",
+     "explanation": "The third paragraph says 'online, the incentives often favour the quick, the shocking, and the divisive.'"
+    },
+    {
+     "id": "q2",
+     "type": "yes-no-not-given",
+     "instructions": "Do the following statements agree with the claims of the writer? Write YES, NO or NOT GIVEN.",
+     "text": "The writer believes attention has become a resource that can be allocated and fought over.",
+     "options": {
+      "YES": "The statement agrees with the claims of the writer.",
+      "NO": "The statement contradicts the claims of the writer.",
+      "NOT GIVEN": "It is impossible to say what the writer thinks about this."
+     },
+     "answer": "YES",
+     "explanation": "The final paragraph states attention is a market and 'it is no longer possible to understand modern media or politics without treating human attention as a resource that can be measured, allocated, and fought over.'"
+    },
+    {
+     "id": "q3",
+     "type": "sentence-completion",
+     "instructions": "Complete the sentence with NO MORE THAN THREE WORDS from the passage.",
+     "text": "In the twentieth century, the scarcity lay in the ____ .",
+     "options": {
+      "A": "channel"
+     },
+     "answer": "channel",
+     "explanation": "The second paragraph says 'scarcity lay in the channel.'"
+    },
+    {
+     "id": "q4",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN TWO WORDS from the passage.",
+     "text": "What has become the bottleneck in today's distribution model?",
+     "options": {
+      "A": "attention"
+     },
+     "answer": "attention",
+     "explanation": "The second paragraph says 'the customer's attention has become the bottleneck.'"
+    }
+   ]
+  },
+  {
+   "id": "r_c1_002",
+   "level": "C1-C2",
+   "title": "Restoring Degraded Wetlands",
+   "topic": "environment",
+   "wordCount": 276,
+   "passage": "For centuries, wetlands were regarded as wasteland: swampy, unsanitary, and fit only to be drained. Across Europe and North America, rivers were straightened, marshes were filled, and coastlines were lined with concrete. Only in the last few decades has the scale of that loss become clear. Wetlands are among the most productive ecosystems on Earth, filtering water, storing carbon, and providing a refuge for fish, birds, and amphibians. Their destruction, often carried out in the name of progress, has cost societies in the form of flooding, declining fisheries, and a sharp fall in biodiversity.\n\nRestoration is therefore no longer a luxury but a practical necessity, and it has become a discipline of its own. The simplest projects involve removing the drain or dam that was drying the land and allowing water to return; the wetland then rebuilds itself, sometimes within a single season. More ambitious projects go further, physically reshaping the land, replanting native species, and even reintroducing the animals that once lived there. A growing number of projects now take the approach of 'managed retreat', in which a defended coastline is deliberately opened to the sea so that a natural buffer can form in front of it.\n\nRestoration is not straightforward, and it is easy to be over-optimistic. A site that has been drained for a hundred years has often lost the soil and the seed bank that made it a wetland in the first place, so simply rewetting it may produce a flooded field rather than a functioning marsh. Moreover, the goals of different groups can conflict: what benefits a rare bird may not suit farmers who want the land, or engineers responsible for a nearby port. For this reason, the most successful projects are those that set clear, measurable goals, monitor their results over many years, and are patient enough to let nature take its course.\n\nThe lesson of wetland loss is that progress and conservation were never opposites; the mistake was to assume that a landscape which looks unused is a landscape that is unused. Restoring a wetland does not return a region to the past. It invests in the capacity of the land to absorb floods, to hold carbon, and to support life, and it is one of the few forms of environmental repair that pays for itself.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "multiple-choice",
+     "instructions": "Choose the correct letter, A, B, C or D.",
+     "text": "Which of the following is NOT mentioned as a benefit of wetlands?",
+     "options": {
+      "A": "Filtering water",
+      "B": "Storing carbon",
+      "C": "Producing crops for export",
+      "D": "Providing a refuge for wildlife"
+     },
+     "answer": "C",
+     "explanation": "The first paragraph lists filtering water, storing carbon, and providing a refuge for fish, birds, and amphibians; crops are not mentioned."
+    },
+    {
+     "id": "q2",
+     "type": "yes-no-not-given",
+     "instructions": "Do the following statements agree with the claims of the writer? Write YES, NO or NOT GIVEN.",
+     "text": "Simply rewetting a long-drained site always restores a working wetland.",
+     "options": {
+      "YES": "The statement agrees with the claims of the writer.",
+      "NO": "The statement contradicts the claims of the writer.",
+      "NOT GIVEN": "It is impossible to say what the writer thinks about this."
+     },
+     "answer": "NO",
+     "explanation": "The third paragraph says that a drained site has often lost its soil and seed bank, so 'simply rewetting it may produce a flooded field rather than a functioning marsh.'"
+    },
+    {
+     "id": "q3",
+     "type": "sentence-completion",
+     "instructions": "Complete the sentence with NO MORE THAN TWO WORDS from the passage.",
+     "text": "'Managed retreat' involves deliberately opening a defended coastline so a natural ____ can form.",
+     "options": {
+      "A": "buffer"
+     },
+     "answer": "buffer",
+     "explanation": "The second paragraph says 'a natural buffer can form in front of it.'"
+    },
+    {
+     "id": "q4",
+     "type": "matching-headings",
+     "instructions": "The passage has four paragraphs, A-D. Choose the correct heading.",
+     "text": "Which paragraph explains why restoration projects need clear goals and careful monitoring?",
+     "options": {
+      "A": "For centuries, wetlands were regarded as wasteland.",
+      "B": "Restoration is therefore no longer a luxury but a practical necessity.",
+      "C": "Restoration is not straightforward, and it is easy to be over-optimistic.",
+      "D": "The lesson of wetland loss is that progress and conservation were never opposites."
+     },
+     "answer": "C",
+     "explanation": "The third paragraph says the most successful projects 'set clear, measurable goals, monitor their results over many years.'"
+    }
+   ]
+  },
+  {
+   "id": "r_c1_003",
+   "level": "C1-C2",
+   "title": "The Formation of Habit",
+   "topic": "science",
+   "wordCount": 272,
+   "passage": "Habits are often described as the brain's way of saving effort, and the description is remarkably accurate. Every action a person repeats in the same setting leaves a trace in the neural pathways of the brain. When the situation recurs, the brain anticipates it and triggers the learned sequence of movements almost without conscious thought. This automation frees the mind to do other things, but it also means that a habit, once formed, can be very hard to break, because it is no longer a decision; it is a reflex.\n\nThe formation of a habit is usually described as a loop with three parts: a cue, a routine, and a reward. A cue is a trigger, such as a time of day, a place, or a mood. The routine is the behaviour that follows, and the reward is the satisfaction that makes the brain want to repeat the loop. Repeated often enough, the three become bound together. This is why small changes to the setting are often more powerful than resolutions. Moving the cue can dismantle the loop more effectively than willpower alone.\n\nResearch on the timing of habit formation has produced a reassuring and slightly uncomfortable finding. Simple routines, such as drinking a glass of water after waking, seem to become automatic within a few weeks. Others, especially those that require a noticeable amount of effort, can take far longer, and there is wide variation between people. The uncomfortable part is that a single missed day was long thought to undo the process; studies now show that missing one repetition has little effect, and that what matters is the overall pattern rather than perfection.\n\nThis understanding has practical value. It suggests that the way to build a habit is to make the routine small enough to be easy, to attach it to an existing cue, and to accept that progress will be slow. It also explains why habits are so resistant to change: when the brain has learnt that a situation leads to a reward, it will keep offering the same behaviour. To shift a habit, then, it is often more effective to replace the routine than to try to remove it, keeping the cue and the reward but changing what happens in between.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "multiple-choice",
+     "instructions": "Choose the correct letter, A, B, C or D.",
+     "text": "Which best describes the three parts of the habit loop described in the passage?",
+     "options": {
+      "A": "Goal, action, reward",
+      "B": "Cue, routine, reward",
+      "C": "Cue, decision, memory",
+      "D": "Setting, effort, outcome"
+     },
+     "answer": "B",
+     "explanation": "The second paragraph describes the loop as 'a cue, a routine, and a reward.'"
+    },
+    {
+     "id": "q2",
+     "type": "yes-no-not-given",
+     "instructions": "Do the following statements agree with the claims of the writer? Write YES, NO or NOT GIVEN.",
+     "text": "A missing a single day completely undoes the habit-forming process.",
+     "options": {
+      "YES": "The statement agrees with the claims of the writer.",
+      "NO": "The statement contradicts the claims of the writer.",
+      "NOT GIVEN": "It is impossible to say what the writer thinks about this."
+     },
+     "answer": "NO",
+     "explanation": "The third paragraph says 'a single missed day was long thought to undo the process; studies now show that missing one repetition has little effect.'"
+    },
+    {
+     "id": "q3",
+     "type": "sentence-completion",
+     "instructions": "Complete the sentence with NO MORE THAN THREE WORDS from the passage.",
+     "text": "To shift a habit, it is often more effective to replace the ____ rather than to remove it.",
+     "options": {
+      "A": "routine"
+     },
+     "answer": "routine",
+     "explanation": "The final paragraph says 'it is often more effective to replace the routine than to try to remove it.'"
+    },
+    {
+     "id": "q4",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN THREE WORDS from the passage.",
+     "text": "What frees the mind to do other things once a habit is formed?",
+     "options": {
+      "A": "automation"
+     },
+     "answer": "automation",
+     "explanation": "The first paragraph says 'This automation frees the mind to do other things.'"
+    }
+   ]
+  },
+  {
+   "id": "r_c1_004",
+   "level": "C1-C2",
+   "title": "The Emergence of Public Libraries",
+   "topic": "society",
+   "wordCount": 268,
+   "passage": "The idea that everyone, rich or poor, should be able to borrow books for free is so familiar that it is easy to forget how recent and how contested it is. For most of history, access to books was a privilege of the wealthy and the well connected. Libraries existed, but they were private, membership-based, or attached to universities and religious institutions. Changing this arrangement required both a new supply of cheap reading material and a political argument strong enough to persuade taxpayers to pay for it.\n\nBoth arrived in the nineteenth century. Improvements in printing made books dramatically cheaper, and the rise of newspapers created an appetite for reading that the book trade alone could not satisfy. At the same time, reformers argued that an educated population was good for industry and for public order, and that a library was a place where skilled workers could improve themselves without cost. The first state-supported public libraries were the result of this union of economics and civic ambition, and they spread quickly through Britain, the United States, and beyond.\n\nThe library was more than a room of books; it was a statement about citizenship. Admission was free, and inside, the person who cleaned the streets and the person who owned the factory had, in principle, the same right to any book on the shelves. In an age of rigid class division, this was a quietly radical idea. It also had practical consequences. Public libraries became the informal universities of the industrial city, where self-taught engineers, clerks, and inventors could learn a trade, a language, or a science.\n\nToday the library is again being redefined. Digital texts can be read without a building, and the value of a free printed collection is no longer as obvious as it once was. Yet the demand for library space has not fallen; it has moved toward other needs, such as access to the internet, a quiet place to work, and support for children and newcomers. The public library, it seems, has always held a role that is broader than the books upon its shelves.",
+   "questions": [
+    {
+     "id": "q1",
+     "type": "matching-information",
+     "instructions": "The passage has four paragraphs, A-D. Which paragraph contains the following information?",
+     "text": "a comparison of a street cleaner and a factory owner inside a library",
+     "options": {
+      "A": "The idea that everyone should be able to borrow books for free is so familiar.",
+      "B": "Both arrived in the nineteenth century.",
+      "C": "The library was more than a room of books; it was a statement about citizenship.",
+      "D": "Today the library is again being redefined."
+     },
+     "answer": "C",
+     "explanation": "The third paragraph says 'the person who cleaned the streets and the person who owned the factory had, in principle, the same right to any book.'"
+    },
+    {
+     "id": "q2",
+     "type": "true-false-not-given",
+     "instructions": "Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.",
+     "text": "Before the nineteenth century, most libraries were open to the general public for free.",
+     "options": {
+      "TRUE": "The statement agrees with the information.",
+      "FALSE": "The statement contradicts the information.",
+      "NOT GIVEN": "There is no information on this."
+     },
+     "answer": "FALSE",
+     "explanation": "The first paragraph says 'access to books was a privilege of the wealthy' and that libraries were 'private, membership-based, or attached to universities and religious institutions.'"
+    },
+    {
+     "id": "q3",
+     "type": "sentence-completion",
+     "instructions": "Complete the sentence with NO MORE THAN TWO WORDS from the passage.",
+     "text": "Public libraries became the informal ____ of the industrial city.",
+     "options": {
+      "A": "universities"
+     },
+     "answer": "universities",
+     "explanation": "The third paragraph says 'Public libraries became the informal universities of the industrial city.'"
+    },
+    {
+     "id": "q4",
+     "type": "short-answer",
+     "instructions": "Answer the question with NO MORE THAN ONE WORD from the passage.",
+     "text": "Which nineteenth-century technology made books dramatically cheaper?",
+     "options": {
+      "A": "printing"
+     },
+     "answer": "printing",
+     "explanation": "The second paragraph says 'Improvements in printing made books dramatically cheaper.'"
+    }
+   ]
+  }
+ ]
+}

@@ -8,6 +8,8 @@
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
+import { READING_LEVELS, READING_QUESTION_TYPES } from '../data/reading.js';
+import { PRACTICE_MODULES } from '../data/practice.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
 
@@ -137,6 +139,52 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     OFFSET,
   ],
   '/v1/tasks/writing': [{ name: 'module', in: 'query', schema: { type: 'string', enum: [...TASK_MODULES] } }],
+  '/v1/reading': [
+    QUERY,
+    { name: 'level', in: 'query', schema: { type: 'string', enum: [...READING_LEVELS] } },
+    { name: 'topic', in: 'query', schema: { type: 'string' } },
+    { name: 'type', in: 'query', schema: { type: 'string', enum: [...READING_QUESTION_TYPES] } },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['level', 'title', 'topic', 'wordCount'], default: 'level' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/reading/random': [
+    { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 5 } },
+    { name: 'level', in: 'query', schema: { type: 'string', enum: [...READING_LEVELS] } },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds return identical samples.',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/reading/daily': [
+    {
+      name: 'date',
+      in: 'query',
+      description: 'ISO date (YYYY-MM-DD). Defaults to today.',
+      schema: { type: 'string', format: 'date' },
+    },
+  ],
+  '/v1/practice/items': [
+    QUERY,
+    { name: 'module', in: 'query', schema: { type: 'string', enum: [...PRACTICE_MODULES] } },
+    { name: 'level', in: 'query', schema: { type: 'string' } },
+    { name: 'format', in: 'query', schema: { type: 'string' } },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['title', 'module', 'level', 'size'], default: 'title' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
   '/v1/corpus/items': [
     QUERY,
     { name: 'category', in: 'query', schema: { type: 'string' } },
@@ -253,8 +301,9 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'descriptors, score concordances, Writing and Speaking task banks, an original',
+        'CEFR-levelled Reading item bank, an index of the open IELTS research corpus,',
+        'and a metadata index of an open CEFR-levelled practice corpus.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

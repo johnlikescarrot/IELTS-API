@@ -3,6 +3,8 @@
  */
 
 import { corpusStats } from '../data/corpus.js';
+import { practiceStats } from '../data/practice.js';
+import { readingStats } from '../data/reading.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
@@ -15,10 +17,16 @@ import type { RouteDefinition } from '../lib/route.js';
 function datasetSummary(): Record<string, number> {
   const words = vocabularyStats();
   const corpus = corpusStats();
+  const reading = readingStats();
+  const practice = practiceStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
     cambridgeVolumes: words.volumes,
+    readingItems: reading.items,
+    readingQuestions: reading.questions,
+    practiceItems: practice.practiceItems,
+    practiceModules: Object.keys(practice.byModule).length,
     corpusFiles: corpus.filesInRepository,
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
   };
@@ -85,7 +93,7 @@ export function createMetaRoutes(
         uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
         datasets: datasetSummary(),
       },
-      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index'] },
+      meta: { checks: ['process', 'vocabulary-dataset', 'reading-bank', 'corpus-index', 'practice-index'] },
     };
   }
 

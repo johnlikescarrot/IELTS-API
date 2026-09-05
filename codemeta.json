@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks and an indexed open research corpus.",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, an original CEFR-levelled Reading item bank, analytic band descriptors, score concordances, task banks and indexed metadata for two open research corpora.",
   "version": "1.0.0",
   "dateCreated": "2026-09-04",
   "datePublished": "2026-09-04",
@@ -25,6 +25,7 @@
     "English for Academic Purposes",
     "second language assessment",
     "vocabulary",
+    "reading comprehension",
     "band descriptors",
     "score concordance",
     "open data",
@@ -59,6 +60,16 @@
         "@type": "Person",
         "name": "zhengyishiming"
       }
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "Upgrade Your IELTS Skills: a CEFR-levelled IELTS/PTE practice corpus",
+      "url": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+      "creator": {
+        "@type": "Person",
+        "name": "ngoclong1209"
+      },
+      "year": "2026"
     }
   ]
 }

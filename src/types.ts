@@ -189,6 +189,122 @@ export type Resource = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Reading                                                                    */
+/* -------------------------------------------------------------------------- */
+
+/** CEFR reading levels used by the reading item bank. */
+export type ReadingLevel = 'A1-A2' | 'B1-B2' | 'C1-C2';
+
+/** Academic Reading question types served by the API. */
+export type ReadingQuestionType =
+  | 'multiple-choice'
+  | 'true-false-not-given'
+  | 'yes-no-not-given'
+  | 'matching-information'
+  | 'matching-headings'
+  | 'summary-completion'
+  | 'sentence-completion'
+  | 'diagram-labelling'
+  | 'short-answer';
+
+/** A single reading question with its answer and explanation. */
+export type ReadingQuestion = {
+  /** Question identifier, unique within the item. */
+  id: string;
+  /** Question type. */
+  type: ReadingQuestionType;
+  /** Instructions shown to the candidate. */
+  instructions: string;
+  /** Question or statement stem. */
+  text: string;
+  /** Options, keyed by letter (e.g. `A`) or answer label. */
+  options: Record<string, string>;
+  /** Accepted answer (the option key, or free-text for `short-answer`). */
+  answer: string;
+  /** One-sentence rationale referencing the passage. */
+  explanation: string;
+};
+
+/** A CEFR-levelled reading passage with its questions. */
+export type ReadingItem = {
+  /** Stable identifier (`r_a1_001`). */
+  id: string;
+  /** CEFR band. */
+  level: ReadingLevel;
+  /** Human-readable title of the passage. */
+  title: string;
+  /** Thematic category. */
+  topic: string;
+  /** Approximate word count of the passage. */
+  wordCount: number;
+  /** Passage text, with paragraphs separated by blank lines. */
+  passage: string;
+  /** Questions, in the order they should be answered. */
+  questions: ReadingQuestion[];
+};
+
+/** Aggregate statistics for the reading item bank. */
+export type ReadingStats = {
+  items: number;
+  questions: number;
+  byLevel: Record<ReadingLevel, number>;
+  byTopic: Record<string, number>;
+};
+
+/** Dataset-level provenance for the reading item bank. */
+export type ReadingMeta = {
+  name: string;
+  license: string;
+  attribution: string;
+  note: string;
+  inspiredBy: string;
+  levels: ReadingLevel[];
+  questionTypes: ReadingQuestionType[];
+};
+
+/* -------------------------------------------------------------------------- */
+/* Practice corpus (metadata only)                                            */
+/* -------------------------------------------------------------------------- */
+
+/** Modules indexed in the practice corpus. */
+export type PracticeModule = 'reading-band' | 'reading-full-test' | 'listening-full-test' | 'listening-basic';
+
+export type PracticeLevel = ReadingLevel | 'Basic' | 'Intermediate' | 'Advanced';
+
+/** One indexed practice module (metadata only). */
+export type PracticeItem = {
+  /** Stable identifier. */
+  id: string;
+  /** Practice module. */
+  module: PracticeModule;
+  /** CEFR or difficulty level, when the module is levelled. */
+  level: PracticeLevel | null;
+  /** Human-readable title. */
+  title: string;
+  /** Path inside the upstream repository. */
+  path: string;
+  /** File extension without the dot. */
+  format: string;
+  /** Size in bytes. */
+  sizeBytes: number | null;
+  /** Git blob SHA-1. */
+  sha1: string | null;
+  /** Public URL of the file in the upstream repository. */
+  sourceUrl: string;
+};
+
+/** Aggregated statistics about the practice corpus. */
+export type PracticeStats = {
+  modulesInRepository: number;
+  practiceItems: number;
+  practiceBytes: number;
+  byModule: Record<string, number>;
+  byLevel: Record<string, number>;
+  byFormat: Record<string, number>;
+  audioFiles: number;
+};
+
+/* -------------------------------------------------------------------------- */
 /* Research corpus                                                            */
 /* -------------------------------------------------------------------------- */
 

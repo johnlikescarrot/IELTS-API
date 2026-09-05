@@ -62,6 +62,12 @@ describe('parseList', () => {
     expect(() => parseList('noun,nope', 'pos', ['noun', 'verb'])).toThrow(HttpError);
     expect(() => parseList('noun,nope', 'pos', ['noun', 'verb'])).toThrow(/Unknown value/);
   });
+
+  it('canonicalises mixed-case allow-list values case-insensitively', () => {
+    expect(parseList('b1-b2', 'level', ['A1-A2', 'B1-B2', 'C1-C2'])).toEqual(['B1-B2']);
+    expect(parseList('C1-C2', 'level', ['A1-A2', 'B1-B2', 'C1-C2'])).toEqual(['C1-C2']);
+    expect(() => parseList('z9', 'level', ['A1-A2', 'B1-B2', 'C1-C2'])).toThrow(HttpError);
+  });
 });
 
 describe('paginate', () => {

@@ -26,6 +26,8 @@ export * from './lib/search.js';
 export * from './data/bands.js';
 export * from './data/conversions.js';
 export * from './data/corpus.js';
+export * from './data/practice.js';
+export * from './data/reading.js';
 export * from './data/resources.js';
 export * from './data/tasks.js';
 export * from './data/topics.js';
