@@ -57,9 +57,14 @@ jobs:
           # Deliberately disabled: the code base is TypeScript-only and the
           # extraction scripts are standalone Python utilities with their own
           # formatting.
-          # Linter configuration files.
-          LINTER_RULES_PATH: /
+          # Linter configuration files, all committed at the repository root.
+          # LINTER_RULES_PATH '.' points super-linter at the checked-out
+          # workspace copy, so every custom config (including the ESLint flat
+          # config below) is found; the previous '/' left the configs outside
+          # the search path and the ESLint steps aborted before linting.
+          LINTER_RULES_PATH: .
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
+          ESLINT_CONFIG_FILE: eslint.config.js
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
