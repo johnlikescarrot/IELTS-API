@@ -46,7 +46,6 @@ jobs:
         uses: super-linter/super-linter/slim@47984f49b4e87383eed97890fe2dca6063bbd9c3 # v8.3.1
         env:
           DEFAULT_BRANCH: main
-          DEFAULT_WORKSPACE: ${{ github.workspace }}
           VALIDATE_ALL_CODEBASE: true
           # The job check is sufficient; do not require a write-capable status token.
           MULTI_STATUS: false
@@ -84,7 +83,7 @@ jobs:
       - name: Report lint failures as a check annotation
         if: failure()
         run: |
-          python3 - <<'PY'
+          sudo python3 - <<'PY'
           from pathlib import Path
           log = Path('super-linter.log')
           if log.exists():
