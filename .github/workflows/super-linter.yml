@@ -33,8 +33,15 @@ jobs:
           persist-credentials: false
 
       - name: Run super-linter
+        id: super_linter
         uses: super-linter/super-linter/slim@v8.3.1
         env:
+          # Write a per-linter report so a failure is diagnosable from the job
+          # summary alone. Action logs are not always retrievable, and reading
+          # 2,000 lines of console output to find one rule violation is not a
+          # reasonable debugging loop.
+          SAVE_SUPER_LINTER_SUMMARY: true
+          SAVE_SUPER_LINTER_OUTPUT: true
           DEFAULT_BRANCH: main
           DEFAULT_WORKSPACE: ${{ github.workspace }}
           VALIDATE_ALL_CODEBASE: true
@@ -64,3 +71,28 @@ jobs:
           YAML_CONFIG_FILE: .yamllint.yml
           ESLINT_USE_FLAT_CONFIG: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Surface the details in the job summary and the log when linting fails,
+      # so the cause is visible without downloading the run archive.
+      - name: Report linter findings
+        if: ${{ failure() && steps.super_linter.outcome == 'failure' }}
+        run: |
+          set -euo pipefail
+          summary="${{ github.workspace }}/super-linter-output/super-linter-summary.md"
+          if [ -f "${summary}" ]; then
+            cat "${summary}" >> "${GITHUB_STEP_SUMMARY}"
+          fi
+          find "${{ github.workspace }}/super-linter-output" -type f -name '*.log' -print0 2>/dev/null |
+            while IFS= read -r -d '' logfile; do
+              printf '\n===== %s =====\n' "${logfile##*/}"
+              cat "${logfile}"
+            done
+
+      - name: Upload linter output
+        if: ${{ failure() && steps.super_linter.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: super-linter-output
+          path: ${{ github.workspace }}/super-linter-output/
+          if-no-files-found: ignore
+          retention-days: 7
