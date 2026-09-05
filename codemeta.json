@@ -14,7 +14,7 @@
       "url": "https://www.typescriptlang.org/"
     }
   ],
-  "runtimePlatform": "Node.js >= 20.10",
+  "runtimePlatform": "Node.js >=20.19.0",
   "operatingSystem": ["Linux", "macOS", "Windows"],
   "codeRepository": "https://github.com/johnlikescarrot/IELTS-API",
   "url": "https://github.com/johnlikescarrot/IELTS-API",
@@ -36,7 +36,10 @@
     "TypeScript",
     "text analysis",
     "lexical diversity",
-    "study planning"
+    "study planning",
+    "Academic Writing Task 1",
+    "data literacy",
+    "reproducible stimuli"
   ],
   "author": [
     {
@@ -65,6 +68,15 @@
       "creator": {
         "@type": "Person",
         "name": "zhengyishiming"
+      }
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "IELTS: community preparation collection (source review)",
+      "url": "https://github.com/msneloy/IELTS/tree/db1064c36b6435b8a23adaf8e74c858476c38812",
+      "creator": {
+        "@type": "Organization",
+        "name": "msneloy and contributors"
       }
     }
   ]

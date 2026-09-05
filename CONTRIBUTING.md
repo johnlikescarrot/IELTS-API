@@ -41,6 +41,20 @@ Useful commands:
    parameters do not.
 3. Add tests: the happy path, every filter, every default, and every error branch.
 4. Update `README.md` (endpoint table, dataset table if the data changed).
+5. Regenerate `docs/openapi.json` from `openApiDocument(DOMAIN_ROUTES,
+'https://ielts-api.example/', API_VERSION)`. Its snapshot and OpenAPI 3.1 validity are tested.
+   Internal `:id` templates must appear as `{id}` in OpenAPI; declare the correct media type for SVG.
+
+## Original Task 1 practice
+
+`src/data/writingExercises.ts` holds original, fictional stimuli; never copy upstream figures,
+learner text or answer keys. Keep figures within the documented renderer layouts, independently
+verify every answer and evidence pointer, and update `WRITING_EXERCISE_REVISION` whenever released
+stimuli or keys change. See `docs/research/MSNELOY.md`. The TypeScript audit CLI is also included
+in typechecking, lint and the per-file 100% coverage gate.
+
+Citation metadata must validate with `cffconvert --validate` (CI installs cffconvert 2.0.0).
+Never add a placeholder DOI or claim publication/indexing without a verified record.
 
 ## Adding data
 

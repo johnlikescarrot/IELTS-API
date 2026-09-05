@@ -35,5 +35,8 @@ export * from './data/tasks.js';
 export * from './data/themes.js';
 export * from './data/topics.js';
 export * from './data/vocabulary.js';
+export * from './data/writingExercises.js';
+export * from './lib/preparationAudit.js';
+export { renderWritingFigure } from './lib/writingFigure.js';
 export { API_VERSION, CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME } from './version.js';
 export type * from './types.js';

@@ -1,8 +1,8 @@
 /**
  * OpenAPI 3.1 document generation.
  *
- * The document is generated from the live route table, so it can never drift
- * from the implementation: adding a route automatically documents it.
+ * Route registration drives path discovery. Query parameters and payload
+ * schemas are maintained explicitly; contract and snapshot tests guard them.
  */
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
@@ -15,6 +15,8 @@ import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
+import { WRITING_EXERCISE_KINDS } from '../data/writingExercises.js';
+import { WRITING_EXERCISE_SCHEMA, WRITING_FEEDBACK_SCHEMA } from './writingSchemas.js';
 
 import type { RouteDefinition } from './route.js';
 import type { JsonValue } from '../types.js';
@@ -151,6 +153,28 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     },
   ],
   '/v1/tasks/writing': [{ name: 'module', in: 'query', schema: { type: 'string', enum: [...TASK_MODULES] } }],
+  '/v1/practice/writing': [
+    QUERY,
+    { name: 'kind', in: 'query', schema: { type: 'string', enum: [...WRITING_EXERCISE_KINDS] } },
+    LIMIT,
+    { ...OFFSET, schema: { ...OFFSET.schema, maximum: 1000 } },
+  ],
+  '/v1/practice/writing/:id/check': [
+    {
+      name: 'question',
+      in: 'query',
+      required: true,
+      description: 'Question identifier from the exercise; case-insensitive.',
+      schema: { type: 'string', enum: ['q1', 'q2', 'q3'] },
+    },
+    {
+      name: 'answer',
+      in: 'query',
+      required: true,
+      description: 'Option identifier; case-insensitive. No essay text is accepted.',
+      schema: { type: 'string', enum: ['a', 'b', 'c'] },
+    },
+  ],
   '/v1/question-types': [
     QUERY,
     { name: 'skill', in: 'query', schema: { type: 'string', enum: [...PRACTICE_SKILLS] } },
@@ -345,18 +369,37 @@ const ENVELOPE = {
   },
 };
 
+/** Typed payloads for the original practice routes. */
+const RESPONSE_DATA: Record<string, JsonValue> = {
+  '/v1/practice/writing': {
+    type: 'array',
+    maxItems: 100,
+    items: { $ref: '#/components/schemas/WritingExercise' },
+  },
+  '/v1/practice/writing/:id': { $ref: '#/components/schemas/WritingExercise' },
+  '/v1/practice/writing/:id/check': { $ref: '#/components/schemas/WritingFeedback' },
+};
+
 const ERROR = {
   type: 'object',
-  required: ['status', 'error'],
+  required: ['status', 'data', 'meta'],
   properties: {
     status: { type: 'integer' },
-    error: {
+    data: { type: 'null' },
+    meta: {
       type: 'object',
-      required: ['code', 'message'],
+      required: ['error', 'version'],
       properties: {
-        code: { type: 'string' },
-        message: { type: 'string' },
-        details: { type: 'object', additionalProperties: { type: 'string' } },
+        version: { type: 'string' },
+        error: {
+          type: 'object',
+          required: ['code', 'message', 'details'],
+          properties: {
+            code: { type: 'string' },
+            message: { type: 'string' },
+            details: { type: 'object', additionalProperties: { type: 'string' } },
+          },
+        },
       },
     },
   },
@@ -393,7 +436,28 @@ export function openApiDocument(
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
+    const payload = RESPONSE_DATA[route.path];
+    const content: JsonValue =
+      route.path === '/v1/practice/writing/:id/figure'
+        ? {
+            'image/svg+xml': {
+              schema: { type: 'string', description: 'Self-contained SVG XML, not a JSON envelope.' },
+            },
+          }
+        : {
+            'application/json': {
+              schema:
+                payload === undefined
+                  ? ENVELOPE
+                  : {
+                      ...ENVELOPE,
+                      properties: { ...ENVELOPE.properties, data: payload },
+                    },
+            },
+          };
+    // OpenAPI templates use {id}; the internal router continues to use :id.
+    const path = route.path.replace(/:([A-Za-z][A-Za-z0-9_]*)/g, '{$1}');
+    paths[path] = {
       get: {
         operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
         summary: route.summary,
@@ -402,7 +466,7 @@ export function openApiDocument(
         responses: {
           '200': {
             description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
+            content,
           },
           '304': { description: 'Not modified (ETag matched).' },
           '400': {
@@ -432,7 +496,9 @@ export function openApiDocument(
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, and an index of a 2,385-file',
-        'self-study materials collection. The toolkit additionally scores any text',
+        'self-study materials collection. Seven original Academic Task 1 exercises',
+        'supply structured data, SVG figures and stateless data-reading checks.',
+        'The toolkit additionally measures surface features of supplied text',
         '(readability and essay profile) and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
@@ -449,7 +515,12 @@ export function openApiDocument(
     ],
     paths,
     components: {
-      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR },
+      schemas: {
+        ApiResponse: ENVELOPE,
+        ApiError: ERROR,
+        WritingExercise: WRITING_EXERCISE_SCHEMA,
+        WritingFeedback: WRITING_FEEDBACK_SCHEMA,
+      },
     },
     externalDocs: {
       description: 'Source code, citation metadata and data provenance',

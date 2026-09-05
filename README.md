@@ -96,6 +96,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
 | Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
+| Original Task 1 practice        |         7 stimuli, 7 SVG figures, 21 data-reading checks | `/v1/practice/writing*` | Original fictional data; [source review](docs/research/MSNELOY.md)             |
 | Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
 | Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
@@ -106,46 +107,84 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
 same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 
-| Method | Path                      | Description                                                                                             |
-| ------ | ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| GET    | `/`                       | Service index, dataset sizes, citation links                                                            |
-| GET    | `/v1`                     | List every versioned endpoint                                                                           |
-| GET    | `/health`                 | Liveness and dataset availability                                                                       |
-| GET    | `/docs`                   | Human-readable documentation                                                                            |
-| GET    | `/openapi.json`           | OpenAPI 3.1 document generated from the live route table                                                |
-| GET    | `/v1/vocabulary`          | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`)       |
-| GET    | `/v1/vocabulary/stats`    | Dataset statistics                                                                                      |
-| GET    | `/v1/vocabulary/random`   | Seeded random sample (`count`, `seed`)                                                                  |
-| GET    | `/v1/vocabulary/daily`    | Deterministic entry for a date (`date`, `count`)                                                        |
-| GET    | `/v1/vocabulary/:word`    | Look up one headword                                                                                    |
-| GET    | `/v1/bands`               | The band scale with indicative CEFR levels                                                              |
-| GET    | `/v1/bands/descriptors`   | Band descriptors (`set`, `criterion`, `band`)                                                           |
-| GET    | `/v1/bands/:band`         | One band, with the descriptors that bracket it                                                          |
-| GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
-| GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
-| GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
-| GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
-| GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                        |
-| GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                           |
-| GET    | `/v1/tasks/writing`       | Writing Task 1 families (`module`)                                                                      |
-| GET    | `/v1/question-types`      | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)                |
-| GET    | `/v1/question-types/:id`  | One question type, with its traps and upstream label variants                                           |
-| GET    | `/v1/frameworks`          | Response frameworks for Writing Task 2 and Speaking Parts 2-3 (`section`, `skill`, `type`, `part`, `q`) |
-| GET    | `/v1/frameworks/:id`      | One framework, with its ordered stages, cue language and pitfalls                                       |
-| GET    | `/v1/tests`               | Practice-test index: provenance, statistics, facets                                                     |
-| GET    | `/v1/tests/stats`         | Question-type and readability statistics                                                                |
-| GET    | `/v1/tests/items`         | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)                |
-| GET    | `/v1/tests/:id`           | One indexed practice test or graded reading lesson                                                      |
-| GET    | `/v1/corpus`              | Corpus metadata, statistics and facets                                                                  |
-| GET    | `/v1/corpus/stats`        | Corpus statistics                                                                                       |
-| GET    | `/v1/corpus/items`        | Search the corpus index                                                                                 |
-| GET    | `/v1/materials`           | Study-materials metadata, statistics and facets                                                         |
-| GET    | `/v1/materials/stats`     | Study-materials statistics                                                                              |
-| GET    | `/v1/materials/items`     | Search the materials index (`category`, `skill`, `format`, `q`)                                         |
-| GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
-| GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
-| GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
-| GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                                |
+| Method | Path                              | Description                                                                                             |
+| ------ | --------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| GET    | `/`                               | Service index, dataset sizes, citation links                                                            |
+| GET    | `/v1`                             | List every versioned endpoint                                                                           |
+| GET    | `/health`                         | Liveness and dataset availability                                                                       |
+| GET    | `/docs`                           | Human-readable documentation                                                                            |
+| GET    | `/openapi.json`                   | OpenAPI 3.1 document generated from the live route table                                                |
+| GET    | `/v1/vocabulary`                  | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`)       |
+| GET    | `/v1/vocabulary/stats`            | Dataset statistics                                                                                      |
+| GET    | `/v1/vocabulary/random`           | Seeded random sample (`count`, `seed`)                                                                  |
+| GET    | `/v1/vocabulary/daily`            | Deterministic entry for a date (`date`, `count`)                                                        |
+| GET    | `/v1/vocabulary/:word`            | Look up one headword                                                                                    |
+| GET    | `/v1/bands`                       | The band scale with indicative CEFR levels                                                              |
+| GET    | `/v1/bands/descriptors`           | Band descriptors (`set`, `criterion`, `band`)                                                           |
+| GET    | `/v1/bands/:band`                 | One band, with the descriptors that bracket it                                                          |
+| GET    | `/v1/scores/overall`              | Overall band from the four components                                                                   |
+| GET    | `/v1/scores/convert`              | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
+| GET    | `/v1/scores/interpret`            | Another scale back to an indicative IELTS band                                                          |
+| GET    | `/v1/topics/writing`              | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
+| GET    | `/v1/topics/speaking`             | Speaking Parts 1-3 (`part`, `q`)                                                                        |
+| GET    | `/v1/topics/themes`               | Recurring exam themes (`group`, `skill`, `q`)                                                           |
+| GET    | `/v1/tasks/writing`               | Writing Task 1 families (`module`)                                                                      |
+| GET    | `/v1/question-types`              | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)                |
+| GET    | `/v1/question-types/:id`          | One question type, with its traps and upstream label variants                                           |
+| GET    | `/v1/frameworks`                  | Response frameworks for Writing Task 2 and Speaking Parts 2-3 (`section`, `skill`, `type`, `part`, `q`) |
+| GET    | `/v1/frameworks/:id`              | One framework, with its ordered stages, cue language and pitfalls                                       |
+| GET    | `/v1/tests`                       | Practice-test index: provenance, statistics, facets                                                     |
+| GET    | `/v1/tests/stats`                 | Question-type and readability statistics                                                                |
+| GET    | `/v1/tests/items`                 | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)                |
+| GET    | `/v1/tests/:id`                   | One indexed practice test or graded reading lesson                                                      |
+| GET    | `/v1/corpus`                      | Corpus metadata, statistics and facets                                                                  |
+| GET    | `/v1/corpus/stats`                | Corpus statistics                                                                                       |
+| GET    | `/v1/corpus/items`                | Search the corpus index                                                                                 |
+| GET    | `/v1/materials`                   | Study-materials metadata, statistics and facets                                                         |
+| GET    | `/v1/materials/stats`             | Study-materials statistics                                                                              |
+| GET    | `/v1/materials/items`             | Search the materials index (`category`, `skill`, `format`, `q`)                                         |
+| GET    | `/v1/practice/writing`            | Original Task 1 exercises (`kind`, `q`, `limit`, `offset`); no answer keys in stimuli                   |
+| GET    | `/v1/practice/writing/:id`        | One exercise with structured data, checklist and data-reading questions                                 |
+| GET    | `/v1/practice/writing/:id/figure` | Accessible SVG figure; no external assets                                                               |
+| GET    | `/v1/practice/writing/:id/check`  | Stateless multiple-choice feedback (`question`, `answer`); never a band score                           |
+| GET    | `/v1/tools/readability`           | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
+| GET    | `/v1/tools/essay-profile`         | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
+| GET    | `/v1/study/plan`                  | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
+| GET    | `/v1/resources`                   | Free preparation resources (`type`, `q`)                                                                |
+
+### Original Academic Task 1 practice
+
+The new `/v1/practice/writing` bank contains **seven original, fictional exercises**, each with a
+self-contained SVG, machine-readable data, a writing checklist and three data-literacy checks.
+They cover line graphs, bars, pies, tables, maps, manufactured processes and natural cycles.
+Nothing from the upstream learners' writing, books or recordings is redistributed.
+
+```bash
+# Find an exercise (all endpoints are free and require no authentication).
+curl -fsS 'http://localhost:3000/v1/practice/writing?kind=bar-chart'
+
+# Save the original figure; the response is SVG, not a JSON envelope.
+curl -fsS 'http://localhost:3000/v1/practice/writing/w1-cycle-rentals/figure' -o rentals.svg
+
+# Check a data-reading choice, not an essay or an IELTS band.
+curl -fsS 'http://localhost:3000/v1/practice/writing/w1-arts-income/check?question=q1&answer=a'
+```
+
+For example, the pie exercise distinguishes a **15-percentage-point** increase from a **300% relative
+increase**. The bar exercise distinguishes a reported `0` from `null` (not reported). Each check
+returns an explanation and JSON pointers into the figure data. Questions are included in the
+stimulus response without the answer key; keys remain openly available through the check endpoint
+and source, making this a self-study tool, not a secure exam.
+
+Open `/docs#writing-practice` for the figure gallery. Filters `kind` and `q` are conjunctive, with
+`limit` (1–100, default 20) and `offset` (0–1000, default 0). Invalid or repeated parameters return 400;
+unknown exercise IDs return 404. No essay body is accepted or stored by these new endpoints. The
+existing text-analysis endpoints are separate services with their own query-string privacy limits.
+
+[The complete source review and reproducibility guide](docs/research/MSNELOY.md) accounts for all
+557 files of `msneloy/IELTS` at a pinned commit, explains the review boundary and data rights, and
+records why this update supplies original practice rather than republishing the collection. Archive
+the API version, code commit, exercise ID, revision, JSON and SVG when using a stimulus in research.
 
 ### Worked examples
 
@@ -323,7 +362,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). The gate includes the TypeScript source-audit CLI; legacy Python extractors and type-only declarations are outside its scope. Zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -347,7 +386,7 @@ Configuration: `--port` / `PORT`, `--host` / `HOST`, `--silent`, `--help`, `--ve
 
 ## Citing this project
 
-If you use the API or the datasets, please cite it — citations are what keep the project free.
+If you use the API or the datasets in research, please cite the exact release or code commit and the relevant data sources. API access is never conditional on citation.
 
 ```bibtex
 @software{ielts_api,
@@ -361,9 +400,12 @@ If you use the API or the datasets, please cite it — citations are what keep t
 ```
 
 Machine-readable citation metadata: [`CITATION.cff`](CITATION.cff), [`codemeta.json`](codemeta.json),
-[`.zenodo.json`](.zenodo.json). Tagged releases are archived on Zenodo, which mints a versioned DOI.
+[`.zenodo.json`](.zenodo.json). Zenodo archiving requires a separately enabled integration and a
+successful deposit. No verified DOI is asserted for this update: use the repository URL and exact
+version/commit until a real archival identifier is available. Metadata does not guarantee Google
+Scholar inclusion or citation counts; the paper in `paper/` is a draft, not a publication claim.
 
-Please also cite the upstream collections the datasets were derived from:
+Please also cite the upstream collections used in your analysis. For the new source review, cite the pinned [msneloy/IELTS snapshot](https://github.com/msneloy/IELTS/tree/db1064c36b6435b8a23adaf8e74c858476c38812); original Task 1 exercises do not reproduce its content. Other dataset sources include:
 
 ```bibtex
 @misc{ielts_open_corpus,

@@ -4,7 +4,7 @@
     "title": "IELTS API",
     "version": "1.2.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
-    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, response frameworks for the\nproductive papers, a structure and readability index of 1,702 practice tests,\nan index of the open IELTS research corpus, and an index of a 2,385-file\nself-study materials collection. The toolkit additionally scores any text\n(readability and essay profile) and composes the datasets into study plans.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
+    "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, a canonical\nquestion-type taxonomy with observed frequencies, response frameworks for the\nproductive papers, a structure and readability index of 1,702 practice tests,\nan index of the open IELTS research corpus, and an index of a 2,385-file\nself-study materials collection. Seven original Academic Task 1 exercises\nsupply structured data, SVG figures and stateless data-reading checks.\nThe toolkit additionally measures surface features of supplied text\n(readability and essay profile) and composes the datasets into study plans.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
       "name": "MIT (code) / CC BY 4.0 (data)",
       "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/LICENSE"
@@ -12,7 +12,7 @@
   },
   "servers": [
     {
-      "url": "http://127.0.0.1:4101/",
+      "url": "https://ielts-api.example/",
       "description": "This instance"
     }
   ],
@@ -152,25 +152,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -186,25 +198,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -256,25 +280,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -290,25 +326,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -379,25 +427,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -413,25 +473,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -503,25 +575,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -537,25 +621,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -568,7 +664,7 @@
         }
       }
     },
-    "/v1/vocabulary/:word": {
+    "/v1/vocabulary/{word}": {
       "get": {
         "operationId": "v1_vocabulary_word",
         "summary": "Look up a single headword.",
@@ -616,25 +712,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -650,25 +758,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -720,25 +840,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -754,25 +886,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -859,25 +1003,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -893,25 +1049,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -924,7 +1092,7 @@
         }
       }
     },
-    "/v1/bands/:band": {
+    "/v1/bands/{band}": {
       "get": {
         "operationId": "v1_bands_band",
         "summary": "One band level with the descriptors that bracket it.",
@@ -972,25 +1140,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1006,25 +1186,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1125,25 +1317,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1159,25 +1363,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1250,25 +1466,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1284,25 +1512,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1372,25 +1612,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1406,25 +1658,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1538,25 +1802,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1572,25 +1848,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1680,25 +1968,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1714,25 +2014,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1821,25 +2133,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1855,25 +2179,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1934,25 +2270,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -1968,25 +2316,635 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/writing": {
+      "get": {
+        "operationId": "v1_practice_writing",
+        "summary": "Original Academic Task 1 exercises with structured data and answer-free self-check questions.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "description": "Free-text search.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "line-graph",
+                "bar-chart",
+                "pie-chart",
+                "table",
+                "map",
+                "manufacturing-process",
+                "natural-process"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Page size (1-100).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "description": "Zero-based offset.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "maximum": 1000
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "array",
+                      "maxItems": 100,
+                      "items": {
+                        "$ref": "#/components/schemas/WritingExercise"
+                      }
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/writing/{id}": {
+      "get": {
+        "operationId": "v1_practice_writing_id",
+        "summary": "One original Task 1 exercise, its checklist, figure link and data-literacy questions.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/WritingExercise"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/writing/{id}/figure": {
+      "get": {
+        "operationId": "v1_practice_writing_id_figure",
+        "summary": "Accessible, self-contained SVG of the exercise data (not a JSON envelope).",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "image/svg+xml": {
+                "schema": {
+                  "type": "string",
+                  "description": "Self-contained SVG XML, not a JSON envelope."
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/writing/{id}/check": {
+      "get": {
+        "operationId": "v1_practice_writing_id_check",
+        "summary": "Check one multiple-choice data-reading answer; returns evidence, never an IELTS band.",
+        "tags": ["v1"],
+        "parameters": [
+          {
+            "name": "question",
+            "in": "query",
+            "required": true,
+            "description": "Question identifier from the exercise; case-insensitive.",
+            "schema": {
+              "type": "string",
+              "enum": ["q1", "q2", "q3"]
+            }
+          },
+          {
+            "name": "answer",
+            "in": "query",
+            "required": true,
+            "description": "Option identifier; case-insensitive. No essay text is accepted.",
+            "schema": {
+              "type": "string",
+              "enum": ["a", "b", "c"]
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/WritingFeedback"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "additionalProperties": true
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "304": {
+            "description": "Not modified (ETag matched)."
+          },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": {
+                      "type": "integer"
+                    },
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2063,25 +3021,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2097,25 +3067,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2128,7 +3110,7 @@
         }
       }
     },
-    "/v1/question-types/:id": {
+    "/v1/question-types/{id}": {
       "get": {
         "operationId": "v1_question_types_id",
         "summary": "One question type, with its strategy, traps and upstream label variants.",
@@ -2176,25 +3158,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2210,25 +3204,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2323,25 +3329,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2357,25 +3375,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2388,7 +3418,7 @@
         }
       }
     },
-    "/v1/frameworks/:id": {
+    "/v1/frameworks/{id}": {
       "get": {
         "operationId": "v1_frameworks_id",
         "summary": "One framework, with its ordered stages, cue language and pitfalls.",
@@ -2436,25 +3466,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2470,25 +3512,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2540,25 +3594,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2574,25 +3640,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2644,25 +3722,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2678,25 +3768,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2887,25 +3989,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2921,25 +4035,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -2952,7 +4078,7 @@
         }
       }
     },
-    "/v1/tests/:id": {
+    "/v1/tests/{id}": {
       "get": {
         "operationId": "v1_tests_id",
         "summary": "One indexed practice test or graded reading lesson.",
@@ -3000,25 +4126,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3034,25 +4172,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3104,25 +4254,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3138,25 +4300,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3208,25 +4382,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3242,25 +4428,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3381,25 +4579,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3415,25 +4625,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3495,25 +4717,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3529,25 +4763,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3629,25 +4875,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3663,25 +4921,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3823,25 +5093,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3857,25 +5139,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3927,25 +5221,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -3961,25 +5267,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -4031,25 +5349,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -4065,25 +5395,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -4240,25 +5582,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -4274,25 +5628,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -4382,25 +5748,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -4416,25 +5794,37 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
                     "status": {
                       "type": "integer"
                     },
-                    "error": {
+                    "data": {
+                      "type": "null"
+                    },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
+                        "version": {
                           "type": "string"
                         },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": {
+                              "type": "string"
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "details": {
+                              "type": "object",
+                              "additionalProperties": {
+                                "type": "string"
+                              }
+                            }
                           }
                         }
                       }
@@ -4468,28 +5858,369 @@
       },
       "ApiError": {
         "type": "object",
-        "required": ["status", "error"],
+        "required": ["status", "data", "meta"],
         "properties": {
           "status": {
             "type": "integer"
           },
-          "error": {
+          "data": {
+            "type": "null"
+          },
+          "meta": {
             "type": "object",
-            "required": ["code", "message"],
+            "required": ["error", "version"],
             "properties": {
-              "code": {
+              "version": {
                 "type": "string"
               },
-              "message": {
-                "type": "string"
-              },
-              "details": {
+              "error": {
                 "type": "object",
-                "additionalProperties": {
-                  "type": "string"
+                "required": ["code", "message", "details"],
+                "properties": {
+                  "code": {
+                    "type": "string"
+                  },
+                  "message": {
+                    "type": "string"
+                  },
+                  "details": {
+                    "type": "object",
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
                 }
               }
             }
+          }
+        }
+      },
+      "WritingExercise": {
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "title",
+          "taskTypeId",
+          "stimulus",
+          "checklist",
+          "revision",
+          "instructions",
+          "minimumWords",
+          "suggestedMinutes",
+          "figureUrl",
+          "checks"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "line-graph",
+              "bar-chart",
+              "pie-chart",
+              "table",
+              "map",
+              "manufacturing-process",
+              "natural-process"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "taskTypeId": {
+            "type": "string",
+            "description": "Identifier from /v1/tasks/writing."
+          },
+          "revision": {
+            "type": "string",
+            "description": "Revision of the original stimulus set."
+          },
+          "instructions": {
+            "type": "string"
+          },
+          "minimumWords": {
+            "type": "integer",
+            "const": 150
+          },
+          "suggestedMinutes": {
+            "type": "integer",
+            "const": 20
+          },
+          "figureUrl": {
+            "type": "string",
+            "description": "Relative URL of the accessible SVG figure."
+          },
+          "checklist": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "type": "string"
+            }
+          },
+          "checks": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "items": {
+              "type": "object",
+              "required": ["id", "question", "options"],
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "question": {
+                  "type": "string"
+                },
+                "options": {
+                  "type": "array",
+                  "minItems": 3,
+                  "maxItems": 3,
+                  "items": {
+                    "type": "object",
+                    "required": ["id", "text"],
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "stimulus": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["kind", "title", "categoryLabel", "categories", "unit", "series", "note"],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": ["line-graph", "bar-chart", "pie-chart"]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "categoryLabel": {
+                    "type": "string"
+                  },
+                  "categories": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 5,
+                    "items": {
+                      "type": "string"
+                    }
+                  },
+                  "unit": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "series": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 3,
+                    "items": {
+                      "type": "object",
+                      "required": ["label", "values"],
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "values": {
+                          "type": "array",
+                          "minItems": 2,
+                          "maxItems": 5,
+                          "description": "Aligned with categories. Null means not reported; zero is a reported zero.",
+                          "items": {
+                            "type": ["number", "null"],
+                            "minimum": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["kind", "title", "columns", "rows", "note"],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "table"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "columns": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "object",
+                      "required": ["label", "unit"],
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "unit": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  },
+                  "rows": {
+                    "type": "array",
+                    "minItems": 3,
+                    "maxItems": 3,
+                    "items": {
+                      "type": "object",
+                      "required": ["label", "values"],
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "values": {
+                          "type": "array",
+                          "minItems": 2,
+                          "maxItems": 2,
+                          "items": {
+                            "type": "number",
+                            "minimum": 0
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["kind", "title", "periods", "note"],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "const": "map"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "periods": {
+                    "type": "array",
+                    "minItems": 2,
+                    "maxItems": 2,
+                    "items": {
+                      "type": "object",
+                      "required": ["label", "cells"],
+                      "properties": {
+                        "label": {
+                          "type": "string"
+                        },
+                        "cells": {
+                          "type": "array",
+                          "minItems": 9,
+                          "maxItems": 9,
+                          "items": {
+                            "type": "string"
+                          },
+                          "description": "North-up grid: NW, N, NE, W, centre, E, SW, S, SE."
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["kind", "title", "topology", "stages", "note"],
+                "properties": {
+                  "kind": {
+                    "type": "string",
+                    "enum": ["manufacturing-process", "natural-process"]
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  },
+                  "topology": {
+                    "type": "string",
+                    "enum": ["linear", "cycle"],
+                    "description": "A cycle connects the last stage back to the first."
+                  },
+                  "stages": {
+                    "type": "array",
+                    "minItems": 6,
+                    "maxItems": 6,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "WritingFeedback": {
+        "type": "object",
+        "required": [
+          "exerciseId",
+          "revision",
+          "questionId",
+          "answer",
+          "correct",
+          "correctOption",
+          "explanation",
+          "evidence"
+        ],
+        "properties": {
+          "exerciseId": {
+            "type": "string"
+          },
+          "revision": {
+            "type": "string"
+          },
+          "questionId": {
+            "type": "string"
+          },
+          "answer": {
+            "type": "string"
+          },
+          "correct": {
+            "type": "boolean"
+          },
+          "correctOption": {
+            "type": "string"
+          },
+          "explanation": {
+            "type": "string"
+          },
+          "evidence": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 3,
+            "items": {
+              "type": "string"
+            },
+            "description": "RFC 6901 JSON pointers into the public exercise data."
           }
         }
       }

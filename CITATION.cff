@@ -17,11 +17,11 @@ abstract: >-
   fifty recurring exam themes, and a curated index of an open IELTS research
   corpus. Deterministic analysis tools profile any text for Flesch readability,
   lexical diversity and Cambridge-headword coverage, and compose the datasets
-  into a week-by-week study plan towards a target band. Every endpoint is free
-  of charge,
-  requires no authentication, returns a uniform JSON envelope with a stable
-  ETag, and is covered by a test suite with 100% statement, branch, function
-  and line coverage. The API is designed for reproducible second-language
+  into a week-by-week study plan towards a target band. The service is free of
+  charge and requires no authentication. JSON endpoints
+  use a uniform envelope with stable ETags, and the TypeScript test suite
+  enforces 100% statement, branch, function and line coverage. The API is designed
+  for reproducible second-language
   assessment research: responses are deterministic, versioned and citable.
 keywords:
   - IELTS
@@ -37,6 +37,9 @@ keywords:
   - open data
   - REST API
   - TypeScript
+  - Academic Writing Task 1
+  - data literacy
+  - reproducible stimuli
 license:
   - MIT
   - CC-BY-4.0
@@ -44,31 +47,32 @@ authors:
   - name: 'The IELTS API contributors'
     website: 'https://github.com/johnlikescarrot/IELTS-API'
 identifiers:
-  - type: doi
-    value: '10.5281/zenodo.0000000'
-    description: 'Zenodo DOI minted for the archived release; replace with the DOI of the version you used.'
   - type: url
     value: 'https://github.com/johnlikescarrot/IELTS-API'
     description: 'Source repository.'
 repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
 url: 'https://github.com/johnlikescarrot/IELTS-API'
-related-software:
-  - reference: ielts-corpus
-    type: usesData
 references:
-  - type: dataset
+  - type: data
+    authors:
+      - name: 'msneloy and contributors'
+    title: 'IELTS: a community preparation collection (source review, not redistributed content)'
+    url: 'https://github.com/msneloy/IELTS/tree/db1064c36b6435b8a23adaf8e74c858476c38812'
+    commit: 'db1064c36b6435b8a23adaf8e74c858476c38812'
+    year: 2022
+  - type: data
     authors:
       - name: 'zhengyishiming'
     title: 'IELTS: an open corpus of IELTS preparation materials'
     url: 'https://github.com/zhengyishiming/IELTS'
     year: 2024
-  - type: dataset
+  - type: data
     authors:
       - name: 'zhengyishiming'
     title: '1-22yas.xlsx: Cambridge IELTS volumes 1-22 vocabulary lists'
     url: 'https://github.com/zhengyishiming/IELTS/blob/main/1-22yas.xlsx'
     year: 2024
-  - type: dataset
+  - type: data
     authors:
       - name: 'ngoclong1209'
     title: 'UPGRADE YOUR IELTS SKILLS: a practice-test collection'

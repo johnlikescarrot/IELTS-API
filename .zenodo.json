@@ -1,6 +1,6 @@
 {
   "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
+  "description": "Metadata for archiving the IELTS API source code and derived/original datasets. This configuration is not evidence of a completed deposit or a minted DOI. Cite a verified version-specific archive record when one exists, otherwise cite the repository and exact version or commit.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
@@ -24,7 +24,10 @@
     "REST API",
     "text analysis",
     "lexical diversity",
-    "study planning"
+    "study planning",
+    "Academic Writing Task 1",
+    "data literacy",
+    "reproducible stimuli"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -41,6 +44,11 @@
     {
       "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
       "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/msneloy/IELTS/tree/db1064c36b6435b8a23adaf8e74c858476c38812",
+      "relation": "references",
       "scheme": "url"
     }
   ]

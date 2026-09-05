@@ -1,0 +1,115 @@
+{
+  "repository": "https://github.com/msneloy/IELTS",
+  "commit": "db1064c36b6435b8a23adaf8e74c858476c38812",
+  "tree": "1a4de7132e4e0a7e63908f322bbb177393841d63",
+  "methodVersion": "1",
+  "manifestSha256": "511e92049b109c3206a03b6ab805f6547a7879814b6a06716dacd1ca83859492",
+  "files": 557,
+  "bytes": 3115412304,
+  "directories": 70,
+  "uniqueBlobs": 557,
+  "duplicateFiles": 0,
+  "byFormat": {
+    "(none)": {
+      "files": 2,
+      "bytes": 1173
+    },
+    ".11": {
+      "files": 1,
+      "bytes": 885
+    },
+    ".jpeg": {
+      "files": 1,
+      "bytes": 62967
+    },
+    ".jpg": {
+      "files": 6,
+      "bytes": 2825525
+    },
+    ".md": {
+      "files": 25,
+      "bytes": 47208
+    },
+    ".mp3": {
+      "files": 488,
+      "bytes": 2929717412
+    },
+    ".pdf": {
+      "files": 12,
+      "bytes": 2072987
+    },
+    ".png": {
+      "files": 1,
+      "bytes": 258277
+    },
+    ".wav": {
+      "files": 1,
+      "bytes": 43282274
+    },
+    ".wma": {
+      "files": 20,
+      "bytes": 137143596
+    }
+  },
+  "bySection": {
+    "(root)": {
+      "files": 2,
+      "bytes": 69
+    },
+    "Academic Reading Samples": {
+      "files": 12,
+      "bytes": 2072987
+    },
+    "Assignments": {
+      "files": 33,
+      "bytes": 799156
+    },
+    "CAMBRIDGE IELTS 1 TO 17": {
+      "files": 237,
+      "bytes": 1905582862
+    },
+    "combo": {
+      "files": 215,
+      "bytes": 813733751
+    },
+    "ptp 123": {
+      "files": 58,
+      "bytes": 393223479
+    }
+  },
+  "byRole": {
+    "audio": {
+      "files": 509,
+      "bytes": 3110143282
+    },
+    "collection-image": {
+      "files": 1,
+      "bytes": 2396810
+    },
+    "grammar-exercise": {
+      "files": 1,
+      "bytes": 2016
+    },
+    "reading-sample": {
+      "files": 12,
+      "bytes": 2072987
+    },
+    "repository-metadata": {
+      "files": 2,
+      "bytes": 69
+    },
+    "writing-figure": {
+      "files": 7,
+      "bytes": 749959
+    },
+    "writing-prompt-list": {
+      "files": 1,
+      "bytes": 1347
+    },
+    "writing-response-file": {
+      "files": 24,
+      "bytes": 45834
+    }
+  },
+  "note": "Path/extension metadata only; no audio transcription, learner scoring, content redistribution or upstream licence grant. Distinct Git blobs need not be semantically distinct recordings."
+}

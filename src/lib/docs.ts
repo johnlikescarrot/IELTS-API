@@ -1,15 +1,16 @@
 /**
  * The self-documenting HTML front page served at `/docs`.
  *
- * The page is generated from the live route table and needs no external
- * assets, so it renders identically offline, in an archive snapshot, or in a
- * citation-manager preview.
+ * The page is generated from the live route table and uses no third-party
+ * assets. Its practice preview loads a same-origin SVG endpoint; archive that
+ * linked figure alongside the HTML when preparing a fully offline copy.
  */
 
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
+import { WRITING_EXERCISES } from '../data/writingExercises.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -99,11 +100,24 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
+  <li><strong>${WRITING_EXERCISES.length} original Academic Task&nbsp;1 exercises</strong> with SVG figures, structured data, checklists and stateless data-reading checks. Fictional teaching material, not official exams or band scoring.</li>
   <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
   <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
   <li><strong>Response frameworks</strong> for Writing Task&nbsp;2 and Speaking Parts&nbsp;2&ndash;3: ordered stage plans with cue language and pitfalls, cross-linked to the task banks.</li>
   <li><strong>${materials.indexedFiles.toLocaleString('en-US')} study-material files</strong> indexed from a ${materials.filesInRepository.toLocaleString('en-US')}-file self-study collection (recall banks, question banks, templates, vocabulary; metadata only).</li>
 </ul>
+
+<h2 id="writing-practice">Original Task 1 practice</h2>
+<p>Use the figure to write a report of at least 150 words in about 20 minutes, then try the
+multiple-choice data checks in the JSON exercise. These checks concern the data, not writing
+quality, and never award an IELTS band. All figures are fictional and original to this project.</p>
+<img src="/v1/practice/writing/w1-cycle-rentals/figure" alt="Fictional bicycle-rental bar chart. Hilltop has a reported weekday zero; Campus weekend rentals are not reported. Full data is available in the linked JSON." style="width:100%;height:auto" loading="lazy">
+<ul>
+${WRITING_EXERCISES.map((exercise) => `<li>${escapeHtml(exercise.title)}: <a href="/v1/practice/writing/${exercise.id}">JSON and checks</a> &middot; <a href="/v1/practice/writing/${exercise.id}/figure">SVG figure</a></li>`).join('\n')}
+</ul>
+<pre><code>curl -s '/v1/practice/writing/w1-arts-income/check?question=q1&amp;answer=a'</code></pre>
+<p class="meta">Prefix the example with this instance's origin. All exercise links above are relative,
+so they work on your own deployment without a key or account.</p>
 
 <h2>Versioned endpoints</h2>
 <table>
@@ -145,7 +159,7 @@ ${service.map(routeRow).join('\n')}
 
 <h2>Citing this API</h2>
 <p>If you use this API in research, please cite it; the <code>CITATION.cff</code> file in the repository
-and the archived Zenodo release both carry full metadata.</p>
+carries the citation metadata. Use a verified release DOI only when a real archive record exists.</p>
 <pre><code>@software{ielts_api,
   title  = {IELTS API: a free, no-authentication REST API for IELTS preparation research},
   author = {IELTS API contributors},
