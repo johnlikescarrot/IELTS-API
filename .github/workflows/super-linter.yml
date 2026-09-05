@@ -3,6 +3,8 @@ name: super-linter
 # super-linter runs on every push, every pull request, weekly, and on demand.
 # It is the project's single source of truth for style across TypeScript,
 # JavaScript, JSON, YAML, Markdown, Dockerfiles, shell scripts and workflows.
+# The pinned image is invoked directly in RUN_LOCAL mode so the full report is
+# always retrievable: it is posted onto the pull request when a lint fails.
 
 on:
   push:
@@ -27,6 +29,9 @@ jobs:
   super-linter:
     name: Lint the whole codebase
     runs-on: ubuntu-latest
+    env:
+      # Pinned image, same release the action wrapper would run.
+      SL_IMAGE: ghcr.io/super-linter/super-linter:v8.7.0-slim
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,63 +42,49 @@ jobs:
       - name: Run super-linter
         id: lint
         continue-on-error: true
-        uses: super-linter/super-linter/slim@v8.7.0
-        env:
-          DEFAULT_BRANCH: main
-          DEFAULT_WORKSPACE: ${{ github.workspace }}
-          VALIDATE_ALL_CODEBASE: true
-          # The generated datasets are machine-written: never lint them.
-          FILTER_REGEX_EXCLUDE: .*(data/|coverage/|dist/).*
-          # Languages enabled for this repository.
-          VALIDATE_JAVASCRIPT_ES: true
-          VALIDATE_TYPESCRIPT_ES: true
-          VALIDATE_JSON: true
-          VALIDATE_YAML: true
-          VALIDATE_MARKDOWN: true
-          VALIDATE_DOCKERFILE_HADOLINT: true
-          VALIDATE_BASH: true
-          VALIDATE_BASH_EXEC: true
-          VALIDATE_GITHUB_ACTIONS: true
-          VALIDATE_EDITORCONFIG: true
-          VALIDATE_ENV: true
-          VALIDATE_GITLEAKS: true
-          VALIDATE_CHECKOV: true
-          # Deliberately disabled: the code base is TypeScript-only and the
-          # extraction scripts are standalone Python utilities with their own
-          # formatting.
-          # Linter configuration files.
-          LINTER_RULES_PATH: /
-          MARKDOWN_CONFIG_FILE: .markdown-lint.yml
-          YAML_CONFIG_FILE: .yamllint.yml
-          ESLINT_USE_FLAT_CONFIG: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Machine-readable report in the workspace; posted by the next step.
-          OUTPUT_FORMAT: markdown
-          OUTPUT_FILE: .super-linter-report.md
+        # The image runs in RUN_LOCAL mode so every finding is written to the
+        # captured log (no reliance on the wrapper's action-only plumbing); the
+        # next step surfaces that log on the pull request when a linter fails.
+        run: |
+          docker run --rm \
+            -e RUN_LOCAL=true \
+            -e DEFAULT_BRANCH=main \
+            -e DEFAULT_WORKSPACE=/tmp/lint \
+            -e VALIDATE_ALL_CODEBASE=true \
+            -e FILTER_REGEX_EXCLUDE='.*(data/|coverage/|dist/).*' \
+            -e LINTER_RULES_PATH=/tmp/lint \
+            -e MARKDOWN_CONFIG_FILE=.markdown-lint.yml \
+            -e YAML_CONFIG_FILE=.yamllint.yml \
+            -e VALIDATE_JAVASCRIPT_ES=true \
+            -e VALIDATE_TYPESCRIPT_ES=true \
+            -e VALIDATE_JSON=true \
+            -e VALIDATE_YAML=true \
+            -e VALIDATE_MARKDOWN=true \
+            -e VALIDATE_DOCKERFILE_HADOLINT=true \
+            -e VALIDATE_BASH=true \
+            -e VALIDATE_BASH_EXEC=true \
+            -e VALIDATE_GITHUB_ACTIONS=true \
+            -e VALIDATE_EDITORCONFIG=true \
+            -e VALIDATE_ENV=true \
+            -e VALIDATE_GITLEAKS=true \
+            -e VALIDATE_CHECKOV=true \
+            -v "$GITHUB_WORKSPACE":/tmp/lint \
+            "$SL_IMAGE" 2>&1 | tee /tmp/super-linter.log
+          exit "${PIPESTATUS[0]}"
 
-      - name: Publish the linting report on the pull request
-        if: steps.lint.outcome == 'failure' && github.event_name == 'pull_request'
+      - name: Surface the failing lint output and fail the job
+        if: steps.lint.outcome == 'failure'
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if [ -s .super-linter-report.md ]; then
-            head -c 60000 .super-linter-report.md > /tmp/report.md
-          elif [ -s super-linter.log ]; then
-            { grep -E '\[ERROR\]|Linting.*Failed|is not passing' super-linter.log || true; } |
-              head -c 60000 > /tmp/report.md
-          else
-            printf '%s\n' 'super-linter failed before writing a report; see the step log.' > /tmp/report.md
-          fi
           {
-            printf '%s\n' '## super-linter report'
-            printf '%s\n' ''
-            cat /tmp/report.md
+            printf '%s\n' '## super-linter report' '' '```text'
+            tail -c 58000 /tmp/super-linter.log
+            printf '%s\n' '```'
           } > /tmp/report-comment.md
-          gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/report-comment.md
-
-      - name: Fail the job when super-linter reported problems
-        if: steps.lint.outcome == 'failure'
-        run: |
-          echo "super-linter exited non-zero; see the step log and the pull-request comment."
+          if [ -n "${PR_NUMBER}" ]; then
+            gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body-file /tmp/report-comment.md
+          fi
+          cat /tmp/report-comment.md >> "$GITHUB_STEP_SUMMARY"
           exit 1
