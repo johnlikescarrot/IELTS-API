@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+### Added (1.1.0 development)
+
+- Pinned metadata-only Reading/Listening inventory: 1,852 units, 4,707 assets, transparent
+  completeness policy, stable path-derived IDs and SHA-256-verifiable exports.
+- Six free/no-auth `/v1/practice` endpoints for discovery, statistics, filtered search, lookup,
+  deterministic sampling and complete archival export. No upstream exercise content is served.
+- Offline TypeScript extractor, generated HTML research draft at `/research`, detailed source audit
+  and data card, synthetic fixtures, live JSON Schema contract tests and byte-for-byte snapshot tests.
+- CI checks for practice reproduction, CFF and OpenAPI validity; Node 24 test coverage.
+
+### Fixed
+
+- OpenAPI now uses `{parameter}` paths, the actual error envelope, explicit no-auth security,
+  unique operation IDs and a relative server URL that works behind HTTPS proxies.
+- Removed a placeholder DOI and invalid CFF fields/types; corrected unsupported Zenodo deposit
+  claims and documented third-party licensing limitations.
+- Super-Linter uses pinned Actions, installed ESLint dependencies and the repository's flat config;
+  the generated-data exclusion no longer hides `src/data/*.ts`.
+- Release workflow generates/verifies documentation before attaching it, and packages include
+  DATA-LICENSE and research documentation.
+
 ## [1.0.0] - 2026-09-04
 
 First citable release.

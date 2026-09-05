@@ -12,7 +12,7 @@ describe('the package entry point', () => {
   it('exports the route table and the documentation builders', () => {
     expect(api.ROUTES.length).toBeGreaterThan(15);
     expect(api.DOMAIN_ROUTES.every((route) => route.versioned)).toBe(true);
-    expect(api.createMetaRoutes([])).toHaveLength(5);
+    expect(api.createMetaRoutes([])).toHaveLength(6);
     expect(typeof api.openApiDocument).toBe('function');
     expect(typeof api.renderDocs).toBe('function');
     expect(api.escapeHtml('<')).toBe('&lt;');
@@ -46,6 +46,8 @@ describe('the package entry point', () => {
     expect(api.RESOURCES.length).toBeGreaterThan(20);
     expect(api.CONVERSION_TARGETS).toContain('cefr');
     expect(api.allEntries().length).toBe(4174);
+    expect(api.practiceStats().units).toBe(1852);
+    expect(typeof api.extractPractice).toBe('function');
     expect(api.corpusStats().filesInRepository).toBe(404);
   });
 

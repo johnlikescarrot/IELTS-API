@@ -1,5 +1,11 @@
 # Research notes: from an open file dump to a citable IELTS dataset
 
+**Scope update (5 September 2026):** this document covers the original vocabulary/file corpus.
+The second, independent audit of `ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS` is documented in the
+[practice data card](docs/UPGRADE-YOUR-IELTS-SKILLS.md) and the [full report draft](docs/research.html).
+It contributes metadata for 1,852 units, not upstream exercises or answers. Neither study establishes
+learning effectiveness, and publicly visible material is not necessarily openly licensed.
+
 This document records how the datasets behind the IELTS API were derived from the open corpus
 [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS). It is written so that a reviewer
 can reproduce, criticise or extend every step.
@@ -94,8 +100,9 @@ Extraction (`scripts/extract_vocabulary.py`, standard library only):
 5. **Normalise phonetics** to slash-delimited transcriptions (4,172 of 4,174 entries carry one).
 6. **Keep morpheme hints** where published — 164 entries carry pedagogical etymologies such as
    `hydro(water);gen(create)`, which are useful for morphology-aware NLP work.
-7. Emit stable identifiers (`w00001` … `w04174`) assigned after sorting by headword, so identifiers
-   never move between releases.
+7. Emit stable identifiers (`w00001` … `w04174`) assigned after sorting by headword. They are fixed within this snapshot;
+   inserting headwords during regeneration can renumber them. The newer practice inventory instead
+   derives IDs from source paths, not list positions.
 
 | Property                                    |                        Value |
 | ------------------------------------------- | ---------------------------: |

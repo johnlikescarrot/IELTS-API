@@ -5,6 +5,8 @@
  * from the implementation: adding a route automatically documents it.
  */
 
+import { PRACTICE_COLLECTION_IDS, PRACTICE_LEVELS } from '../data/practice-extract.js';
+import { PRACTICE_RESPONSES, PRACTICE_SCHEMAS } from './practice-schema.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
@@ -29,8 +31,47 @@ const OFFSET = {
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
 
+const PRACTICE_FILTERS = [
+  QUERY,
+  { name: 'collection', in: 'query', schema: { type: 'string', enum: [...PRACTICE_COLLECTION_IDS] } },
+  { name: 'skill', in: 'query', schema: { type: 'string', enum: ['listening', 'reading'] } },
+  {
+    name: 'level',
+    in: 'query',
+    description: 'Source label, not independently calibrated CEFR.',
+    schema: { type: 'string', enum: [...PRACTICE_LEVELS] },
+  },
+  {
+    name: 'complete',
+    in: 'query',
+    description: 'Required asset paths exist; not a quality or access guarantee. Use true or false.',
+    schema: { type: 'boolean' },
+  },
+];
+
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
+  '/v1/practice/items': [
+    ...PRACTICE_FILTERS,
+    LIMIT,
+    { name: 'offset', in: 'query', schema: { type: 'integer', minimum: 0, maximum: 100000, default: 0 } },
+  ],
+  '/v1/practice/sample': [
+    ...PRACTICE_FILTERS,
+    {
+      name: 'seed',
+      in: 'query',
+      required: true,
+      description: 'Nonblank seed. Pin contentSha256 as well to replay a sample.',
+      schema: { type: 'string', minLength: 1 },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Capped at the matching population, without replacement.',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 5 },
+    },
+  ],
   '/v1/vocabulary': [
     QUERY,
     {
@@ -172,16 +213,24 @@ const ENVELOPE = {
 
 const ERROR = {
   type: 'object',
-  required: ['status', 'error'],
+  required: ['status', 'data', 'meta'],
   properties: {
-    status: { type: 'integer' },
-    error: {
+    status: { type: 'integer', minimum: 400, maximum: 599 },
+    data: { type: 'null' },
+    meta: {
       type: 'object',
-      required: ['code', 'message'],
+      required: ['error', 'version'],
       properties: {
-        code: { type: 'string' },
-        message: { type: 'string' },
-        details: { type: 'object', additionalProperties: { type: 'string' } },
+        version: { type: 'string' },
+        error: {
+          type: 'object',
+          required: ['code', 'message', 'details'],
+          properties: {
+            code: { type: 'string' },
+            message: { type: 'string' },
+            details: { type: 'object', additionalProperties: { type: 'string' } },
+          },
+        },
       },
     },
   },
@@ -214,20 +263,21 @@ export function openApiDocument(
 ): JsonValue {
   const paths: Record<string, JsonValue> = {};
   for (const route of routes) {
-    if (route.path === '/openapi.json' || route.path === '/docs') {
+    if (route.path === '/openapi.json' || route.path === '/docs' || route.path === '/research') {
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
+    const path = route.path.replace(/:([^/]+)/g, '{$1}');
+    paths[path] = {
       get: {
-        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
+        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '') || 'service_index',
         summary: route.summary,
         tags: route.versioned ? ['v1'] : ['service'],
         parameters,
         responses: {
           '200': {
             description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
+            content: { 'application/json': { schema: PRACTICE_RESPONSES[route.path] ?? ENVELOPE } },
           },
           '304': { description: 'Not modified (ETag matched).' },
           '400': {
@@ -264,13 +314,14 @@ export function openApiDocument(
       },
     },
     servers: [{ url: serverUrl, description: 'This instance' }],
+    security: [],
     tags: [
       { name: 'v1', description: 'Versioned, stable endpoints.' },
       { name: 'service', description: 'Service discovery, health and documentation.' },
     ],
     paths,
     components: {
-      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR },
+      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR, ...PRACTICE_SCHEMAS },
     },
     externalDocs: {
       description: 'Source code, citation metadata and data provenance',

@@ -42,6 +42,20 @@ the upstream files themselves, which remain the property of their respective
 copyright holders and are never redistributed by this project. The corpus index
 in `data/corpus.json` publishes metadata only.
 
+The practice inventory in `data/practice.json` is an original metadata
+compilation derived solely from paths, byte sizes and Git blob identifiers in
+ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS at commit
+ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c. Attribute both that snapshot and IELTS API.
+Its CC BY 4.0 licence applies only to our original metadata compilation. The
+upstream repository specifies no repository-level content licence and describes
+login/payment requirements. No upstream exercises, answers, scripts, student
+records or media are included, and no rights to them are granted here.
+
+The pre-existing vocabulary glosses have unresolved origins (see RESEARCH.md).
+This licence covers our original contributions, not any third-party rights in
+those glosses or phonetics. Do not infer permission to redistribute third-party
+content merely from its public visibility or this project's metadata licence.
+
 The band descriptors in `src/data/bands.ts` are original condensed paraphrases
 written for this project. They are not the official IELTS band descriptors,
 which are published by the British Council, IDP: IELTS Australia and Cambridge

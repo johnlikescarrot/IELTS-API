@@ -3,10 +3,9 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks and an indexed open research corpus.",
-  "version": "1.0.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks and an indexed open research corpus. Includes a pinned, metadata-only reading/listening practice inventory with structural availability statistics and a reproducible technical report draft.",
+  "version": "1.1.0",
   "dateCreated": "2026-09-04",
-  "datePublished": "2026-09-04",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",
@@ -14,7 +13,7 @@
       "url": "https://www.typescriptlang.org/"
     }
   ],
-  "runtimePlatform": "Node.js >= 20.10",
+  "runtimePlatform": "Node.js >= 20.19.0",
   "operatingSystem": ["Linux", "macOS", "Windows"],
   "codeRepository": "https://github.com/johnlikescarrot/IELTS-API",
   "url": "https://github.com/johnlikescarrot/IELTS-API",
@@ -43,9 +42,10 @@
   "softwareRequirements": [],
   "referencePublication": [
     {
-      "@type": "ScholarlyArticle",
-      "name": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-      "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/paper/paper.md"
+      "@type": "CreativeWork",
+      "name": "A reproducible metadata audit of IELTS reading and listening practice collections",
+      "description": "Unreviewed technical report draft; no publication acceptance or DOI claimed.",
+      "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/docs/research.html"
     }
   ],
   "isAccessibleForFree": true,
@@ -58,6 +58,15 @@
       "creator": {
         "@type": "Person",
         "name": "zhengyishiming"
+      }
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "UPGRADE-YOUR-IELTS-SKILLS: repository snapshot (metadata source)",
+      "url": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/tree/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c",
+      "creator": {
+        "@type": "Person",
+        "name": "ngoclong1209"
       }
     }
   ]

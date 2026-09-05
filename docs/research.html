@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>A reproducible metadata audit of IELTS reading and listening practice collections</title>
+    <meta
+      name="citation_title"
+      content="A reproducible metadata audit of IELTS reading and listening practice collections"
+    />
+    <meta name="citation_author" content="The IELTS API contributors" />
+    <meta name="citation_publication_date" content="2026/09/05" />
+    <meta
+      name="description"
+      content="A metadata-only, reproducible structural audit. No test questions, answers, audio, student records or upstream code are redistributed."
+    />
+    <style>
+      body {
+        max-width: 55rem;
+        margin: 2rem auto;
+        padding: 0 1.25rem;
+        font:
+          17px/1.65 system-ui,
+          sans-serif;
+        color: #192534;
+        background: #fff;
+      }
+      h1 {
+        line-height: 1.2;
+      }
+      h2 {
+        margin-top: 2rem;
+      }
+      a {
+        color: #064f9c;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 0.4rem;
+        border-bottom: 1px solid #ccd5df;
+      }
+      pre {
+        overflow: auto;
+        background: #f1f4f8;
+        padding: 1rem;
+      }
+      code {
+        overflow-wrap: anywhere;
+      }
+      .notice {
+        border-left: 4px solid #617da0;
+        padding-left: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <nav aria-label="Project">
+      <a href="/docs">API documentation</a> · <a href="/v1/practice/export">Metadata snapshot</a>
+    </nav>
+    <article>
+      <header>
+        <h1>A reproducible metadata audit of IELTS reading and listening practice collections</h1>
+        <p>The IELTS API contributors</p>
+        <p><time datetime="2026-09-05">5 September 2026</time> · Technical report draft · API 1.1.0</p>
+      </header>
+      <h2>Abstract</h2>
+      <p>
+        Publicly visible learning repositories can be mistaken for complete, openly licensed datasets. We
+        inventory a pinned snapshot of UPGRADE-YOUR-IELTS-SKILLS using Git paths, byte sizes and blob
+        identifiers only. Across 5,545 repository files, we identify 1,852 lesson/test units and 4,707
+        associated assets. The collection names and documentation imply 1,853 units. Of the observed units, 51
+        lack at least one required asset role under our published policy. We release original descriptive
+        metadata, a deterministic TypeScript extractor, a checksum-verifiable snapshot and an
+        authentication-free query API. These findings concern structural availability, not pedagogical
+        quality, answer correctness, CEFR calibration or permission to reuse source content.
+      </p>
+      <p class="notice">
+        This is an unreviewed project report. No DOI, publication acceptance, Google Scholar indexing or
+        citation count is claimed.
+      </p>
+      <h2>1. Research question and scope</h2>
+      <p>
+        How closely do the source's advertised collection sizes agree with its committed asset structure? The
+        unit of analysis is a path-defined lesson or full test, not a question or learner. The earlier IELTS
+        API corpus has limited listening coverage; this second source supplies a complementary structural case
+        study, not a representative sample of IELTS preparation resources.
+      </p>
+      <h2>2. Materials and methods</h2>
+      <p>
+        Source:
+        <a
+          href="https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/tree/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c"
+          >ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS</a
+        >, commit <code>ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c</code>, dated 2026-07-03T02:16:52Z; tree
+        <code>52e6e832d6b3243205ebe3bb7fe901bbeca7f504</code>. Audit date: 5 September 2026.
+      </p>
+      <p>
+        We request the recursive Git tree and reject truncated responses, wrong snapshot identifiers,
+        malformed blob records and duplicate paths. Explicit path rules select canonical lesson/test assets.
+        No upstream code is executed. Directories, submodules, symlinks, dependencies, authentication files,
+        logs, workbooks, templates and nonmatching files are excluded from the asset catalogue. A unit ID
+        encodes its collection, source level label (if any) and sequence number; inserting another unit does
+        not renumber existing IDs.
+      </p>
+      <p>
+        Assets are ordered by path and units by ID using code-point comparisons. JSON and JavaScript
+        representations of a reading lesson remain one unit. A unit is structurally complete only when every
+        role in the following table has a matching path. File presence alone cannot establish that a file
+        parses, an audio track plays, or the content is educationally valid.
+      </p>
+      <table>
+        <caption>
+          Advertised versus observed units and required asset roles
+        </caption>
+        <thead>
+          <tr>
+            <th scope="col">Collection</th>
+            <th scope="col">Expected</th>
+            <th scope="col">Observed</th>
+            <th scope="col">Required roles</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">Basic listening lessons</th>
+            <td>102</td>
+            <td>102</td>
+            <td>page, audio</td>
+          </tr>
+          <tr>
+            <th scope="row">Listening full tests</th>
+            <td>204</td>
+            <td>204</td>
+            <td>page, questions, audio</td>
+          </tr>
+          <tr>
+            <th scope="row">Level-labelled reading lessons</th>
+            <td>1232</td>
+            <td>1232</td>
+            <td>questions</td>
+          </tr>
+          <tr>
+            <th scope="row">Reading full tests</th>
+            <td>315</td>
+            <td>314</td>
+            <td>page, questions</td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>3. Results</h2>
+      <p>
+        The source contains 3,876,514,725 committed blob bytes (not a deduplicated download size). The
+        catalogue selects 4,707 assets and excludes 838 files. It contains 306 listening units and 1546
+        reading units; 1,801 units satisfy the structural policy.
+      </p>
+      <p>
+        Reading full-test directory 105 is absent. Among observed listening full tests, JSON is absent for 3,
+        34 and 51; audio is absent for 83, 85 and 88. Forty-five observed reading full tests lack canonical
+        question JSON. All 1,232 basic reading lessons have paired JSON/JavaScript paths; the source groups
+        them into A1–A2 (198), B1–B2 (374) and C1–C2 (660), not six independently validated proficiency
+        levels.
+      </p>
+      <p>
+        We observe 68 repeated Git-blob groups and 68 references beyond the first occurrence in those groups.
+        This measures identical Git objects, not near-duplicate passages, semantic equivalence, independent
+        test forms or leakage-free evaluation splits.
+      </p>
+      <h2>4. Reproducibility</h2>
+      <p>
+        The full <a href="/v1/practice/export">JSON snapshot</a> is served without an API key or
+        authentication. Its payload digest is
+        <code>aa3d43627d0a1264292ff14a019e03ffcb9a4a0c63b748e3d213259da0588b2b</code>. Compute SHA-256 over
+        the UTF-8 bytes of <code>JSON.stringify([catalog.collections, catalog.stats, catalog.items])</code>;
+        the metadata is excluded to avoid self-reference. The checksum verifies payload identity, not
+        ownership or the truth of educational claims.
+      </p>
+      <pre><code>npm ci
+npm run data:practice -- tree.json reproduced.json
+npm run validate
+npm run docs:generate</code></pre>
+      <p>
+        Fetch the exact tree identified above, not a moving branch. The data card records the download
+        command, scope rules and verification procedure. CI re-derives the snapshot from that pinned tree.
+        Offline unit tests use synthetic metadata and reconcile every committed count and digest.
+      </p>
+      <p>
+        For repeatable selection use <code>/v1/practice/sample?seed=study-2026&amp;count=10</code> and record
+        the payload digest, seed, filters and requested count. Sampling is without replacement using FNV-1a,
+        mulberry32 and partial Fisher–Yates; results are capped at the matching population and returned in ID
+        order.
+      </p>
+      <h2>5. Rights, privacy and limitations</h2>
+      <p>
+        The upstream snapshot has no repository-level content licence. Its project summary describes login and
+        payment, and sampled client files implement authentication and score reporting. Public Git visibility
+        must not be represented as a free-access or redistribution licence. Our API returns metadata only,
+        never passages, questions, answers, audio, upstream scripts, student records or bypass links. The
+        original metadata compilation is offered under CC BY 4.0; no rights in third-party material are
+        granted.
+      </p>
+      <p>
+        This is a single-repository descriptive audit. We inspect selected documentation and schema examples,
+        not every exercise. The directory labels are not validated CEFR classifications. Missing JSON need not
+        mean no usable exercise exists in another format. Automated test coverage checks software behaviour,
+        not teaching effectiveness or correctness of all upstream content.
+      </p>
+      <h2>6. Availability and citation</h2>
+      <p>
+        The code is MIT-licensed and has no runtime dependencies. Cite the version/commit of IELTS API
+        actually used and the upstream snapshot separately; preserve the exported metadata with its digest.
+        The repository provides CFF, CodeMeta and Zenodo-ready metadata. A DOI should be added only after a
+        real archive deposit has succeeded. An accessible report with citation tags supports discovery, but
+        neither it nor a software DOI guarantees inclusion in Google Scholar.
+      </p>
+      <h2>References</h2>
+      <ol>
+        <li>
+          ngoclong1209 (2026).
+          <a
+            href="https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS/tree/ba7a0f2bf13be89c601bab2f9e72d1007f49bb2c"
+            >UPGRADE-YOUR-IELTS-SKILLS</a
+          >. Pinned repository snapshot; metadata source.
+        </li>
+        <li>
+          The IELTS API contributors (2026).
+          <a href="https://github.com/johnlikescarrot/IELTS-API">IELTS API</a>. See CITATION.cff and
+          docs/UPGRADE-YOUR-IELTS-SKILLS.md.
+        </li>
+        <li>
+          <a href="https://citation-file-format.github.io/">Citation File Format</a>. Software and dataset
+          citation metadata.
+        </li>
+        <li>
+          Google Scholar.
+          <a href="https://scholar.google.com/intl/en/scholar/inclusion.html"
+            >Inclusion guidelines for webmasters</a
+          >. Accessed 5 September 2026.
+        </li>
+        <li>
+          Zenodo.
+          <a href="https://help.zenodo.org/docs/github/archive-software/github-upload/"
+            >Archive a release from GitHub</a
+          >. Accessed 5 September 2026.
+        </li>
+      </ol>
+    </article>
+  </body>
+</html>

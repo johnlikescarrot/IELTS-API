@@ -75,3 +75,21 @@ describe('GET /docs', () => {
     expect(body).toContain('/v1/vocabulary');
   });
 });
+
+describe('GET /research', () => {
+  it('serves the full, freely accessible report and exposes it through discovery', async () => {
+    const response = await server.request('/research');
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toContain('text/html');
+    expect(response.headers.get('access-control-allow-origin')).toBe('*');
+    const body = await response.text();
+    expect(body).toContain('<h2>Abstract</h2>');
+    expect(body).toContain('citation_title');
+    expect(body).toContain('Technical report draft');
+    const root = await server.json<{ endpoints: Record<string, string> }>('/');
+    expect(root.data.endpoints.research).toBe('/research');
+    expect(root.data.endpoints.practice).toBe('/v1/practice');
+    const docs = await (await server.request('/docs')).text();
+    expect(docs).toContain('href="/research"');
+  });
+});

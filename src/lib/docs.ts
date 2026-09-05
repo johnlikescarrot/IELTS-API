@@ -6,6 +6,7 @@
  * citation-manager preview.
  */
 
+import { practiceStats } from '../data/practice.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 
@@ -94,6 +95,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>${corpus.ieltsRelevantFiles} of ${corpus.filesInRepository} upstream files</strong> indexed from the open research corpus (${(corpus.coverageRatio * 100).toFixed(1)}% IELTS-relevant); only metadata is published.</li>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
+  <li><strong>${practiceStats().units.toLocaleString('en-US')} reading/listening units</strong> in a pinned metadata-only practice catalogue. <a href="/research">Read the full technical report</a>; <a href="/v1/practice/export">archive the JSON snapshot</a>.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
 </ul>
 
@@ -114,7 +116,7 @@ ${service.map(routeRow).join('\n')}
 </table>
 
 <h2>Response envelope</h2>
-<p>Every JSON response uses the same envelope, so clients can parse any endpoint uniformly:</p>
+<p>JSON API responses use this envelope. <code>/openapi.json</code> and <code>/v1/practice/export</code> instead serve raw documents:</p>
 <pre><code>{
   "status": 200,
   "data": [ ... ],
@@ -137,7 +139,7 @@ ${service.map(routeRow).join('\n')}
 
 <h2>Citing this API</h2>
 <p>If you use this API in research, please cite it; the <code>CITATION.cff</code> file in the repository
-and the archived Zenodo release both carry full metadata.</p>
+contains the citation metadata. Zenodo archiving requires an enabled integration and a successful release deposit; no DOI is claimed here.</p>
 <pre><code>@software{ielts_api,
   title  = {IELTS API: a free, no-authentication REST API for IELTS preparation research},
   author = {IELTS API contributors},

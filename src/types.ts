@@ -257,3 +257,104 @@ export type RouteInfo = {
   /** Whether the route is part of the versioned `/v1` contract. */
   versioned: boolean;
 };
+
+/* -------------------------------------------------------------------------- */
+/* Practice metadata (no upstream exercise content)                            */
+/* -------------------------------------------------------------------------- */
+
+/** The four independently inventoried upstream collections. */
+export type PracticeCollectionId = 'listening-basic' | 'listening-tests' | 'reading-basic' | 'reading-tests';
+
+/** Source directory labels, not independently calibrated CEFR levels. */
+export type PracticeLevel =
+  'basic' | 'intermediate' | 'advanced' | 'a1-a2' | 'b1-b2' | 'c1-c2' | 'unspecified';
+
+/** Roles inferred only from explicitly allowlisted file paths. */
+export type PracticeAssetRole =
+  | 'page'
+  | 'questions'
+  | 'processed-questions'
+  | 'audio'
+  | 'document'
+  | 'data-script'
+  | 'strategies'
+  | 'image';
+
+/** Factual Git metadata for an asset; no content or download URL is included. */
+export type PracticeAsset = {
+  path: string;
+  role: PracticeAssetRole;
+  sizeBytes: number;
+  /** Git blob object identifier, not a SHA-1 of the bare file. */
+  sha1: string;
+};
+
+/** A lesson/test identity and its observable asset availability. */
+export type PracticeItem = {
+  /** Path-derived ID, independent of position in the catalogue. */
+  id: string;
+  collection: PracticeCollectionId;
+  skill: 'listening' | 'reading';
+  mode: 'lesson' | 'full-test';
+  level: PracticeLevel;
+  sequence: number;
+  /** Directory, or extensionless lesson path for the reading SPA. */
+  sourcePath: string;
+  assets: PracticeAsset[];
+  missingRoles: PracticeAssetRole[];
+  /** Required paths exist; does NOT assert validity, quality or public access. */
+  structurallyComplete: boolean;
+};
+
+/** Collection policy; expected counts come from upstream names/documentation. */
+export type PracticeCollection = {
+  id: PracticeCollectionId;
+  name: string;
+  skill: PracticeItem['skill'];
+  mode: PracticeItem['mode'];
+  expectedUnits: number;
+  requiredRoles: PracticeAssetRole[];
+};
+
+/** Reproducible counts computed from Git metadata, not educational evaluation. */
+export type PracticeStats = {
+  repositoryFiles: number;
+  repositoryBytes: number;
+  indexedAssets: number;
+  indexedBytes: number;
+  excludedFiles: number;
+  units: number;
+  completeUnits: number;
+  incompleteUnits: number;
+  bySkill: Record<string, number>;
+  byCollection: Record<string, number>;
+  byLevel: Record<string, number>;
+  byAssetRole: Record<string, number>;
+  /** Number of SHA-1 groups referenced by more than one indexed asset. */
+  duplicateBlobGroups: number;
+  /** Sum of (group size - 1); byte equality is not semantic equivalence. */
+  repeatedBlobReferences: number;
+};
+
+/** Versioned, metadata-only snapshot exported by the practice API. */
+export type PracticeCatalog = {
+  meta: {
+    schemaVersion: string;
+    generator: string;
+    source: {
+      repository: string;
+      commit: string;
+      tree: string;
+      committedAt: string;
+      license: string;
+      access: string;
+    };
+    metadataLicense: string;
+    note: string;
+    /** SHA-256 of JSON.stringify([collections, stats, items]), encoded as UTF-8. */
+    contentSha256: string;
+  };
+  collections: PracticeCollection[];
+  stats: PracticeStats;
+  items: PracticeItem[];
+};

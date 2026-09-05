@@ -5,6 +5,7 @@
  * ones, because {@link matchRoute} returns the first match.
  */
 
+import { practiceRoutes } from './practice.js';
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
 import { createMetaRoutes } from './meta.js';
@@ -23,6 +24,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...topicRoutes,
   ...corpusRoutes,
   ...resourceRoutes,
+  ...practiceRoutes,
 ];
 
 /** Every route served by the API. */

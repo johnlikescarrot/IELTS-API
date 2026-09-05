@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "info": {
     "title": "IELTS API",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "summary": "A free, no-authentication API for IELTS preparation research.",
     "description": "A free, open, no-authentication REST API for IELTS research and preparation.\n\nDatasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band\ndescriptors, score concordances, Writing and Speaking task banks, and an index\nof the open IELTS research corpus.\n\nNo API key, no registration, no rate limiting by key: every endpoint is open.",
     "license": {
@@ -10,21 +10,11 @@
       "url": "https://github.com/johnlikescarrot/IELTS-API/blob/main/LICENSE"
     }
   },
-  "servers": [
-    {
-      "url": "http://localhost:3000/",
-      "description": "This instance"
-    }
-  ],
+  "servers": [{ "url": "/", "description": "This instance" }],
+  "security": [],
   "tags": [
-    {
-      "name": "v1",
-      "description": "Versioned, stable endpoints."
-    },
-    {
-      "name": "service",
-      "description": "Service discovery, health and documentation."
-    }
+    { "name": "v1", "description": "Versioned, stable endpoints." },
+    { "name": "service", "description": "Service discovery, health and documentation." }
   ],
   "paths": {
     "/v1/vocabulary": {
@@ -33,32 +23,18 @@
         "summary": "Search the Cambridge IELTS 1-22 vocabulary dataset.",
         "tags": ["v1"],
         "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Free-text search.",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "q", "in": "query", "description": "Free-text search.", "schema": { "type": "string" } },
           {
             "name": "match",
             "in": "query",
             "description": "How `q` is matched against the dataset.",
-            "schema": {
-              "type": "string",
-              "enum": ["contains", "prefix", "exact"],
-              "default": "contains"
-            }
+            "schema": { "type": "string", "enum": ["contains", "prefix", "exact"], "default": "contains" }
           },
           {
             "name": "volume",
             "in": "query",
             "description": "Comma-separated Cambridge IELTS volumes (1-22).",
-            "schema": {
-              "type": "string",
-              "example": "10,11,12"
-            }
+            "schema": { "type": "string", "example": "10,11,12" }
           },
           {
             "name": "pos",
@@ -82,41 +58,24 @@
             "name": "sort",
             "in": "query",
             "description": "Sort key.",
-            "schema": {
-              "type": "string",
-              "enum": ["word", "length", "volumes", "senses"],
-              "default": "word"
-            }
+            "schema": { "type": "string", "enum": ["word", "length", "volumes", "senses"], "default": "word" }
           },
           {
             "name": "order",
             "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": ["asc", "desc"],
-              "default": "asc"
-            }
+            "schema": { "type": "string", "enum": ["asc", "desc"], "default": "asc" }
           },
           {
             "name": "limit",
             "in": "query",
             "description": "Page size (1-100).",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            }
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
           },
           {
             "name": "offset",
             "in": "query",
             "description": "Zero-based offset.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0
-            }
+            "schema": { "type": "integer", "minimum": 0, "default": 0 }
           }
         ],
         "responses": {
@@ -128,49 +87,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -186,25 +135,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -232,49 +178,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -290,25 +226,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -330,20 +263,13 @@
           {
             "name": "count",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 50,
-              "default": 5
-            }
+            "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 5 }
           },
           {
             "name": "seed",
             "in": "query",
             "description": "Seed; identical seeds return identical samples.",
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -355,49 +281,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -413,25 +329,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -454,20 +367,12 @@
             "name": "date",
             "in": "query",
             "description": "ISO date (YYYY-MM-DD). Defaults to today.",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            }
+            "schema": { "type": "string", "format": "date" }
           },
           {
             "name": "count",
             "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 10,
-              "default": 1
-            }
+            "schema": { "type": "integer", "minimum": 1, "maximum": 10, "default": 1 }
           }
         ],
         "responses": {
@@ -479,49 +384,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -537,25 +432,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -568,21 +460,12 @@
         }
       }
     },
-    "/v1/vocabulary/:word": {
+    "/v1/vocabulary/{word}": {
       "get": {
         "operationId": "v1_vocabulary_word",
         "summary": "Look up a single headword.",
         "tags": ["v1"],
-        "parameters": [
-          {
-            "name": "word",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [{ "name": "word", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": {
           "200": {
             "description": "Successful response.",
@@ -592,49 +475,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -650,25 +523,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -696,49 +566,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -754,25 +614,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -816,15 +673,7 @@
               ]
             }
           },
-          {
-            "name": "band",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "maximum": 9
-            }
-          }
+          { "name": "band", "in": "query", "schema": { "type": "integer", "minimum": 0, "maximum": 9 } }
         ],
         "responses": {
           "200": {
@@ -835,49 +684,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -893,25 +732,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -924,21 +760,12 @@
         }
       }
     },
-    "/v1/bands/:band": {
+    "/v1/bands/{band}": {
       "get": {
         "operationId": "v1_bands_band",
         "summary": "One band level with the descriptors that bracket it.",
         "tags": ["v1"],
-        "parameters": [
-          {
-            "name": "band",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
+        "parameters": [{ "name": "band", "in": "path", "required": true, "schema": { "type": "string" } }],
         "responses": {
           "200": {
             "description": "Successful response.",
@@ -948,49 +775,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1006,25 +823,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1048,48 +862,28 @@
             "in": "query",
             "required": true,
             "description": "Band score for listening (0-9 in 0.5 steps).",
-            "schema": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 9,
-              "multipleOf": 0.5
-            }
+            "schema": { "type": "number", "minimum": 0, "maximum": 9, "multipleOf": 0.5 }
           },
           {
             "name": "reading",
             "in": "query",
             "required": true,
             "description": "Band score for reading (0-9 in 0.5 steps).",
-            "schema": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 9,
-              "multipleOf": 0.5
-            }
+            "schema": { "type": "number", "minimum": 0, "maximum": 9, "multipleOf": 0.5 }
           },
           {
             "name": "writing",
             "in": "query",
             "required": true,
             "description": "Band score for writing (0-9 in 0.5 steps).",
-            "schema": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 9,
-              "multipleOf": 0.5
-            }
+            "schema": { "type": "number", "minimum": 0, "maximum": 9, "multipleOf": 0.5 }
           },
           {
             "name": "speaking",
             "in": "query",
             "required": true,
             "description": "Band score for speaking (0-9 in 0.5 steps).",
-            "schema": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 9,
-              "multipleOf": 0.5
-            }
+            "schema": { "type": "number", "minimum": 0, "maximum": 9, "multipleOf": 0.5 }
           }
         ],
         "responses": {
@@ -1101,49 +895,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1159,25 +943,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1200,12 +981,7 @@
             "name": "band",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "number",
-              "minimum": 0,
-              "maximum": 9,
-              "multipleOf": 0.5
-            }
+            "schema": { "type": "number", "minimum": 0, "maximum": 9, "multipleOf": 0.5 }
           },
           {
             "name": "to",
@@ -1226,49 +1002,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1284,25 +1050,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1330,14 +1093,7 @@
               "enum": ["cefr", "toefl-ibt", "cambridge-english-scale", "pte-academic", "duolingo"]
             }
           },
-          {
-            "name": "score",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "number"
-            }
-          }
+          { "name": "score", "in": "query", "required": true, "schema": { "type": "number" } }
         ],
         "responses": {
           "200": {
@@ -1348,49 +1104,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1406,25 +1152,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1443,14 +1186,7 @@
         "summary": "Writing Task 2 prompts, filterable by category and question type.",
         "tags": ["v1"],
         "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Free-text search.",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "q", "in": "query", "description": "Free-text search.", "schema": { "type": "string" } },
           {
             "name": "category",
             "in": "query",
@@ -1487,22 +1223,13 @@
             "name": "limit",
             "in": "query",
             "description": "Page size (1-100).",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            }
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
           },
           {
             "name": "offset",
             "in": "query",
             "description": "Zero-based offset.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0
-            }
+            "schema": { "type": "integer", "minimum": 0, "default": 0 }
           }
         ],
         "responses": {
@@ -1514,49 +1241,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1572,25 +1289,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1609,42 +1323,19 @@
         "summary": "Speaking Part 1, 2 and 3 items.",
         "tags": ["v1"],
         "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Free-text search.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "part",
-            "in": "query",
-            "schema": {
-              "type": "integer",
-              "enum": [1, 2, 3]
-            }
-          },
+          { "name": "q", "in": "query", "description": "Free-text search.", "schema": { "type": "string" } },
+          { "name": "part", "in": "query", "schema": { "type": "integer", "enum": [1, 2, 3] } },
           {
             "name": "limit",
             "in": "query",
             "description": "Page size (1-100).",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            }
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
           },
           {
             "name": "offset",
             "in": "query",
             "description": "Zero-based offset.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0
-            }
+            "schema": { "type": "integer", "minimum": 0, "default": 0 }
           }
         ],
         "responses": {
@@ -1656,49 +1347,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1714,25 +1395,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1754,10 +1432,7 @@
           {
             "name": "module",
             "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": ["academic", "general-training"]
-            }
+            "schema": { "type": "string", "enum": ["academic", "general-training"] }
           }
         ],
         "responses": {
@@ -1769,49 +1444,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1827,25 +1492,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1873,49 +1535,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1931,25 +1583,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -1977,49 +1626,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -2035,25 +1674,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -2072,73 +1708,31 @@
         "summary": "Search the corpus index by category, skill, format or free text.",
         "tags": ["v1"],
         "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Free-text search.",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "category",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "skill",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "format",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "q", "in": "query", "description": "Free-text search.", "schema": { "type": "string" } },
+          { "name": "category", "in": "query", "schema": { "type": "string" } },
+          { "name": "skill", "in": "query", "schema": { "type": "string" } },
+          { "name": "format", "in": "query", "schema": { "type": "string" } },
           {
             "name": "sort",
             "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": ["title", "category", "skill", "size"],
-              "default": "title"
-            }
+            "schema": { "type": "string", "enum": ["title", "category", "skill", "size"], "default": "title" }
           },
           {
             "name": "order",
             "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": ["asc", "desc"],
-              "default": "asc"
-            }
+            "schema": { "type": "string", "enum": ["asc", "desc"], "default": "asc" }
           },
           {
             "name": "limit",
             "in": "query",
             "description": "Page size (1-100).",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            }
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
           },
           {
             "name": "offset",
             "in": "query",
             "description": "Zero-based offset.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0
-            }
+            "schema": { "type": "integer", "minimum": 0, "default": 0 }
           }
         ],
         "responses": {
@@ -2150,49 +1744,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -2208,25 +1792,22 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -2245,14 +1826,7 @@
         "summary": "Freely accessible IELTS preparation resources and open datasets.",
         "tags": ["v1"],
         "parameters": [
-          {
-            "name": "q",
-            "in": "query",
-            "description": "Free-text search.",
-            "schema": {
-              "type": "string"
-            }
-          },
+          { "name": "q", "in": "query", "description": "Free-text search.", "schema": { "type": "string" } },
           {
             "name": "type",
             "in": "query",
@@ -2265,22 +1839,13 @@
             "name": "limit",
             "in": "query",
             "description": "Page size (1-100).",
-            "schema": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 100,
-              "default": 20
-            }
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
           },
           {
             "name": "offset",
             "in": "query",
             "description": "Zero-based offset.",
-            "schema": {
-              "type": "integer",
-              "minimum": 0,
-              "default": 0
-            }
+            "schema": { "type": "integer", "minimum": 0, "default": 0 }
           }
         ],
         "responses": {
@@ -2292,49 +1857,39 @@
                   "type": "object",
                   "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
+                    "status": { "type": "integer" },
                     "data": {
                       "description": "Response payload: an array for collections, an object for singletons."
                     },
-                    "meta": {
-                      "type": "object",
-                      "additionalProperties": true
-                    }
+                    "meta": { "type": "object", "additionalProperties": true }
                   }
                 }
               }
             }
           },
-          "304": {
-            "description": "Not modified (ETag matched)."
-          },
+          "304": { "description": "Not modified (ETag matched)." },
           "400": {
             "description": "Invalid parameters.",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -2350,25 +1905,923 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["status", "error"],
+                  "required": ["status", "data", "meta"],
                   "properties": {
-                    "status": {
-                      "type": "integer"
-                    },
-                    "error": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
                       "type": "object",
-                      "required": ["code", "message"],
+                      "required": ["error", "version"],
                       "properties": {
-                        "code": {
-                          "type": "string"
-                        },
-                        "message": {
-                          "type": "string"
-                        },
-                        "details": {
+                        "version": { "type": "string" },
+                        "error": {
                           "type": "object",
-                          "additionalProperties": {
-                            "type": "string"
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice": {
+      "get": {
+        "operationId": "v1_practice",
+        "summary": "Reading and listening metadata: collections, counts and pinned provenance.",
+        "tags": ["v1"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "required": ["collections", "stats"],
+                          "properties": {
+                            "collections": {
+                              "type": "array",
+                              "items": { "$ref": "#/components/schemas/PracticeCollection" }
+                            },
+                            "stats": { "$ref": "#/components/schemas/PracticeStats" }
+                          }
+                        },
+                        "meta": { "$ref": "#/components/schemas/PracticeMeta" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/stats": {
+      "get": {
+        "operationId": "v1_practice_stats",
+        "summary": "Structural availability and duplicate-blob statistics, not learning outcomes.",
+        "tags": ["v1"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/PracticeStats" },
+                        "meta": { "$ref": "#/components/schemas/PracticeMeta" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/items": {
+      "get": {
+        "operationId": "v1_practice_items",
+        "summary": "Search practice metadata by collection, skill, source level or structural completeness.",
+        "tags": ["v1"],
+        "parameters": [
+          { "name": "q", "in": "query", "description": "Free-text search.", "schema": { "type": "string" } },
+          {
+            "name": "collection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["listening-basic", "listening-tests", "reading-basic", "reading-tests"]
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["listening", "reading"] }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "Source label, not independently calibrated CEFR.",
+            "schema": {
+              "type": "string",
+              "enum": ["basic", "intermediate", "advanced", "a1-a2", "b1-b2", "c1-c2", "unspecified"]
+            }
+          },
+          {
+            "name": "complete",
+            "in": "query",
+            "description": "Required asset paths exist; not a quality or access guarantee. Use true or false.",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Page size (1-100).",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": { "type": "integer", "minimum": 0, "maximum": 100000, "default": 0 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeItem" } },
+                        "meta": { "$ref": "#/components/schemas/PracticeMeta" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/sample": {
+      "get": {
+        "operationId": "v1_practice_sample",
+        "summary": "Reproducible metadata sample without replacement (seed required).",
+        "tags": ["v1"],
+        "parameters": [
+          { "name": "q", "in": "query", "description": "Free-text search.", "schema": { "type": "string" } },
+          {
+            "name": "collection",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["listening-basic", "listening-tests", "reading-basic", "reading-tests"]
+            }
+          },
+          {
+            "name": "skill",
+            "in": "query",
+            "schema": { "type": "string", "enum": ["listening", "reading"] }
+          },
+          {
+            "name": "level",
+            "in": "query",
+            "description": "Source label, not independently calibrated CEFR.",
+            "schema": {
+              "type": "string",
+              "enum": ["basic", "intermediate", "advanced", "a1-a2", "b1-b2", "c1-c2", "unspecified"]
+            }
+          },
+          {
+            "name": "complete",
+            "in": "query",
+            "description": "Required asset paths exist; not a quality or access guarantee. Use true or false.",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "seed",
+            "in": "query",
+            "required": true,
+            "description": "Nonblank seed. Pin contentSha256 as well to replay a sample.",
+            "schema": { "type": "string", "minLength": 1 }
+          },
+          {
+            "name": "count",
+            "in": "query",
+            "description": "Capped at the matching population, without replacement.",
+            "schema": { "type": "integer", "minimum": 1, "maximum": 50, "default": 5 }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeItem" } },
+                        "meta": { "$ref": "#/components/schemas/PracticeMeta" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/export": {
+      "get": {
+        "operationId": "v1_practice_export",
+        "summary": "Complete metadata snapshot as raw JSON with a verifiable payload checksum.",
+        "tags": ["v1"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": { "schema": { "$ref": "#/components/schemas/PracticeCatalog" } }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/practice/items/{id}": {
+      "get": {
+        "operationId": "v1_practice_items_id",
+        "summary": "Look up a stable practice metadata ID; no exercise content is served.",
+        "tags": ["v1"],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    { "$ref": "#/components/schemas/ApiResponse" },
+                    {
+                      "properties": {
+                        "data": { "$ref": "#/components/schemas/PracticeItem" },
+                        "meta": { "$ref": "#/components/schemas/PracticeMeta" }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "operationId": "service_index",
+        "summary": "Service index and dataset summary.",
+        "tags": ["service"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": { "type": "object", "additionalProperties": true }
+                  }
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1": {
+      "get": {
+        "operationId": "v1",
+        "summary": "List every versioned endpoint.",
+        "tags": ["service"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": { "type": "object", "additionalProperties": true }
+                  }
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "summary": "Health and dataset availability.",
+        "tags": ["service"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer" },
+                    "data": {
+                      "description": "Response payload: an array for collections, an object for singletons."
+                    },
+                    "meta": { "type": "object", "additionalProperties": true }
+                  }
+                }
+              }
+            }
+          },
+          "304": { "description": "Not modified (ETag matched)." },
+          "400": {
+            "description": "Invalid parameters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["status", "data", "meta"],
+                  "properties": {
+                    "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+                    "data": { "type": "null" },
+                    "meta": {
+                      "type": "object",
+                      "required": ["error", "version"],
+                      "properties": {
+                        "version": { "type": "string" },
+                        "error": {
+                          "type": "object",
+                          "required": ["code", "message", "details"],
+                          "properties": {
+                            "code": { "type": "string" },
+                            "message": { "type": "string" },
+                            "details": { "type": "object", "additionalProperties": { "type": "string" } }
                           }
                         }
                       }
@@ -2388,43 +2841,209 @@
         "type": "object",
         "required": ["status", "data", "meta"],
         "properties": {
-          "status": {
-            "type": "integer"
-          },
-          "data": {
-            "description": "Response payload: an array for collections, an object for singletons."
-          },
-          "meta": {
-            "type": "object",
-            "additionalProperties": true
-          }
+          "status": { "type": "integer" },
+          "data": { "description": "Response payload: an array for collections, an object for singletons." },
+          "meta": { "type": "object", "additionalProperties": true }
         }
       },
       "ApiError": {
         "type": "object",
-        "required": ["status", "error"],
+        "required": ["status", "data", "meta"],
         "properties": {
-          "status": {
-            "type": "integer"
-          },
-          "error": {
+          "status": { "type": "integer", "minimum": 400, "maximum": 599 },
+          "data": { "type": "null" },
+          "meta": {
             "type": "object",
-            "required": ["code", "message"],
+            "required": ["error", "version"],
             "properties": {
-              "code": {
-                "type": "string"
-              },
-              "message": {
-                "type": "string"
-              },
-              "details": {
+              "version": { "type": "string" },
+              "error": {
                 "type": "object",
-                "additionalProperties": {
-                  "type": "string"
+                "required": ["code", "message", "details"],
+                "properties": {
+                  "code": { "type": "string" },
+                  "message": { "type": "string" },
+                  "details": { "type": "object", "additionalProperties": { "type": "string" } }
                 }
               }
             }
           }
+        }
+      },
+      "PracticeAsset": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "role", "sizeBytes", "sha1"],
+        "properties": {
+          "path": { "type": "string" },
+          "role": {
+            "type": "string",
+            "enum": [
+              "page",
+              "questions",
+              "processed-questions",
+              "audio",
+              "document",
+              "data-script",
+              "strategies",
+              "image"
+            ]
+          },
+          "sizeBytes": { "type": "integer", "minimum": 0 },
+          "sha1": { "type": "string", "pattern": "^[a-f0-9]{40}$" }
+        }
+      },
+      "PracticeItem": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "collection",
+          "skill",
+          "mode",
+          "level",
+          "sequence",
+          "sourcePath",
+          "assets",
+          "missingRoles",
+          "structurallyComplete"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "collection": {
+            "type": "string",
+            "enum": ["listening-basic", "listening-tests", "reading-basic", "reading-tests"]
+          },
+          "skill": { "type": "string", "enum": ["listening", "reading"] },
+          "mode": { "type": "string", "enum": ["lesson", "full-test"] },
+          "level": {
+            "type": "string",
+            "enum": ["basic", "intermediate", "advanced", "a1-a2", "b1-b2", "c1-c2", "unspecified"]
+          },
+          "sequence": { "type": "integer", "minimum": 1 },
+          "sourcePath": { "type": "string" },
+          "assets": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeAsset" } },
+          "missingRoles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "page",
+                "questions",
+                "processed-questions",
+                "audio",
+                "document",
+                "data-script",
+                "strategies",
+                "image"
+              ]
+            },
+            "uniqueItems": true
+          },
+          "structurallyComplete": { "type": "boolean" }
+        }
+      },
+      "PracticeCollection": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "skill", "mode", "expectedUnits", "requiredRoles"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": ["listening-basic", "listening-tests", "reading-basic", "reading-tests"]
+          },
+          "name": { "type": "string" },
+          "skill": { "type": "string", "enum": ["listening", "reading"] },
+          "mode": { "type": "string", "enum": ["lesson", "full-test"] },
+          "expectedUnits": { "type": "integer", "minimum": 0 },
+          "requiredRoles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "page",
+                "questions",
+                "processed-questions",
+                "audio",
+                "document",
+                "data-script",
+                "strategies",
+                "image"
+              ]
+            },
+            "uniqueItems": true
+          }
+        }
+      },
+      "PracticeStats": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "repositoryFiles",
+          "repositoryBytes",
+          "indexedAssets",
+          "indexedBytes",
+          "excludedFiles",
+          "units",
+          "completeUnits",
+          "incompleteUnits",
+          "bySkill",
+          "byCollection",
+          "byLevel",
+          "byAssetRole",
+          "duplicateBlobGroups",
+          "repeatedBlobReferences"
+        ],
+        "properties": {
+          "repositoryFiles": { "type": "integer", "minimum": 0 },
+          "repositoryBytes": { "type": "integer", "minimum": 0 },
+          "indexedAssets": { "type": "integer", "minimum": 0 },
+          "indexedBytes": { "type": "integer", "minimum": 0 },
+          "excludedFiles": { "type": "integer", "minimum": 0 },
+          "units": { "type": "integer", "minimum": 0 },
+          "completeUnits": { "type": "integer", "minimum": 0 },
+          "incompleteUnits": { "type": "integer", "minimum": 0 },
+          "bySkill": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+          "byCollection": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+          "byLevel": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+          "byAssetRole": { "type": "object", "additionalProperties": { "type": "integer", "minimum": 0 } },
+          "duplicateBlobGroups": { "type": "integer", "minimum": 0 },
+          "repeatedBlobReferences": { "type": "integer", "minimum": 0 }
+        }
+      },
+      "PracticeMeta": {
+        "type": "object",
+        "required": ["schemaVersion", "generator", "source", "metadataLicense", "note", "contentSha256"],
+        "properties": {
+          "schemaVersion": { "type": "string" },
+          "generator": { "type": "string" },
+          "source": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["repository", "commit", "tree", "committedAt", "license", "access"],
+            "properties": {
+              "repository": { "type": "string" },
+              "commit": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+              "tree": { "type": "string", "pattern": "^[a-f0-9]{40}$" },
+              "committedAt": { "type": "string" },
+              "license": { "type": "string" },
+              "access": { "type": "string" }
+            }
+          },
+          "metadataLicense": { "const": "CC-BY-4.0" },
+          "note": { "type": "string" },
+          "contentSha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+        }
+      },
+      "PracticeCatalog": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["meta", "collections", "stats", "items"],
+        "properties": {
+          "meta": { "$ref": "#/components/schemas/PracticeMeta" },
+          "collections": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeCollection" } },
+          "stats": { "$ref": "#/components/schemas/PracticeStats" },
+          "items": { "type": "array", "items": { "$ref": "#/components/schemas/PracticeItem" } }
         }
       }
     }

@@ -17,6 +17,15 @@ date: 4 September 2026
 bibliography: paper.bib
 ---
 
+# Status and companion audit
+
+This is an unreviewed project manuscript, not an accepted publication. The newer Reading/Listening
+metadata audit is available in `docs/research.html` and at `/research` on a running API instance.
+It inventories 1,852 units and 4,707 asset records from a pinned second source, publishes no exercise
+content, and documents 51 structurally incomplete observed units. Its data card includes exact
+reproduction instructions and rights limitations. Neither test coverage nor metadata availability
+establishes learning effectiveness or ensures Google Scholar indexing.
+
 # Summary
 
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
@@ -105,7 +114,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (295 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -117,7 +126,8 @@ dataset has drifted, which guards against silent data rot.
 Source, datasets, citation metadata and CI configuration are released at
 <https://github.com/johnlikescarrot/IELTS-API> under the MIT licence for code and CC BY 4.0 for data.
 Citation metadata is published in Citation File Format [@citationfileformat] and CodeMeta
-[@codemeta], and tagged releases are archived on Zenodo [@zenodo], which mints a versioned DOI.
+[@codemeta], and Zenodo-ready metadata [@zenodo]. Archiving requires enabling the integration and verifying
+a successful deposit; no DOI is claimed until one is actually minted.
 
 # Acknowledgements
 

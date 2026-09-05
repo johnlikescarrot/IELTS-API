@@ -1,6 +1,6 @@
 {
   "name": "ielts-api",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks.",
   "keywords": [
     "ielts",
@@ -28,7 +28,11 @@
     "data",
     "README.md",
     "CITATION.cff",
-    "LICENSE"
+    "LICENSE",
+    "DATA-LICENSE",
+    "RESEARCH.md",
+    "docs",
+    "paper"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -43,13 +47,15 @@
     "format:check": "prettier --check .",
     "validate": "npm run typecheck && npm run lint && npm run format:check && npm run test",
     "data:vocabulary": "python3 scripts/extract_vocabulary.py",
-    "data:corpus": "python3 scripts/extract_corpus.py"
+    "data:corpus": "python3 scripts/extract_corpus.py",
+    "data:practice": "tsx scripts/extract_practice.ts",
+    "docs:generate": "tsx scripts/export_docs.ts"
   },
-  "dependencies": {},
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@types/node": "^22.10.7",
     "@vitest/coverage-v8": "^5.0.0",
+    "ajv": "^8.20.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "prettier": "^3.4.2",
