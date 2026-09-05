@@ -37,10 +37,22 @@ describe('request handling', () => {
     expect(Number(response.headers.get('content-length'))).toBeGreaterThan(0);
   });
 
-  it('answers OPTIONS requests with 204', async () => {
+  it('answers OPTIONS requests with 204 and the complete CORS contract', async () => {
     const response = await server.request('/v1/bands', { method: 'OPTIONS' });
     expect(response.status).toBe(204);
     expect(response.headers.get('access-control-allow-methods')).toContain('GET');
+    expect(response.headers.get('access-control-allow-headers')).toContain('if-none-match');
+    expect(response.headers.get('allow')).toBe('GET, HEAD, OPTIONS');
+  });
+
+  it('does not send a body for HEAD errors and advertises allowed methods', async () => {
+    const response = await server.request('/missing', { method: 'HEAD' });
+    expect(response.status).toBe(404);
+    expect(await response.text()).toBe('');
+    expect(Number(response.headers.get('content-length'))).toBeGreaterThan(0);
+
+    const methodResponse = await server.request('/v1/bands', { method: 'POST' });
+    expect(methodResponse.headers.get('allow')).toBe('GET, HEAD, OPTIONS');
   });
 
   it('rejects unsupported methods with 405', async () => {
