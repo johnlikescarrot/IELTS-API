@@ -416,9 +416,13 @@ not become a fraction of a band.
 3. **CEFR labels are inferred, not aligned.** The mapping from Reading Ease to a CEFR range derives
    from the distribution of the graded lessons in Part II — a collection Part II itself shows to be
    calibrated too hard — and is not an official alignment.
-4. **Short samples are unstable.** Under 20 words the formulae are noise; the endpoint reports
+4. **The scanners are linear by construction.** Markup stripping, sentence splitting and device
+   matching all avoid backtracking-prone regular expressions, because the input is supplied by the
+   caller: a passage of 50,000 `!` characters must cost the same as 50,000 letters. Entity decoding
+   is a single pass, so `&amp;lt;` decodes to `&lt;` and never to `<`.
+5. **Short samples are unstable.** Under 20 words the formulae are noise; the endpoint reports
    `reliable: false` and says so in the caveats rather than refusing to answer.
-5. **Nothing here observes accuracy.** Not grammatical accuracy, not task fulfilment, not relevance,
+6. **Nothing here observes accuracy.** Not grammatical accuracy, not task fulfilment, not relevance,
    not the quality of an argument — which is most of what the descriptors actually reward.
 
 ### 18. Privacy

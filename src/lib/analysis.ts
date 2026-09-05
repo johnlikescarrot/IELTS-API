@@ -21,7 +21,7 @@
 import { allEntries } from '../data/vocabulary.js';
 import { COHESIVE_DEVICES_BY_LENGTH, COHESION_RELATIONS, isFunctionWord } from '../data/lexicon.js';
 import { practiceStats } from '../data/practiceTests.js';
-import { describeReadingEase, measureText, tokenize } from './text.js';
+import { describeReadingEase, measureText, sentenceSpans, tokenize } from './text.js';
 
 import type { CohesionRelation } from '../data/lexicon.js';
 import type { NumericSummary } from '../types.js';
@@ -398,10 +398,17 @@ export interface WritingAnalysis {
   caveats: string[];
 }
 
-/** Population standard deviation of the sentence lengths of a text. */
+/**
+ * Population standard deviation of the sentence lengths of a text.
+ *
+ * Splitting uses {@link sentenceSpans}, a linear scan, so an adversarial input
+ * such as a long run of `!` cannot make this quadratic.
+ *
+ * @param text - Text to measure.
+ * @returns The standard deviation in words, or `0` when there are no words.
+ */
 export function sentenceLengthVariation(text: string): number {
-  const sentences = text
-    .split(/[.!?]+(?:\s|$)/)
+  const sentences = sentenceSpans(text)
     .map((sentence) => tokenize(sentence).length)
     .filter((length) => length > 0);
   if (sentences.length === 0) {

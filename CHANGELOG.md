@@ -50,7 +50,13 @@ measurement with its caveats attached.
 - CORS preflight and the common response headers now advertise `POST` and the `content-type` header.
 - `405` responses report `allow: GET, HEAD, POST`; a `POST` to a route that does not accept a body
   still returns `405`.
-- Test suite grown to 449 tests, still at 100% statement, branch, function and line coverage per file.
+- Test suite grown to 456 tests, still at 100% statement, branch, function and line coverage per file.
+
+### Security
+
+- Markup stripping, sentence splitting and cohesive-device matching are linear by construction —
+  no backtracking-prone regular expression is ever applied to caller-supplied text — and HTML
+  entities are decoded in a single pass, so `&amp;lt;` decodes to `&lt;` rather than to `<`.
 
 ### Privacy
 

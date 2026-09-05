@@ -17,14 +17,39 @@
 /** Alphabetic word token, allowing internal apostrophes and hyphens. */
 const WORD_RE = /[A-Za-z][A-Za-z'\u2019-]*/g;
 
-/** Sentence terminator followed by whitespace or end of input. */
-const SENTENCE_RE = /[.!?]+(?:\s|$)/g;
+/** Sentence-terminating punctuation. */
+const TERMINATORS = new Set(['.', '!', '?']);
 
 /** Vowel group, used by the syllable heuristic. */
 const VOWEL_GROUP_RE = /[aeiouy]+/g;
 
-/** HTML tag. */
-const TAG_RE = /<[^>]+>/g;
+/**
+ * HTML tag.
+ *
+ * The character class excludes `<` as well as `>` so that the match can never
+ * backtrack across a run of unclosed angle brackets: `<<<<<...` is linear here
+ * rather than quadratic.
+ */
+const TAG_RE = /<[^<>]*>/g;
+
+/** The HTML entities the upstream sources use, and their replacements. */
+const ENTITIES: Readonly<Record<string, string>> = {
+  '&nbsp;': ' ',
+  '&amp;': '&',
+  '&quot;': '"',
+  '&#39;': "'",
+  '&lt;': '<',
+  '&gt;': '>',
+};
+
+/**
+ * Entity pattern.
+ *
+ * Every entity is replaced in a single pass, so a decoded `&` can never be
+ * re-read as the start of another entity (`&amp;lt;` decodes to `&lt;`, not
+ * to `<`).
+ */
+const ENTITY_RE = /&(?:nbsp|amp|quot|#39|lt|gt);/g;
 
 /** Paragraph separator: one or more blank lines. */
 const PARAGRAPH_RE = /\n\s*\n+/;
@@ -52,14 +77,7 @@ export const READABILITY_FORMULAE: Readonly<Record<string, string>> = {
  * @returns Plain text with runs of whitespace collapsed to single spaces.
  */
 export function stripMarkup(text: string): string {
-  const plain = text
-    .replace(TAG_RE, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>');
+  const plain = text.replace(TAG_RE, ' ').replace(ENTITY_RE, (entity) => ENTITIES[entity] as string);
   return plain.replace(/\s+/g, ' ').trim();
 }
 
@@ -78,8 +96,48 @@ export function tokenize(text: string): string[] {
  * @param text - Plain text.
  */
 export function countSentences(text: string): number {
-  const matches = text.match(SENTENCE_RE);
-  return Math.max(matches === null ? 0 : matches.length, 1);
+  return Math.max(sentenceSpans(text).length, 1);
+}
+
+/**
+ * Split text at sentence terminators.
+ *
+ * A run of terminators (`?!`, `...`) closes one sentence, and a terminator only
+ * closes a sentence when whitespace or the end of the input follows it, so
+ * `3.14` stays a single token. The scan is a single linear pass rather than a
+ * regular expression, which keeps it immune to catastrophic backtracking on
+ * adversarial input such as a long run of `!`.
+ *
+ * @param text - Plain text.
+ * @returns The non-empty sentences, trimmed.
+ */
+export function sentenceSpans(text: string): string[] {
+  const spans: string[] = [];
+  let start = 0;
+  let index = 0;
+  while (index < text.length) {
+    if (!TERMINATORS.has(text[index] as string)) {
+      index += 1;
+      continue;
+    }
+    let end = index;
+    while (end < text.length && TERMINATORS.has(text[end] as string)) {
+      end += 1;
+    }
+    const next = text[end];
+    if (next === undefined || /\s/.test(next)) {
+      // The slice always contains at least the terminator run, so it is never
+      // empty after trimming and needs no emptiness guard.
+      spans.push(text.slice(start, end).trim());
+      start = end;
+    }
+    index = end;
+  }
+  const tail = text.slice(start).trim();
+  if (tail.length > 0) {
+    spans.push(tail);
+  }
+  return spans;
 }
 
 /**

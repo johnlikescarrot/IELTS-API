@@ -7,6 +7,7 @@ import {
   countSentences,
   countSyllables,
   describeReadingEase,
+  sentenceSpans,
   measureText,
   splitParagraphs,
   stripMarkup,
@@ -20,6 +21,42 @@ describe('stripMarkup', () => {
 
   it('decodes every supported entity', () => {
     expect(stripMarkup('&nbsp;&quot;&#39;&lt;&gt;')).toBe('"\'<>');
+  });
+
+  it('decodes in a single pass, so entities are never double-unescaped', () => {
+    expect(stripMarkup('&amp;lt;')).toBe('&lt;');
+    expect(stripMarkup('&amp;amp;')).toBe('&amp;');
+  });
+
+  it('handles a long run of unclosed angle brackets in linear time', () => {
+    const started = Date.now();
+    expect(stripMarkup(`${'<'.repeat(50_000)}x`)).toBe(`${'<'.repeat(50_000)}x`);
+    expect(Date.now() - started).toBeLessThan(2_000);
+  });
+});
+
+describe('sentenceSpans', () => {
+  it('splits on terminator runs followed by whitespace', () => {
+    expect(sentenceSpans('One. Two!! Three?')).toEqual(['One.', 'Two!!', 'Three?']);
+  });
+
+  it('does not split inside a decimal number', () => {
+    expect(sentenceSpans('Pi is 3.14 exactly.')).toEqual(['Pi is 3.14 exactly.']);
+  });
+
+  it('keeps a trailing fragment with no terminator', () => {
+    expect(sentenceSpans('One. and a tail')).toEqual(['One.', 'and a tail']);
+  });
+
+  it('drops empty spans and returns nothing for punctuation only', () => {
+    expect(sentenceSpans('   ')).toEqual([]);
+    expect(sentenceSpans('. . .')).toEqual(['.', '.', '.']);
+  });
+
+  it('handles a long run of terminators in linear time', () => {
+    const started = Date.now();
+    expect(sentenceSpans('!'.repeat(50_000))).toEqual(['!'.repeat(50_000)]);
+    expect(Date.now() - started).toBeLessThan(2_000);
   });
 });
 
