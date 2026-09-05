@@ -15,7 +15,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: super-linter-${{ github.ref }}
@@ -80,24 +80,13 @@ jobs:
           CREATE_LOG_FILE: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Surface the failure where it can be read without opening the Actions
-      # UI: the tail of the super-linter log is posted as a commit comment.
-      - name: Report the super-linter log on failure
+      # Keep the linter log when the job fails: it is the only place that
+      # records which linter complained and why.
+      - name: Upload the super-linter log
         if: failure()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHA: ${{ github.sha }}
-        run: |
-          sudo chmod -R a+rX . || true
-          log_file="$(find . /tmp -maxdepth 3 -name 'super-linter.log' -print -quit 2>/dev/null || true)"
-          if [ -z "${log_file}" ]; then
-            echo 'No super-linter.log was produced.' > /tmp/super-linter.log
-            log_file=/tmp/super-linter.log
-          fi
-          grep -vE '\[(DEBUG|TRACE)\]' "${log_file}" > /tmp/super-linter-trimmed.log
-          split -b 55000 -d /tmp/super-linter-trimmed.log /tmp/super-linter-chunk-
-          for chunk in /tmp/super-linter-chunk-*; do
-            jq -Rs '{body: ("```text\n" + . + "\n```")}' "${chunk}" > "${chunk}.json"
-            gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}/comments" \
-              --input "${chunk}.json" > /dev/null
-          done
+        uses: actions/upload-artifact@v4
+        with:
+          name: super-linter-log
+          path: super-linter.log
+          if-no-files-found: ignore
+          retention-days: 7
