@@ -2,6 +2,7 @@
  * Service routes: discovery, health, OpenAPI document and documentation.
  */
 
+import { archiveStats } from '../data/archive.js';
 import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
@@ -19,6 +20,7 @@ function datasetSummary(): Record<string, number> {
   const corpus = corpusStats();
   const practice = practiceStats();
   const materials = materialsStats();
+  const archive = archiveStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -29,6 +31,9 @@ function datasetSummary(): Record<string, number> {
     practiceQuestions: practice.questions,
     materialsFiles: materials.filesInRepository,
     materialsIndexedFiles: materials.indexedFiles,
+    archiveFiles: archive.indexedFiles,
+    archiveAudioTracks: archive.audioTracks,
+    archiveEssays: archive.assignments.essays,
   };
 }
 
@@ -93,7 +98,9 @@ export function createMetaRoutes(
         uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
         datasets: datasetSummary(),
       },
-      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index'] },
+      meta: {
+        checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index', 'archive-index'],
+      },
     };
   }
 

@@ -20,18 +20,23 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is derived from three open collections — [`zhengyishiming/IELTS`][corpus] for the
+Everything here is derived from four open collections — [`zhengyishiming/IELTS`][corpus] for the
 vocabulary and the corpus index, [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
-question-type taxonomy and the practice-test structure and readability index, and
-[`Oxidaner/ielts`][materials] for the study-materials index. None is redistributed: the API publishes
-derived, non-substitutive metadata and statistics, plus original guidance datasets written for this
-project. See [RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every
-dataset, and [paper/paper.md](paper/paper.md) for the short research paper.
+question-type taxonomy and the practice-test structure and readability index,
+[`Oxidaner/ielts`][materials] for the study-materials index, and [`msneloy/IELTS`][archive] for the
+grey-literature archive index. None is redistributed: the API publishes derived, non-substitutive
+metadata and statistics, plus original guidance datasets written for this project. See
+[RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every dataset, and
+[paper/paper.md](paper/paper.md) for the short research paper.
 
 The API also analyses text, not just publishes it: `/v1/tools/readability` scores any passage with
 the Flesch formulas and places it next to the corpus group means, `/v1/tools/essay-profile` turns a
 writing sample into lexical, structural and theme measurements with descriptor-aligned hints, and
-`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule.
+`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule. And it
+indexes what preparation material looks like before anyone curates it: `/v1/archive` catalogues a
+5.4 GB grey-literature archive — the Cambridge IELTS 1-18 listening audio with a per-volume
+naming-scheme and completeness table, the twelve official sample tasks measured for readability, and
+24 marked learner essays summarised statistically.
 
 ## Quick start
 
@@ -67,6 +72,9 @@ curl -s "http://localhost:3000/v1/frameworks/w2-concession-rebuttal"
 
 # What a self-study collection looks like: 2,354 preparation files by category and skill
 curl -s "http://localhost:3000/v1/materials/items?category=past-paper-recall"
+
+# The Cambridge 1-18 listening archive, volume by volume: naming era, tests, completeness
+curl -s "http://localhost:3000/v1/archive/volumes"
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -100,6 +108,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
+| Grey-literature archive         |         555 files / 509 audio tracks / 24 learner essays | `/v1/archive`           | Derived index of [the grey-literature archive][archive]                        |
 
 ## Endpoints
 
@@ -142,6 +151,12 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/materials`           | Study-materials metadata, statistics and facets                                                         |
 | GET    | `/v1/materials/stats`     | Study-materials statistics                                                                              |
 | GET    | `/v1/materials/items`     | Search the materials index (`category`, `skill`, `format`, `q`)                                         |
+| GET    | `/v1/archive`             | Archive provenance, statistics and the Cambridge volume table                                           |
+| GET    | `/v1/archive/stats`       | Archive statistics only                                                                                 |
+| GET    | `/v1/archive/volumes`     | Cambridge IELTS 1-18 volume table: naming scheme, media era, tracks, tests, completeness                |
+| GET    | `/v1/archive/volumes/:id` | One Cambridge volume row                                                                                |
+| GET    | `/v1/archive/items`       | Search the archive index (`collection`, `format`, `media`, `skill`, `volume`, `q`)                      |
+| GET    | `/v1/archive/:id`         | One indexed archive item                                                                                |
 | GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
@@ -291,6 +306,37 @@ GET /v1/materials/stats
 }
 ```
 
+**The grey-literature archive.** One row per Cambridge IELTS volume: how its listening audio is
+named, which media era that implies, how many tests the names still encode, and whether the volume
+is complete — with watermark provenance flagged where a vendor or channel left a trace.
+
+```jsonc
+GET /v1/archive/volumes
+{
+  "status": 200,
+  "data": [
+    { "volume": 1,  "namingScheme": "cassette-side", "media": "cassette",
+      "audioTracks": 4, "bytes": 110227957, "testsInferred": null, "testNumbers": null,
+      "complete": false, "watermarked": false },
+    { "volume": 12, "namingScheme": "test-section", "media": "download",
+      "audioTracks": 16, "bytes": 181577243, "testsInferred": 4, "testNumbers": [5, 6, 7, 8],
+      "complete": true, "watermarked": false },
+    { "volume": 16, "namingScheme": "test-section", "media": "download",
+      "audioTracks": 16, "bytes": 228728749, "testsInferred": 4, "testNumbers": [1, 2, 3, 4],
+      "complete": true, "watermarked": true },
+    { "volume": 18, "namingScheme": "none", "media": "none",
+      "audioTracks": 0, "bytes": 2396810, "testsInferred": null, "testNumbers": null,
+      "complete": false, "watermarked": false },
+    ...
+  ],
+  "meta": { "count": 18, "note": "Naming scheme, media era and recoverable test structure are derived from the file names; see RESEARCH.md Part V." }
+}
+```
+
+The twelve official sample tasks sit at full-test difficulty (median Flesch Reading Ease 41.5 against
+the corpus mean of 43.5), and the 24 marked learner essays are published as per-file statistics
+only — eleven aggregates per essay, never the text.
+
 ### What the practice-test index measures
 
 The 1,232 CEFR-graded lessons and the 470 machine-readable full tests are indexed by structure and by
@@ -309,21 +355,24 @@ questions against 14.3% of reading questions. [RESEARCH.md](RESEARCH.md) works t
 
 ## Reproducible data pipeline
 
-Every dataset is regenerated from source with standard-library-only Python:
+Every dataset is regenerated from source with standard-library Python (plus one pinned dependency,
+`pypdf`, for the twelve sample PDFs):
 
 ```bash
 python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 python3 scripts/extract_corpus.py tree.json data/corpus.json
 python3 scripts/extract_practice_tests.py tree.json ./upstream data/practice-tests.json
+python3 scripts/extract_archive.py tree.json ./upstream data/archive.json
 ```
 
-CI re-derives `data/vocabulary.json` from the upstream workbook on every push and fails if the
-committed dataset has drifted.
+CI re-derives the vocabulary, study-materials and archive datasets from upstream on every push — the
+archive derivation downloads the 38 document blobs it needs by blob SHA — and fails if any committed
+dataset has drifted. The practice-test index is validated for internal consistency on the same run.
 
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 502 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -354,7 +403,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.2.0},
+  version = {1.3.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -379,6 +428,13 @@ Please also cite the upstream collections the datasets were derived from:
   year   = {2026},
   url    = {https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS}
 }
+
+@misc{ielts_grey_literature_archive,
+  title  = {IELTS: a grey-literature archive of Cambridge listening audio, official sample tasks and marked assignments},
+  author = {msneloy},
+  year   = {2022},
+  url    = {https://github.com/msneloy/IELTS}
+}
 ```
 
 ## Licence and provenance
@@ -390,8 +446,9 @@ Please also cite the upstream collections the datasets were derived from:
   you need the authoritative text.
 - **Score concordances:** indicative values compiled from the providers' own published comparison
   tables. Receiving institutions apply their own rules.
-- **Upstream files:** never redistributed. `/v1/corpus` and `/v1/tests` publish derived metadata and
-  statistics only — no passage, question, answer key, transcript or recording.
+- **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests` and `/v1/archive` publish
+  derived metadata and statistics only — no passage, question, answer key, transcript, recording,
+  PDF content, essay text or image.
 - **Question-type strategies:** original wording. The task families follow the partners' public task
   descriptions; the observed frequencies describe the indexed practice corpus, not the live exam.
 
@@ -402,3 +459,4 @@ partners.
 [corpus]: https://github.com/zhengyishiming/IELTS
 [practice]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
 [materials]: https://github.com/Oxidaner/ielts
+[archive]: https://github.com/msneloy/IELTS

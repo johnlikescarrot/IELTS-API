@@ -6,6 +6,55 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-09-05
+
+The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material
+looks like before anyone curates it. The upstream collection
+([`msneloy/IELTS`](https://github.com/msneloy/IELTS)) is a 5.4 GB, licence-less personal archive —
+rips of the Cambridge IELTS 1-18 listening audio, the audio of five companion courses, the twelve
+British Council "Sample Academic Reading" task PDFs, and a teacher's folder of marked student
+writing. As with every other family, only derived, non-substitutive metadata and statistics are
+published. The API remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Grey-literature archive index** (`data/archive.json`, 555 of 557 upstream files indexed): every
+  file classified into nine canonical collections with normalised titles, byte sizes, blob SHA-1
+  provenance and permalinks. Endpoints: `/v1/archive`, `/v1/archive/stats`, `/v1/archive/volumes`,
+  `/v1/archive/volumes/:id`, `/v1/archive/items`, `/v1/archive/:id`.
+- **The media-archaeology table** (`/v1/archive/volumes`): one row per Cambridge IELTS volume with
+  its naming scheme (`cassette-side` → `cd-track` → `test-section`), the media era it implies, track
+  and byte totals, the listening tests recoverable from the file names (7 of 17 audio volumes),
+  completeness (14 of 18 volumes hold a full four-test audio set; volume 18 is a cover image only),
+  and watermark provenance (vendor tracks in volumes 4 and 5, a channel credit across volume 16).
+  The folder that calls itself "1 TO 17" in fact contains volumes 1-18, and the index says so.
+- **Official sample tasks, measured**: the twelve British Council sample PDFs mapped onto the
+  canonical question-type taxonomy (8 distinct types) with passage-level readability computed by the
+  same formulas as the practice-test index. The samples sit at full-test difficulty — median Flesch
+  Reading Ease 41.5 against the full-reading-test corpus mean of 43.5. Question counts are
+  deliberately not published: the PDF text layer scrambles question numbers, and a number that
+  cannot be trusted is left visibly `null`.
+- **Learner assignment log**: 33 files of a study group's marked writing (5-27 August 2022) — 24
+  essays by four named learners across eight Writing task types (7,458 words total), 7 prompt
+  images, one answered grammar exercise and one Task 2 prompt list — each essay published as eleven
+  derived statistics, never as text.
+- `scripts/extract_archive.py`: deterministic extraction from the upstream tree; standard library
+  except for a pinned `pypdf` (6.17.0) needed for the twelve sample PDFs. The readability formulas
+  are imported from `scripts/extract_practice_tests.py`, so the two datasets stay comparable by
+  construction. CI downloads the 38 document blobs it needs by blob SHA and re-derives the index
+  byte-identically on every run.
+- `RESEARCH.md` Part V: archive composition, the naming-scheme analysis, sample measurement, essay
+  profiling methodology and the threats to validity (multi-draft files, margin notes, name-based
+  classification, bytes-are-not-duration).
+- The service index, `/health`, `/docs` and `/openapi.json` now report the archive datasets.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.3.0; the keyword
+  lists now include learner corpus, grey literature and listening comprehension.
+- Test suite grown to 502 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.2.0] - 2026-09-05
 
 Two additions in one release: the **toolkit** — the first capabilities that consume text as well as
