@@ -102,11 +102,15 @@ jobs:
           body="$(mktemp)"
           echo '### super-linter findings' >> "${body}"
           echo '```text' >> "${body}"
-          find "${out}" -type f \( -name '*.log' -o -name '*.md' \) -print0 2>/dev/null |
-            while IFS= read -r -d '' f; do
-              printf '\n===== %s =====\n' "${f##*/}" >> "${body}"
-              tail -c 8000 "${f}" >> "${body}"
-            done
+          echo "--- files produced ---" >> "${body}"
+          find "${out}" -type f 2>/dev/null >> "${body}" || true
+          for name in EDITORCONFIG GITHUB_ACTIONS TYPESCRIPT_ES; do
+            find "${out}" -type f -iname "*${name}*" -print0 2>/dev/null |
+              while IFS= read -r -d '' f; do
+                printf '\n===== %s =====\n' "${f##*/}" >> "${body}"
+                tail -c 15000 "${f}" >> "${body}"
+              done
+          done
           echo '```' >> "${body}"
           gh pr comment "${PR_NUMBER}" --body-file "${body}" --repo "${GITHUB_REPOSITORY}"
 
