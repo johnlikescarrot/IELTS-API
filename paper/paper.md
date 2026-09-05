@@ -24,7 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -34,7 +34,8 @@ frequency of each family observed in 27,225 practice questions; an original taxo
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of three open IELTS collections.
+metadata indexes of four open IELTS collections, one of which contributes the only learner-produced
+text the service indexes: dated classroom essays with their task visuals [@ieltssamples].
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -109,6 +110,20 @@ availability), provenance (path, blob SHA-1, permalink) and passage-level readab
 sentences, type-token ratio, Flesch Reading Ease, Flesch-Kincaid grade). Only derived statistics are
 published; no passage, question, answer key, transcript or recording is redistributed.
 
+**Study-materials and classroom indexes.** Two further collections are indexed by metadata only.
+A 2,385-file self-study repository [@ieltsmaterials] — the material one candidate actually
+aggregated while preparing — is classified by explicit, ordered rules into preparation genres
+(answer keys, question banks, templates, methodology notes, audio), so its shape can be studied as
+evidence of how candidates assemble preparation material. A 557-file classroom archive
+[@ieltssamples] contributes two unique subsets: twelve official-style Academic Reading sample-task
+sheets, mapped onto the canonical taxonomy (8 of the 13 families are illustrated), and 33 files of
+authentic learner production from seven dated sessions in August 2022 — twenty-four Task 1 reports
+and Task 2 essays with the chart visuals they were set from, classified per essay onto the Writing
+task families by rule (hand-verified file-name keywords with session defaults; one
+content-verified override) and reported with authors exactly as published upstream. Everything
+else the service indexes is input material — things to read, hear or memorise; these files are
+output, the genre of open data second-language writing research has least of.
+
 Two results follow from the aggregate. First, the task-family distribution is strongly paper
 dependent: completion tasks account for 58.5% of 8,007 indexed listening questions but only 14.3% of
 19,218 reading questions, where identification (True/False/Not Given, 18.3%) and multiple choice
@@ -152,12 +167,12 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (469 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (495 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
-study-materials index from the upstream tree, and revalidates the
+study-materials and learner-writing indexes from their upstream trees, and revalidates the
 internal consistency of the practice-test index (question counts, type normalisation and provenance),
 failing if the committed data has drifted — which guards against silent data rot.
 
@@ -170,9 +185,10 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 # Acknowledgements
 
-This work builds on the open corpus assembled by `zhengyishiming` and on the practice collection
-assembled by `ngoclong1209`; both are cited in `CITATION.cff` and in every response that draws on
-them. IELTS is a jointly owned trademark of the
+This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
+classroom archive assembled by `msneloy`; all four are cited in `CITATION.cff` and in every response
+that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

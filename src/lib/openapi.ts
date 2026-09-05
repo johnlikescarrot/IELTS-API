@@ -10,6 +10,7 @@ import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
+import { samplesFacets } from '../data/samples.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
@@ -250,6 +251,65 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/samples/items': [
+    QUERY,
+    {
+      name: 'collection',
+      in: 'query',
+      description: 'Comma-separated collections.',
+      schema: { type: 'string', enum: samplesFacets('collection') },
+    },
+    {
+      name: 'kind',
+      in: 'query',
+      description: 'Comma-separated kinds: essay, prompt, exercise, task-visual, sample-task.',
+      schema: { type: 'string', enum: samplesFacets('kind') },
+    },
+    {
+      name: 'skill',
+      in: 'query',
+      description: 'Comma-separated skills.',
+      schema: { type: 'string', enum: samplesFacets('skill') },
+    },
+    {
+      name: 'format',
+      in: 'query',
+      description: 'Comma-separated file formats.',
+      schema: { type: 'string', enum: samplesFacets('format') },
+    },
+    {
+      name: 'session',
+      in: 'query',
+      description: 'Comma-separated classroom session dates (ISO).',
+      schema: { type: 'string', enum: samplesFacets('session') },
+    },
+    {
+      name: 'author',
+      in: 'query',
+      description: 'Comma-separated learner first names, as published upstream.',
+      schema: { type: 'string', enum: samplesFacets('author') },
+    },
+    {
+      name: 'task',
+      in: 'query',
+      description: 'Comma-separated task families (`/v1/tasks/writing` ids or `task-2`).',
+      schema: { type: 'string', enum: samplesFacets('taskFamily') },
+    },
+    {
+      name: 'type',
+      in: 'query',
+      description: 'Comma-separated canonical question types.',
+      schema: { type: 'string', enum: samplesFacets('questionType') },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['id', 'title', 'session', 'size'], default: 'id' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },
@@ -431,9 +491,10 @@ export function openApiDocument(
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
-        'an index of the open IELTS research corpus, and an index of a 2,385-file',
-        'self-study materials collection. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        'an index of the open IELTS research corpus, an index of a 2,385-file self-study',
+        'materials collection, and an index of 45 learner essays and Academic Reading',
+        'sample tasks from an open classroom collection. The toolkit additionally scores',
+        'any text (readability and essay profile) and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

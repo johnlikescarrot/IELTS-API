@@ -126,7 +126,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials"):
+          for name in ("vocabulary", "corpus", "practice-tests", "materials", "samples"):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
           PY
@@ -144,6 +144,21 @@ jobs:
           regenerated = json.load(open('/tmp/materials.json'))
           assert committed == regenerated, 'data/materials.json is out of date'
           print(f"materials index reproducible: {regenerated['stats']['indexedFiles']} files")
+          PY
+
+      - name: Re-derive the learner-writing and sample-task index from the upstream tree
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/msneloy/IELTS/git/trees/main?recursive=1" \
+            -o /tmp/samples-tree.json
+          python3 scripts/extract_samples.py /tmp/samples-tree.json /tmp/samples.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/samples.json'))
+          regenerated = json.load(open('/tmp/samples.json'))
+          assert committed == regenerated, 'data/samples.json is out of date'
+          print(f"samples index reproducible: {regenerated['stats']['indexedFiles']} files")
           PY
 
       - name: Check the practice-test index for internal consistency

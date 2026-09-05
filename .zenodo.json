@@ -18,6 +18,8 @@
     "score concordance",
     "question types",
     "response frameworks",
+    "learner writing",
+    "sample tasks",
     "readability",
     "CEFR",
     "open data",
@@ -40,6 +42,16 @@
     },
     {
       "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/Oxidaner/ielts",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/msneloy/IELTS",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }
