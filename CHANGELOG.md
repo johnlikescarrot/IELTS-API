@@ -38,6 +38,16 @@ redistributed.
 - The OpenAPI document, the README dataset table and the endpoint index cover the new routes.
 - Test suite grown to 341 tests, still at 100% statement, branch, function and line coverage per file.
 
+### Fixed
+
+- super-linter now installs the project's dependencies before it runs: version 8 lints TypeScript
+  with this repository's own `eslint.config.js`, which cannot be loaded unless the packages it
+  imports are resolvable, so the job failed before checking a single file.
+- The whole tree is clean under super-linter 8 again: an unused shell loop variable (SC2034),
+  Markdown and BibTeX indentation that editorconfig-checker rejected, the JOSS paper's top-level
+  section headings (MD025), and the two Checkov OpenAPI policies that assume every API
+  authenticates its callers — recorded, with the reason, in `.checkov.yaml`.
+
 ## [1.0.0] - 2026-09-04
 
 First citable release.
