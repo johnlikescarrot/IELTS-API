@@ -382,10 +382,13 @@ export type ApiResponse = {
   meta: Record<string, JsonValue>;
 };
 
+/** HTTP methods the API serves. */
+export type HttpMethod = 'GET' | 'POST';
+
 /** Description of an exposed route, used for discovery and OpenAPI. */
 export type RouteInfo = {
   /** HTTP method. */
-  method: 'GET';
+  method: HttpMethod;
   /** Path template. */
   path: string;
   /** Short summary. */

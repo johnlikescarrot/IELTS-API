@@ -13,7 +13,10 @@ abstract: >-
   and the Duolingo English Test, Writing and Speaking task banks, a curated
   index of an open IELTS research corpus, and a metadata index of an open
   CEFR-graded practice corpus (1,804 listening and reading items, 15,558
-  questions, a normalised item-type taxonomy). Every endpoint is free of
+  questions, a normalised item-type taxonomy) and reproducible
+  text-analytics endpoints (readability, lexical diversity, cohesion and
+  indicative Writing diagnostics measured with published formulas). Every
+  endpoint is free of
   charge, requires no authentication, returns a uniform JSON envelope with a
   stable ETag, and is covered by a test suite with 100% statement, branch,
   function and line coverage. The API is designed for reproducible
@@ -29,6 +32,11 @@ keywords:
   - open data
   - REST API
   - TypeScript
+  - readability
+  - lexical diversity
+  - MTLD
+  - automated writing evaluation
+  - corpus linguistics
 license:
   - MIT
   - CC-BY-4.0

@@ -34,8 +34,16 @@ export function notFound(message: string, details: Record<string, string> = {}):
 }
 
 /** Create a `405 Method Not Allowed` error. */
-export function methodNotAllowed(message = 'Only GET requests are supported.'): HttpError {
-  return new HttpError(405, 'method_not_allowed', message, { allow: 'GET' });
+export function methodNotAllowed(
+  message = 'Only GET, HEAD, OPTIONS and POST requests are supported.',
+  allow = 'GET, HEAD, OPTIONS, POST',
+): HttpError {
+  return new HttpError(405, 'method_not_allowed', message, { allow });
+}
+
+/** Create a `413 Payload Too Large` error. */
+export function payloadTooLarge(message: string, details: Record<string, string> = {}): HttpError {
+  return new HttpError(413, 'payload_too_large', message, details);
 }
 
 /** Create a `406 Not Acceptable` error. */

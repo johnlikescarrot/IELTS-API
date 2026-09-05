@@ -118,6 +118,25 @@ ${service.map(routeRow).join('\n')}
   </tbody>
 </table>
 
+<h2>Text analysis</h2>
+<p>The <code>/v1/analyze/*</code> endpoints accept a candidate response and return reproducible,
+literature-standard measurements of it. They are the only endpoints that also accept <code>POST</code>,
+because essays exceed a safe query-string length. Nothing is stored: the text is analysed in-process
+and discarded.</p>
+<pre><code>curl -s -X POST "https://ielts-api.example/v1/analyze/essay?task=task-2" \\
+  -H "content-type: application/json" \\
+  -d '{"text": "Some people believe ..."}'</code></pre>
+<ul>
+  <li><strong>Readability</strong>: Flesch Reading Ease, Flesch&ndash;Kincaid, Gunning Fog, SMOG,
+  Coleman&ndash;Liau and the Automated Readability Index.</li>
+  <li><strong>Lexical diversity</strong>: TTR, root TTR, log TTR (Herdan&rsquo;s C), the Maas index and MTLD.</li>
+  <li><strong>Cohesion</strong>: cohesive devices grouped by discourse function.</li>
+  <li><strong>Vocabulary profile</strong>: coverage of the text against the Cambridge IELTS 1&ndash;22 word lists.</li>
+</ul>
+<p class="meta">The indicative band returned by <code>/v1/analyze/essay</code> is a deterministic
+surface-feature rubric published for reproducibility. It is not an IELTS score and does not assess
+task content or argument quality; every dimension is returned with the evidence that produced it.</p>
+
 <h2>Response envelope</h2>
 <p>Every JSON response uses the same envelope, so clients can parse any endpoint uniformly:</p>
 <pre><code>{

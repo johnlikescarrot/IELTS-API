@@ -6,7 +6,7 @@
  * and request logging. Handlers stay pure and trivially testable.
  */
 
-import { HttpError, methodNotAllowed, notFound } from './lib/errors.js';
+import { HttpError, methodNotAllowed, notFound, payloadTooLarge } from './lib/errors.js';
 import { acceptsGzip, sendJson, writeResponse } from './lib/http.js';
 import { isRawResult, matchRoute, splitPath } from './lib/route.js';
 import { ROUTES } from './routes/index.js';
@@ -14,7 +14,33 @@ import { API_VERSION } from './version.js';
 
 import type { IncomingMessage, ServerResponse } from 'node:http';
 import type { RouteDefinition } from './lib/route.js';
-import type { JsonValue } from './types.js';
+import type { HttpMethod, JsonValue } from './types.js';
+
+/** Largest request body accepted, in bytes. */
+export const MAX_BODY_BYTES = 262144;
+
+/**
+ * Read a request body, refusing anything larger than {@link MAX_BODY_BYTES}.
+ *
+ * @param req - Incoming request.
+ * @returns The body decoded as UTF-8.
+ */
+export async function readBody(req: IncomingMessage): Promise<string> {
+  const chunks: Buffer[] = [];
+  let size = 0;
+  // `node:http` always yields Buffers: the request stream is never in object
+  // mode and no encoding is set on it.
+  for await (const buffer of req as AsyncIterable<Buffer>) {
+    size += buffer.byteLength;
+    if (size > MAX_BODY_BYTES) {
+      throw payloadTooLarge(`Request bodies are limited to ${MAX_BODY_BYTES} bytes.`, {
+        limit: String(MAX_BODY_BYTES),
+      });
+    }
+    chunks.push(buffer);
+  }
+  return Buffer.concat(chunks).toString('utf8');
+}
 
 /** Options for {@link createRequestHandler}. */
 export interface AppOptions {
@@ -39,6 +65,11 @@ export function createRequestHandler(
   const log = options.log ?? false;
 
   return (req, res) => {
+    void handle(req, res);
+  };
+
+  /** Handle one request, translating every failure into a JSON envelope. */
+  async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const started = process.hrtime.bigint();
     const method = (req.method ?? 'GET').toUpperCase();
     const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
@@ -50,21 +81,28 @@ export function createRequestHandler(
       if (method === 'OPTIONS') {
         res.writeHead(204, {
           'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, HEAD, OPTIONS',
+          'access-control-allow-methods': 'GET, HEAD, OPTIONS, POST',
+          'access-control-allow-headers': 'accept, accept-encoding, content-type, if-none-match',
           'access-control-max-age': '86400',
         });
         res.end();
-      } else if (method !== 'GET' && method !== 'HEAD') {
+      } else if (method !== 'GET' && method !== 'HEAD' && method !== 'POST') {
         throw methodNotAllowed();
       } else {
-        const match = matchRoute(routes, splitPath(url.pathname));
+        const lookup: HttpMethod = method === 'POST' ? 'POST' : 'GET';
+        const match = matchRoute(routes, splitPath(url.pathname), lookup);
         if (match === undefined) {
           throw notFound(`No endpoint matches ${url.pathname}.`, {
             path: url.pathname,
             documentation: '/docs',
           });
         }
-        const result = match.route.handler({ url, params: match.params });
+        const body = method === 'POST' ? await readBody(req) : undefined;
+        const result = match.route.handler({
+          url,
+          params: match.params,
+          ...(body === undefined ? {} : { body }),
+        });
         if (isRawResult(result)) {
           writeResponse(res, {
             status: 200,
@@ -85,11 +123,19 @@ export function createRequestHandler(
             gzipAllowed,
             ifNoneMatch,
             headOnly: method === 'HEAD',
+            // Analyses are computed from a request body: never cache them.
+            ...(method === 'POST' ? { cacheControl: 'no-store' } : {}),
             headers: { 'x-endpoint': match.route.path },
           });
         }
       }
     } catch (error) {
+      // A request whose body was never fully read would poison a keep-alive
+      // connection, so such responses always close it.
+      const extra: Record<string, string> = { 'x-endpoint': url.pathname };
+      if (!req.readableEnded && method === 'POST') {
+        extra['connection'] = 'close';
+      }
       const httpError = error instanceof HttpError ? error : undefined;
       if (httpError !== undefined) {
         status = httpError.status;
@@ -105,7 +151,7 @@ export function createRequestHandler(
             },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          { gzipAllowed, headers: extra },
         );
       } else {
         status = 500;
@@ -119,7 +165,7 @@ export function createRequestHandler(
             error: { code: 'internal_error', message: 'An unexpected error occurred.', details: {} },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          { gzipAllowed, headers: extra },
         );
       }
     }
@@ -128,5 +174,5 @@ export function createRequestHandler(
       const elapsed = Number(process.hrtime.bigint() - started) / 1e6;
       console.log(`${method} ${url.pathname}${url.search} ${status} ${elapsed.toFixed(2)}ms`);
     }
-  };
+  }
 }

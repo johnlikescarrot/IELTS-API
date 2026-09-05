@@ -8,7 +8,7 @@ All notable changes to this project are documented here. The format is based on
 
 ## [1.1.0] - 2026-09-05
 
-Feature release: the open practice corpus.
+Feature release: the open practice corpus and reproducible text analytics.
 
 ### Added
 
@@ -25,11 +25,28 @@ Feature release: the open practice corpus.
 - Privacy-by-design: the upstream learner workbook (student names, device identifiers) is excluded
   from the index; only derived metadata — identifiers, levels, lengths, counts, availability flags —
   is published, never passages, questions or audio.
+- **Text analytics** (`/v1/analyze/*`), the first endpoints that accept `POST` as well as `GET`:
+  - `/v1/analyze/text` — Flesch Reading Ease, Flesch-Kincaid Grade Level, Gunning Fog, SMOG,
+    Coleman-Liau, the Automated Readability Index and a consensus grade; type-token ratio, root TTR
+    (Guiraud), log TTR (Herdan's C), the Maas index, MTLD, hapax legomena and lexical density;
+    sentence-length statistics; and a frequency distribution.
+  - `/v1/analyze/cohesion` — 48 cohesive devices grouped into 7 discourse functions.
+  - `/v1/analyze/essay` — a deterministic, fully published surface-feature rubric that returns an
+    indicative band per dimension together with the evidence that produced it, plus actionable
+    suggestions. Explicitly not an IELTS score.
+  - `/v1/analyze/vocabulary` — coverage of a text against the Cambridge IELTS 1-22 word lists.
+- `POST` support in the dispatcher: bodies up to 256 KiB, JSON (`{"text": ...}`) or plain text,
+  `413` beyond the limit, `no-store` on analysis responses, and `405` when a path exists but not for
+  the requested method.
+- New public library exports: `src/lib/text.ts` and `src/lib/essay.ts`.
 
 ### Changed
 
 - `/` and `/health` report the practice-corpus dataset sizes; `/docs`, the OpenAPI document and the
   resource catalogue cover the new endpoints and the new upstream source.
+- CORS now advertises `POST` and the `content-type` request header.
+- The OpenAPI document keys operations by method, so a path can document both `GET` and `POST`, and
+  documents the `405` and `413` responses.
 
 ## [1.0.0] - 2026-09-04
 

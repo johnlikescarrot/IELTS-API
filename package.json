@@ -1,7 +1,7 @@
 {
   "name": "ielts-api",
   "version": "1.1.0",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, and a metadata index of an open CEFR-graded practice corpus.",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a metadata index of an open CEFR-graded practice corpus, and reproducible text analytics.",
   "keywords": [
     "ielts",
     "api",
@@ -14,7 +14,12 @@
     "typescript",
     "cefr",
     "item-types",
-    "practice-corpus"
+    "practice-corpus",
+    "readability",
+    "lexical-diversity",
+    "mtld",
+    "automated-writing-evaluation",
+    "text-analysis"
   ],
   "license": "MIT",
   "type": "module",

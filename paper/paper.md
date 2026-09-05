@@ -26,7 +26,8 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships six kinds of data: a 4,174-headword vocabulary dataset derived from
+JSON envelope, plus reproducible text-analytics endpoints that measure a candidate response in
+process. The service ships six kinds of data: a 4,174-headword vocabulary dataset derived from
 the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking and
 Writing across bands 0-9; indicative score concordances between IELTS and five other scales; original
 Writing and Speaking task banks built on the question families and word lists that recur in IELTS
@@ -122,9 +123,30 @@ document is generated from the live route table, so documentation cannot drift f
 implementation. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
 reproducible stimulus for longitudinal studies rather than a novelty.
 
+# Reproducible text analytics
+
+Version 1.1 adds `/v1/analyze/*`, a set of endpoints that measure a candidate response rather than
+merely serving reference data. They implement published formulas exactly as defined, so that a
+number reported in a paper can be recomputed by hand: Flesch Reading Ease and Flesch-Kincaid Grade
+Level [@kincaid1975], the Gunning Fog index [@gunning1952], the SMOG grade [@mclaughlin1969], the
+Coleman-Liau index [@colemanliau1975], type-token ratio and its root and logarithmic variants
+[@herdan1960], and MTLD [@mccarthy2010]. Cohesive devices are counted against an inventory organised
+by the discourse functions of @hallidayhasan1976, and a text can be profiled against the Cambridge
+IELTS 1-22 word lists to report the share of its distinct types that the published lists cover.
+
+These are the only endpoints that also accept `POST`, since essays exceed a safe query-string
+length; no text is stored, logged or transmitted, and analysis responses are marked `no-store`.
+
+`/v1/analyze/essay` returns an _indicative_ band. It is deliberately **not** a machine-learning
+scorer: it is a deterministic weighted rubric over four observable surface dimensions, each returned
+with the evidence that produced it, and it states in every response that it is not an IELTS score
+and does not assess task content or argument quality. The value of publishing such a rubric is that
+it is auditable: a reviewer can read the thresholds, disagree with them, and reproduce any published
+figure exactly — a property that opaque commercial scorers do not offer.
+
 # Quality control
 
-The test suite (322 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (389 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

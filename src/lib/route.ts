@@ -2,7 +2,9 @@
  * Routing primitives shared by the route table and the request dispatcher.
  */
 
-import type { JsonValue, RouteInfo } from '../types.js';
+import { methodNotAllowed } from './errors.js';
+
+import type { HttpMethod, JsonValue, RouteInfo } from '../types.js';
 
 /** Everything a handler needs to produce a response. */
 export interface RouteContext {
@@ -10,6 +12,8 @@ export interface RouteContext {
   url: URL;
   /** Path parameters extracted by the router. */
   params: Record<string, string>;
+  /** Raw request body, present only for `POST` routes. */
+  body?: string;
 }
 
 /** A handler result rendered as a JSON envelope. */
@@ -85,7 +89,9 @@ export interface RouteMatch {
 export function matchRoute(
   routes: readonly RouteDefinition[],
   segments: readonly string[],
+  method?: HttpMethod,
 ): RouteMatch | undefined {
+  let pathMatched = false;
   for (const route of routes) {
     const template = splitPath(route.path);
     if (template.length !== segments.length) {
@@ -105,9 +111,16 @@ export function matchRoute(
         break;
       }
     }
-    if (matched) {
+    if (!matched) {
+      continue;
+    }
+    pathMatched = true;
+    if (method === undefined || route.method === method) {
       return { route, params };
     }
+  }
+  if (pathMatched) {
+    throw methodNotAllowed(`${String(method)} is not supported for this endpoint.`);
   }
   return undefined;
 }
