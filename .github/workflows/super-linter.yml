@@ -79,8 +79,10 @@ jobs:
           LINTER_RULES_PATH: /
           MARKDOWN_CONFIG_FILE: .markdown-lint.yml
           YAML_CONFIG_FILE: .yamllint.yml
-          ESLINT_USE_FLAT_CONFIG: true
-          ESLINT_CONFIG_FILE: eslint.config.js
+          # super-linter looks for `eslint.config.mjs` by default and silently falls
+          # back to its own bundled rules when it is missing, so name the real file.
+          JAVASCRIPT_ES_CONFIG_FILE: eslint.config.js
+          TYPESCRIPT_ES_CONFIG_FILE: eslint.config.js
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Report findings
