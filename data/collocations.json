@@ -1,0 +1,2337 @@
+{
+ "meta": {
+  "name": "IELTS Speaking argumentative collocation bank",
+  "source": "口语/口语part 3方法论.md",
+  "sourceUrl": "https://github.com/Oxidaner/ielts/blob/738c60828118f8f9d720e548b73245dd0fe70a30/口语/口语part%203方法论.md",
+  "repository": "https://github.com/Oxidaner/ielts",
+  "commit": "738c60828118f8f9d720e548b73245dd0fe70a30",
+  "license": "CC BY 4.0",
+  "attribution": "Collocations and glosses selected and organised in the self-study notes at https://github.com/Oxidaner/ielts/blob/738c60828118f8f9d720e548b73245dd0fe70a30/口语/口语part%203方法论.md; re-published with attribution.",
+  "note": "Short common English collocations and sentence frames only, extracted from Part I of the upstream note. The upstream model answers are not redistributed.",
+  "extraction": "Deterministic parse of Part I (分维度讨论思路) of the upstream note; every phrase keeps its upstream Chinese gloss, argumentative dimension, sub-group, polarity and kind."
+ },
+ "dimensions": [
+  {
+   "id": "personality",
+   "label": "Personality types",
+   "description": "Arguing by personality type: what introverted and extroverted people are like, do and feel.",
+   "source": "1. 按性格划分（话题短语）"
+  },
+  {
+   "id": "emotional-value",
+   "label": "Emotional value",
+   "description": "Emotional value and support, positive and negative emotions, and the frames that express them.",
+   "source": "2. 情绪价值"
+  },
+  {
+   "id": "money",
+   "label": "Money",
+   "description": "Cost and value: negative, positive and extended money collocations.",
+   "source": "（1）金钱相关"
+  },
+  {
+   "id": "time",
+   "label": "Time",
+   "description": "Time budgeting: negative, positive and extended time collocations.",
+   "source": "（2）时间相关"
+  },
+  {
+   "id": "economy-then-now",
+   "label": "Economy, past and present",
+   "description": "Comparing past and present through economic development.",
+   "source": "（1）经济发展角度"
+  },
+  {
+   "id": "technology-then-now",
+   "label": "Technology, past and present",
+   "description": "Comparing past and present through technological change.",
+   "source": "（2）技术创新角度"
+  },
+  {
+   "id": "either-or",
+   "label": "Either-or questions",
+   "description": "Frames for questions that offer two alternatives.",
+   "source": "5. 二选一问题（A or B）"
+  },
+  {
+   "id": "children",
+   "label": "Children",
+   "description": "Discussing children: drawbacks, strengths and needs.",
+   "source": "（1）孩子（children/kids/students）"
+  },
+  {
+   "id": "parents",
+   "label": "Parents",
+   "description": "The roles parents play in an argument.",
+   "source": "（2）父母（parents）"
+  },
+  {
+   "id": "teachers",
+   "label": "Teachers",
+   "description": "The traits and the contribution of teachers.",
+   "source": "（3）老师（teachers）"
+  },
+  {
+   "id": "skills",
+   "label": "Transferable skills",
+   "description": "Transferable skills invoked as a universal angle, one group per skill family.",
+   "source": "7. 万能技能法（8 点）"
+  },
+  {
+   "id": "traditional-items",
+   "label": "Traditional items",
+   "description": "Traditional objects and the meanings attached to them.",
+   "source": "（2）传统物品（traditional items）"
+  },
+  {
+   "id": "nature-and-nurture",
+   "label": "Nature and nurture",
+   "description": "Innate traits versus upbringing.",
+   "source": "（3）先天与后天（nature and nurture）"
+  },
+  {
+   "id": "culture",
+   "label": "Culture, festivals and traditions",
+   "description": "Culture, festivals and traditions.",
+   "source": "（4）文化 / 节日 / 传统（culture/festival/tradition）"
+  }
+ ],
+ "stats": {
+  "phrases": 245,
+  "distinctPhrases": 234,
+  "glossedPhrases": 240,
+  "dimensions": 14,
+  "byDimension": {
+   "children": 26,
+   "culture": 7,
+   "economy-then-now": 15,
+   "either-or": 3,
+   "emotional-value": 23,
+   "money": 31,
+   "nature-and-nurture": 8,
+   "parents": 8,
+   "personality": 35,
+   "skills": 36,
+   "teachers": 5,
+   "technology-then-now": 22,
+   "time": 19,
+   "traditional-items": 7
+  },
+  "byPolarity": {
+   "negative": 45,
+   "neutral": 150,
+   "positive": 50
+  },
+  "byKind": {
+   "collocation": 237,
+   "frame": 8
+  }
+ },
+ "items": [
+  {
+   "id": "c0001",
+   "phrase": "Well, it really depends on different personalities",
+   "gloss": null,
+   "dimension": "personality",
+   "group": "opener",
+   "polarity": "neutral",
+   "kind": "frame"
+  },
+  {
+   "id": "c0002",
+   "phrase": "shy",
+   "gloss": "害羞",
+   "dimension": "personality",
+   "group": "introverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0003",
+   "phrase": "timid",
+   "gloss": "胆怯",
+   "dimension": "personality",
+   "group": "introverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0004",
+   "phrase": "clumsy in socializing",
+   "gloss": "不擅长社交",
+   "dimension": "personality",
+   "group": "introverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0005",
+   "phrase": "have social phobia",
+   "gloss": "社交恐惧",
+   "dimension": "personality",
+   "group": "introverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0006",
+   "phrase": "keep silent",
+   "gloss": "沉默",
+   "dimension": "personality",
+   "group": "introverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0007",
+   "phrase": "avoid eye contact",
+   "gloss": "避免眼神接触",
+   "dimension": "personality",
+   "group": "introverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0008",
+   "phrase": "keep a low profile",
+   "gloss": "低调",
+   "dimension": "personality",
+   "group": "introverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0009",
+   "phrase": "stay at home",
+   "gloss": "宅家",
+   "dimension": "personality",
+   "group": "introverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0010",
+   "phrase": "read books",
+   "gloss": "读书",
+   "dimension": "personality",
+   "group": "introverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0011",
+   "phrase": "listen to music",
+   "gloss": "听音乐",
+   "dimension": "personality",
+   "group": "introverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0012",
+   "phrase": "watch short videos",
+   "gloss": "看短视频",
+   "dimension": "personality",
+   "group": "introverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0013",
+   "phrase": "prefer online communication",
+   "gloss": "偏好线上交流",
+   "dimension": "personality",
+   "group": "introverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0014",
+   "phrase": "spend time alone",
+   "gloss": "独处",
+   "dimension": "personality",
+   "group": "introverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0015",
+   "phrase": "feel comfortable and relaxed by being alone",
+   "gloss": "独处时舒适放松",
+   "dimension": "personality",
+   "group": "introverted-feelings",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0016",
+   "phrase": "stay in comfort zone",
+   "gloss": "待在舒适区",
+   "dimension": "personality",
+   "group": "introverted-feelings",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0017",
+   "phrase": "dislike catching people’s eyes",
+   "gloss": "不喜欢被关注",
+   "dimension": "personality",
+   "group": "introverted-feelings",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0018",
+   "phrase": "feel exhausted and uneasy by face-to-face talk",
+   "gloss": "面对面交流感到疲惫不安",
+   "dimension": "personality",
+   "group": "introverted-feelings",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0019",
+   "phrase": "outgoing",
+   "gloss": "外向",
+   "dimension": "personality",
+   "group": "extroverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0020",
+   "phrase": "easygoing",
+   "gloss": "随和",
+   "dimension": "personality",
+   "group": "extroverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0021",
+   "phrase": "talkative",
+   "gloss": "健谈",
+   "dimension": "personality",
+   "group": "extroverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0022",
+   "phrase": "energetic",
+   "gloss": "精力充沛",
+   "dimension": "personality",
+   "group": "extroverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0023",
+   "phrase": "party animals",
+   "gloss": "派对达人",
+   "dimension": "personality",
+   "group": "extroverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0024",
+   "phrase": "social butterflies",
+   "gloss": "社交达人",
+   "dimension": "personality",
+   "group": "extroverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0025",
+   "phrase": "not afraid of making a big scene",
+   "gloss": "不怕引人注目",
+   "dimension": "personality",
+   "group": "extroverted-traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0026",
+   "phrase": "outdoor activities",
+   "gloss": "户外活动",
+   "dimension": "personality",
+   "group": "extroverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0027",
+   "phrase": "join/hold parties",
+   "gloss": "参加 / 举办派对",
+   "dimension": "personality",
+   "group": "extroverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0028",
+   "phrase": "socialize with others in person",
+   "gloss": "线下社交",
+   "dimension": "personality",
+   "group": "extroverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0029",
+   "phrase": "step out of comfort zone",
+   "gloss": "走出舒适区",
+   "dimension": "personality",
+   "group": "extroverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0030",
+   "phrase": "attract people’s attention",
+   "gloss": "吸引关注",
+   "dimension": "personality",
+   "group": "extroverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0031",
+   "phrase": "meet new friends",
+   "gloss": "结交新朋友",
+   "dimension": "personality",
+   "group": "extroverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0032",
+   "phrase": "share feelings directly",
+   "gloss": "直接分享感受",
+   "dimension": "personality",
+   "group": "extroverted-behaviour",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0033",
+   "phrase": "recharge their batteries by interacting with others",
+   "gloss": "通过社交恢复精力",
+   "dimension": "personality",
+   "group": "extroverted-feelings",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0034",
+   "phrase": "enjoy being part of the crowd",
+   "gloss": "享受融入群体",
+   "dimension": "personality",
+   "group": "extroverted-feelings",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0035",
+   "phrase": "like being under the spotlight",
+   "gloss": "喜欢成为焦点",
+   "dimension": "personality",
+   "group": "extroverted-feelings",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0036",
+   "phrase": "emotional value",
+   "gloss": "情绪价值",
+   "dimension": "emotional-value",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0037",
+   "phrase": "emotional supports",
+   "gloss": "情感支持",
+   "dimension": "emotional-value",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0038",
+   "phrase": "emotional connections",
+   "gloss": "情感联结",
+   "dimension": "emotional-value",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0039",
+   "phrase": "sentimental value",
+   "gloss": "情感价值",
+   "dimension": "emotional-value",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0040",
+   "phrase": "mental supports",
+   "gloss": "心理支持",
+   "dimension": "emotional-value",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0041",
+   "phrase": "happiness",
+   "gloss": "快乐",
+   "dimension": "emotional-value",
+   "group": "positive-emotions",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0042",
+   "phrase": "achievement",
+   "gloss": "成就感",
+   "dimension": "emotional-value",
+   "group": "positive-emotions",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0043",
+   "phrase": "accomplishment",
+   "gloss": "成就感",
+   "dimension": "emotional-value",
+   "group": "positive-emotions",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0044",
+   "phrase": "satisfaction",
+   "gloss": "满足感",
+   "dimension": "emotional-value",
+   "group": "positive-emotions",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0045",
+   "phrase": "fulfillment",
+   "gloss": "充实感",
+   "dimension": "emotional-value",
+   "group": "positive-emotions",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0046",
+   "phrase": "motivation",
+   "gloss": "动力",
+   "dimension": "emotional-value",
+   "group": "positive-emotions",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0047",
+   "phrase": "confidence",
+   "gloss": "自信",
+   "dimension": "emotional-value",
+   "group": "positive-emotions",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0048",
+   "phrase": "anxiety",
+   "gloss": "焦虑",
+   "dimension": "emotional-value",
+   "group": "negative-emotions",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0049",
+   "phrase": "depression",
+   "gloss": "抑郁",
+   "dimension": "emotional-value",
+   "group": "negative-emotions",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0050",
+   "phrase": "loneliness",
+   "gloss": "孤独",
+   "dimension": "emotional-value",
+   "group": "negative-emotions",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0051",
+   "phrase": "isolation",
+   "gloss": "孤立",
+   "dimension": "emotional-value",
+   "group": "negative-emotions",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0052",
+   "phrase": "boredom",
+   "gloss": "无聊",
+   "dimension": "emotional-value",
+   "group": "negative-emotions",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0053",
+   "phrase": "tiredness",
+   "gloss": "疲惫",
+   "dimension": "emotional-value",
+   "group": "negative-emotions",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0054",
+   "phrase": "sadness",
+   "gloss": "悲伤",
+   "dimension": "emotional-value",
+   "group": "negative-emotions",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0055",
+   "phrase": "can provide emotional values to / can gain emotional values from",
+   "gloss": null,
+   "dimension": "emotional-value",
+   "group": "frames",
+   "polarity": "neutral",
+   "kind": "frame"
+  },
+  {
+   "id": "c0056",
+   "phrase": "to satisfy their emotional needs",
+   "gloss": null,
+   "dimension": "emotional-value",
+   "group": "frames",
+   "polarity": "neutral",
+   "kind": "frame"
+  },
+  {
+   "id": "c0057",
+   "phrase": "help them to have a better mental condition",
+   "gloss": null,
+   "dimension": "emotional-value",
+   "group": "frames",
+   "polarity": "neutral",
+   "kind": "frame"
+  },
+  {
+   "id": "c0058",
+   "phrase": "beneficial for their mental health",
+   "gloss": null,
+   "dimension": "emotional-value",
+   "group": "frames",
+   "polarity": "neutral",
+   "kind": "frame"
+  },
+  {
+   "id": "c0059",
+   "phrase": "money-wasting",
+   "gloss": "浪费钱",
+   "dimension": "money",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0060",
+   "phrase": "money-consuming",
+   "gloss": "耗钱",
+   "dimension": "money",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0061",
+   "phrase": "a waste of money",
+   "gloss": "浪费钱",
+   "dimension": "money",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0062",
+   "phrase": "costly",
+   "gloss": "昂贵",
+   "dimension": "money",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0063",
+   "phrase": "luxurious",
+   "gloss": "奢华",
+   "dimension": "money",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0064",
+   "phrase": "cost a big fortune",
+   "gloss": "花一大笔钱",
+   "dimension": "money",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0065",
+   "phrase": "cost an arm and a leg",
+   "gloss": "天价",
+   "dimension": "money",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0066",
+   "phrase": "money-saving",
+   "gloss": "省钱",
+   "dimension": "money",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0067",
+   "phrase": "reasonable price",
+   "gloss": "价格合理",
+   "dimension": "money",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0068",
+   "phrase": "cost-effective",
+   "gloss": "性价比高",
+   "dimension": "money",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0069",
+   "phrase": "economical",
+   "gloss": "经济实惠",
+   "dimension": "money",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0070",
+   "phrase": "affordable",
+   "gloss": "负担得起",
+   "dimension": "money",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0071",
+   "phrase": "a good bargain",
+   "gloss": "划算",
+   "dimension": "money",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0072",
+   "phrase": "cut price",
+   "gloss": "降价",
+   "dimension": "money",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0073",
+   "phrase": "a tight budget",
+   "gloss": "预算紧张",
+   "dimension": "money",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0074",
+   "phrase": "make a living",
+   "gloss": "谋生",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0075",
+   "phrase": "make ends meet",
+   "gloss": "收支平衡",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0076",
+   "phrase": "living cost",
+   "gloss": "生活成本",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0077",
+   "phrase": "commuting cost",
+   "gloss": "通勤成本",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0078",
+   "phrase": "a decent job",
+   "gloss": "体面工作",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0079",
+   "phrase": "well-paid job",
+   "gloss": "高薪工作",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0080",
+   "phrase": "considerable income",
+   "gloss": "可观收入",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0081",
+   "phrase": "bonus",
+   "gloss": "奖金",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0082",
+   "phrase": "subsidy",
+   "gloss": "补贴",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0083",
+   "phrase": "gain material rewards",
+   "gloss": "获得物质回报",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0084",
+   "phrase": "satisfy material needs",
+   "gloss": "满足物质需求",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0085",
+   "phrase": "money-management skills",
+   "gloss": "理财技能",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0086",
+   "phrase": "social comparison culture",
+   "gloss": "社会攀比文化",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0087",
+   "phrase": "show off",
+   "gloss": "炫耀",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0088",
+   "phrase": "social identity",
+   "gloss": "社会身份",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0089",
+   "phrase": "symbol of social status",
+   "gloss": "社会地位象征",
+   "dimension": "money",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0090",
+   "phrase": "time-wasting",
+   "gloss": "浪费时间",
+   "dimension": "time",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0091",
+   "phrase": "time-consuming",
+   "gloss": "耗时",
+   "dimension": "time",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0092",
+   "phrase": "a waste of time",
+   "gloss": "浪费时间",
+   "dimension": "time",
+   "group": "negative",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0093",
+   "phrase": "time-saving",
+   "gloss": "省时",
+   "dimension": "time",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0094",
+   "phrase": "efficient",
+   "gloss": "高效",
+   "dimension": "time",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0095",
+   "phrase": "convenient",
+   "gloss": "方便",
+   "dimension": "time",
+   "group": "positive",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0096",
+   "phrase": "work-life balance",
+   "gloss": "工作生活平衡",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0097",
+   "phrase": "work overtime",
+   "gloss": "加班",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0098",
+   "phrase": "kill time",
+   "gloss": "消磨时间",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0099",
+   "phrase": "commuting time",
+   "gloss": "通勤时间",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0100",
+   "phrase": "on time",
+   "gloss": "准时",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0101",
+   "phrase": "in time",
+   "gloss": "及时",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0102",
+   "phrase": "peak time/rush hours",
+   "gloss": "高峰期",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0103",
+   "phrase": "traffic jam/congestions",
+   "gloss": "交通拥堵",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0104",
+   "phrase": "time off/days off",
+   "gloss": "休假",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0105",
+   "phrase": "fast-paced lifestyle",
+   "gloss": "快节奏生活",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0106",
+   "phrase": "slow-paced lifestyle",
+   "gloss": "慢节奏生活",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0107",
+   "phrase": "free time/leisure time/entertainment time",
+   "gloss": "空闲时间",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0108",
+   "phrase": "time-management skills",
+   "gloss": "时间管理技能",
+   "dimension": "time",
+   "group": "extension",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0109",
+   "phrase": "richer and richer",
+   "gloss": "越来越富有",
+   "dimension": "economy-then-now",
+   "group": "advantages",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0110",
+   "phrase": "satisfy material needs",
+   "gloss": "满足物质需求",
+   "dimension": "economy-then-now",
+   "group": "advantages",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0111",
+   "phrase": "higher living standard",
+   "gloss": "更高生活水平",
+   "dimension": "economy-then-now",
+   "group": "advantages",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0112",
+   "phrase": "governments have funds",
+   "gloss": "政府有资金",
+   "dimension": "economy-then-now",
+   "group": "advantages",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0113",
+   "phrase": "better financial condition",
+   "gloss": "更好的经济状况",
+   "dimension": "economy-then-now",
+   "group": "advantages",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0114",
+   "phrase": "consumerism",
+   "gloss": "消费主义",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0115",
+   "phrase": "work overtime",
+   "gloss": "加班",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0116",
+   "phrase": "weaken relationship with others",
+   "gloss": "削弱人际关系",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0117",
+   "phrase": "more life pressure",
+   "gloss": "更多生活压力",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0118",
+   "phrase": "competitive job market",
+   "gloss": "竞争激烈的就业市场",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0119",
+   "phrase": "fierce competition",
+   "gloss": "激烈竞争",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0120",
+   "phrase": "social isolation",
+   "gloss": "社会孤立",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0121",
+   "phrase": "wider gap between rich and poor",
+   "gloss": "贫富差距扩大",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0122",
+   "phrase": "inflation",
+   "gloss": "通货膨胀",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0123",
+   "phrase": "expensive commodities/houses",
+   "gloss": "昂贵的商品 / 房子",
+   "dimension": "economy-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0124",
+   "phrase": "mature infrastructure",
+   "gloss": "完善的基础设施",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0125",
+   "phrase": "more facilities",
+   "gloss": "更多设施",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0126",
+   "phrase": "convenience",
+   "gloss": "便利",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0127",
+   "phrase": "skyscrapers",
+   "gloss": "摩天大楼",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0128",
+   "phrase": "diverse entertainment ways",
+   "gloss": "多样化娱乐方式",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0129",
+   "phrase": "online shopping",
+   "gloss": "网购",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0130",
+   "phrase": "digital payments",
+   "gloss": "数字支付",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0131",
+   "phrase": "deliveries",
+   "gloss": "外卖配送",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0132",
+   "phrase": "online learning",
+   "gloss": "线上学习",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0133",
+   "phrase": "work from home",
+   "gloss": "居家办公",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0134",
+   "phrase": "live streaming",
+   "gloss": "直播",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0135",
+   "phrase": "online influencers/celebrities",
+   "gloss": "网红",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0136",
+   "phrase": "freelancers",
+   "gloss": "自由职业者",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0137",
+   "phrase": "smart furniture",
+   "gloss": "智能家具",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0138",
+   "phrase": "automatic devices",
+   "gloss": "自动化设备",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0139",
+   "phrase": "VR devices",
+   "gloss": "VR 设备",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0140",
+   "phrase": "immersive experience",
+   "gloss": "沉浸式体验",
+   "dimension": "technology-then-now",
+   "group": "progress",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0141",
+   "phrase": "obsessed with short videos",
+   "gloss": "沉迷短视频",
+   "dimension": "technology-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0142",
+   "phrase": "addicted to video games",
+   "gloss": "沉迷游戏",
+   "dimension": "technology-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0143",
+   "phrase": "virtual world",
+   "gloss": "虚拟世界",
+   "dimension": "technology-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0144",
+   "phrase": "weaken real connections",
+   "gloss": "削弱真实联结",
+   "dimension": "technology-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0145",
+   "phrase": "AI/robots replace human jobs",
+   "gloss": "AI / 机器人替代人类工作",
+   "dimension": "technology-then-now",
+   "group": "problems",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0146",
+   "phrase": "A and B are equally important",
+   "gloss": "同等重要",
+   "dimension": "either-or",
+   "group": "frames",
+   "polarity": "neutral",
+   "kind": "frame"
+  },
+  {
+   "id": "c0147",
+   "phrase": "A and B are irreplaceable parts of...",
+   "gloss": "都是... 不可替代的部分",
+   "dimension": "either-or",
+   "group": "frames",
+   "polarity": "neutral",
+   "kind": "frame"
+  },
+  {
+   "id": "c0148",
+   "phrase": "A and B are complementary",
+   "gloss": "互补的",
+   "dimension": "either-or",
+   "group": "frames",
+   "polarity": "neutral",
+   "kind": "frame"
+  },
+  {
+   "id": "c0149",
+   "phrase": "make noise to express feelings",
+   "gloss": "通过吵闹表达情绪",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0150",
+   "phrase": "frequent emotional changes",
+   "gloss": "情绪多变",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0151",
+   "phrase": "cry",
+   "gloss": "哭闹",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0152",
+   "phrase": "annoying/disturbing",
+   "gloss": "令人困扰",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0153",
+   "phrase": "impatient",
+   "gloss": "没耐心",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0154",
+   "phrase": "immature",
+   "gloss": "不成熟",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0155",
+   "phrase": "easily distracted/influenced",
+   "gloss": "易分心 / 受影响",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0156",
+   "phrase": "cannot distinguish right from wrong",
+   "gloss": "无法分辨对错",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0157",
+   "phrase": "lack critical thinking/problem-solving skills",
+   "gloss": "缺乏批判性思维 / 解决问题能力",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0158",
+   "phrase": "lack self-control/self-discipline",
+   "gloss": "缺乏自控 / 自律",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0159",
+   "phrase": "rely on parents",
+   "gloss": "依赖父母",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0160",
+   "phrase": "weak/vulnerable",
+   "gloss": "脆弱",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0161",
+   "phrase": "easily cheated/injured",
+   "gloss": "易受骗 / 受伤",
+   "dimension": "children",
+   "group": "drawbacks",
+   "polarity": "negative",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0162",
+   "phrase": "active",
+   "gloss": "活泼",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0163",
+   "phrase": "positive",
+   "gloss": "积极",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0164",
+   "phrase": "energetic",
+   "gloss": "有活力",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0165",
+   "phrase": "enthusiastic",
+   "gloss": "热情",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0166",
+   "phrase": "adventurous",
+   "gloss": "爱冒险",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0167",
+   "phrase": "cute",
+   "gloss": "可爱",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0168",
+   "phrase": "creative",
+   "gloss": "有创造力",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0169",
+   "phrase": "imaginative",
+   "gloss": "有想象力",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0170",
+   "phrase": "curious",
+   "gloss": "好奇",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0171",
+   "phrase": "easily motivated/satisfied",
+   "gloss": "易被激励 / 满足",
+   "dimension": "children",
+   "group": "strengths",
+   "polarity": "positive",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0172",
+   "phrase": "need guidance/supervision",
+   "gloss": "需要引导 / 监督",
+   "dimension": "children",
+   "group": "needs",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0173",
+   "phrase": "need protection",
+   "gloss": "需要保护",
+   "dimension": "children",
+   "group": "needs",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0174",
+   "phrase": "develop right value systems/good habits",
+   "gloss": "培养正确价值观 / 好习惯",
+   "dimension": "children",
+   "group": "needs",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0175",
+   "phrase": "first teacher of kids",
+   "gloss": "孩子的第一任老师",
+   "dimension": "parents",
+   "group": "roles",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0176",
+   "phrase": "supervisor",
+   "gloss": "监督者",
+   "dimension": "parents",
+   "group": "roles",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0177",
+   "phrase": "role model",
+   "gloss": "榜样",
+   "dimension": "parents",
+   "group": "roles",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0178",
+   "phrase": "set an example for kids",
+   "gloss": "为孩子树立榜样",
+   "dimension": "parents",
+   "group": "roles",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0179",
+   "phrase": "kids copy behaviors from parents",
+   "gloss": "孩子模仿父母行为",
+   "dimension": "parents",
+   "group": "roles",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0180",
+   "phrase": "set reward and punishment systems",
+   "gloss": "设立奖惩机制",
+   "dimension": "parents",
+   "group": "roles",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0181",
+   "phrase": "parenting skills",
+   "gloss": "育儿技巧",
+   "dimension": "parents",
+   "group": "roles",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0182",
+   "phrase": "avoid spoiling kids",
+   "gloss": "避免宠坏孩子",
+   "dimension": "parents",
+   "group": "roles",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0183",
+   "phrase": "professional",
+   "gloss": "专业",
+   "dimension": "teachers",
+   "group": "traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0184",
+   "phrase": "systematical",
+   "gloss": "系统的",
+   "dimension": "teachers",
+   "group": "traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0185",
+   "phrase": "academic",
+   "gloss": "学术的",
+   "dimension": "teachers",
+   "group": "traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0186",
+   "phrase": "comprehensive",
+   "gloss": "全面的",
+   "dimension": "teachers",
+   "group": "traits",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0187",
+   "phrase": "develop students' right value systems/behaviors/habits",
+   "gloss": "培养学生正确价值观 / 行为 / 习惯",
+   "dimension": "teachers",
+   "group": "contribution",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0188",
+   "phrase": "timetable",
+   "gloss": "时间表",
+   "dimension": "skills",
+   "group": "time-management-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0189",
+   "phrase": "schedule",
+   "gloss": "计划",
+   "dimension": "skills",
+   "group": "time-management-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0190",
+   "phrase": "to-do list",
+   "gloss": "待办清单",
+   "dimension": "skills",
+   "group": "time-management-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0191",
+   "phrase": "punctual",
+   "gloss": "准时",
+   "dimension": "skills",
+   "group": "time-management-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0192",
+   "phrase": "improve work/study efficiency",
+   "gloss": "提高效率",
+   "dimension": "skills",
+   "group": "time-management-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0193",
+   "phrase": "save/earn money",
+   "gloss": "存钱 / 赚钱",
+   "dimension": "skills",
+   "group": "money-management-money-making-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0194",
+   "phrase": "make a living",
+   "gloss": "谋生",
+   "dimension": "skills",
+   "group": "money-management-money-making-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0195",
+   "phrase": "satisfy material needs",
+   "gloss": "满足物质需求",
+   "dimension": "skills",
+   "group": "money-management-money-making-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0196",
+   "phrase": "get a foothold in society",
+   "gloss": "在社会立足",
+   "dimension": "skills",
+   "group": "money-management-money-making-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0197",
+   "phrase": "accumulate life experience",
+   "gloss": "积累经验",
+   "dimension": "skills",
+   "group": "problem-solving-decision-making-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0198",
+   "phrase": "learn from others",
+   "gloss": "向他人学习",
+   "dimension": "skills",
+   "group": "problem-solving-decision-making-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0199",
+   "phrase": "make quick and right decisions",
+   "gloss": "快速正确决策",
+   "dimension": "skills",
+   "group": "problem-solving-decision-making-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0200",
+   "phrase": "think from different perspectives",
+   "gloss": "多角度思考",
+   "dimension": "skills",
+   "group": "critical-independent-thinking-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0201",
+   "phrase": "objective",
+   "gloss": "客观",
+   "dimension": "skills",
+   "group": "critical-independent-thinking-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0202",
+   "phrase": "empathy",
+   "gloss": "同理心",
+   "dimension": "skills",
+   "group": "critical-independent-thinking-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0203",
+   "phrase": "creativity",
+   "gloss": "创造力",
+   "dimension": "skills",
+   "group": "critical-independent-thinking-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0204",
+   "phrase": "imagination",
+   "gloss": "想象力",
+   "dimension": "skills",
+   "group": "critical-independent-thinking-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0205",
+   "phrase": "right value systems",
+   "gloss": "正确价值观",
+   "dimension": "skills",
+   "group": "critical-independent-thinking-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0206",
+   "phrase": "no supervision",
+   "gloss": "无需监督",
+   "dimension": "skills",
+   "group": "self-study-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0207",
+   "phrase": "self-motivated",
+   "gloss": "自我激励",
+   "dimension": "skills",
+   "group": "self-study-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0208",
+   "phrase": "internal motivation",
+   "gloss": "内在动力",
+   "dimension": "skills",
+   "group": "self-study-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0209",
+   "phrase": "concentration",
+   "gloss": "专注力",
+   "dimension": "skills",
+   "group": "self-study-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0210",
+   "phrase": "share feelings",
+   "gloss": "分享感受",
+   "dimension": "skills",
+   "group": "communication-interpersonal-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0211",
+   "phrase": "make new friends",
+   "gloss": "结交朋友",
+   "dimension": "skills",
+   "group": "communication-interpersonal-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0212",
+   "phrase": "accumulate human resources",
+   "gloss": "积累人脉",
+   "dimension": "skills",
+   "group": "communication-interpersonal-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0213",
+   "phrase": "start a conversation",
+   "gloss": "开启对话",
+   "dimension": "skills",
+   "group": "communication-interpersonal-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0214",
+   "phrase": "find common topics",
+   "gloss": "找到共同话题",
+   "dimension": "skills",
+   "group": "communication-interpersonal-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0215",
+   "phrase": "exchange ideas",
+   "gloss": "交流想法",
+   "dimension": "skills",
+   "group": "teamwork-cooperation-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0216",
+   "phrase": "brainstorming",
+   "gloss": "头脑风暴",
+   "dimension": "skills",
+   "group": "teamwork-cooperation-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0217",
+   "phrase": "generate new ideas",
+   "gloss": "产生新想法",
+   "dimension": "skills",
+   "group": "teamwork-cooperation-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0218",
+   "phrase": "understand strengths and weaknesses",
+   "gloss": "了解优缺点",
+   "dimension": "skills",
+   "group": "teamwork-cooperation-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0219",
+   "phrase": "cooking",
+   "gloss": "烹饪",
+   "dimension": "skills",
+   "group": "life-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0220",
+   "phrase": "housework",
+   "gloss": "家务",
+   "dimension": "skills",
+   "group": "life-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0221",
+   "phrase": "technology operation",
+   "gloss": "技术操作",
+   "dimension": "skills",
+   "group": "life-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0222",
+   "phrase": "language",
+   "gloss": "语言",
+   "dimension": "skills",
+   "group": "life-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0223",
+   "phrase": "repairing",
+   "gloss": "维修",
+   "dimension": "skills",
+   "group": "life-skills",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0224",
+   "phrase": "special meanings",
+   "gloss": "特殊意义",
+   "dimension": "traditional-items",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0225",
+   "phrase": "recall memory",
+   "gloss": "唤起回忆",
+   "dimension": "traditional-items",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0226",
+   "phrase": "heritage",
+   "gloss": "遗产",
+   "dimension": "traditional-items",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0227",
+   "phrase": "symbol of...",
+   "gloss": "... 的象征",
+   "dimension": "traditional-items",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0228",
+   "phrase": "a sense of belonging and identity",
+   "gloss": "归属感与认同感",
+   "dimension": "traditional-items",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0229",
+   "phrase": "emotional connections",
+   "gloss": "情感联结",
+   "dimension": "traditional-items",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0230",
+   "phrase": "mental satisfaction",
+   "gloss": "心理满足",
+   "dimension": "traditional-items",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0231",
+   "phrase": "born different",
+   "gloss": "生而不同",
+   "dimension": "nature-and-nurture",
+   "group": "nature",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0232",
+   "phrase": "different genetics",
+   "gloss": "不同基因",
+   "dimension": "nature-and-nurture",
+   "group": "nature",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0233",
+   "phrase": "talents",
+   "gloss": "天赋",
+   "dimension": "nature-and-nurture",
+   "group": "nature",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0234",
+   "phrase": "abilities",
+   "gloss": "能力",
+   "dimension": "nature-and-nurture",
+   "group": "nature",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0235",
+   "phrase": "environment",
+   "gloss": "环境",
+   "dimension": "nature-and-nurture",
+   "group": "nurture",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0236",
+   "phrase": "educational background",
+   "gloss": "教育背景",
+   "dimension": "nature-and-nurture",
+   "group": "nurture",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0237",
+   "phrase": "practice",
+   "gloss": "练习",
+   "dimension": "nature-and-nurture",
+   "group": "nurture",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0238",
+   "phrase": "experience",
+   "gloss": "经验",
+   "dimension": "nature-and-nurture",
+   "group": "nurture",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0239",
+   "phrase": "special meanings",
+   "gloss": "特殊意义",
+   "dimension": "culture",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0240",
+   "phrase": "heritage",
+   "gloss": "遗产",
+   "dimension": "culture",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0241",
+   "phrase": "symbol of...",
+   "gloss": "... 的象征",
+   "dimension": "culture",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0242",
+   "phrase": "a sense of belonging and identity",
+   "gloss": "归属感与认同感",
+   "dimension": "culture",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0243",
+   "phrase": "emotional connections",
+   "gloss": "情感联结",
+   "dimension": "culture",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0244",
+   "phrase": "recall memories",
+   "gloss": "唤起回忆",
+   "dimension": "culture",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  },
+  {
+   "id": "c0245",
+   "phrase": "nostalgia",
+   "gloss": "怀旧",
+   "dimension": "culture",
+   "group": "keywords",
+   "polarity": "neutral",
+   "kind": "collocation"
+  }
+ ]
+}

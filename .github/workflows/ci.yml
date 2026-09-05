@@ -124,7 +124,69 @@ jobs:
 
       - name: Validate the JSON datasets
         run: |
-          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); print('datasets are valid JSON')"
+          python3 -c "import json; json.load(open('data/vocabulary.json')); json.load(open('data/corpus.json')); json.load(open('data/practice-tests.json')); json.load(open('data/study-notes.json')); json.load(open('data/collocations.json')); print('datasets are valid JSON')"
+
+      - name: Re-derive the study-notes and collocation datasets from upstream
+        run: |
+          curl -sL "https://api.github.com/repos/Oxidaner/ielts/git/trees/main?recursive=1" -o /tmp/notes-tree.json
+          mkdir -p "/tmp/notes-checkout/口语"
+          curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+            "https://api.github.com/repos/Oxidaner/ielts/git/blobs/71b3d5039aa49bf41ebb323e17500489ba44e161" \
+            -o "/tmp/notes-checkout/口语/口语part 3方法论.md"
+          curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+            "https://api.github.com/repos/Oxidaner/ielts/git/blobs/28a27e2e827e9536d75546c5d15b1a3ed713b12d" \
+            -o "/tmp/notes-checkout/口语/神奇题库.md"
+          python3 scripts/extract_study_notes.py /tmp/notes-tree.json /tmp/notes-checkout /tmp/study-notes.json
+          python3 scripts/extract_collocations.py "/tmp/notes-checkout/口语/口语part 3方法论.md" /tmp/collocations.json
+          python3 - <<'PY'
+          import json
+
+          for name, committed, regenerated in (
+              ("study-notes", "data/study-notes.json", "/tmp/study-notes.json"),
+              ("collocations", "data/collocations.json", "/tmp/collocations.json"),
+          ):
+              left = json.load(open(committed, encoding="utf-8"))
+              right = json.load(open(regenerated, encoding="utf-8"))
+              assert left == right, f"data/{name}.json is out of date"
+              print(f"{name} reproducible: {right['stats']}")
+          PY
+
+      - name: Check the study-notes and collocation indexes for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+
+          notes = json.load(open('data/study-notes.json', encoding='utf-8'))
+          items, stats = notes['items'], notes['stats']
+          assert stats['indexedFiles'] == len(items), 'indexedFiles disagrees with items'
+          assert len({item['id'] for item in items}) == len(items), 'duplicate identifiers'
+          assert items == sorted(items, key=lambda item: item['path']), 'items not in path order'
+          assert sum(stats['bySkill'].values()) == len(items), 'skill totals differ'
+          assert sum(stats['byCategory'].values()) == len(items), 'category totals differ'
+          assert sum(stats['byFormat'].values()) == len(items), 'format totals differ'
+          bank = stats['speakingBank']
+          assert bank['questions'] == bank['part1Questions'] + bank['part3FollowUpQuestions']
+          for item in items:
+              assert item['path'].replace(' ', '%20') in item['sourceUrl'], item['id']
+              assert len(item['sha1'] or '') == 40, item['id']
+
+          bank_items = json.load(open('data/collocations.json', encoding='utf-8'))
+          entries, cstats = bank_items['items'], bank_items['stats']
+          assert cstats['phrases'] == len(entries), 'phrases disagrees with items'
+          assert len({entry['id'] for entry in entries}) == len(entries), 'duplicate identifiers'
+          assert sum(cstats['byDimension'].values()) == len(entries), 'dimension totals differ'
+          assert sum(cstats['byPolarity'].values()) == len(entries), 'polarity totals differ'
+          assert sum(cstats['byKind'].values()) == len(entries), 'kind totals differ'
+          assert len(bank_items['dimensions']) == cstats['dimensions'], 'catalogue disagrees'
+          for entry in entries:
+              assert entry['dimension'] in {d['id'] for d in bank_items['dimensions']}, entry['id']
+              assert len(entry['phrase']) > 1, entry['id']
+
+          print(
+              f"indexes consistent: {len(items)} study-note files, "
+              f"{len(entries)} collocations across {cstats['dimensions']} dimensions"
+          )
+          PY
 
       - name: Check the practice-test index for internal consistency
         run: |

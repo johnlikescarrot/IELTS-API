@@ -6,8 +6,15 @@
  */
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
+import {
+  COLLOCATION_KINDS,
+  COLLOCATION_POLARITIES,
+  observedDimensions,
+  observedGroups,
+} from '../data/collocations.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
+import { STUDY_SKILLS, studyNoteFacets } from '../data/studyNotes.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
@@ -217,6 +224,68 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/notes/items': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...STUDY_SKILLS] } },
+    {
+      name: 'category',
+      in: 'query',
+      description: 'Comma-separated collection categories.',
+      schema: { type: 'string', enum: studyNoteFacets('category') },
+    },
+    {
+      name: 'format',
+      in: 'query',
+      description: 'Comma-separated file extensions.',
+      schema: { type: 'string', enum: studyNoteFacets('format') },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['title', 'category', 'skill', 'size', 'path'], default: 'title' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/collocations/items': [
+    QUERY,
+    {
+      name: 'dimension',
+      in: 'query',
+      description: 'Comma-separated argumentative dimensions.',
+      schema: { type: 'string', enum: observedDimensions() },
+    },
+    {
+      name: 'group',
+      in: 'query',
+      description: 'Comma-separated sub-groups inside a dimension.',
+      schema: { type: 'string', enum: observedGroups() },
+    },
+    {
+      name: 'polarity',
+      in: 'query',
+      schema: { type: 'string', enum: [...COLLOCATION_POLARITIES] },
+    },
+    { name: 'kind', in: 'query', schema: { type: 'string', enum: [...COLLOCATION_KINDS] } },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['phrase', 'dimension', 'polarity'], default: 'phrase' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/collocations/random': [
+    { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 5 } },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds return identical samples.',
+      schema: { type: 'string' },
+    },
+  ],
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },
@@ -321,7 +390,9 @@ export function openApiDocument(
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, a structure and readability',
-        'index of 1,702 practice tests, and an index of the open IELTS research corpus.',
+        'index of 1,702 practice tests, an index of the open IELTS research corpus,',
+        'an index of a 2,353-file self-study collection with speaking-bank counts,',
+        'and a 245-phrase Speaking argumentative collocation bank across 14 dimensions.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

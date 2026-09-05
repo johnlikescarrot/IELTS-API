@@ -20,7 +20,10 @@
     "readability",
     "CEFR",
     "open data",
-    "REST API"
+    "REST API",
+    "collocations",
+    "phraseology",
+    "speaking"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -39,5 +42,6 @@
       "relation": "isDerivedFrom",
       "scheme": "url"
     }
-  ]
+  ],
+  "version": "1.2.0"
 }

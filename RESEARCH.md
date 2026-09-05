@@ -3,14 +3,15 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Three independent upstream collections are analysed:
 
-| Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
-| [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| Part                                                   | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                 | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
+| [Part II](#part-ii--the-practice-test-collection)      | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| [Part III](#part-iii--the-self-study-notes-collection) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the self-study collection index and the Speaking argumentative collocation bank  |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+None of the collections is redistributed. All three are indexed, measured and cited.
 
 ## Part I — the research corpus
 
@@ -327,4 +328,138 @@ python3 scripts/extract_practice_tests.py tree.json upstream data/practice-tests
 ```
 
 The script is standard library only and deterministic: the same tree and the same files always
+produce byte-identical output.
+
+## Part III — the self-study notes collection
+
+**Collection snapshot:** [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts), commit
+`738c60828118f8f9d720e548b73245dd0fe70a30` (20 November 2025), 72 commits, single branch `main`,
+2,385 blobs, 4.8 GB, no licence file.
+
+### 13. What the collection contains
+
+Where Part I is a dump of books and Part II is a gated study product, this collection is a single
+candidate's personal study archive ("自学笔记" — self-study notes) assembled over four months of
+exam preparation. Its five skill folders and their weight are:
+
+| Folder              | Skill     | Files |    Size | Share of bytes |
+| ------------------- | --------- | ----: | ------: | -------------: |
+| `听力` (listening)  | listening |   722 | 3.61 GB |          71.0% |
+| `阅读` (reading)    | reading   | 1,593 | 1.20 GB |          23.6% |
+| `作文` (writing)    | writing   |    27 | 0.26 GB |           5.1% |
+| `口语` (speaking)   | speaking  |     7 | 0.01 GB |           0.2% |
+| `经验` (experience) | general   |     4 | 0.01 GB |           0.2% |
+
+Two observations follow. First, **the archive is audio-heavy but listening-first in bytes only**:
+71% of the bytes are `mp3` recordings and the PDFs that accompany them, while reading dominates the
+file count through per-article HTML and PDF exports. Second, **the material is almost entirely
+third-party**: predicted-question article collections attributed to named teachers, training-camp
+handouts, scene-vocabulary recordings and question-bank exports circulated in study groups. Only a
+handful of Markdown files are the author's own notes — and those are the files this project mines.
+
+Classification of every file by an ordered keyword rule set (first match wins; RESEARCH rules in
+`scripts/extract_study_notes.py`) yields the category distribution behind `/v1/notes`:
+
+| Category            | Files | What it marks                                                     |
+| ------------------- | ----: | ----------------------------------------------------------------- |
+| `high-frequency`    | 1,489 | teacher-predicted "frequent" passages and word lists              |
+| `practice-material` |   422 | question-and-answer sheets (dictation sets, full practice papers) |
+| `vocabulary`        |   148 | scene-vocabulary lists, glossaries, word-audio pairs              |
+| `course-material`   |   144 | training-camp handouts, crash-course guides                       |
+| `web-asset`         |    70 | scripts, styles and icons saved with the HTML lessons             |
+| `practice-test`     |    36 | numbered Cambridge-style tests with keys and audio                |
+| other 11 categories |   144 | templates, question banks, methodology, exam recall, strategy, …  |
+
+31 files are editor droppings (`.DS_Store`, a Word lock file) and one — a software-career roadmap —
+is not IELTS material; both groups are counted in `stats.excludedJunkFiles` and
+`stats.excludedNonIeltsFiles` rather than silently dropped.
+
+### 14. Counting the speaking question bank
+
+`口语/神奇题库.md` is a seasonal speaking question bank. Only counts are published (the questions
+themselves are circulated commercial predictions):
+
+| Measure                    |       Count |
+| -------------------------- | ----------: |
+| Part 1 topics              |          18 |
+| Part 1 questions           |          79 |
+| Part 2 cue cards           |          22 |
+| Part 3 follow-up questions |         121 |
+| Total counted questions    |         200 |
+| Season (from file names)   | 2025-09..12 |
+
+A four-month personal archive that already tracks a question bank by season is fieldwork evidence
+for how candidates actually prepare: predicted question banks, not textbooks, drive speaking
+practice.
+
+### 15. Mining the argumentative collocation bank
+
+`口语/口语part 3方法论.md` is the author's own methodology note for Speaking Part 3. Part I of the
+note ("分维度讨论思路") organises English collocations by the argumentative **dimension** they
+serve; Part II is a set of model Part 2 answers in prose and is deliberately **not** extracted.
+
+`scripts/extract_collocations.py` parses Part I deterministically: every list item is split on the
+Chinese enumeration comma, an English phrase is kept only with its Chinese gloss where published,
+and the enclosing heading and bold labels determine the dimension, sub-group, polarity
+(positive/negative/neutral) and kind (collocation versus sentence frame). The result is
+`data/collocations.json`:
+
+| Measure                                |         Value |
+| -------------------------------------- | ------------: |
+| Phrases (entries)                      |           245 |
+| Distinct phrases                       |           233 |
+| Glossed phrases                        |           240 |
+| Dimensions                             |            14 |
+| Frames                                 |             8 |
+| Polarity positive / negative / neutral | 50 / 45 / 149 |
+| Mean phrase length                     |    2.44 words |
+
+The interesting finding is **cross-listing**: 9 phrases are taught under more than one dimension.
+`satisfy material needs` appears under money, economy-then-now and skills; `emotional connections`
+under emotional-value, traditional-items and culture; `work overtime` under both time and
+economy-then-now. The note is not a dictionary but an argumentation toolkit whose phrases are
+deliberately reusable across question types — which is exactly the property a phrase bank for
+response-planning research needs to preserve, and why the same phrase may appear several times with
+different dimension tags rather than being de-duplicated.
+
+The bank is small, bilingual (240 of 245 entries carry the original Chinese gloss) and fully typed:
+dimension, sub-group, polarity and kind give four independent facets for filtering, and every entry
+is deterministic to sample through `/v1/collocations/random` for reproducible study designs.
+
+### 16. Threats to validity (Part III)
+
+- **One candidate's archive.** The collection documents a single preparation trajectory at one point
+  in time (August–November 2025); it is not a sample of the candidate population.
+- **Filename classification is heuristic.** Categories come from ordered keyword rules over paths,
+  not from opening the files. Files misfiled by the author are mis-classified here; the rules and
+  the per-item paths are published so mis-classification is auditable.
+- **The question-bank season is inferred from sibling file names**, not from a dated header inside
+  the note; the note itself is undated.
+- **The collocation bank is a teaching selection, not a corpus.** It records what one tutor
+  considered argumentatively useful, so frequencies within it describe pedagogy, not usage. The
+  polarity tags follow the note's own labels and inherit its judgements.
+- **Glosses are the author's.** The Chinese glosses are retained verbatim for reproducibility;
+  they are one learner's renderings, not dictionary senses.
+- **Licensing is undeclared upstream.** The repository carries no licence. This project publishes
+  only metadata counts and short common collocations with attribution, and nothing substitutive for
+  the archive; the model answers and all third-party course material stay unindexed in content
+  terms. Users should cite the upstream collection alongside this API.
+- **The snapshot is mutable.** The commit SHA recorded in both datasets pins the analysis; upstream
+  history rewrites would change the tree.
+
+### 17. Reproducing Part III
+
+```bash
+curl -sL "https://api.github.com/repos/Oxidaner/ielts/git/trees/main?recursive=1" -o tree.json
+
+# A checkout is needed only for the two Markdown files that are counted and mined.
+# The archive is 4.8 GB; a sparse checkout of just the speaking folder is enough:
+git clone --filter=blob:none --sparse https://github.com/Oxidaner/ielts checkout
+cd checkout && git sparse-checkout set 口语 && cd ..
+
+python3 scripts/extract_study_notes.py tree.json checkout data/study-notes.json
+python3 scripts/extract_collocations.py 'checkout/口语/口语part 3方法论.md' data/collocations.json
+```
+
+Both scripts are standard library only and deterministic: the same tree and the same note always
 produce byte-identical output.

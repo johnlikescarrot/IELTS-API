@@ -189,6 +189,137 @@ export type Resource = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Self-study notes collection                                                */
+/* -------------------------------------------------------------------------- */
+
+/** Skills covered by the indexed self-study collection. */
+export type StudySkill = 'writing' | 'speaking' | 'listening' | 'reading' | 'general';
+
+/** One file of the indexed self-study collection. */
+export type StudyNoteItem = {
+  /** Stable identifier (`n00001`). */
+  id: string;
+  /** Path inside the upstream repository (skill folders are Chinese). */
+  path: string;
+  /** Human-readable title derived from the file name. */
+  title: string;
+  /** Skill folder the file lives in. */
+  skill: StudySkill;
+  /** Collection category (derived metadata, see RESEARCH.md Part III). */
+  category: string;
+  /** File extension without the dot (`none` when absent). */
+  format: string;
+  /** Size in bytes. */
+  sizeBytes: number;
+  /** Git blob SHA-1. */
+  sha1: string | null;
+  /** Public URL of the file in the upstream repository. */
+  sourceUrl: string;
+};
+
+/** Derived counts of the speaking question bank shipped in the collection. */
+export type SpeakingBankStats = {
+  /** Path of the counted note inside the upstream repository. */
+  sourcePath: string;
+  /** Season label parsed from the sibling export file names, when present. */
+  season: string | null;
+  /** Part 1 topics listed in the bank. */
+  part1Topics: number;
+  /** Part 1 questions listed in the bank. */
+  part1Questions: number;
+  /** Part 2 cue cards listed in the bank. */
+  part2CueCards: number;
+  /** Part 3 follow-up questions attached to the cue cards. */
+  part3FollowUpQuestions: number;
+  /** Total counted questions (Part 1 plus Part 3). */
+  questions: number;
+};
+
+/** Aggregated statistics about the self-study collection. */
+export type StudyNotesStats = {
+  /** Files in the upstream repository, junk included. */
+  filesInRepository: number;
+  /** Files in this index. */
+  indexedFiles: number;
+  /** Total size of the indexed files. */
+  indexedBytes: number;
+  /** Editor droppings and OS metadata excluded from the index. */
+  excludedJunkFiles: number;
+  /** Non-IELTS files excluded from the index. */
+  excludedNonIeltsFiles: number;
+  /** Share of upstream files that the index covers. */
+  coverageRatio: number;
+  /** Indexed files per skill. */
+  bySkill: Record<string, number>;
+  /** Indexed files per category. */
+  byCategory: Record<string, number>;
+  /** Indexed files per format. */
+  byFormat: Record<string, number>;
+  /** Counts of the speaking question bank (the canonical dataset always carries them). */
+  speakingBank: SpeakingBankStats;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Speaking argumentative collocation bank                                    */
+/* -------------------------------------------------------------------------- */
+
+/** Polarity a collocation carries in its argumentative dimension. */
+export type CollocationPolarity = 'positive' | 'negative' | 'neutral';
+
+/** Whether an entry is a multi-word collocation or a full sentence frame. */
+export type CollocationKind = 'collocation' | 'frame';
+
+/** One argumentative dimension of the collocation bank. */
+export type CollocationDimensionInfo = {
+  /** Stable identifier (`emotional-value`). */
+  id: string;
+  /** Human-readable label. */
+  label: string;
+  /** What the dimension argues about. */
+  description: string;
+  /** Upstream heading the dimension was taken from. */
+  source: string;
+  /** Number of phrases in the dimension. */
+  phrases: number;
+};
+
+/** One collocation or frame of the phrase bank. */
+export type CollocationEntry = {
+  /** Stable identifier (`c0001`). */
+  id: string;
+  /** The English collocation or frame. */
+  phrase: string;
+  /** Chinese gloss published in the upstream note, when present. */
+  gloss: string | null;
+  /** Argumentative dimension. */
+  dimension: string;
+  /** Sub-group inside the dimension (`introverted-traits`). */
+  group: string;
+  /** Polarity inside the dimension. */
+  polarity: CollocationPolarity;
+  /** Entry kind. */
+  kind: CollocationKind;
+};
+
+/** Aggregated statistics about the collocation bank. */
+export type CollocationStats = {
+  /** Entries in the bank (cross-listed phrases counted per dimension). */
+  phrases: number;
+  /** Distinct phrases ignoring case and dimension. */
+  distinctPhrases: number;
+  /** Entries that carry a Chinese gloss. */
+  glossedPhrases: number;
+  /** Dimensions that hold at least one phrase. */
+  dimensions: number;
+  /** Entries per dimension. */
+  byDimension: Record<string, number>;
+  /** Entries per polarity. */
+  byPolarity: Record<string, number>;
+  /** Entries per kind. */
+  byKind: Record<string, number>;
+};
+
+/* -------------------------------------------------------------------------- */
 /* Research corpus                                                            */
 /* -------------------------------------------------------------------------- */
 

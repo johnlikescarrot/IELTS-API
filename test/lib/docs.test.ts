@@ -30,6 +30,8 @@ describe('renderDocs', () => {
 
   it('advertises the datasets, the citation block and the licence', () => {
     expect(page).toContain('4,174');
+    expect(page).toContain('2,353 files of a self-study collection');
+    expect(page).toContain('argumentative collocation bank');
     expect(page).toContain('@software{ielts_api');
     expect(page).toContain('https://github.com/johnlikescarrot/IELTS-API');
     expect(page).toContain('MIT');

@@ -6,11 +6,13 @@
  */
 
 import { bandRoutes } from './bands.js';
+import { collocationRoutes } from './collocations.js';
 import { corpusRoutes } from './corpus.js';
 import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
+import { studyNoteRoutes } from './notes.js';
 import { testRoutes } from './tests.js';
 import { topicRoutes } from './topics.js';
 import { vocabularyRoutes } from './vocabulary.js';
@@ -26,6 +28,8 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...questionTypeRoutes,
   ...testRoutes,
   ...corpusRoutes,
+  ...studyNoteRoutes,
+  ...collocationRoutes,
   ...resourceRoutes,
 ];
 

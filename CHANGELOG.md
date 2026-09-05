@@ -6,6 +6,43 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-09-05
+
+Third dataset family: the self-study notes collection
+[`Oxidaner/ielts`](https://github.com/Oxidaner/ielts) — a 4.8 GB personal IELTS study archive — is
+analysed, indexed and mined. As with the research corpus and the practice-test collection, only
+derived, non-substitutive metadata, counts and short collocations are published: no upstream
+document, recording, model answer or question text is redistributed.
+
+### Added
+
+- **Self-study collection index** (`data/study-notes.json`, 2,353 of 2,385 upstream files):
+  skill, category, format, size, blob SHA-1 and permalink for every file, plus aggregate
+  composition statistics and derived counts of the seasonal speaking question bank shipped inside
+  the collection (18 Part 1 topics, 79 Part 1 questions, 22 Part 2 cue cards, 121 Part 3 follow-up
+  questions, season 2025-09..12). Endpoints: `/v1/notes`, `/v1/notes/stats`, `/v1/notes/items`.
+- **Speaking argumentative collocation bank** (`data/collocations.json`, 245 phrases): English
+  collocations and sentence frames mined from Part I of the collection's Speaking Part 3
+  methodology note, each tagged with its argumentative dimension (14 dimensions from personality
+  types to nature and nurture), sub-group, polarity (50 positive / 45 negative / 149 neutral) and
+  the original Chinese gloss (240 of 245 entries). Endpoints: `/v1/collocations`,
+  `/v1/collocations/stats`, `/v1/collocations/dimensions`, `/v1/collocations/items`,
+  `/v1/collocations/random`.
+- `scripts/extract_study_notes.py` and `scripts/extract_collocations.py`: standard-library-only,
+  deterministic extraction from an upstream tree listing and a sparse checkout.
+- `RESEARCH.md` Part III: the collection analysis (audio-heavy composition, third-party material
+  share, category distribution), the question-bank counts, the collocation mining methodology, the
+  cross-listing finding (9 phrases taught under more than one dimension) and the threats to
+  validity that apply to all of it.
+
+### Changed
+
+- `/` and `/health` report the new dataset sizes (`studyNotesFiles`, `speakingBankQuestions`,
+  `collocationPhrases`, `collocationDimensions`); `/health` checks the two new datasets.
+- The OpenAPI document, the README dataset table and the endpoint index cover the new routes.
+- Test suite grown to 385 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.1.0] - 2026-09-05
 
 Second dataset family: the practice-test collection

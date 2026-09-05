@@ -11,6 +11,8 @@ This directory holds the archived artefacts of the API contract.
 | `vocabulary.json`               | 4,174 Cambridge IELTS 1-22 headwords with phonetics, sense-split glosses, morpheme hints and volume provenance. |
 | `corpus.json`                   | Metadata index of the 76 IELTS-relevant files of the 404-file open research corpus.                             |
 | `practice-tests.json`           | Structure, question-type normalisation, provenance and readability statistics for 1,702 practice items.         |
+| `study-notes.json`              | Metadata index of 2,353 files of the self-study collection, with derived speaking-bank counts.                  |
+| `collocations.json`             | 245 Speaking argumentative collocations and frames across 14 dimensions, with glosses and polarity tags.        |
 
 The datasets themselves live in [`data/`](../data) and are documented in
 [RESEARCH.md](../RESEARCH.md), which records the extraction methodology and the threats to validity

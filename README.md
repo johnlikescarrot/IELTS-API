@@ -20,12 +20,13 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is derived from two open collections — [`zhengyishiming/IELTS`][corpus] for the
-vocabulary and the corpus index, and [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
-question-type taxonomy and the practice-test structure and readability index. Neither is
-redistributed: the API publishes derived, non-substitutive metadata and statistics. See
-[RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every dataset, and
-[paper/paper.md](paper/paper.md) for the short research paper.
+Everything here is derived from three open collections — [`zhengyishiming/IELTS`][corpus] for the
+vocabulary and the corpus index, [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
+question-type taxonomy and the practice-test structure and readability index, and
+[`Oxidaner/ielts`][notes] for the self-study collection index and the Speaking argumentative
+collocation bank. None of them is redistributed: the API publishes derived, non-substitutive
+metadata and statistics. See [RESEARCH.md](RESEARCH.md) for the analysis and the construction
+methodology of every dataset, and [paper/paper.md](paper/paper.md) for the short research paper.
 
 ## Quick start
 
@@ -49,6 +50,12 @@ curl -s "http://localhost:3000/v1/question-types?skill=listening"
 
 # Graded reading passages between Flesch Reading Ease 60 and 80
 curl -s "http://localhost:3000/v1/tests/items?level=b1-b2&minReadingEase=60&maxReadingEase=80"
+
+# Negative money collocations for a Speaking Part 3 argument
+curl -s "http://localhost:3000/v1/collocations/items?dimension=money&polarity=negative"
+
+# A seeded random sample of argumentative collocations
+curl -s "http://localhost:3000/v1/collocations/random?seed=2026-09-05&count=3"
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -78,44 +85,54 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
 | Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
+| Self-study collection index     |                            2,353 of 2,385 upstream files | `/v1/notes`             | Metadata index of [the self-study collection][notes] with speaking-bank counts |
+| Speaking collocation bank       |                 245 phrases, 14 argumentative dimensions | `/v1/collocations`      | Mined from the methodology note in [the self-study collection][notes]          |
 
 ## Endpoints
 
 All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
 same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 
-| Method | Path                     | Description                                                                                       |
-| ------ | ------------------------ | ------------------------------------------------------------------------------------------------- |
-| GET    | `/`                      | Service index, dataset sizes, citation links                                                      |
-| GET    | `/v1`                    | List every versioned endpoint                                                                     |
-| GET    | `/health`                | Liveness and dataset availability                                                                 |
-| GET    | `/docs`                  | Human-readable documentation                                                                      |
-| GET    | `/openapi.json`          | OpenAPI 3.1 document generated from the live route table                                          |
-| GET    | `/v1/vocabulary`         | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
-| GET    | `/v1/vocabulary/stats`   | Dataset statistics                                                                                |
-| GET    | `/v1/vocabulary/random`  | Seeded random sample (`count`, `seed`)                                                            |
-| GET    | `/v1/vocabulary/daily`   | Deterministic entry for a date (`date`, `count`)                                                  |
-| GET    | `/v1/vocabulary/:word`   | Look up one headword                                                                              |
-| GET    | `/v1/bands`              | The band scale with indicative CEFR levels                                                        |
-| GET    | `/v1/bands/descriptors`  | Band descriptors (`set`, `criterion`, `band`)                                                     |
-| GET    | `/v1/bands/:band`        | One band, with the descriptors that bracket it                                                    |
-| GET    | `/v1/scores/overall`     | Overall band from the four components                                                             |
-| GET    | `/v1/scores/convert`     | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
-| GET    | `/v1/scores/interpret`   | Another scale back to an indicative IELTS band                                                    |
-| GET    | `/v1/topics/writing`     | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
-| GET    | `/v1/topics/speaking`    | Speaking Parts 1-3 (`part`, `q`)                                                                  |
-| GET    | `/v1/topics/themes`      | Recurring exam themes (`group`, `skill`, `q`)                                                     |
-| GET    | `/v1/tasks/writing`      | Writing Task 1 families (`module`)                                                                |
-| GET    | `/v1/question-types`     | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)          |
-| GET    | `/v1/question-types/:id` | One question type, with its traps and upstream label variants                                     |
-| GET    | `/v1/tests`              | Practice-test index: provenance, statistics, facets                                               |
-| GET    | `/v1/tests/stats`        | Question-type and readability statistics                                                          |
-| GET    | `/v1/tests/items`        | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)          |
-| GET    | `/v1/tests/:id`          | One indexed practice test or graded reading lesson                                                |
-| GET    | `/v1/corpus`             | Corpus metadata, statistics and facets                                                            |
-| GET    | `/v1/corpus/stats`       | Corpus statistics                                                                                 |
-| GET    | `/v1/corpus/items`       | Search the corpus index                                                                           |
-| GET    | `/v1/resources`          | Free preparation resources (`type`, `q`)                                                          |
+| Method | Path                          | Description                                                                                       |
+| ------ | ----------------------------- | ------------------------------------------------------------------------------------------------- |
+| GET    | `/`                           | Service index, dataset sizes, citation links                                                      |
+| GET    | `/v1`                         | List every versioned endpoint                                                                     |
+| GET    | `/health`                     | Liveness and dataset availability                                                                 |
+| GET    | `/docs`                       | Human-readable documentation                                                                      |
+| GET    | `/openapi.json`               | OpenAPI 3.1 document generated from the live route table                                          |
+| GET    | `/v1/vocabulary`              | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
+| GET    | `/v1/vocabulary/stats`        | Dataset statistics                                                                                |
+| GET    | `/v1/vocabulary/random`       | Seeded random sample (`count`, `seed`)                                                            |
+| GET    | `/v1/vocabulary/daily`        | Deterministic entry for a date (`date`, `count`)                                                  |
+| GET    | `/v1/vocabulary/:word`        | Look up one headword                                                                              |
+| GET    | `/v1/bands`                   | The band scale with indicative CEFR levels                                                        |
+| GET    | `/v1/bands/descriptors`       | Band descriptors (`set`, `criterion`, `band`)                                                     |
+| GET    | `/v1/bands/:band`             | One band, with the descriptors that bracket it                                                    |
+| GET    | `/v1/scores/overall`          | Overall band from the four components                                                             |
+| GET    | `/v1/scores/convert`          | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
+| GET    | `/v1/scores/interpret`        | Another scale back to an indicative IELTS band                                                    |
+| GET    | `/v1/topics/writing`          | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
+| GET    | `/v1/topics/speaking`         | Speaking Parts 1-3 (`part`, `q`)                                                                  |
+| GET    | `/v1/topics/themes`           | Recurring exam themes (`group`, `skill`, `q`)                                                     |
+| GET    | `/v1/tasks/writing`           | Writing Task 1 families (`module`)                                                                |
+| GET    | `/v1/question-types`          | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)          |
+| GET    | `/v1/question-types/:id`      | One question type, with its traps and upstream label variants                                     |
+| GET    | `/v1/tests`                   | Practice-test index: provenance, statistics, facets                                               |
+| GET    | `/v1/tests/stats`             | Question-type and readability statistics                                                          |
+| GET    | `/v1/tests/items`             | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)          |
+| GET    | `/v1/tests/:id`               | One indexed practice test or graded reading lesson                                                |
+| GET    | `/v1/corpus`                  | Corpus metadata, statistics and facets                                                            |
+| GET    | `/v1/corpus/stats`            | Corpus statistics                                                                                 |
+| GET    | `/v1/corpus/items`            | Search the corpus index                                                                           |
+| GET    | `/v1/notes`                   | Self-study collection metadata, statistics, facets and speaking-bank counts                       |
+| GET    | `/v1/notes/stats`             | Collection statistics, including the speaking-bank counts                                         |
+| GET    | `/v1/notes/items`             | Search the collection index (`skill`, `category`, `format`, `q`, `sort`, ...)                     |
+| GET    | `/v1/collocations`            | Collocation bank metadata, statistics and dimension catalogue                                     |
+| GET    | `/v1/collocations/stats`      | Bank statistics                                                                                   |
+| GET    | `/v1/collocations/dimensions` | The 14 argumentative dimensions with live phrase counts                                           |
+| GET    | `/v1/collocations/items`      | Search the bank (`dimension`, `group`, `polarity`, `kind`, `q`, `sort`, ...)                      |
+| GET    | `/v1/collocations/random`     | Seeded random sample (`count`, `seed`)                                                            |
+| GET    | `/v1/resources`               | Free preparation resources (`type`, `q`)                                                          |
 
 ### Worked examples
 
@@ -179,6 +196,8 @@ Every dataset is regenerated from source with standard-library-only Python:
 python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 python3 scripts/extract_corpus.py tree.json data/corpus.json
 python3 scripts/extract_practice_tests.py tree.json ./upstream data/practice-tests.json
+python3 scripts/extract_study_notes.py tree.json ./checkout data/study-notes.json
+python3 scripts/extract_collocations.py '口语/口语part 3方法论.md' data/collocations.json
 ```
 
 CI re-derives `data/vocabulary.json` from the upstream workbook on every push and fails if the
@@ -187,7 +206,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 341 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 385 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -218,7 +237,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.1.0},
+  version = {1.2.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -243,6 +262,13 @@ Please also cite the upstream collections the datasets were derived from:
   year   = {2026},
   url    = {https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS}
 }
+
+@misc{ielts_study_notes,
+  title  = {ielts: a self-study notes collection (自学笔记)},
+  author = {Oxidaner},
+  year   = {2025},
+  url    = {https://github.com/Oxidaner/ielts}
+}
 ```
 
 ## Licence and provenance
@@ -254,8 +280,11 @@ Please also cite the upstream collections the datasets were derived from:
   you need the authoritative text.
 - **Score concordances:** indicative values compiled from the providers' own published comparison
   tables. Receiving institutions apply their own rules.
-- **Upstream files:** never redistributed. `/v1/corpus` and `/v1/tests` publish derived metadata and
-  statistics only — no passage, question, answer key, transcript or recording.
+- **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests` and `/v1/notes` publish derived
+  metadata and statistics only — no passage, question, answer key, transcript or recording.
+- **Collocation bank:** short common English collocations and sentence frames with their upstream
+  Chinese glosses, dimension tags and polarity tags. The selection and grouping are the upstream
+  author's and are credited; the upstream model answers are not published.
 - **Question-type strategies:** original wording. The task families follow the partners' public task
   descriptions; the observed frequencies describe the indexed practice corpus, not the live exam.
 
@@ -265,3 +294,4 @@ partners.
 
 [corpus]: https://github.com/zhengyishiming/IELTS
 [practice]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
+[notes]: https://github.com/Oxidaner/ielts

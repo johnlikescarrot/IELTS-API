@@ -9,6 +9,8 @@
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 import { practiceStats } from '../data/practiceTests.js';
+import { studyNotesStats } from '../data/studyNotes.js';
+import { collocationsStats } from '../data/collocations.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -50,6 +52,8 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const words = vocabularyStats().words;
   const corpus = corpusStats();
   const practice = practiceStats();
+  const notes = studyNotesStats();
+  const collocations = collocationsStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -99,6 +103,8 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
   <li><strong>${practice.indexedItems.toLocaleString('en-US')} practice tests and graded lessons</strong> indexed by structure, question type and passage readability (${practice.questions.toLocaleString('en-US')} questions; metadata only).</li>
   <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
+  <li><strong>${notes.indexedFiles.toLocaleString('en-US')} files of a self-study collection</strong> indexed by skill, category and format, with derived counts of a seasonal speaking question bank (${notes.speakingBank.questions} questions); metadata only.</li>
+  <li><strong>A Speaking argumentative collocation bank</strong> of ${collocations.phrases} phrases across ${collocations.dimensions} dimensions, with Chinese glosses and polarity tags; mined from the collection's methodology note.</li>
 </ul>
 
 <h2>Versioned endpoints</h2>
@@ -132,7 +138,7 @@ ${service.map(routeRow).join('\n')}
     <tr><td class="path">q</td><td>collections</td><td>Free-text search.</td></tr>
     <tr><td class="path">limit</td><td>collections</td><td>Page size, 1&ndash;100 (default 20, resources default 50).</td></tr>
     <tr><td class="path">offset</td><td>collections</td><td>Zero-based offset for pagination.</td></tr>
-    <tr><td class="path">sort</td><td><code>/v1/vocabulary</code>, <code>/v1/corpus/items</code></td><td>Sort key.</td></tr>
+    <tr><td class="path">sort</td><td><code>/v1/vocabulary</code>, <code>/v1/corpus/items</code>, <code>/v1/notes/items</code>, <code>/v1/collocations/items</code></td><td>Sort key.</td></tr>
     <tr><td class="path">order</td><td>collections</td><td><code>asc</code> or <code>desc</code>.</td></tr>
     <tr><td class="path">match</td><td><code>/v1/vocabulary</code></td><td><code>contains</code>, <code>prefix</code> or <code>exact</code>.</td></tr>
     <tr><td class="path">volume</td><td><code>/v1/vocabulary</code></td><td>Comma-separated Cambridge IELTS volumes, 1&ndash;22.</td></tr>

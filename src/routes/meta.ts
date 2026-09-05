@@ -2,8 +2,10 @@
  * Service routes: discovery, health, OpenAPI document and documentation.
  */
 
+import { collocationsStats } from '../data/collocations.js';
 import { corpusStats } from '../data/corpus.js';
 import { practiceStats } from '../data/practiceTests.js';
+import { studyNotesStats } from '../data/studyNotes.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
@@ -17,6 +19,8 @@ function datasetSummary(): Record<string, number> {
   const words = vocabularyStats();
   const corpus = corpusStats();
   const practice = practiceStats();
+  const notes = studyNotesStats();
+  const collocations = collocationsStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -25,6 +29,10 @@ function datasetSummary(): Record<string, number> {
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,
     practiceItems: practice.indexedItems,
     practiceQuestions: practice.questions,
+    studyNotesFiles: notes.indexedFiles,
+    speakingBankQuestions: notes.speakingBank.questions,
+    collocationPhrases: collocations.phrases,
+    collocationDimensions: collocations.dimensions,
   };
 }
 
@@ -89,7 +97,16 @@ export function createMetaRoutes(
         uptimeSeconds: Math.round((Date.now() - startedAt) / 1000),
         datasets: datasetSummary(),
       },
-      meta: { checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index'] },
+      meta: {
+        checks: [
+          'process',
+          'vocabulary-dataset',
+          'corpus-index',
+          'practice-test-index',
+          'study-notes-index',
+          'collocation-bank',
+        ],
+      },
     };
   }
 
