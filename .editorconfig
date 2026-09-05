@@ -8,12 +8,21 @@ trim_trailing_whitespace = true
 indent_style = space
 indent_size = 2
 
+# Prose and bibliographies wrap and align to the text, not to a code grid, so
+# the indent-size rule does not apply to them.
 [*.md]
 trim_trailing_whitespace = false
 # Prettier is the formatting authority for Markdown, and it aligns
 # ordered-list continuations with the marker text — a 3-space pad under
 # `1. `, which no multiple-of-2 indent rule can accept. The editorconfig
 # check would demand exactly what prettier undoes, so it is unset here.
+indent_size = unset
+
+# BibTeX fields align to the opening brace of their entry, likewise a
+# text grid rather than an indent grid.
+[*.bib]
+indent_size = unset
+
 indent_size = unset
 
 [data/**.json]
