@@ -4,10 +4,10 @@ name: super-linter
 # It is the project's single source of truth for style across TypeScript,
 # JavaScript, JSON, YAML, Markdown, Dockerfiles, shell scripts and workflows.
 #
-# The job runs the official super-linter container directly (the documented
-# "run it inside a container" usage). This is equivalent to the `uses:` form
-# but lets the job publish a readable diagnostic in the step summary even when
-# the raw Actions log is not reachable.
+# The job runs the official super-linter container (the documented container
+# usage). This is equivalent to the `uses:` action form but keeps GitHub
+# context variables, the repo-root linter configurations and a readable
+# failure report (emitted as check annotations) under our control.
 
 on:
   push:
@@ -26,6 +26,9 @@ concurrency:
   group: super-linter-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  SUPER_LINTER_IMAGE: ghcr.io/super-linter/super-linter:slim-v8.3.1
+
 jobs:
   super-linter:
     name: Lint the whole codebase
@@ -37,7 +40,11 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - name: Write super-linter configuration
+      - name: Run super-linter
+        id: lint
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           {
             echo "DEFAULT_BRANCH=main"
@@ -59,9 +66,6 @@ jobs:
             echo "VALIDATE_ENV=true"
             echo "VALIDATE_GITLEAKS=true"
             echo "VALIDATE_CHECKOV=true"
-            # Deliberately disabled: the code base is TypeScript-only and the
-            # extraction scripts are standalone Python utilities with their own
-            # formatting.
             # Linter configuration files, all committed at the repository root
             # and mounted at /tmp/lint.
             echo "LINTER_RULES_PATH=/tmp/lint"
@@ -70,16 +74,18 @@ jobs:
             echo "ESLINT_CONFIG_FILE=eslint.config.js"
             echo "ESLINT_USE_FLAT_CONFIG=true"
           } > /tmp/super-linter.env
-
-      - name: Run super-linter
-        id: lint
-        shell: bash
-        run: |
           status=0
           docker run --rm \
             --volume "$GITHUB_WORKSPACE:/tmp/lint" \
             --env-file /tmp/super-linter.env \
-            ghcr.io/super-linter/super-linter:slim-v8.3.1 \
+            -e "GITHUB_TOKEN=$GITHUB_TOKEN" \
+            -e "GITHUB_REPOSITORY=$GITHUB_REPOSITORY" \
+            -e "GITHUB_API_URL=$GITHUB_API_URL" \
+            -e "GITHUB_SERVER_URL=$GITHUB_SERVER_URL" \
+            -e "GITHUB_SHA=$GITHUB_SHA" \
+            -e "GITHUB_REF=$GITHUB_REF" \
+            -e "GITHUB_RUN_ID=$GITHUB_RUN_ID" \
+            "$SUPER_LINTER_IMAGE" \
             > /tmp/super-linter.log 2>&1 || status=1
           grep -qE "Failed linting|failed validation" /tmp/super-linter.log && status=1
           echo "super-linter exit status: $status" >> "$GITHUB_STEP_SUMMARY"
@@ -87,12 +93,14 @@ jobs:
             # Surface the failure through check-run annotations: they are
             # available through the Checks API even when the raw job log is
             # not reachable.
-            grep -nE "ERROR|WARNING.*failed|Failed to validate|failed validation|❌" /tmp/super-linter.log \
+            grep -nE "ERROR|Failed to validate|failed validation|Violations|❌" /tmp/super-linter.log \
               | head -n 25 \
               | sed -e 's/%/%25/g' -e 's/:/%3A/g' \
               | while IFS= read -r line; do
                   echo "::error title=super-linter::$line"
                 done
+          else
+            echo "super-linter passed: $(grep -cE 'Linted \[' /tmp/super-linter.log) file groups linted" >> "$GITHUB_STEP_SUMMARY"
           fi
           exit "$status"
 
@@ -104,20 +112,19 @@ jobs:
           {
             echo "## super-linter (slim-v8.3.1)"
             echo
-            if grep -qE "Failed linting|failed validation" /tmp/super-linter.log; then
-              echo '**Failure details (per-linter):**'
+            if grep -qE "Failed linting|failed validation|ERROR" /tmp/super-linter.log; then
+              echo '**Failing lines:**'
               echo '```'
-              grep -E "Failed to lint|ERROR.*lint|Errors while running" /tmp/super-linter.log | tail -n 60
+              grep -nE "ERROR|Failed to validate|failed validation|Violations" /tmp/super-linter.log | tail -n 40
               echo '```'
             else
               echo 'All enabled linters passed on every file.'
-              grep -E "Linted|passed validation" /tmp/super-linter.log | tail -n 25 || true
             fi
             echo
             echo '<details><summary>Last log lines</summary>'
             echo
             echo '```'
-            tail -n 25 /tmp/super-linter.log
+            tail -n 30 /tmp/super-linter.log
             echo '```'
             echo '</details>'
           } >> "$GITHUB_STEP_SUMMARY"
