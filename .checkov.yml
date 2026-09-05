@@ -1,0 +1,9 @@
+# Checkov configuration, honoured by the super-linter run and by local scans.
+skip_check:
+  # The published OpenAPI document (/docs/openapi.json) intentionally declares
+  # no security schemes: this API is free of charge and authentication-free
+  # by design (its core research requirement). Checkov's OpenAPI checks assume
+  # authenticated APIs and flag the (correct) absence of `security`.
+  - CKV_OPENAPI_2
+  - CKV_OPENAPI_4
+  - CKV_OPENAPI_5
