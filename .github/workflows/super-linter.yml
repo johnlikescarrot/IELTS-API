@@ -53,7 +53,10 @@ jobs:
         uses: super-linter/super-linter/slim@v8.3.1
         env:
           DEFAULT_BRANCH: main
-          DEFAULT_WORKSPACE: ${{ github.workspace }}
+          # Deliberately no DEFAULT_WORKSPACE override: inside the container
+          # the checkout lives at /tmp/lint, and saving output under a host
+          # path invisible to the container silently drops super-linter.log
+          # and super-linter-output, leaving failures undiagnosable.
           VALIDATE_ALL_CODEBASE: true
           # The generated datasets are machine-written: never lint them.
           FILTER_REGEX_EXCLUDE: .*(data/|coverage/|dist/).*
@@ -103,6 +106,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
+          set +e
           report=$(mktemp)
           {
             echo '## super-linter findings'
@@ -140,6 +144,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: super-linter-output
-          path: super-linter-output/
+          path: |
+            super-linter-output/
+            super-linter.log
           retention-days: 7
           if-no-files-found: ignore

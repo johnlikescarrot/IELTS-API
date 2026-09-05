@@ -7,3 +7,7 @@ coverage/
 .idea/
 .vscode/
 __pycache__/
+
+# Super-linter outputs
+super-linter-output
+super-linter.log
