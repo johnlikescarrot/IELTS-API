@@ -87,10 +87,17 @@ jobs:
       - name: Surface super-linter errors as annotations
         if: failure()
         run: |
-          grep -F '[ERROR]' super-linter.log 2>/dev/null | head -10 | while IFS= read -r line; do
-            message=$(printf '%s' "$line" | cut -c1-500)
+          set +e
+          size=$(wc -c < super-linter.log 2>/dev/null)
+          echo "::error title=super-linter log::super-linter.log is ${size:-missing} bytes; tail follows"
+          grep -F '[ERROR]' super-linter.log 2>/dev/null | head -8 | while IFS= read -r line; do
+            message=$(printf '%s' "$line" | cut -c1-450)
             echo "::error title=super-linter::${message}"
-          done || true
+          done
+          tail -n 8 super-linter.log 2>/dev/null | while IFS= read -r line; do
+            message=$(printf '%s' "$line" | cut -c1-450)
+            echo "::error title=super-linter tail::${message}"
+          done
 
       - name: Upload the super-linter log
         if: failure()
