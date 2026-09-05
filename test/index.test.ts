@@ -47,6 +47,18 @@ describe('the package entry point', () => {
     expect(api.CONVERSION_TARGETS).toContain('cefr');
     expect(api.allEntries().length).toBe(4174);
     expect(api.corpusStats().filesInRepository).toBe(404);
+    expect(api.READING_PASSAGES.length).toBeGreaterThanOrEqual(8);
+    expect(api.READING_LEVELS).toContain('C1');
+    expect(api.STRATEGIES.length).toBeGreaterThanOrEqual(24);
+  });
+
+  it('exports the generators', () => {
+    expect(typeof api.buildStudyPlan).toBe('function');
+    expect(typeof api.generateVocabularyQuiz).toBe('function');
+    expect(typeof api.searchReading).toBe('function');
+    expect(typeof api.findStrategy).toBe('function');
+    expect(typeof api.readingStats).toBe('function');
+    expect(typeof api.strategyStats).toBe('function');
   });
 
   it('exports the build constants', () => {

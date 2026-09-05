@@ -8,6 +8,8 @@
 
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
+import { readingStats } from '../data/reading.js';
+import { strategyStats } from '../data/strategies.js';
 
 import type { RouteDefinition } from './route.js';
 
@@ -48,6 +50,8 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const service = routes.filter((route) => !route.versioned);
   const words = vocabularyStats().words;
   const corpus = corpusStats();
+  const reading = readingStats();
+  const strategies = strategyStats().strategies;
 
   return `<!doctype html>
 <html lang="en">
@@ -95,6 +99,8 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Analytic band descriptors</strong> (condensed paraphrases) for Speaking, Writing Task&nbsp;1 and Writing Task&nbsp;2 across bands 0&ndash;9.</li>
   <li><strong>Score concordances</strong> for CEFR, TOEFL iBT, Cambridge English Scale, PTE Academic and the Duolingo English Test.</li>
   <li><strong>Task banks</strong> for Writing Task&nbsp;1 and Task&nbsp;2 and for Speaking Parts&nbsp;1&ndash;3.</li>
+  <li><strong>${reading.passages} original graded reading passages</strong> (${reading.questions} exam-style items, A2&ndash;C1) and a <strong>${strategies}-card learning-strategy bank</strong> with an evidence label on every card.</li>
+  <li><strong>Deterministic generators</strong>: seeded vocabulary quizzes and weekly study plans built from the datasets, reproducible from their parameters alone.</li>
 </ul>
 
 <h2>Versioned endpoints</h2>

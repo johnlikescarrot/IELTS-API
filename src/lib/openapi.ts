@@ -6,9 +6,11 @@
  */
 
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { READING_LEVELS, READING_TOPICS } from '../data/reading.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
+import { STRATEGY_SKILLS } from '../data/strategies.js';
 import { TASK_MODULES } from '../data/tasks.js';
 
 import type { RouteDefinition } from './route.js';
@@ -122,6 +124,81 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/scores/interpret': [
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
+  ],
+  '/v1/reading': [
+    QUERY,
+    { name: 'level', in: 'query', schema: { type: 'string', enum: [...READING_LEVELS] } },
+    { name: 'topic', in: 'query', schema: { type: 'string', enum: [...READING_TOPICS] } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/reading/:id': [
+    {
+      name: 'answers',
+      in: 'query',
+      description: 'Set to `false` to withhold answer keys for self-testing.',
+      schema: { type: 'boolean', default: true },
+    },
+  ],
+  '/v1/strategies': [
+    QUERY,
+    {
+      name: 'skill',
+      in: 'query',
+      schema: { type: 'string', enum: [...STRATEGY_SKILLS] },
+    },
+    {
+      name: 'band',
+      in: 'query',
+      description: 'Only strategies calibrated for this band.',
+      schema: { type: 'integer', minimum: 0, maximum: 9 },
+    },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/quizzes/vocabulary': [
+    { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 25, default: 10 } },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds and filters reproduce identical items.',
+      schema: { type: 'string' },
+    },
+    {
+      name: 'direction',
+      in: 'query',
+      schema: { type: 'string', enum: ['word-to-meaning', 'meaning-to-word'], default: 'word-to-meaning' },
+    },
+    {
+      name: 'pos',
+      in: 'query',
+      description: 'Comma-separated parts of speech to restrict the item pool.',
+      schema: { type: 'string', enum: [...PARTS_OF_SPEECH] },
+    },
+  ],
+  '/v1/study-plan': [
+    {
+      name: 'current',
+      in: 'query',
+      required: true,
+      description: 'Current overall band (0-9, 0.5 steps).',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'target',
+      in: 'query',
+      required: true,
+      description: 'Target overall band (0-9, 0.5 steps).',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    { name: 'weeks', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 24, default: 8 } },
+    { name: 'hours', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 40, default: 10 } },
+    {
+      name: 'focus',
+      in: 'query',
+      description: 'Comma-separated weak skills to prioritise (listening, reading, writing, speaking).',
+      schema: { type: 'string', example: 'writing,speaking' },
+    },
   ],
   '/v1/topics/writing': [
     QUERY,
@@ -253,8 +330,10 @@ export function openApiDocument(
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
         'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
-        'descriptors, score concordances, Writing and Speaking task banks, and an index',
-        'of the open IELTS research corpus.',
+        'descriptors, score concordances, Writing and Speaking task banks, original',
+        'CEFR-graded reading passages with exam-style items, an evidence-labelled',
+        'learning-strategy bank, and deterministic generators for seeded vocabulary',
+        'quizzes and weekly study plans; plus an index of the open IELTS research corpus.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

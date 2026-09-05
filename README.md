@@ -18,7 +18,9 @@ IELTS preparation data is everywhere and machine-readable almost nowhere: vocabu
 workbooks, band descriptors live in PDFs, and score concordances live in marketing pages. This API
 turns that material into a stable, versioned, citable HTTP contract with **no API key, no
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
-reproduce a result years later.
+reproduce a result years later. Since v1.1.0 the same applies to _practice_: original CEFR-graded
+reading passages, an evidence-labelled strategy bank, deterministic quiz generation and transparent
+study plans — the features learners actually seek, in a form researchers can cite.
 
 Everything here is built on an open corpus: [`zhengyishiming/IELTS`][corpus]. See
 [RESEARCH.md](RESEARCH.md) for the corpus analysis and the dataset construction methodology, and
@@ -28,7 +30,7 @@ Everything here is built on an open corpus: [`zhengyishiming/IELTS`][corpus]. Se
 
 ```bash
 npx ielts-api                 # or: npm install -g ielts-api
-# ielts-api 1.0.0 listening on http://0.0.0.0:3000
+# ielts-api 1.1.0 listening on http://0.0.0.0:3000
 ```
 
 ```bash
@@ -40,6 +42,15 @@ curl -s "http://localhost:3000/v1/scores/overall?listening=7&reading=6.5&writing
 
 # One headword, with phonetics, senses and morpheme hints
 curl -s "http://localhost:3000/v1/vocabulary/atmosphere"
+
+# A reproducible 5-item vocabulary quiz (same seed, same quiz, forever)
+curl -s "http://localhost:3000/v1/quizzes/vocabulary?count=5&seed=lecture-demo"
+
+# A weekly study plan from band 5.5 to 7, built from the API's own items
+curl -s "http://localhost:3000/v1/study-plan?current=5.5&target=7&focus=writing,speaking"
+
+# An original CEFR-graded reading passage, answers withheld for self-testing
+curl -s "http://localhost:3000/v1/reading/rd-b2-science-01?answers=false"
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -55,48 +66,59 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 
 ## Datasets
 
-| Dataset                         |                                            Size | Endpoint                | Provenance                                                        |
-| ------------------------------- | ----------------------------------------------: | ----------------------- | ----------------------------------------------------------------- |
-| Cambridge IELTS 1-22 vocabulary |             4,174 headwords / 4,310 occurrences | `/v1/vocabulary`        | Derived from `1-22yas.xlsx` in [the upstream corpus][corpus]      |
-| Analytic band descriptors       |      120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE)) |
-| Band scale with CEFR levels     |                                         19 rows | `/v1/bands`             | Original compilation                                              |
-| Score concordances              |                             5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                            |
-| Writing Task 2 prompts          | 111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families      |
-| Speaking items                  |        80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                    |
-| Writing Task 1 families         |                                10 task families | `/v1/tasks/writing`     | Original compilation                                              |
-| Free resources                  |                                    27 resources | `/v1/resources`         | Original catalogue (free + no login only)                         |
-| Research corpus index           |                        76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                   |
+| Dataset                         |                                            Size | Endpoint                 | Provenance                                                               |
+| ------------------------------- | ----------------------------------------------: | ------------------------ | ------------------------------------------------------------------------ |
+| Cambridge IELTS 1-22 vocabulary |             4,174 headwords / 4,310 occurrences | `/v1/vocabulary`         | Derived from `1-22yas.xlsx` in [the upstream corpus][corpus]             |
+| Analytic band descriptors       |      120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors`  | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))        |
+| Band scale with CEFR levels     |                                         19 rows | `/v1/bands`              | Original compilation                                                     |
+| Score concordances              |                             5 scales x 11 bands | `/v1/scores/convert`     | Providers' published comparison tables                                   |
+| Writing Task 2 prompts          | 111 prompts, 15 categories, 5 question families | `/v1/topics/writing`     | Original items modelled on recurring IELTS question families             |
+| Speaking items                  |        80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`    | Original items                                                           |
+| Writing Task 1 families         |                                10 task families | `/v1/tasks/writing`      | Original compilation                                                     |
+| Free resources                  |                                    27 resources | `/v1/resources`          | Original catalogue (free + no login only)                                |
+| Research corpus index           |                        76 of 404 upstream files | `/v1/corpus`             | Metadata index of [the upstream corpus][corpus]                          |
+| Graded reading passages         |         9 passages (A2-C1), 27 exam-style items | `/v1/reading`            | Original writing, CEFR-calibrated (see [RESEARCH.md §7](RESEARCH.md))    |
+| Learning-strategy bank          |                 24 cards across the four skills | `/v1/strategies`         | Original cards, each with an honest evidence label                       |
+| Vocabulary quizzes              |          generated from the 4,174-entry dataset | `/v1/quizzes/vocabulary` | Deterministic generator (seeded), no stored content                      |
+| Study plans                     |                 generated from all of the above | `/v1/study-plan`         | Transparent band-gap heuristic, documented in [RESEARCH.md](RESEARCH.md) |
 
 ## Endpoints
 
 All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
 same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 
-| Method | Path                    | Description                                                                                       |
-| ------ | ----------------------- | ------------------------------------------------------------------------------------------------- |
-| GET    | `/`                     | Service index, dataset sizes, citation links                                                      |
-| GET    | `/v1`                   | List every versioned endpoint                                                                     |
-| GET    | `/health`               | Liveness and dataset availability                                                                 |
-| GET    | `/docs`                 | Human-readable documentation                                                                      |
-| GET    | `/openapi.json`         | OpenAPI 3.1 document generated from the live route table                                          |
-| GET    | `/v1/vocabulary`        | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
-| GET    | `/v1/vocabulary/stats`  | Dataset statistics                                                                                |
-| GET    | `/v1/vocabulary/random` | Seeded random sample (`count`, `seed`)                                                            |
-| GET    | `/v1/vocabulary/daily`  | Deterministic entry for a date (`date`, `count`)                                                  |
-| GET    | `/v1/vocabulary/:word`  | Look up one headword                                                                              |
-| GET    | `/v1/bands`             | The band scale with indicative CEFR levels                                                        |
-| GET    | `/v1/bands/descriptors` | Band descriptors (`set`, `criterion`, `band`)                                                     |
-| GET    | `/v1/bands/:band`       | One band, with the descriptors that bracket it                                                    |
-| GET    | `/v1/scores/overall`    | Overall band from the four components                                                             |
-| GET    | `/v1/scores/convert`    | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
-| GET    | `/v1/scores/interpret`  | Another scale back to an indicative IELTS band                                                    |
-| GET    | `/v1/topics/writing`    | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
-| GET    | `/v1/topics/speaking`   | Speaking Parts 1-3 (`part`, `q`)                                                                  |
-| GET    | `/v1/tasks/writing`     | Writing Task 1 families (`module`)                                                                |
-| GET    | `/v1/corpus`            | Corpus metadata, statistics and facets                                                            |
-| GET    | `/v1/corpus/stats`      | Corpus statistics                                                                                 |
-| GET    | `/v1/corpus/items`      | Search the corpus index                                                                           |
-| GET    | `/v1/resources`         | Free preparation resources (`type`, `q`)                                                          |
+| Method | Path                     | Description                                                                                       |
+| ------ | ------------------------ | ------------------------------------------------------------------------------------------------- |
+| GET    | `/`                      | Service index, dataset sizes, citation links                                                      |
+| GET    | `/v1`                    | List every versioned endpoint                                                                     |
+| GET    | `/health`                | Liveness and dataset availability                                                                 |
+| GET    | `/docs`                  | Human-readable documentation                                                                      |
+| GET    | `/openapi.json`          | OpenAPI 3.1 document generated from the live route table                                          |
+| GET    | `/v1/vocabulary`         | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`) |
+| GET    | `/v1/vocabulary/stats`   | Dataset statistics                                                                                |
+| GET    | `/v1/vocabulary/random`  | Seeded random sample (`count`, `seed`)                                                            |
+| GET    | `/v1/vocabulary/daily`   | Deterministic entry for a date (`date`, `count`)                                                  |
+| GET    | `/v1/vocabulary/:word`   | Look up one headword                                                                              |
+| GET    | `/v1/bands`              | The band scale with indicative CEFR levels                                                        |
+| GET    | `/v1/bands/descriptors`  | Band descriptors (`set`, `criterion`, `band`)                                                     |
+| GET    | `/v1/bands/:band`        | One band, with the descriptors that bracket it                                                    |
+| GET    | `/v1/scores/overall`     | Overall band from the four components                                                             |
+| GET    | `/v1/scores/convert`     | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                            |
+| GET    | `/v1/scores/interpret`   | Another scale back to an indicative IELTS band                                                    |
+| GET    | `/v1/reading`            | Graded reading passages (`level`, `topic`, `q`, `limit`, `offset`)                                |
+| GET    | `/v1/reading/stats`      | Reading dataset statistics                                                                        |
+| GET    | `/v1/reading/:id`        | One full passage with items (`answers=false` withholds the key)                                   |
+| GET    | `/v1/strategies`         | Study-strategy cards (`skill`, `band`, `q`)                                                       |
+| GET    | `/v1/strategies/:id`     | One strategy card                                                                                 |
+| GET    | `/v1/quizzes/vocabulary` | Seeded vocabulary quiz (`count`, `seed`, `direction`, `pos`)                                      |
+| GET    | `/v1/study-plan`         | Weekly plan between two bands (`current`, `target`, `weeks`, `hours`, `focus`)                    |
+| GET    | `/v1/topics/writing`     | Writing Task 2 prompts (`category`, `type`, `q`)                                                  |
+| GET    | `/v1/topics/speaking`    | Speaking Parts 1-3 (`part`, `q`)                                                                  |
+| GET    | `/v1/tasks/writing`      | Writing Task 1 families (`module`)                                                                |
+| GET    | `/v1/corpus`             | Corpus metadata, statistics and facets                                                            |
+| GET    | `/v1/corpus/stats`       | Corpus statistics                                                                                 |
+| GET    | `/v1/corpus/items`       | Search the corpus index                                                                           |
+| GET    | `/v1/resources`          | Free preparation resources (`type`, `q`)                                                          |
 
 ### Worked examples
 
@@ -151,7 +173,7 @@ committed dataset has drifted.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 295 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 349 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -182,7 +204,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.0.0},
+  version = {1.1.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }

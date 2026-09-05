@@ -1,6 +1,6 @@
 {
   "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
+  "description": "Archived release of the IELTS API source code and datasets, version 1.1.0: the Cambridge IELTS 1-22 vocabulary dataset, band descriptors and score concordances, task and topic banks, original CEFR-graded reading passages with exam-style items, an evidence-labelled learning-strategy bank, and deterministic generators for seeded vocabulary quizzes and weekly study plans. Cite this record, or the version-specific DOI, when you use the API or the datasets in research.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
@@ -16,6 +16,11 @@
     "vocabulary",
     "band descriptors",
     "score concordance",
+    "reading comprehension",
+    "CEFR",
+    "language learning strategies",
+    "quiz generation",
+    "study plan",
     "open data",
     "REST API"
   ],

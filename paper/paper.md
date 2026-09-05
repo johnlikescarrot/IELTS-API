@@ -13,7 +13,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 4 September 2026
+date: 5 September 2026
 bibliography: paper.bib
 ---
 
@@ -22,14 +22,18 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships five kinds of data: a 4,174-headword vocabulary dataset derived from
-the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking and
-Writing across bands 0-9; indicative score concordances between IELTS and five other scales; original
-Writing and Speaking task banks built on the question families and word lists that recur in IELTS
-preparation material [@coxhead2000]; and a curated metadata index of an open IELTS research corpus.
-Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
-support — so a response archived today can be re-fetched and diffed years later, which is the
-practical requirement for reproducible corpus and assessment research.
+JSON envelope. The service ships reference data and a practice layer: a 4,174-headword vocabulary
+dataset derived from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors
+for Speaking and Writing across bands 0-9; indicative score concordances between IELTS and five
+other scales; original Writing and Speaking task banks built on the question families and word lists
+that recur in IELTS preparation material [@coxhead2000]; a curated metadata index of an open IELTS
+research corpus; and, since v1.1.0, nine original CEFR-graded reading passages with 27 explained
+exam-style items, a 24-card learning-strategy bank carrying an honest evidence label on every card,
+and two deterministic generators — seeded vocabulary quizzes and weekly study plans — that compose
+those datasets into practicable artefacts. Responses are deterministic — seeded sampling, stable
+identifiers, ETags and conditional-request support — so a response archived today can be re-fetched
+and diffed years later, which is the practical requirement for reproducible corpus and assessment
+research.
 
 # Statement of need
 
@@ -45,6 +49,13 @@ The open corpus this work builds on (`zhengyishiming/IELTS`, 404 files, 713 MB o
 material) contains, alongside its IELTS content, a larger volume of semiconductor textbooks, Chinese
 pop music and cryptocurrency books. Only 76 of the 404 files (18.8%) are IELTS or English-learning
 material — an unfiltered crawler treats a lithography textbook as IELTS training data. [@ieltscorpus]
+
+A parallel signal comes from the closed end of the market: the most active public IELTS-practice
+repositories are scraped mirrors of commercial tests — thousands of graded passages and full tests
+behind an injected login wall, sold by the year, unlicensed and unciteable (documented as a case
+study in `RESEARCH.md` §8). The demand they satisfy is precisely the demand an API can serve better:
+structured practice content that is versioned, attributable and machine-readable rather than hidden
+behind an account.
 
 The API addresses three concrete needs:
 
@@ -90,6 +101,21 @@ for the 76 IELTS-relevant files, plus aggregate statistics for the full 404-file
 upstream binary is mirrored: the upstream files are third-party copyrighted material, and the index
 is a descriptive act over metadata.
 
+**Graded reading and strategies (v1.1.0).** Nine original passages calibrated to CEFR levels A2-C1
+carry 27 explained exam-style items in a fixed 1+1+1 format (multiple-choice, True/False/Not-given,
+short-answer), so items are comparable across levels. The 24-card strategy bank pairs each strategy
+with its mechanism and an `evidence` label that names the supporting literature where it exists and
+admits `practitioner convention` where it does not — an explicit provenance discipline applied to
+pedagogical advice for the first time in this space, as far as we are aware.
+
+**Generators (v1.1.0).** `/v1/quizzes/vocabulary` composes multiple-choice quizzes from the
+vocabulary dataset with seeded sampling: distractors are drawn from the same filtered pool shifted to
+exclude the target, and a quiz is fully specified by `(count, seed, filters)`, so a study can publish
+its seed instead of an appendix. `/v1/study-plan` allocates weekly hours across skills by a printed
+band-gap heuristic (`max(0.5, target − current + 0.5·weak_flag)`, fixed review share, CEFR-matched
+reading selection, four-week mock cadence) and schedules real dataset item ids, so the plan is
+executable against the API and auditable against its own `assumptions` list.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
@@ -105,7 +131,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (295 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (349 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

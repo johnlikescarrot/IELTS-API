@@ -159,3 +159,74 @@ python3 scripts/extract_vocabulary.py 1-22yas.xlsx data/vocabulary.json
 
 The commit SHA recorded in `data/corpus.json` identifies the exact snapshot; re-running against a
 different commit is expected to change the item count and the coverage ratio.
+
+## 7. The practice layer (v1.1.0): reading, strategies, quizzes, plans
+
+Version 1.0.0 published _reference_ data. Version 1.1.0 publishes the layer learners actually
+practise on — graded input, strategy advice, items and schedules — under the same licence and with
+the same reproducibility guarantees. Each module was designed to be executable from the API alone.
+
+**Graded reading (`/v1/reading`).** The dataset is nine passages written for this project (no text
+is extracted or adapted from Cambridge papers or commercial sites) spanning A2 to C1: two A2, two
+B1, three B2, two C1, ~1,700 words total. Calibration is heuristic and stated as such: A2 texts use
+high-frequency vocabulary, short coordinated sentences and concrete referents; B1 adds connected
+argument; B2 introduces abstraction and concession; C1 assumes precision, implied stance and
+low-frequency lexis. Each passage carries a fixed 1+1+1 item set — one multiple-choice, one
+True/False/Not-given, one short-answer question — chosen so that item types are comparable across
+levels and passages can be pooled in studies without re-coding; the answer key for every item
+carries an explanation quoting the passage. Threats: levels are assigned by construction, not by
+independent rating, so cross-level difficulty ordering is plausible but not validated; nine passages
+are a reference sample, not a practice bank, and the fixed item shape under-counts the range of real
+IELTS tasks (matching, sentence completion, reference).
+
+**Strategy bank (`/v1/strategies`).** Twenty-four cards, six per skill, each with a concrete
+action, a mechanism and an `evidence` label. The labels are the methodological core: where published
+research supports a strategy it is named (author, year) — spacing and testing effects (Cepeda et
+al., 2006; Roediger & Karpicke, 2006), feedback and self-assessment (Hattie & Timperley, 2007),
+metacognitive listening instruction (Vandergrift & Tafaghodtari, 2010), extensive reading (Jeon &
+Yamashita, 2014), the lexical approach (Lewis, 1993; Wray, 2002), intelligibility-pronunciation
+research (Derwing & Munro, 2015), planning effects in L2 speech (Yuan & Felser, 2012) — and where
+the claim is folklore the card says so (`practitioner convention`). Band ranges encode who a
+strategy is for; strategies are excluded outside their range rather than recommended universally.
+
+**Quiz generator (`/v1/quizzes/vocabulary`).** Quizzes are not a dataset but a pure function over
+the vocabulary dataset: `count` targets are drawn from the filtered pool with the seeded
+`seededIndices` sampler, three distractors per item are drawn from the same pool shifted to exclude
+the target (so no item can contain its own answer twice), and option order is a seeded Fisher-Yates
+shuffle. A quiz is therefore fully specified by `(count, seed, filters)` — a paper can publish its
+seed and anyone can regenerate the stimulus. Because distractors come from the same part-of-speech
+pool when `pos` is given, item difficulty is homogeneous by construction.
+
+**Study-plan generator (`/v1/study-plan`).** A transparent heuristic, printed with its own
+assumptions so it can be audited or re-implemented: demand per skill is
+`max(0.5, target − current + 0.5·weak_flag)`; a quarter of weekly hours (minimum 0.5) is reserved
+for review and feedback; the rest is split proportionally to demand and rounded to half hours;
+weekly focus rotates through skills ordered by demand so the weakest is first; vocabulary load is
+`min(60, 12 + 6·gap + hours/2)`; reading material is selected at the target band's indicative CEFR
+level with a whole-set fallback; mock tests land on weeks divisible by four and a closing review
+week always exists. The allocation borrows its shape from mastery-based planning rather than any
+validated IELTS-specific model — it is offered as a reproducible baseline that a treatment study can
+modify, and the response says in terms that evidence on hours-to-band-gain is mixed.
+
+## 8. Case study: what the closed mirrors demand, and what they cannot give
+
+The v1.1.0 feature set was motivated by a systematic look at what real-world IELTS practice
+repositories are made of, rather than by what reference APIs usually ship. The clearest recent
+example — chosen because it is public, indexed and self-described as an upgrade-your-skills system —
+is `ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`, a Pages-hosted mirror assembled from three sibling
+repositories. Its project summary describes the architecture: 204 full listening tests and 315 full
+reading tests, 1,232 reading passages graded A1-C2, 102 three-level listening lessons with audio,
+scraped and rebuilt with a Python crawler, with a Google Apps Script login overlay injected into
+every HTML file so access can be sold as a one-year licence. The repository itself carries no
+licence, commits its `node_modules` and a `.env`, and hosts scraped third-party question content and
+audio with no provenance or permission.
+
+Two lessons were taken from it, and one boundary drawn. The lessons: (1) the demand is not for more
+vocabulary lists but for _structured practice_ — graded passages, skill-levelled lessons, per-test
+items, schedulable curricula — which is exactly the layer §7 adds; and (2) the access overlay shows
+that even this scale of mirror needs a database, an auth flow and a paywall to function, which is
+the architectural opposite of a citable endpoint. The boundary: none of its content was imported,
+re-derived or used to seed any dataset here, because scraped items inherit their owner's copyright
+and its provenance chain, and neither survives review — the whole reason this API can be cited at
+all is that its data provenance is checkable. The mirror is therefore cited here as evidence of
+demand, not as a source.

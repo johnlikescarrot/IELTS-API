@@ -226,6 +226,192 @@ export type CorpusStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Graded reading                                                             */
+/* -------------------------------------------------------------------------- */
+
+/** CEFR levels used by the graded reading dataset. */
+export type CefrLevel = 'A2' | 'B1' | 'B2' | 'C1' | 'C2';
+
+/** Item formats used by the reading questions. */
+export type ReadingQuestionFormat = 'multiple-choice' | 'true-false-notgiven' | 'short-answer';
+
+/** One comprehension question attached to a graded passage. */
+export type ReadingQuestion = {
+  /** Stable identifier (`rd-a2-cities-01-q1`). */
+  id: string;
+  /** Item format. */
+  format: ReadingQuestionFormat;
+  /** The question stem. */
+  prompt: string;
+  /** Answer options, only present for multiple-choice items. */
+  options?: string[];
+  /** The correct option text, `True`/`False`/`Not given`, or the expected short answer. */
+  answer: string;
+  /** Why the answer is correct, referencing the passage. */
+  explanation: string;
+};
+
+/** An original, CEFR-graded reading passage with exam-style items. */
+export type ReadingPassage = {
+  /** Stable identifier (`rd-b2-history-01`). */
+  id: string;
+  /** Passage title. */
+  title: string;
+  /** Indicative CEFR level of the language in the passage. */
+  cefrLevel: CefrLevel;
+  /** Thematic category. */
+  topic: string;
+  /** One-line abstract of the passage. */
+  summary: string;
+  /** Suggested time on task, in minutes. */
+  minutes: number;
+  /** The passage text itself. */
+  text: string;
+  /** Comprehension items that follow the passage. */
+  questions: ReadingQuestion[];
+};
+
+/** A reading passage without its full text (the collection representation). */
+export type ReadingSummary = {
+  /** Stable identifier. */
+  id: string;
+  /** Passage title. */
+  title: string;
+  /** Indicative CEFR level. */
+  cefrLevel: CefrLevel;
+  /** Thematic category. */
+  topic: string;
+  /** One-line abstract. */
+  summary: string;
+  /** Suggested time on task, in minutes. */
+  minutes: number;
+  /** Words in the passage text. */
+  wordCount: number;
+  /** Number of comprehension items. */
+  questionCount: number;
+};
+
+/** Aggregate statistics for the graded reading dataset. */
+export type ReadingStats = {
+  /** Number of passages. */
+  passages: number;
+  /** Number of comprehension questions. */
+  questions: number;
+  /** Total words across all passage texts. */
+  words: number;
+  /** Passages per CEFR level. */
+  byLevel: Record<string, number>;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Learning strategies                                                        */
+/* -------------------------------------------------------------------------- */
+
+/** An original study-strategy card with a pointer to its evidence base. */
+export type StrategyCard = {
+  /** Stable identifier (`st-listening-01`). */
+  id: string;
+  /** IELTS skill the strategy supports. */
+  skill: Skill;
+  /** Short strategy name. */
+  title: string;
+  /** Inclusive band range the strategy is calibrated for. */
+  bands: [number, number];
+  /** What the candidate should actually do. */
+  action: string;
+  /** Why it helps. */
+  rationale: string;
+  /** Research pointer supporting the strategy, or an honest `practitioner convention` label. */
+  evidence: string;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Generated quizzes and study plans                                          */
+/* -------------------------------------------------------------------------- */
+
+/** Direction of a generated vocabulary quiz item. */
+export type QuizDirection = 'word-to-meaning' | 'meaning-to-word';
+
+/** One generated multiple-choice quiz item. */
+export type QuizItem = {
+  /** Position identifier within the quiz (`q1` … `qN`). */
+  id: string;
+  /** Identifier of the vocabulary entry the item was built from. */
+  wordId: string;
+  /** The headword the item tests. */
+  word: string;
+  /** The question stem. */
+  prompt: string;
+  /** Shuffled answer options; exactly one is correct. */
+  options: string[];
+  /** Index of the correct option within `options`. */
+  answerIndex: number;
+};
+
+/** A deterministic, seeded vocabulary quiz. */
+export type VocabularyQuiz = {
+  /** Generator kind (`vocabulary-definitions`). */
+  kind: string;
+  /** Item direction. */
+  direction: QuizDirection;
+  /** Seed used; the same seed reproduces the same items. */
+  seed: string;
+  /** Number of items. */
+  count: number;
+  /** The generated items. */
+  items: QuizItem[];
+};
+
+/** One week of a generated study plan. */
+export type StudyPlanWeek = {
+  /** Week number, starting at 1. */
+  week: number;
+  /** The skill this week concentrates on. */
+  focusSkill: Skill;
+  /** Practice hours per skill this week (half-hour units, rounded). */
+  hours: Record<Skill, number>;
+  /** Hours reserved for review, feedback and error logging. */
+  reviewHours: number;
+  /** New vocabulary words to study this week. */
+  vocabularyWords: number;
+  /** Concrete dataset items to practise with. */
+  materials: {
+    /** Writing Task 2 prompt id. */
+    writingTopicId: string;
+    /** Speaking item id. */
+    speakingTopicId: string;
+    /** Graded reading passage id. */
+    readingPassageId: string;
+    /** Strategy card ids for the focus skill. */
+    strategyIds: string[];
+  };
+  /** Milestone description, or `null` for ordinary weeks. */
+  milestone: string | null;
+};
+
+/** A deterministic, heuristic study plan between two band scores. */
+export type StudyPlan = {
+  /** Current band score. */
+  current: number;
+  /** Target band score. */
+  target: number;
+  /** Band gap the plan addresses. */
+  gap: number;
+  /** Plan length in weeks. */
+  weeks: number;
+  /** Total study hours per week. */
+  hoursPerWeek: number;
+  /** Indicative CEFR level of the target band. */
+  targetCefr: string;
+  /** Skills the candidate flagged as weak. */
+  focus: string[];
+  /** One entry per week. */
+  weekly: StudyPlanWeek[];
+  /** The heuristics behind the allocation, so the plan is auditable. */
+  assumptions: string[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

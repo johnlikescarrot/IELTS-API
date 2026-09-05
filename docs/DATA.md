@@ -8,7 +8,11 @@ This directory holds the archived artefacts of the API contract.
 
 The datasets themselves live in [`data/`](../data) and are documented in
 [RESEARCH.md](../RESEARCH.md), which records the extraction methodology and the threats to validity
-that apply to each of them. Endpoint-level documentation is served by the API itself at `/docs`.
+that apply to each of them. The datasets that are small enough to be type-checked are embedded in the
+source tree instead (`src/data/`): the band scale, descriptors, concordances, task and topic banks,
+the graded reading passages and the strategy bank. [RESEARCH.md §7](../RESEARCH.md) documents their
+construction; the quiz and study-plan endpoints are pure generators over those datasets, so they
+carry no stored content at all. Endpoint-level documentation is served by the API itself at `/docs`.
 
 ## Machine-readable citation
 

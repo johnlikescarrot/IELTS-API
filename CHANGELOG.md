@@ -6,6 +6,39 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-09-05
+
+The practice release: everything a learner practises on, in citable, licensed form.
+
+### Added
+
+- **Graded reading dataset**: 9 original CEFR-graded passages (A2-C1, 1,700+ words) with 27
+  exam-style items — one multiple-choice, one True/False/Not-given and one short-answer per passage,
+  every answer carrying an explanation. Endpoints: `/v1/reading`, `/v1/reading/stats`,
+  `/v1/reading/:id` (with `?answers=false` to withhold the key for self-testing).
+- **Learning-strategy bank**: 24 evidence-labelled strategy cards across listening, reading, writing
+  and speaking, each calibrated to a band range; research pointers name published findings and
+  unsupported folklore is explicitly labelled `practitioner convention`. Endpoints: `/v1/strategies`,
+  `/v1/strategies/:id`.
+- **Vocabulary quiz generator**: deterministic seeded multiple-choice quizzes composed live from the
+  4,174-entry dataset, forward (`word-to-meaning`) or reverse (`meaning-to-word`), optional part-of-
+  speech restriction; the same seed and filters reproduce the same items years later. Endpoint:
+  `/v1/quizzes/vocabulary`.
+- **Study-plan generator**: a transparent, documented band-gap heuristic that allocates weekly hours
+  across the four skills, rotates the focus, scales vocabulary load, schedules mock-test milestones,
+  and points at real dataset items (prompts, speaking cards, passages, strategy ids). Endpoint:
+  `/v1/study-plan`.
+- Methodology and case-study notes in [RESEARCH.md](RESEARCH.md) §7 (design of the new modules) and
+  §8 (what closed mirrors of IELTS practice content reveal about demand, and what was deliberately
+  not taken from them).
+
+### Changed
+
+- `/`, `/health` and the OpenAPI `info` block now advertise the reading dataset, the strategy bank
+  and the generators; `/docs` lists them alongside the existing datasets.
+- Citation metadata (`CITATION.cff`, `codemeta.json`, `.zenodo.json`) updated for 1.1.0, including
+  learning-strategy and quiz-generation keywords and three additional research references.
+
 ## [1.0.0] - 2026-09-04
 
 First citable release.
@@ -35,5 +68,6 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0
