@@ -18,6 +18,8 @@ All notable changes to this project are documented here. The format is based on
 
 ### Fixed
 
+- Normalize the legacy software paper's heading hierarchy beneath its front-matter title.
+
 - Bound practice and task-guide response arrays in OpenAPI to their actual limits and
   regression-test both the boundary and overflow, including all dereferenced nested arrays. Address the CI smoke loop's ShellCheck warning.
 - Include code/data licensing and citation metadata in the Docker runtime image, not only npm archives.

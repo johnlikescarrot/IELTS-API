@@ -96,8 +96,14 @@ jobs:
           from pathlib import Path
           log = Path('super-linter.log')
           if log.exists():
-              text = log.read_text(errors='replace')[-48000:]
-              # GitHub truncates large annotation messages; retain readable chunks.
+              lines = log.read_text(errors='replace').splitlines()
+              # Prioritise failures over Checkov's verbose successful-check output.
+              selected = set(range(max(0, len(lines) - 30), len(lines)))
+              for index, line in enumerate(lines):
+                  if '[ERROR]' in line or '[FATAL]' in line or 'FAILED for' in line:
+                      selected.update(range(max(0, index - 3), min(len(lines), index + 40)))
+              text = '\n'.join(lines[index] for index in sorted(selected))[:24000]
+              # GitHub limits both message size and annotations per step.
               for start in range(0, len(text), 3000):
                   chunk = text[start:start + 3000]
                   chunk = chunk.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
