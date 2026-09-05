@@ -24,7 +24,10 @@
     "REST API",
     "text analysis",
     "lexical diversity",
-    "study planning"
+    "study planning",
+    "learner corpus",
+    "grey literature",
+    "listening comprehension"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -40,6 +43,11 @@
     },
     {
       "identifier": "https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/msneloy/IELTS",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }

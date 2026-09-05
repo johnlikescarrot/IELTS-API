@@ -34,7 +34,10 @@ frequency of each family observed in 27,225 practice questions; an original taxo
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of three open IELTS collections.
+metadata indexes of four open IELTS collections, including a grey-literature archive index that
+catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
+twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
+statistics.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -123,6 +126,29 @@ overall, because they are ten times longer (2,642 words against roughly 250) at 
 ratio (0.388 against 0.54-0.64): short lessons cannot train reading stamina however dense their
 sentences are.
 
+**Study materials and response frameworks.** A third open collection (a 2,385-file self-study
+repository) is indexed by category, skill and format — recall banks, question banks, scenario
+vocabulary, templates, idea banks — as descriptive metadata only. On top of it sits an original
+taxonomy of twelve response frameworks for Writing Task 2 and Speaking Parts 2-3: ordered stages
+with purpose statements, concrete moves, cue language and pitfalls, cross-linked to the task banks
+so that every framework names the prompts it fits.
+
+**Grey-literature archive.** A fourth open collection [@ieltsarchive] is what preparation material
+looks like before anyone curates it: a 3.1 GB, licence-less personal archive of rips of the
+Cambridge IELTS 1-18 listening audio, five companion-course audio sets, the twelve British Council
+"Sample Academic Reading" task PDFs, and a teacher's folder of marked student writing. The index
+normalises its chaotic naming into nine collections and publishes a per-volume
+"media-archaeology" table: how each volume's audio is named (`cassette-side` through `cd-track` to
+`test-section`), the media era the naming implies, how many listening tests the file names still
+encode (seven of seventeen audio volumes), whether the volume is complete (fourteen of eighteen; the
+folder that calls itself volumes "1 TO 17" in fact contains an audio-less volume 18), and where a
+vendor or channel watermark marks grey provenance (volumes 4, 5 and 16). The twelve sample tasks are
+mapped onto the canonical question-type taxonomy and measured with the same readability formulas as
+the practice corpus: their median Flesch Reading Ease of 41.5 sits at full-test difficulty (corpus
+mean 43.5), confirming that the official exemplars are extracts of real tests rather than simplified
+demonstrations. The 24 marked essays (four learners, eight task types, August 2022) are published as
+eleven derived statistics per file — never as text, which the non-substitutive design forbids.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -152,13 +178,15 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (469 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
-study-materials index from the upstream tree, and revalidates the
-internal consistency of the practice-test index (question counts, type normalisation and provenance),
+study-materials index and the grey-literature archive index from the upstream tree (the archive
+derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit), and
+revalidates the internal consistency of the practice-test index (question counts, type normalisation
+and provenance) and of the archive index (facet totals, volume arithmetic, per-essay statistics),
 failing if the committed data has drifted — which guards against silent data rot.
 
 # Availability
@@ -170,9 +198,10 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 # Acknowledgements
 
-This work builds on the open corpus assembled by `zhengyishiming` and on the practice collection
-assembled by `ngoclong1209`; both are cited in `CITATION.cff` and in every response that draws on
-them. IELTS is a jointly owned trademark of the
+This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
+grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
+response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

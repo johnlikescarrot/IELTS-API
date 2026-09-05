@@ -3,14 +3,17 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Two independent upstream collections are analysed:
+Five parts, four upstream collections:
 
-| Part                                              | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                   |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)            | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                      |
-| [Part II](#part-ii--the-practice-test-collection) | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                        |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                   |
+| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
+| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
 
-Neither collection is redistributed. Both are indexed, measured and cited.
+None of the collections is redistributed. All are indexed, measured and cited.
 
 ## Part I — the research corpus
 
@@ -520,3 +523,161 @@ python3 scripts/extract_materials.py tree.json data/materials.json
 The script is standard library only and deterministic: the same tree always produces byte-identical
 output. The continuous-integration workflow re-derives the index from the upstream tree on every run
 and fails if the committed file disagrees.
+
+## Part V — the grey-literature archive
+
+_Upstream: [`msneloy/IELTS`](https://github.com/msneloy/IELTS), commit `db1064c3` (2 October 2022,
+the repository's last commit), 557 blobs, 3.12 GB of file payload, no licence, an empty README. The
+dataset is `data/archive.json`; the endpoints are `/v1/archive`, `/v1/archive/stats`,
+`/v1/archive/volumes`, `/v1/archive/items` and `/v1/archive/:id`._
+
+### 23. What the archive actually contains
+
+The four collections indexed so far are, in different ways, curated: a vocabulary workbook, a
+publisher's practice corpus, a candidate's organised notes. Part V indexes what preparation material
+looks like **before** anyone curates it — a 5.4 GB working tree that one study group pushed to GitHub
+as-is. Five top-level folders:
+
+| Folder                     | Files | Payload | Canonical collection | Content                                                                                                                                             |
+| -------------------------- | ----: | ------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `CAMBRIDGE IELTS 1 TO 17`  |   237 | 1.91 GB | `cambridge-audio`    | listening audio for volumes 1-18 (plus one cover image)                                                                                             |
+| `combo`                    |   215 | 0.75 GB | five companion sets  | audio of Grammar for IELTS (33), IELTS Trainer (33), Vocabulary for IELTS (49), "instant practice tests" (30, WMA), "official IELTS" materials (70) |
+| `ptp 123`                  |    58 | 0.39 GB | `practice-test-plus` | audio of Practice Test Plus 1-3                                                                                                                     |
+| `Academic Reading Samples` |    12 | 2.1 MB  | `reading-samples`    | the British Council "Sample Academic Reading" task PDFs                                                                                             |
+| `Assignments`              |    33 | 0.8 MB  | `assignments`        | a teacher's marked student writing, dated August 2022                                                                                               |
+
+Two details survive only because nobody cleaned the tree up, and both are recorded by the index:
+
+- **the folder that miscounts itself** — `CAMBRIDGE IELTS 1 TO 17` actually contains volumes 1-18;
+  volume 18 is present as a cover image and no audio at all. The volume table publishes the folder
+  name verbatim next to the canonical volume number it resolves to;
+- **duplicated vendor numbering** — the "official IELTS" folder holds both `01.mp3` and `1.mp3`
+  (numbering restarts in two conventions), which is why 70 files describe roughly 35 tracks.
+
+As everywhere in this API, the archive is third-party copyrighted material shared without a licence,
+so the index publishes **derived, non-substitutive metadata and statistics only**: no audio, PDF
+content, essay text or image is redistributed (§26 explains why statistics over essays are not
+invertible into essays).
+
+### 24. The media-archaeology table
+
+`GET /v1/archive/volumes` publishes one row per Cambridge volume. Listening audio is the one part of
+IELTS preparation that used to be physical, and the file names still show it:
+
+| Volumes | Naming scheme    | Media era | Example file name                         | Tests recoverable?  |
+| ------: | ---------------- | --------- | ----------------------------------------- | ------------------- |
+|    1, 3 | `cassette-side`  | cassette  | `Casset-1/2.mp3`                          | no (4 tracks each)  |
+|       2 | `cassette-side`  | cassette  | `1/2.MP3`                                 | no (4 tracks)       |
+| 4,5,7-9 | `cd-track`       | CD        | `CD 1/8.MP3`                              | no (16 flat tracks) |
+|       6 | `test-folder`    | CD        | `Test2/Test2-s1.mp3`                      | yes (tests 1-4)     |
+|      10 | `flat-track`     | CD        | `CAMBRIDGE   12.mp3`                      | no (16 flat tracks) |
+|      11 | `test-section`   | download  | `IELTS11_Test1_Section4.mp3`              | yes (tests 1-4)     |
+|      12 | `test-section`   | download  | `Test 5 Section 1.mp3`                    | yes (tests 5-8)     |
+|      13 | `cd-track-range` | CD        | `IELTS13-Tests1-4CD1Track_03.mp3`         | range only (1-4)    |
+|      14 | `test-section`   | download  | `C14T2S3.mp3`                             | yes (tests 1-4)     |
+|      15 | `test-section`   | download  | `IELTS15_test1_audio4.wav`                | yes (tests 1-4)     |
+|      16 | `test-section`   | download  | `Test 1 Part 2 [@cambridgematerials].mp3` | yes (tests 1-4)     |
+|      17 | `test-section`   | download  | `Camb 17 3-4.mp3`                         | yes (tests 1-4)     |
+|      18 | `none`           | none      | `ielts.jpg`                               | no audio at all     |
+
+Derived facts the table makes queryable:
+
+- **14 of 18 volumes are complete** in the sense that matters for practice — sixteen tracks, i.e.
+  four tests x four listening sections. Volumes 1-3 carry only four tracks each, and volume 18 none.
+- **Test structure is recoverable in 7 volumes** (6, 11, 12, 14-17). Everywhere else the naming
+  destroys it: a cassette side or a CD track number does not say which test it belongs to. This is a
+  small, concrete instance of a general point — the test's structure survives only where the
+  file-naming conventions encode it.
+- **Grey provenance is visible and recorded.** Volumes 4 and 5 each contain a ripped vendor track
+  (`...SAKIB BOOK CENTER (7).MP3`, a book-shop watermark), and every volume-16 file name carries
+  `[@cambridgematerials]`, a Telegram channel credit. The index flags all three volumes.
+
+### 25. The official sample tasks, measured
+
+The twelve PDFs are the British Council's "Sample Academic Reading" series: one exemplar task per
+question format. Each file name already names its task, so the index maps the twelve onto the
+canonical taxonomy of Part II — eight distinct types, with the completion variants (flow-chart,
+note, table, both summary modes) rolling up to `summary-completion` exactly as the practice corpus's
+labels do. Three samples ship an answer key (`-and-key` in the file name).
+
+The index also measures each sample. The text layer is extracted with a pinned `pypdf` (6.17.0); the
+**passage** is everything before the first `Questions n-m` rubric, which makes the figures
+comparable with the passage-level figures of Part II:
+
+- Flesch Reading Ease 32.0-57.0, **median 41.5** — against a full-reading-test corpus mean of 43.5
+  and graded-lesson means of 70.2 (A1-A2), 26.0 (B1-B2) and 5.0 (C1-C2). The official exemplars sit
+  exactly at full-test difficulty; they are extracts of real tests, and the numbers agree.
+- Flesch-Kincaid grade 9.5-14.8.
+- Nine of the twelve state their reading part in the bracketed descriptive note (four Part 1, one
+  Part 2, four Part 3); two state a topic without a part; the note text itself is never republished —
+  only the parsed part number and topic phrase.
+
+One measurement is deliberately **not** published: question counts. In these PDFs the text layer
+scrambles question numbers (kerned digits swap positions — a "Questions 7-13" rubric can extract as
+"Questions 7 - 6"), so any count would be unreliable, and a number that cannot be trusted is not
+published. The same rule as in Part II: what cannot be measured cleanly is left `null`, visibly.
+
+### 26. The learner assignment log
+
+`Assignments/` is a teacher's folder: seven dated sub-folders (5-27 August 2022), each holding a
+task prompt image and markdown essays by that study group's members. The index classifies all 33
+files and publishes derived statistics per essay — never the essays:
+
+- **24 essays** by four named learners (`emon` 7, `riad` 7 — the archive spells him `riad` and
+  `riadul` interchangeably; the index normalises to `riad` — `pranto` 6, `mahmuda` 3) plus one
+  unnamed essay, 7,458 words in total;
+- **eight task types**: line-chart (4), bar-chart (2), pie-chart (3), table (2), map (3),
+  man-made process (3), natural process (3) and Task 2 essay (4) — i.e. the complete Writing Task 1
+  repertoire of Part I plus Task 2;
+- **7 prompt images**, one answered grammar exercise and one ten-prompt Task 2 list;
+- per essay: the same `readability()` statistics used across the API (words, sentences, sentence
+  length, syllables, type-token ratio, Flesch Reading Ease, Flesch-Kincaid grade).
+
+Why the statistics are non-substitutive: they are eleven aggregates per essay. Twenty-four essays
+yield 264 numbers where the source holds 7,458 words; the aggregates cannot be inverted to
+reconstruct a single sentence. Learner first names are retained because they are part of the public
+upstream file paths — removing them would break provenance links; the API adds no personal data
+beyond what upstream already publishes.
+
+### 27. Threats to validity (Part V)
+
+- **The archive is one study group's.** As in Part IV, n = 1 by design: the index documents what one
+  group collected, not a sample of what groups collect.
+- **Name-based classification is approximate.** Folder and file names are noisy (`CEMBRIDGE garamar
+i e l t s` is Cambridge Grammar for IELTS). Every rule is published in
+  `scripts/extract_archive.py`; misclassifications can be found and reported.
+- **Bytes are not duration.** Audio size is published in bytes only. MP3 duration would need frame
+  parsing and is bitrate-sensitive, so it is deliberately not estimated.
+- **Structure inference trusts file names.** A mislabelled rip (e.g. `CD 2` files that actually
+  carry test 3) would mislead the volume table. The table is honest about this: 7 of 17 audio
+  volumes expose test structure at all, and the rest are visibly `null`, not guessed.
+- **PDF text extraction is lossy.** The pinned `pypdf` extracts the text layer imperfectly (digit
+  scrambling, occasional ligature loss); readability figures carry that noise. The passage boundary
+  is the first `Questions n-m` rubric — a rubric mentioned inside a passage would truncate it.
+- **Some "essays" hold several drafts.** Two files contain multiple drafts separated by hand-written
+  markers (`essay-5 ------`), which inflates their word counts (max 2,479 words for one file). The
+  statistics are per **file**, and this is stated here rather than silently corrected, because
+  splitting drafts would require publishing the separators - text we do not redistribute.
+- **Teacher margin notes remain in the text.** At least one file opens with `[Redo this one]`;
+  light Markdown stripping does not remove bracketed notes, and lexical figures carry that noise.
+- **The snapshot is mutable and unlicensed.** The upstream repository declares no licence; the
+  commit SHA and per-file blob SHA-1s pin the analysis, but upstream deletion would orphan the
+  permalinks. As with Parts I, II and IV, the index would need re-deriving after upstream changes.
+
+### 28. Reproducing Part V
+
+```bash
+curl -sL "https://api.github.com/repos/msneloy/IELTS/git/trees/HEAD?recursive=1" -o tree.json
+# The text statistics need only the ~4 MB of document blobs (sample PDFs and
+# assignment text files); a full clone also works but is 5.4 GB.
+python3 scripts/extract_archive.py tree.json ./upstream data/archive.json
+```
+
+`scripts/extract_archive.py` is standard library except for the pinned `pypdf` needed for the twelve
+sample PDFs; the readability formulas are imported from `scripts/extract_practice_tests.py` so the
+two datasets remain comparable by construction. The derivation is deterministic: the same tree and
+blobs always produce byte-identical output. Continuous integration re-derives the index on every run
+
+- it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
+  file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
+  per-essay statistics).

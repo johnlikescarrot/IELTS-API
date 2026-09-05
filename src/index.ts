@@ -23,6 +23,7 @@ export * from './lib/query.js';
 export * from './lib/rng.js';
 export * from './lib/route.js';
 export * from './lib/search.js';
+export * from './data/archive.js';
 export * from './data/bands.js';
 export * from './data/conversions.js';
 export * from './data/corpus.js';
