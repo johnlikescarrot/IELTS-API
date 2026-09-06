@@ -202,11 +202,7 @@ export const SCENES: readonly Scene[] = [
     register: 'academic',
     description:
       'Two or three students planning an assignment with a tutor. Opinions, tentative plans and feedback overlap, so tracking who says what matters more than catching facts.',
-    typicalQuestionTypes: [
-      'multiple-choice',
-      'multiple-choice-multiple-answer',
-      'matching',
-    ],
+    typicalQuestionTypes: ['multiple-choice', 'multiple-choice-multiple-answer', 'matching'],
     signals: [
       'Agreement and disagreement markers: *actually*, *I see your point, but…*.',
       'Named students matched to tasks, topics or opinions.',

@@ -130,9 +130,9 @@ describe('buildQuiz', () => {
     expect(MIN_QUESTIONS).toBe(4);
     expect(DEFAULT_QUESTIONS).toBe(12);
     expect(MAX_QUESTIONS).toBe(40);
-    expect(
-      buildQuiz({ seed: 'edges', count: MIN_QUESTIONS, formats: ['spelling'] }).questions,
-    ).toHaveLength(MIN_QUESTIONS);
+    expect(buildQuiz({ seed: 'edges', count: MIN_QUESTIONS, formats: ['spelling'] }).questions).toHaveLength(
+      MIN_QUESTIONS,
+    );
   });
 });
 

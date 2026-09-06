@@ -117,12 +117,9 @@ describe('GET /v1/diagnostic/evaluate', () => {
 
   it('rejects out-of-range counts and unknown formats', async () => {
     const answers = Array.from({ length: 8 }, () => 'A').join(',');
+    expect((await server.json(`/v1/diagnostic/evaluate?seed=x&count=3&answers=${answers}`)).status).toBe(400);
     expect(
-      (await server.json(`/v1/diagnostic/evaluate?seed=x&count=3&answers=${answers}`)).status,
-    ).toBe(400);
-    expect(
-      (await server.json(`/v1/diagnostic/evaluate?seed=x&count=8&formats=nope&answers=${answers}`))
-        .status,
+      (await server.json(`/v1/diagnostic/evaluate?seed=x&count=8&formats=nope&answers=${answers}`)).status,
     ).toBe(400);
   });
 });

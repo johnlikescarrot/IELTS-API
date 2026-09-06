@@ -109,8 +109,7 @@ function blueprint(context: RouteContext): HandlerResult {
   const params = toParams(context.url);
   const skill = getEnum(params, 'skill', BLUEPRINT_SKILLS) ?? 'reading';
   const focus = parseList(getString(params, 'focus'), 'focus', observedQuestionTypes()) as
-    | QuestionTypeId[]
-    | undefined;
+    QuestionTypeId[] | undefined;
   const items = getInt(params, 'items', BLUEPRINT_MIN_ITEMS, BLUEPRINT_MAX_ITEMS, BLUEPRINT_DEFAULT_ITEMS);
   const seed = getString(params, 'seed') ?? BLUEPRINT_DEFAULT_SEED;
   return {

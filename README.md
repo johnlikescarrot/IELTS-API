@@ -38,6 +38,14 @@ indexes what preparation material looks like before anyone curates it: `/v1/arch
 naming-scheme and completeness table, the twelve official sample tasks measured for readability, and
 24 marked learner essays summarised statistically.
 
+Finally, the API runs a stateless mock-exam centre modelled on the open
+[YYSD test centre][yysd]: `/v1/scores/raw-to-band` converts 40-item raw scores to bands,
+`/v1/scenes` taxonomises the listening scenes and reading domains those papers recycle,
+`/v1/diagnostic/quiz` deals seeded placement quizzes from the headword dataset and
+`/v1/diagnostic/evaluate` grades them with a Wilson score interval, `/v1/study/review`
+schedules vocabulary reviews with the SM-2 algorithm, and `/v1/tests/blueprint` assembles
+reproducible drill sets from the indexed full tests — all without accounts, sessions or API keys.
+
 ## Quick start
 
 ```bash
@@ -75,6 +83,24 @@ curl -s "http://localhost:3000/v1/materials/items?category=past-paper-recall"
 
 # The Cambridge 1-18 listening archive, volume by volume: naming era, tests, completeness
 curl -s "http://localhost:3000/v1/archive/volumes"
+
+# Raw score to band: 30 out of 40 in Listening is band 7
+curl -s "http://localhost:3000/v1/scores/raw-to-band?scale=listening&raw=30"
+
+# The Section 4 lecture scene, with its favoured question types and signals
+curl -s "http://localhost:3000/v1/scenes/academic-lecture"
+
+# A seeded 8-question placement quiz (answers stay out of the response)
+curl -s "http://localhost:3000/v1/diagnostic/quiz?seed=cohort-a&count=8"
+
+# Grade it: 7 of 8, a Wilson interval, a "good" rating and per-format sub-scores
+curl -s "http://localhost:3000/v1/diagnostic/evaluate?seed=cohort-a&count=8&answers=D,A,depression,B,D,D,A,tolerance"
+
+# One SM-2 review step for a card recalled perfectly
+curl -s "http://localhost:3000/v1/study/review?repetitions=2&easiness=2.7&interval=6&quality=5"
+
+# A drill set of the three full tests densest in matching headings
+curl -s "http://localhost:3000/v1/tests/blueprint?skill=reading&focus=matching-headings"
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -90,25 +116,30 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 
 ## Datasets
 
-| Dataset                         |                                                     Size | Endpoint                | Provenance                                                                     |
-| ------------------------------- | -------------------------------------------------------: | ----------------------- | ------------------------------------------------------------------------------ |
-| Cambridge IELTS 1-22 vocabulary |                      4,174 headwords / 4,310 occurrences | `/v1/vocabulary`        | Derived from `1-22yas.xlsx` in [the upstream corpus][corpus]                   |
-| Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
-| Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`             | Original compilation                                                           |
-| Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                         |
-| Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                   |
-| Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                 |
-| Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`     | Original compilation                                                           |
-| Free resources                  |                                             27 resources | `/v1/resources`         | Original catalogue (free + no login only)                                      |
-| Research corpus index           |                                 76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                                |
-| Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
-| Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
-| Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
-| Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
-| Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
-| Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
-| Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
-| Grey-literature archive         |         555 files / 509 audio tracks / 24 learner essays | `/v1/archive`           | Derived index of [the grey-literature archive][archive]                        |
+| Dataset                         |                                                     Size | Endpoint                 | Provenance                                                                     |
+| ------------------------------- | -------------------------------------------------------: | ------------------------ | ------------------------------------------------------------------------------ |
+| Cambridge IELTS 1-22 vocabulary |                      4,174 headwords / 4,310 occurrences | `/v1/vocabulary`         | Derived from `1-22yas.xlsx` in [the upstream corpus][corpus]                   |
+| Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors`  | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
+| Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`              | Original compilation                                                           |
+| Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`     | Providers' published comparison tables                                         |
+| Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`     | Original items modelled on recurring IELTS question families                   |
+| Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`    | Original items                                                                 |
+| Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`      | Original compilation                                                           |
+| Free resources                  |                                             27 resources | `/v1/resources`          | Original catalogue (free + no login only)                                      |
+| Research corpus index           |                                 76 of 404 upstream files | `/v1/corpus`             | Metadata index of [the upstream corpus][corpus]                                |
+| Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`     | Original taxonomy and guidance; frequencies from the practice corpus           |
+| Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`              | Derived structure and readability index of [the practice collection][practice] |
+| Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`      | Original compilation with keyword sets                                         |
+| Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`            | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
+| Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`         | Composition of the datasets above                                              |
+| Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`         | Original taxonomy with stages, cue language and pitfalls                       |
+| Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`          | Metadata index of [the self-study collection][materials]                       |
+| Grey-literature archive         |         555 files / 509 audio tracks / 24 learner essays | `/v1/archive`            | Derived index of [the grey-literature archive][archive]                        |
+| Raw-score tables                |                                 3 scales x 41 raw scores | `/v1/scores/raw-to-band` | IELTS partners' scoring guides, cross-checked with the [YYSD centre][yysd]     |
+| Communicative contexts          |                   12 listening scenes, 8 reading domains | `/v1/scenes`             | Original taxonomy in the spirit of the [YYSD taxonomies][yysd]                 |
+| Vocabulary diagnostic           |              Seeded quizzes of 4-40 questions, 3 formats | `/v1/diagnostic/quiz`    | Original engine; grading with the Wilson score interval                        |
+| Spaced-repetition scheduler     |                     SM-2 single reviews and trajectories | `/v1/study/review`       | SuperMemo SM-2 (Woźniak & Gorzelańczyk 1994)                                   |
+| Mock-paper blueprints           |                       Drill sets from 470 indexed papers | `/v1/tests/blueprint`    | Composition of the practice-test index above                                   |
 
 ## Endpoints
 
@@ -133,17 +164,24 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
 | GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
 | GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
+| GET    | `/v1/scores/raw-to-band`  | Raw score out of 40 to a band (`scale`, `raw`)                                                          |
+| GET    | `/v1/scores/raw-tables`   | The raw-score conversion tables, one row per raw score (`scale`)                                        |
 | GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
 | GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                        |
 | GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                           |
 | GET    | `/v1/tasks/writing`       | Writing Task 1 families (`module`)                                                                      |
 | GET    | `/v1/question-types`      | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)                |
 | GET    | `/v1/question-types/:id`  | One question type, with its traps and upstream label variants                                           |
+| GET    | `/v1/scenes`              | Listening scenes and reading domains (`skill`, `section`, `type`, `q`)                                  |
+| GET    | `/v1/scenes/:id`          | One context, with links into the question-type and vocabulary datasets                                  |
+| GET    | `/v1/diagnostic/quiz`     | Seeded vocabulary quiz (`seed`, `count`, `formats`)                                                     |
+| GET    | `/v1/diagnostic/evaluate` | Grade a quiz: accuracy, Wilson interval, rating (`seed`, `count`, `formats`, `answers`)                 |
 | GET    | `/v1/frameworks`          | Response frameworks for Writing Task 2 and Speaking Parts 2-3 (`section`, `skill`, `type`, `part`, `q`) |
 | GET    | `/v1/frameworks/:id`      | One framework, with its ordered stages, cue language and pitfalls                                       |
 | GET    | `/v1/tests`               | Practice-test index: provenance, statistics, facets                                                     |
 | GET    | `/v1/tests/stats`         | Question-type and readability statistics                                                                |
 | GET    | `/v1/tests/items`         | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)                |
+| GET    | `/v1/tests/blueprint`     | Deterministic drill set from the full tests (`skill`, `focus`, `items`, `seed`)                         |
 | GET    | `/v1/tests/:id`           | One indexed practice test or graded reading lesson                                                      |
 | GET    | `/v1/corpus`              | Corpus metadata, statistics and facets                                                                  |
 | GET    | `/v1/corpus/stats`        | Corpus statistics                                                                                       |
@@ -160,6 +198,7 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
+| GET    | `/v1/study/review`        | SM-2 spaced-repetition step (`repetitions`, `easiness`, `interval`, `quality`/`qualities`)              |
 | GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                                |
 
 ### Worked examples
@@ -176,6 +215,45 @@ GET /v1/scores/overall?listening=7&reading=6&writing=6&speaking=6
     "mean": 6.25, "overall": 6.5, "cefr": "B2", "spread": 1,
     "explanation": "The mean of the four components is 6.25, which falls exactly between two
                     bands; IELTS rounds a .25/.75 mean up, giving 6.5."
+  }
+}
+```
+
+**Raw score to band.**
+
+```jsonc
+GET /v1/scores/raw-to-band?scale=listening&raw=30
+{
+  "status": 200,
+  "data": {
+    "scale": "listening", "raw": 30, "band": 7,
+    "label": "Good user", "cefr": "C1", "belowPublishedRows": false
+  }
+}
+```
+
+**Diagnostic grading.** The quiz is rebuilt from its seed, so the grade is reproducible from
+the URL alone.
+
+```jsonc
+GET /v1/diagnostic/evaluate?seed=cohort-a&count=8&answers=D,A,depression,B,D,D,A,tolerance
+{
+  "status": 200,
+  "data": {
+    "seed": "cohort-a", "total": 8, "score": 7, "accuracy": 0.875,
+    "wilson95": { "lower": 0.5291, "upper": 0.9776 },
+    "rating": "good",
+    "perFormat": [
+      { "format": "meaning-choice", "correct": 3, "total": 3, "accuracy": 1 },
+      { "format": "word-choice", "correct": 2, "total": 3, "accuracy": 0.6667 },
+      { "format": "spelling", "correct": 2, "total": 2, "accuracy": 1 }
+    ],
+    "advice": [
+      "You answered 7 of 8 correctly (88%).",
+      "Good: a pass, with one format usually dragging the total down.",
+      "Your weakest format was word-choice (67%): drill it with /v1/vocabulary/random before retaking this quiz."
+    ],
+    // ... plus per-question items and a headwords-per-day recommendation
   }
 }
 ```
@@ -460,3 +538,4 @@ partners.
 [practice]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
 [materials]: https://github.com/Oxidaner/ielts
 [archive]: https://github.com/msneloy/IELTS
+[yysd]: https://github.com/wanli4473/yysd-testcenter

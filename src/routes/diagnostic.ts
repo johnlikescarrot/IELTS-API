@@ -31,8 +31,7 @@ const ANSWER_FORMAT =
 /** Read the requested formats, defaulting to every format. */
 function readFormats(params: ReturnType<typeof toParams>): DiagnosticFormat[] {
   const formats = parseList(getString(params, 'formats'), 'formats', DIAGNOSTIC_FORMATS) as
-    | DiagnosticFormat[]
-    | undefined;
+    DiagnosticFormat[] | undefined;
   return formats ?? [...DIAGNOSTIC_FORMATS];
 }
 

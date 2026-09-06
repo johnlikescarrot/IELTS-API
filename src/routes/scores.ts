@@ -3,13 +3,7 @@
  */
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
-import {
-  MAX_RAW_SCORE,
-  RAW_BAND_SCALES,
-  RAW_BAND_TABLES,
-  rawBandRows,
-  rawToBand,
-} from '../data/rawBands.js';
+import { MAX_RAW_SCORE, RAW_BAND_SCALES, RAW_BAND_TABLES, rawBandRows, rawToBand } from '../data/rawBands.js';
 import { cefrForBand } from '../data/bands.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';

@@ -15,7 +15,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 5 September 2026
+date: 6 September 2026
 bibliography: paper.bib
 ---
 
@@ -24,7 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -37,7 +37,11 @@ cross-linked to the task banks; a structure and readability index of
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; and a stateless mock-exam centre — raw-score to band tables for the receptive papers,
+a taxonomy of the listening scenes and reading domains those papers recycle, seeded placement
+quizzes with Wilson-graded reports [@wilson1927], SuperMemo SM-2 review scheduling
+[@wozniak1994], and deterministic drill-set blueprints — whose designs are studied from the open
+YYSD test centre [@yysdtestcenter] and reimplemented without accounts, sessions or API keys.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -163,6 +167,18 @@ composes the gap between a target band and current component scores into a deter
 week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
 pure functions of their inputs, so their outputs are as reproducible as the datasets.
 
+**Mock-exam centre.** Five engines compose the datasets above into sittable examinations. Raw-score
+tables convert 40-item Listening, Academic Reading and General Training Reading scores to bands
+with explicit floor rows below the published ranges. A context taxonomy names the 12 listening
+scenes and 8 reading domains the papers recycle, each linked to the canonical question types it
+favours. A placement quiz deals 4–40 seeded questions from the headword dataset in three formats
+and grades the answer string with per-format sub-scores, a pass/excellent rating and a 95% Wilson
+score interval for the accuracy. An SM-2 scheduler advances spaced-repetition state by single
+reviews or graded trajectories. A blueprint dealer ranks the 470 indexed full tests by focus-type
+density and wraps the top ranks in time boxes, coverage analysis and scoring pointers. Every
+engine is deterministic in its seed, so a quiz, a grade and a drill set are reproducible from
+their URLs alone.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
@@ -178,7 +194,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (599 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -201,7 +217,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
 assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
 grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
-response that draws on them. IELTS is a jointly owned trademark of the
+response that draws on them. The mock-exam engines study the designs of the YYSD test centre
+assembled by `wanli4473`, read-only and without redistributing any of its material. IELTS is a
+jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

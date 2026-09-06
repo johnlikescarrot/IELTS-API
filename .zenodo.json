@@ -27,7 +27,9 @@
     "study planning",
     "learner corpus",
     "grey literature",
-    "listening comprehension"
+    "listening comprehension",
+    "placement testing",
+    "spaced repetition"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -49,6 +51,11 @@
     {
       "identifier": "https://github.com/msneloy/IELTS",
       "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/wanli4473/yysd-testcenter",
+      "relation": "references",
       "scheme": "url"
     }
   ]

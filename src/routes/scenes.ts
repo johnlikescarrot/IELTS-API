@@ -34,10 +34,7 @@ function index(context: RouteContext): HandlerResult {
     }
     if (
       query.length > 0 &&
-      !matchesQuery(
-        [scene.id, scene.name, scene.description, ...scene.keywords, ...scene.signals],
-        query,
-      )
+      !matchesQuery([scene.id, scene.name, scene.description, ...scene.keywords, ...scene.signals], query)
     ) {
       return false;
     }

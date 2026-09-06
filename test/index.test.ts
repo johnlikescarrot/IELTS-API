@@ -47,6 +47,20 @@ describe('the package entry point', () => {
     expect(api.CONVERSION_TARGETS).toContain('cefr');
     expect(api.allEntries().length).toBe(4174);
     expect(api.corpusStats().filesInRepository).toBe(404);
+    expect(api.RAW_BAND_SCALES).toContain('general-reading');
+    expect(api.rawToBand('listening', 30).band).toBe(7);
+    expect(api.SCENES.length).toBe(20);
+    expect(api.findScene('academic-lecture')?.skill).toBe('listening');
+  });
+
+  it('exports the mock-exam engines', () => {
+    expect(typeof api.buildQuiz).toBe('function');
+    expect(typeof api.evaluateQuiz).toBe('function');
+    expect(typeof api.wilsonInterval).toBe('function');
+    expect(typeof api.sm2Step).toBe('function');
+    expect(typeof api.sm2Chain).toBe('function');
+    expect(typeof api.buildBlueprint).toBe('function');
+    expect(api.buildBlueprint({ seed: 'x', skill: 'reading', focus: [], items: 1 }).papers).toHaveLength(1);
   });
 
   it('exports the build constants', () => {

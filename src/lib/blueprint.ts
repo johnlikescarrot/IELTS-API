@@ -48,9 +48,10 @@ const SCORING_SCALE: Record<BlueprintSkill, string> = {
 };
 
 /** Canonical type names, keyed by identifier. */
-const TYPE_NAMES = Object.fromEntries(
-  QUESTION_TYPES.map((type) => [type.id, type.name]),
-) as Record<QuestionTypeId, string>;
+const TYPE_NAMES = Object.fromEntries(QUESTION_TYPES.map((type) => [type.id, type.name])) as Record<
+  QuestionTypeId,
+  string
+>;
 
 /** Canonical types of one skill, in taxonomy order. */
 function canonicalFor(skill: BlueprintSkill): QuestionTypeId[] {
@@ -191,10 +192,7 @@ export function buildBlueprint(options: BuildBlueprintOptions): Blueprint {
       questions: item.questions,
       focusQuestions: focusScore(item, focus),
       questionTypes: [...item.questionTypes],
-      suggestedMinutes: Math.max(
-        10,
-        Math.round((item.questions / 40) * PAPER_MINUTES[options.skill]),
-      ),
+      suggestedMinutes: Math.max(10, Math.round((item.questions / 40) * PAPER_MINUTES[options.skill])),
       readingEase: options.skill === 'reading' ? readability.fleschReadingEase : null,
       fleschKincaidGrade: options.skill === 'reading' ? readability.fleschKincaidGrade : null,
     };
@@ -209,8 +207,7 @@ export function buildBlueprint(options: BuildBlueprintOptions): Blueprint {
   const meanReadingEase =
     options.skill === 'reading' && papers.length > 0
       ? Math.round(
-          (papers.reduce((sum, paper) => sum + (paper.readingEase as number), 0) / papers.length) *
-            100,
+          (papers.reduce((sum, paper) => sum + (paper.readingEase as number), 0) / papers.length) * 100,
         ) / 100
       : null;
   return {

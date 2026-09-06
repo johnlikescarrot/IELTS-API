@@ -137,10 +137,7 @@ export function sm2Step(state: SpacedRepetitionState, quality: number): SpacedRe
  * @param qualities - Recall qualities (0–5) in review order.
  * @returns One outcome per grade.
  */
-export function sm2Chain(
-  state: SpacedRepetitionState,
-  qualities: readonly number[],
-): SpacedRepetitionStep[] {
+export function sm2Chain(state: SpacedRepetitionState, qualities: readonly number[]): SpacedRepetitionStep[] {
   const steps: SpacedRepetitionStep[] = [];
   let current = state;
   for (const quality of qualities) {

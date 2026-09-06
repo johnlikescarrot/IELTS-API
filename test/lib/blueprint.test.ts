@@ -22,11 +22,10 @@ describe('buildBlueprint', () => {
   });
 
   it('breaks rank ties by seed', () => {
-    const deals = [0, 1, 2, 3, 4, 5].map(
-      (round) =>
-        buildBlueprint({ seed: `tie-${round}`, skill: 'reading', focus: ['matching-headings'], items: 3 })
-          .papers.map((paper) => paper.id)
-          .join(','),
+    const deals = [0, 1, 2, 3, 4, 5].map((round) =>
+      buildBlueprint({ seed: `tie-${round}`, skill: 'reading', focus: ['matching-headings'], items: 3 })
+        .papers.map((paper) => paper.id)
+        .join(','),
     );
     expect(new Set(deals).size).toBeGreaterThan(1);
   });
@@ -37,9 +36,7 @@ describe('buildBlueprint', () => {
     expect([...BLUEPRINT_SKILLS]).toEqual(['reading', 'listening']);
     const blueprint = buildBlueprint({ seed: 'size', skill: 'listening', focus: [], items: 2 });
     expect(blueprint.papers).toHaveLength(2);
-    expect(blueprint.totalQuestions).toBe(
-      blueprint.papers.reduce((sum, paper) => sum + paper.questions, 0),
-    );
+    expect(blueprint.totalQuestions).toBe(blueprint.papers.reduce((sum, paper) => sum + paper.questions, 0));
     expect(blueprint.totalMinutes).toBe(
       blueprint.papers.reduce((sum, paper) => sum + paper.suggestedMinutes, 0),
     );
@@ -114,8 +111,6 @@ describe('buildBlueprint', () => {
     expect(blueprint.totalQuestions).toBe(0);
     expect(blueprint.totalMinutes).toBe(0);
     expect(blueprint.meanReadingEase).toBeNull();
-    expect(blueprint.missing.map((gap) => gap.id).sort()).toEqual(
-      [...canonicalFor('reading')].sort(),
-    );
+    expect(blueprint.missing.map((gap) => gap.id).sort()).toEqual([...canonicalFor('reading')].sort());
   });
 });

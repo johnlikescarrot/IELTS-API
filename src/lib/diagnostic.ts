@@ -454,14 +454,11 @@ export type EvaluateQuizOptions = {
 export function evaluateQuiz(options: EvaluateQuizOptions): DiagnosticReport {
   const quiz = buildQuiz({ seed: options.seed, count: options.count, formats: options.formats });
   if (options.answers.length !== quiz.questions.length) {
-    throw badRequest(
-      `Expected ${quiz.questions.length} answers but received ${options.answers.length}.`,
-      {
-        parameter: 'answers',
-        expected: String(quiz.questions.length),
-        received: String(options.answers.length),
-      },
-    );
+    throw badRequest(`Expected ${quiz.questions.length} answers but received ${options.answers.length}.`, {
+      parameter: 'answers',
+      expected: String(quiz.questions.length),
+      received: String(options.answers.length),
+    });
   }
   const entries = testableEntries();
   const items = quiz.questions.map((question, position) => {

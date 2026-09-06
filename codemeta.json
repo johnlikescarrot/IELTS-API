@@ -3,10 +3,10 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, and a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays.",
-  "version": "1.3.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, and a stateless mock-exam centre with raw-score tables, placement diagnostics, SM-2 scheduling and drill-set blueprints.",
+  "version": "1.4.0",
   "dateCreated": "2026-09-04",
-  "datePublished": "2026-09-05",
+  "datePublished": "2026-09-06",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",
@@ -39,7 +39,10 @@
     "study planning",
     "learner corpus",
     "grey literature",
-    "listening comprehension"
+    "listening comprehension",
+    "placement testing",
+    "spaced repetition",
+    "mock exam"
   ],
   "author": [
     {

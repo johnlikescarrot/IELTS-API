@@ -3,15 +3,16 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Six parts, five upstream collections:
 
-| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                        |
-| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                   |
-| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
-| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
-| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                          | What it yields                                                                                                     |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs      | the vocabulary dataset and the corpus index                                                                        |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs    | the question-type taxonomy and the practice-test structure and readability index                                   |
+| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                                 | the readability analyser, the essay profiler and the study planner                                                 |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs    | the study-materials index and the response-framework taxonomy                                                      |
+| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs      | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| [Part VI](#part-vi--the-stateless-mock-exam-centre)                             | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | September 2026, studied read-only | the raw-score tables, the context taxonomy and the diagnostic, scheduling and blueprint engines                    |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -681,3 +682,122 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the stateless mock-exam centre
+
+Parts I–V publish data and analyse text; Part VI turns the API into something a candidate can sit:
+a mock-exam centre without accounts, sessions or API keys. The design is studied from the open
+[YYSD test centre](https://github.com/wanli4473/yysd-testcenter) (repository state of September
+2026, latest push 4 September 2026): a Chinese-language IELTS preparation platform pairing a static
+front end with an Express + SQLite API (phone-number login, score sync, teacher assignments, AI
+tutoring). Five ideas port cleanly to a stateless, authentication-free API, and none of the ported
+material is redistributed — the centre's Cambridge mock pages and word banks stay where they are:
+
+| YYSD capability                     | What was studied                                                                                                                         | What this API ships instead                                                                           |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Band lookup in mock pages           | `scripts/cambridge_scoring.py`: 0–40 threshold lists for Listening and Academic Reading                                                  | Raw-score tables for Listening, Academic and General Training Reading, with explicit floor rows (§29) |
+| Drill-down practice by scene        | `library/listening-taxonomy.json` (7 types × 16 scenes, 530 groups) and `library/reading-taxonomy.json` (8 types × 8 scenes, 569 groups) | An original English taxonomy: 12 listening scenes and 8 reading domains (§30)                         |
+| Staged vocabulary diagnostic        | `server/diagnostic.js`: levelled banks, format ratios, pass thresholds, Wilson score interval                                            | Seeded quizzes from the Cambridge headwords with Wilson-graded reports (§31)                          |
+| Vocabulary challenge pool           | `server/vocab-challenge.js`: words rescored by days since review and failure count                                                       | Stateless SuperMemo SM-2 scheduling (§32)                                                             |
+| CDT exam shell + teacher assignment | `exam.html`, `teacher-calendar.html`: timed papers dealt from a manifest                                                                 | Deterministic drill-set blueprints from the practice-test index (§33)                                 |
+
+Everything below is a pure function of its inputs plus the datasets of Parts I–II, so the
+project-wide guarantees carry over: deterministic, reproducible, versioned and archivable. A quiz,
+a grade, a review step and a drill set are all reproducible from their URLs alone.
+
+### 29. `/v1/scores/raw-to-band`: the missing conversion
+
+The receptive papers are marked out of 40 and converted to bands through threshold tables the
+IELTS partners publish in their scoring guides — yet every score endpoint so far started from
+bands. The raw-score tables close that gap. Listening and Academic Reading reuse the threshold
+lists the YYSD centre ships (14 and 15 rows respectively), cross-checked against the partners'
+guides; General Training Reading adds the 15-row table from the GT guides, which demands more raw
+marks per band (30 buys band 6.0 in GT against 7.0 in Academic).
+
+The published guides stop above zero, so each table ends in an explicit floor row (2.5 for
+Listening, 2.0 for both Reading papers) and every conversion carries a `belowPublishedRows` flag.
+Scores under the lowest published row still convert — to the floor — but a researcher archiving
+results can exclude them. `/v1/scores/raw-tables` expands each table to 41 rows so the exact
+mapping is citable row by row. Bands resolve to the official user labels and CEFR levels of
+Part I rather than duplicating them.
+
+The honest limitation is equating: operational grading adjusts thresholds between test versions,
+so any fixed table is indicative. The responses say so, and promise nothing admissions-worthy.
+
+### 30. `/v1/scenes`: the contexts the papers recycle
+
+Section 1 is almost always an everyday transaction and Section 4 is always an academic monologue;
+the YYSD taxonomies exploit exactly this regularity by letting students drill into one scene
+(求职 recruitment, 图书馆 the library, 课题研究 research projects) at a time. The English
+taxonomy keeps the shape and rewrites the content: 12 listening scenes from accommodation
+dialogues to lecture monologues, each with its section affinity, and 8 reading domains from
+history to public health, each with its passage affinity.
+
+Every context links outward instead of standing alone: to the canonical question types it favours
+(§8 of Part II, validated by test to belong to the same skill), to the signals that unlock it
+(signpost language for lectures, problem–solution arcs for environment passages), and to keyword
+queries into the Part I vocabulary dataset. The descriptions are original wording; the section
+affinities follow the public paper format, not any single book.
+
+The limitation is granularity. Real sections blend contexts — a Section 2 monologue can tour a
+library _and_ explain its courses — while the taxonomy assigns each context one home. It is a
+drill organiser, not a content analysis of any particular paper.
+
+### 31. `/v1/diagnostic/*`: placement quizzes with the seed as the session
+
+The YYSD diagnostic runs three stages (high-school, CET-4 and IELTS word banks), allocates
+formats by fixed ratios, and grades each stage against pass/excellent thresholds with a Wilson
+score interval for the accuracy. The stateless port keeps the ratios, the thresholds (0.8 pass,
+0.9 excellent) and the Wilson interval, and replaces accounts and sessions with determinism:
+`/v1/diagnostic/quiz` samples 4–40 of the 4,174 Cambridge headwords with a seeded generator, and
+`/v1/diagnostic/evaluate` rebuilds the identical quiz from the seed to grade a comma-separated
+answer string. Three text formats survive the port (recognition both ways plus spelling; the
+centre's listening-choice format needs audio the API does not serve), split 35/35/30 by largest
+remainder, with distractors drawn as seeded options.
+
+Two grading decisions deserve recording. First, choice answers are graded by option _text_, not
+position: the source workbook repeats 136 glosses across headwords, so a duplicated option is
+accepted under either letter rather than overhauled. Second, spelling is graded on the headword
+normalised for case and whitespace only — no edit distance, no mercy for near-misses — because a
+placement test should measure automaticity, and the rule fits in one sentence of documentation.
+
+The limitations are those of any vocabulary quiz: recognition is not production, the 4,174
+headwords are Cambridge-list words rather than a frequency sample, and the Wilson interval
+quantifies sampling noise, not the far larger construct gap between a quiz and the exam.
+
+### 32. `/v1/study/review`: SM-2 without a database
+
+The YYSD challenge pool reschedules words from days since review, failure counts and a
+stubbornness multiplier. The equivalent with fifty years of literature behind it is SuperMemo
+SM-2: three numbers per card (repetitions, easiness, interval), one 0–5 recall grade per review,
+and textbook update rules — 1 day after the first pass, 6 after the second, interval × easiness
+thereafter, lapses restarting at one day with the easiness floored at 1.3. The endpoint computes
+single steps and whole trajectories; the caller stores the state. An approximate Leitner box
+(1–5, reset on lapse) is reported alongside for interfaces that think in boxes.
+
+SM-2 is genuinely old — devised in the 1980s, published in 1994 — and newer schedulers (FSRS and
+its kin) fit individual forgetting curves better. It is used here precisely because it is the
+lingua franca: three inputs, no training, and every researcher can check the arithmetic by hand.
+
+### 33. `/v1/tests/blueprint`: drill sets dealt from the index
+
+The centre's exam shell deals timed papers from a manifest; the blueprint deals drill sets from
+the Part II index. The 269 reading and 201 listening full tests are ranked by focus-type density
+— questions on the requested types, or all questions without a focus — with seeded shuffling
+breaking rank ties, and the top ranks are dealt with per-paper time boxes (60 exam minutes per
+reading paper, 30 plus 10 transfer minutes per listening paper), readability profiles for
+reading, the union and gaps of canonical-type coverage with study links, and a pointer at the
+§29 scoring table. No focus is required: without one, the densest papers win.
+
+The honest limitation is that metadata is not difficulty. Two papers can share a type profile
+while differing wildly in lexical demand; the blueprint reports reading ease but grades nothing,
+and the ranking optimises coverage density, not a calibrated difficulty curve.
+
+### 34. Reproducing Part VI
+
+Part VI has no extraction script because there is no upstream dataset to extract: the tables are
+compiled from published scoring guides, the taxonomy and the engines are original code, and the
+YYSD centre contributed designs, not data (studied read-only through the public repository in
+September 2026). Reproduction is therefore the test suite: 100% statement, branch, function and
+line coverage is a release gate, and the determinism tests pin byte-identical quizzes,
+trajectories and blueprints for fixed seeds. Any behaviour change fails loudly before merge.

@@ -7,12 +7,7 @@
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
-import {
-  DEFAULT_QUESTIONS,
-  DIAGNOSTIC_FORMATS,
-  MAX_QUESTIONS,
-  MIN_QUESTIONS,
-} from '../lib/diagnostic.js';
+import { DEFAULT_QUESTIONS, DIAGNOSTIC_FORMATS, MAX_QUESTIONS, MIN_QUESTIONS } from '../lib/diagnostic.js';
 import { MAX_RAW_SCORE, RAW_BAND_SCALES } from '../data/rawBands.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
@@ -330,7 +325,11 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     OFFSET,
   ],
   '/v1/tests/blueprint': [
-    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...BLUEPRINT_SKILLS], default: 'reading' } },
+    {
+      name: 'skill',
+      in: 'query',
+      schema: { type: 'string', enum: [...BLUEPRINT_SKILLS], default: 'reading' },
+    },
     {
       name: 'focus',
       in: 'query',

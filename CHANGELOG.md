@@ -6,6 +6,50 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-06
+
+The **mock-exam centre**: five engines that turn the API into something a candidate can sit —
+without accounts, sessions or API keys. The designs are studied read-only from the open
+[YYSD test centre](https://github.com/wanli4473/yysd-testcenter) (an Express + SQLite mock-exam
+platform with phone login, score sync, teacher assignment and AI tutoring) and reimplemented as
+stateless, deterministic endpoints; none of the centre's material is redistributed. The API
+remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Raw-score tables** (`GET /v1/scores/raw-to-band`, `GET /v1/scores/raw-tables`): 0–40 to band
+  conversion for Listening, Academic Reading and General Training Reading, compiled from the
+  IELTS partners' published scoring guides and cross-checked against the YYSD centre's threshold
+  lists. Each table ends in an explicit floor row and every conversion carries a
+  `belowPublishedRows` flag, so archived results can exclude extrapolated rows.
+- **Communicative-context taxonomy** (`GET /v1/scenes`, `GET /v1/scenes/:id`): 12 listening
+  scenes and 8 reading domains in the spirit of the YYSD listening/reading taxonomies, each with
+  section affinity, favoured canonical question types, listen-for/skim-for signals and keyword
+  queries into the vocabulary dataset.
+- **Vocabulary diagnostic** (`GET /v1/diagnostic/quiz`, `GET /v1/diagnostic/evaluate`): seeded
+  placement quizzes of 4–40 questions sampled from the 4,174 Cambridge headwords in three formats
+  (meaning-choice, word-choice, spelling, split 35/35/30 by largest remainder). The seed is the
+  session: evaluation rebuilds the identical quiz to grade a comma-separated answer string with
+  per-format sub-scores, a pass/excellent rating and a 95% Wilson score interval.
+- **Spaced-repetition scheduler** (`GET /v1/study/review`): stateless SuperMemo SM-2 review steps
+  and trajectory previews, with an approximate Leitner box and next-review hints. The caller
+  stores the three-number memory state; the API only computes.
+- **Mock-paper blueprints** (`GET /v1/tests/blueprint`): deterministic drill sets dealt from the
+  269 reading and 201 listening full tests, ranked by focus-type density with seeded tie-breaking
+  and wrapped in per-paper time boxes, readability profiles, canonical-type coverage analysis and
+  scoring pointers.
+- `RESEARCH.md` Part VI: the YYSD study (what was read, what ported, what deliberately did not),
+  per-engine methodology and threats to validity.
+- Paper and citation updates: the JOSS-style paper gains the mock-exam centre section with
+  references to Wilson (1927), Woźniak & Gorzelańczyk (1994) and the YYSD centre; `CITATION.cff`,
+  `codemeta.json`, `.zenodo.json` and the README cite version 1.4.0.
+
+### Changed
+
+- The keyword lists now include placement testing, spaced repetition and mock exam.
+- Test suite grown to 599 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material
@@ -182,6 +226,9 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
+[1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0
