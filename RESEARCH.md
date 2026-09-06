@@ -3,7 +3,7 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Six parts, four upstream collections:
 
 | Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
@@ -12,6 +12,7 @@ Five parts, four upstream collections:
 | [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
 | [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
 | [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| [Part VI](#part-vi--the-mock-exam-centre)                                       | — (composes Parts II-V into exam sittings and applies published scoring)                              | —                              | the raw-score conversion tables, the mock-exam composer and the four-skill score report                            |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -681,3 +682,112 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the mock-exam centre
+
+**Origin:** no upstream collection. This part applies the published tables and the datasets of Parts
+I-V to the canonical three-stage flow of a computer-delivered mock test (sit, convert, report), in the
+spirit of online test centres such as [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)
+whose interface was studied for this part: a full-mock shell, single-skill sittings, and a three-skill
+score report. Nothing from any test centre is copied; the implementation composes only this API's own
+datasets.
+
+### 29. Why a mock-exam layer
+
+Every dataset so far answers a research question _about_ IELTS. What none of them does is stage the
+canonical user journey of IELTS preparation: sit a complete timed paper under exam conditions, convert
+the objective answers into band scores, and read a four-skill report. A researcher building or
+benchmarking a test-centre front end previously had to re-implement all three steps from raw notes —
+an error-prone exercise, particularly for the raw-score conversion tables, which circulate online in
+dozens of subtly different versions. Part VI turns the three steps into endpoints, so that the whole
+journey is deterministic, reproducible and citable:
+
+```
+GET /v1/mock/exam?seed=...&module=...   # sit:    assemble a complete four-skill sitting
+GET /v1/scores/raw/convert?...          # convert: raw answers (0-40) to a band, per paper
+GET /v1/scores/mock-report?...          # report:  objective + examiner bands to an overall
+```
+
+### 30. The raw-score conversion tables
+
+Listening and Reading are machine-marked: one mark per correct answer, forty questions, and the band
+is a function of the count. The IELTS partners publish _representative_ tables — the band thresholds
+for an individual test form may shift by a mark or two — and it is those reference tables the API
+reproduces in `src/data/rawScores.ts`:
+
+- **Listening** (one table shared by both modules): 39-40 → 9.0 down to 4-5 → 2.5 in half-band steps.
+- **Academic Reading**: 39-40 → 9.0 down to 4-5 → 2.5; band 7.0 starts at 30-32.
+- **General Training Reading**: easier texts demand more correct answers for the same band — 40 → 9.0,
+  39 → 8.5, 36 → 7.5, 30-31 → 6.0, down to 6-8 → 2.5.
+
+Each of the three tables has 14 rows, ordered descending, mapped over the raw ranges without gaps from
+the floor up to 40. Two structural decisions deserve a record:
+
+1. **The published floor is 2.5, and the API does not go below it.** IELTS does not publish band rows
+   under 2.5 for the objective papers. Where a score falls below a table's floor, the endpoint returns
+   `band: null` with `belowFloor: true` and a note, rather than extrapolating — inventing a conversion
+   would present unreviewable numbers as published data. The report endpoint correspondingly withholds
+   the overall band while any component is `null`.
+2. **The tables are data, not code.** They live in a declarative module whose rows are validated
+   structurally by the test suite (descending half bands, gap-free coverage above the floor, GT
+   Reading strictly stricter at every sampled score), so a transcription slip fails the build.
+
+### 31. The mock-exam composer
+
+`/v1/mock/exam` assembles a realistic sitting with no new content at all: it is a pure composition of
+existing datasets, which is what keeps it redistributable. From the seed it derives one pick per slot:
+
+| Slot                  | Pool seeded over                    | Constraint                                |
+| --------------------- | ----------------------------------- | ----------------------------------------- |
+| Listening paper       | indexed `listening-full-test` items | must ship an audio recording (198 of 201) |
+| Reading paper         | indexed `reading-full-test` items   | —                                         |
+| Writing Task 1 family | `TASK_TYPES`                        | filtered to the requested module          |
+| Writing Task 2 prompt | `WRITING_TOPICS`                    | —                                         |
+| Speaking Parts 1-3    | `SPEAKING_TOPICS` per part          | one topic per part                        |
+
+All picks use the mulberry32/FNV-1a generator of Part III (`seededIndices` over the pool), with a
+distinct seed suffix per slot, so sections don't correlate. Every pick is a _reference_ — identifier,
+title, question counts, permalink — never the upstream content itself. Section structure and timings
+follow the published test format (Listening 30 minutes, Reading 60, Writing 60, Speaking ~14); the
+response declares which conversion table scores each objective paper (`academic-reading` or
+`general-training-reading` by module). The default seed, the current UTC date, makes the endpoint a
+de facto "mock of the day" identical for every caller; explicit seeds turn any sitting into a stable,
+re-sittable artefact.
+
+### 32. The four-skill score report
+
+`/v1/scores/mock-report` models the report a test centre hands back after a sitting. The two
+objective papers enter as raw counts and are converted by the Part VI tables; Writing and Speaking are
+examiner-graded outside the API, so they enter (optionally) as bands in 0.5 steps. Design points:
+
+- **Marked provenance per component** (`raw-conversion` vs `examiner-band`), because the two routes to
+  a band have different reliability and different caveats.
+- **The overall is withheld, not guessed, while any band is missing.** A report on objective papers
+  alone names the missing components; a raw score below a table floor marks its component and explains
+  the floor rule. Averaging over gaps would silently treat a missing examiner paper as earned.
+- When all four bands exist, the report is the standard arithmetic of `/v1/scores/overall` (mean
+  rounded to the nearest half band, .25/.75 up) plus the indicative CEFR level, the weakest
+  components, and the band spread.
+
+### 33. Threats to validity (Part VI)
+
+- **Representative tables, not calibrated forms.** Official band thresholds for an individual form may
+  differ from the reference tables by a mark or two; the meta note states this on every conversion.
+  Treat table output as indicative for self-marking, never as an official result.
+- **Writing and Speaking cannot be machine-banded here.** The API marks what is objectively markable
+  and waits for the examiner bands; `/v1/tools/essay-profile` offers heuristic feedback but is
+  deliberately kept out of the report, because a heuristic is not an examiner band.
+- **Mock realism is bounded by the indexed collections.** The Listening pool requires audio (198 of
+  201 items); the Reading pool is module-agnostic, so General Training sittings use the same passages
+  and only the scoring table differs — this is stated in the exam's meta. Realistic administration
+  (invigilation, on-screen timing, answer capture) belongs to the front end, not the API.
+- **Seed collisions are by design.** Two seeds may map onto the same exam (the pools are finite);
+  seeds are identifiers, not uniqueness guarantees.
+
+### 34. Reproducing Part VI
+
+The tables, composer and report are plain data and pure functions in `src/data/rawScores.ts` and
+`src/lib/mock.ts`; `npx tsc -p tsconfig.build.json && npx vitest run` builds and re-verifies them
+without network access. The structural invariants of §30 (14 rows per table, descending half bands,
+gap-free coverage above each floor, GT Reading strictly stricter) and the determinism of §31
+(identical seeds yield byte-identical exams across processes) are release-gated by the test suite.

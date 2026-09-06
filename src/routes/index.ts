@@ -11,6 +11,7 @@ import { corpusRoutes } from './corpus.js';
 import { frameworkRoutes } from './frameworks.js';
 import { materialRoutes } from './materials.js';
 import { createMetaRoutes } from './meta.js';
+import { mockRoutes } from './mock.js';
 import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
@@ -27,6 +28,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...vocabularyRoutes,
   ...bandRoutes,
   ...scoreRoutes,
+  ...mockRoutes,
   ...topicRoutes,
   ...questionTypeRoutes,
   ...frameworkRoutes,

@@ -109,58 +109,64 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
 | Grey-literature archive         |         555 files / 509 audio tracks / 24 learner essays | `/v1/archive`           | Derived index of [the grey-literature archive][archive]                        |
+| Raw-score conversion tables     |                     3 tables x 14 rows, bands 9.0 to 2.5 | `/v1/scores/raw`        | Providers' published reference conversions                                     |
+| Mock-exam centre                |              Deterministic four-skill sittings, any seed | `/v1/mock/exam`         | Composition of the datasets above ([RESEARCH.md](RESEARCH.md) Part VI)         |
 
 ## Endpoints
 
 All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
 same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 
-| Method | Path                      | Description                                                                                             |
-| ------ | ------------------------- | ------------------------------------------------------------------------------------------------------- |
-| GET    | `/`                       | Service index, dataset sizes, citation links                                                            |
-| GET    | `/v1`                     | List every versioned endpoint                                                                           |
-| GET    | `/health`                 | Liveness and dataset availability                                                                       |
-| GET    | `/docs`                   | Human-readable documentation                                                                            |
-| GET    | `/openapi.json`           | OpenAPI 3.1 document generated from the live route table                                                |
-| GET    | `/v1/vocabulary`          | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`)       |
-| GET    | `/v1/vocabulary/stats`    | Dataset statistics                                                                                      |
-| GET    | `/v1/vocabulary/random`   | Seeded random sample (`count`, `seed`)                                                                  |
-| GET    | `/v1/vocabulary/daily`    | Deterministic entry for a date (`date`, `count`)                                                        |
-| GET    | `/v1/vocabulary/:word`    | Look up one headword                                                                                    |
-| GET    | `/v1/bands`               | The band scale with indicative CEFR levels                                                              |
-| GET    | `/v1/bands/descriptors`   | Band descriptors (`set`, `criterion`, `band`)                                                           |
-| GET    | `/v1/bands/:band`         | One band, with the descriptors that bracket it                                                          |
-| GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
-| GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
-| GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
-| GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
-| GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                        |
-| GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                           |
-| GET    | `/v1/tasks/writing`       | Writing Task 1 families (`module`)                                                                      |
-| GET    | `/v1/question-types`      | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)                |
-| GET    | `/v1/question-types/:id`  | One question type, with its traps and upstream label variants                                           |
-| GET    | `/v1/frameworks`          | Response frameworks for Writing Task 2 and Speaking Parts 2-3 (`section`, `skill`, `type`, `part`, `q`) |
-| GET    | `/v1/frameworks/:id`      | One framework, with its ordered stages, cue language and pitfalls                                       |
-| GET    | `/v1/tests`               | Practice-test index: provenance, statistics, facets                                                     |
-| GET    | `/v1/tests/stats`         | Question-type and readability statistics                                                                |
-| GET    | `/v1/tests/items`         | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)                |
-| GET    | `/v1/tests/:id`           | One indexed practice test or graded reading lesson                                                      |
-| GET    | `/v1/corpus`              | Corpus metadata, statistics and facets                                                                  |
-| GET    | `/v1/corpus/stats`        | Corpus statistics                                                                                       |
-| GET    | `/v1/corpus/items`        | Search the corpus index                                                                                 |
-| GET    | `/v1/materials`           | Study-materials metadata, statistics and facets                                                         |
-| GET    | `/v1/materials/stats`     | Study-materials statistics                                                                              |
-| GET    | `/v1/materials/items`     | Search the materials index (`category`, `skill`, `format`, `q`)                                         |
-| GET    | `/v1/archive`             | Archive provenance, statistics and the Cambridge volume table                                           |
-| GET    | `/v1/archive/stats`       | Archive statistics only                                                                                 |
-| GET    | `/v1/archive/volumes`     | Cambridge IELTS 1-18 volume table: naming scheme, media era, tracks, tests, completeness                |
-| GET    | `/v1/archive/volumes/:id` | One Cambridge volume row                                                                                |
-| GET    | `/v1/archive/items`       | Search the archive index (`collection`, `format`, `media`, `skill`, `volume`, `q`)                      |
-| GET    | `/v1/archive/:id`         | One indexed archive item                                                                                |
-| GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
-| GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
-| GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
-| GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                                |
+| Method | Path                      | Description                                                                                               |
+| ------ | ------------------------- | --------------------------------------------------------------------------------------------------------- |
+| GET    | `/`                       | Service index, dataset sizes, citation links                                                              |
+| GET    | `/v1`                     | List every versioned endpoint                                                                             |
+| GET    | `/health`                 | Liveness and dataset availability                                                                         |
+| GET    | `/docs`                   | Human-readable documentation                                                                              |
+| GET    | `/openapi.json`           | OpenAPI 3.1 document generated from the live route table                                                  |
+| GET    | `/v1/vocabulary`          | Search the vocabulary dataset (`q`, `match`, `volume`, `pos`, `sort`, `order`, `limit`, `offset`)         |
+| GET    | `/v1/vocabulary/stats`    | Dataset statistics                                                                                        |
+| GET    | `/v1/vocabulary/random`   | Seeded random sample (`count`, `seed`)                                                                    |
+| GET    | `/v1/vocabulary/daily`    | Deterministic entry for a date (`date`, `count`)                                                          |
+| GET    | `/v1/vocabulary/:word`    | Look up one headword                                                                                      |
+| GET    | `/v1/bands`               | The band scale with indicative CEFR levels                                                                |
+| GET    | `/v1/bands/descriptors`   | Band descriptors (`set`, `criterion`, `band`)                                                             |
+| GET    | `/v1/bands/:band`         | One band, with the descriptors that bracket it                                                            |
+| GET    | `/v1/scores/overall`      | Overall band from the four components                                                                     |
+| GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                    |
+| GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                            |
+| GET    | `/v1/scores/raw`          | Published raw-score to band tables for the objective papers                                               |
+| GET    | `/v1/scores/raw/convert`  | Correct answers (0-40) on Listening or Reading to a band (`test`, `correct`)                              |
+| GET    | `/v1/scores/mock-report`  | Four-skill mock-exam score report (`module`, `listeningCorrect`, `readingCorrect`, `writing`, `speaking`) |
+| GET    | `/v1/mock/exam`           | Deterministic complete mock exam from a seed (`seed`, `module`)                                           |
+| GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                          |
+| GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                          |
+| GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                             |
+| GET    | `/v1/tasks/writing`       | Writing Task 1 families (`module`)                                                                        |
+| GET    | `/v1/question-types`      | Question-type taxonomy with strategies and observed frequencies (`skill`, `family`, `q`)                  |
+| GET    | `/v1/question-types/:id`  | One question type, with its traps and upstream label variants                                             |
+| GET    | `/v1/frameworks`          | Response frameworks for Writing Task 2 and Speaking Parts 2-3 (`section`, `skill`, `type`, `part`, `q`)   |
+| GET    | `/v1/frameworks/:id`      | One framework, with its ordered stages, cue language and pitfalls                                         |
+| GET    | `/v1/tests`               | Practice-test index: provenance, statistics, facets                                                       |
+| GET    | `/v1/tests/stats`         | Question-type and readability statistics                                                                  |
+| GET    | `/v1/tests/items`         | Search the index (`collection`, `skill`, `level`, `type`, `minReadingEase`, `sort`, ...)                  |
+| GET    | `/v1/tests/:id`           | One indexed practice test or graded reading lesson                                                        |
+| GET    | `/v1/corpus`              | Corpus metadata, statistics and facets                                                                    |
+| GET    | `/v1/corpus/stats`        | Corpus statistics                                                                                         |
+| GET    | `/v1/corpus/items`        | Search the corpus index                                                                                   |
+| GET    | `/v1/materials`           | Study-materials metadata, statistics and facets                                                           |
+| GET    | `/v1/materials/stats`     | Study-materials statistics                                                                                |
+| GET    | `/v1/materials/items`     | Search the materials index (`category`, `skill`, `format`, `q`)                                           |
+| GET    | `/v1/archive`             | Archive provenance, statistics and the Cambridge volume table                                             |
+| GET    | `/v1/archive/stats`       | Archive statistics only                                                                                   |
+| GET    | `/v1/archive/volumes`     | Cambridge IELTS 1-18 volume table: naming scheme, media era, tracks, tests, completeness                  |
+| GET    | `/v1/archive/volumes/:id` | One Cambridge volume row                                                                                  |
+| GET    | `/v1/archive/items`       | Search the archive index (`collection`, `format`, `media`, `skill`, `volume`, `q`)                        |
+| GET    | `/v1/archive/:id`         | One indexed archive item                                                                                  |
+| GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                        |
+| GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)              |
+| GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)                 |
+| GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                                  |
 
 ### Worked examples
 
@@ -178,6 +184,51 @@ GET /v1/scores/overall?listening=7&reading=6&writing=6&speaking=6
                     bands; IELTS rounds a .25/.75 mean up, giving 6.5."
   }
 }
+```
+
+**Mock-exam centre.** One seed assembles a complete sitting; raw answers convert to bands; the report
+withholds the overall until every component has one. The same round trip an online test centre runs.
+
+```jsonc
+GET /v1/mock/exam?seed=revision-week-7&module=academic
+{
+  "status": 200,
+  "data": {
+    "seed": "revision-week-7", "module": "academic", "questions": 80,
+    "sections": [
+      { "skill": "listening", "order": 1, "minutes": 30,
+        "format": "Four recordings, ten questions each; ...",
+        "content": { "paper": { "id": "lft-101", "title": "IELTS Listening Practice - Test 101",
+                     "questions": 40, ... }, "recordings": 4, "audio": true } },
+      { "skill": "reading", "order": 2, "minutes": 60,
+        "content": { "paper": { "id": "rft-...", "title": "IELTS Reading Practice - Test ...", ... } } },
+      { "skill": "writing", "order": 3, "minutes": 60,
+        "content": { "task1": { "id": "...", "name": "Line chart", "minimumWords": 150, ... },
+                     "task2": { "id": "...", "category": "...", "prompt": "...", "minimumWords": 250 } } },
+      { "skill": "speaking", "order": 4, "minutes": 14,
+        "content": { "parts": [{ "part": 1, "id": "...", ... }, { "part": 3, "id": "...", ... }, ...] } }
+    ],
+    "scoring": { "listening": "listening", "reading": "academic-reading" }
+  }
+}
+
+GET /v1/scores/raw/convert?test=listening&correct=32
+{ "status": 200,
+  "data": { "test": "listening", "correct": 32, "outOf": 40, "band": 7.5,
+            "range": [32, 34], "belowFloor": false, "cefr": "C1", ... } }
+
+GET /v1/scores/mock-report?listeningCorrect=32&readingCorrect=30&writing=6&speaking=6
+{ "status": 200,
+  "data": { "module": "academic",
+            "components": [
+              { "skill": "listening", "band": 7.5, "source": "raw-conversion",
+                "raw": { "test": "listening", "correct": 32, "outOf": 40 } },
+              { "skill": "reading", "band": 7.0, "source": "raw-conversion", ... },
+              { "skill": "writing", "band": 6, "source": "examiner-band" },
+              { "skill": "speaking", "band": 6, "source": "examiner-band" }
+            ],
+            "overall": 6.5, "cefr": "B2", "weakestSkills": ["writing", "speaking"],
+            "spread": 1.5, "explanation": "Component bands averaged 6.5, ..." } }
 ```
 
 **Vocabulary search.**
@@ -403,7 +454,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.3.0},
+  version = {1.4.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }

@@ -6,6 +6,42 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **mock-exam centre**: the missing layer between the datasets and the learner. A computer-delivered
+mock test, as run by online test centres, has three stages — sit a complete four-skill paper, turn the
+objective answers into bands, read the report — and the API now serves all three, deterministically and
+without authentication or redistribution of any upstream content.
+
+### Added
+
+- **Raw-score conversion tables** (`/v1/scores/raw`, `/v1/scores/raw/convert`): the published
+  representative conversions from correct answers out of 40 to band scores — one Listening table shared
+  by both modules, stricter Academic and General Training Reading tables (14 rows each, bands 9.0 down
+  to the published floor of 2.5). Scores below a table's floor report `band: null` with an explanatory
+  note: IELTS does not publish bands below the floor, and the API does not invent them.
+- **Deterministic mock-exam composition** (`/v1/mock/exam`): one seed assembles a complete four-skill
+  sitting — an audio-backed indexed Listening full test, an indexed Reading full test, a module-correct
+  Writing Task 1 family and Task 2 prompt, and one Speaking topic per part — with canonical section
+  timings and the conversion tables that score it. Identical seeds return identical exams on every
+  replica, so an exam is citable, cacheable and re-sittable; the default seed is the current UTC date
+  and composes de facto "mock of the day".
+- **Four-skill mock score report** (`/v1/scores/mock-report`): the two objective raw scores plus
+  optional examiner-graded Writing and Speaking bands become a report with per-component provenance
+  (`raw-conversion` vs `examiner-band`), IELTS overall rounding, the indicative CEFR level, the weakest
+  components and the band spread. While any band is missing — an objective score below the published
+  table floor, or an examiner paper not yet graded — the overall is withheld with an explanation instead
+  of averaged over gaps.
+- `RESEARCH.md` Part VI: the mock-exam centre as an application of the datasets, the seed discipline
+  and the published-floor rule, with threats to validity.
+- The service index, `/docs` and `/openapi.json` now advertise the three new endpoints.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.4.0; the keyword lists
+  now include mock examination and raw score conversion.
+- Test suite grown to 547 tests, still at 100% statement, branch, function and line coverage per file.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material

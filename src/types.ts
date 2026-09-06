@@ -868,6 +868,104 @@ export type ResponseFramework = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Mock-exam centre                                                           */
+/* -------------------------------------------------------------------------- */
+
+/** IELTS module a candidate sits (`academic` or `general-training`). */
+export type IeltsModule = 'academic' | 'general-training';
+
+/** Objective papers whose 40-question raw scores convert to band scores. */
+export type RawScoreTest = 'listening' | 'academic-reading' | 'general-training-reading';
+
+/** One published row of a raw-score-to-band conversion table. */
+export type RawScoreRow = {
+  /** Inclusive raw-score range (correct answers out of 40). */
+  correct: [number, number];
+  /** Band awarded for that range. */
+  band: number;
+};
+
+/** A raw-score conversion table for one objective paper. */
+export type RawScoreTable = {
+  /** Paper identifier. */
+  test: RawScoreTest;
+  /** Human-readable paper name. */
+  name: string;
+  /** Module(s) the paper belongs to; Listening is shared by both modules. */
+  appliesTo: IeltsModule[];
+  /** Number of questions the raw score counts. */
+  questions: number;
+  /** Organisation whose publicly published scoring guidance the table reproduces. */
+  provider: string;
+  /** Public URL documenting the conversion. */
+  sourceUrl: string;
+  /** Accuracy class of the table. */
+  provenance: 'published-table';
+  /** Caveat surfaced in every response that uses this table. */
+  note: string;
+  /** Rows ordered from the highest band down. */
+  rows: readonly RawScoreRow[];
+};
+
+/** Timed section of a composed mock exam, in sitting order. */
+export type MockExamSection = {
+  /** Skill assessed in this section. */
+  skill: Skill;
+  /** 1-based position in the sitting. */
+  order: number;
+  /** Minutes allowed for the section. */
+  minutes: number;
+  /** How many tasks, passages or parts the section contains. */
+  format: string;
+  /** Composed content, referencing datasets and indexed items by identifier. */
+  content: Record<string, JsonValue>;
+};
+
+/** A deterministically composed four-skill mock exam. */
+export type MockExam = {
+  /** Seed the composition derives from; identical seeds give identical exams. */
+  seed: string;
+  /** Module the exam is composed for. */
+  module: IeltsModule;
+  /** Sections in sitting order. */
+  sections: MockExamSection[];
+  /** Objective questions across the Listening and Reading papers. */
+  questions: number;
+  /** Which raw-score tables convert the objective papers' answers to bands. */
+  scoring: { listening: RawScoreTest; reading: RawScoreTest };
+};
+
+/** One component line of a {@link MockReport}. */
+export type MockReportComponent = {
+  /** Skill assessed. */
+  skill: Skill;
+  /** Band score, or `null` when the component is missing or below the published table. */
+  band: number | null;
+  /** How the band was obtained. */
+  source: 'raw-conversion' | 'examiner-band';
+  /** Raw marks echoed back for converted components. */
+  raw?: { test: RawScoreTest; correct: number; outOf: number };
+};
+
+/** Four-skill score report for a completed mock exam. */
+export type MockReport = {
+  /** Module reported on. */
+  module: IeltsModule;
+  /** Component lines in report order (listening, reading, writing, speaking). */
+  components: MockReportComponent[];
+  /** Overall band, or `null` while any component band is missing. */
+  overall: number | null;
+  /** Indicative CEFR level of the overall band, or `null` like the overall. */
+  cefr: string | null;
+  /** Weakest component skills, in report order; empty while the report is incomplete. */
+  weakestSkills: Skill[];
+  /** Half-band distance between the strongest and weakest component, or `null`. */
+  spread: number | null;
+  /** Human-readable explanation of the report. */
+  explanation: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

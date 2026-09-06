@@ -11,6 +11,7 @@ import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
+import { RAW_SCORE_TESTS } from '../data/rawScores.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
@@ -128,6 +129,61 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/scores/interpret': [
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
+  ],
+  '/v1/scores/raw/convert': [
+    {
+      name: 'test',
+      in: 'query',
+      required: true,
+      description: 'Objective paper. Listening is shared by both modules.',
+      schema: { type: 'string', enum: [...RAW_SCORE_TESTS] },
+    },
+    {
+      name: 'correct',
+      in: 'query',
+      required: true,
+      description: 'Correct answers out of 40.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+  ],
+  '/v1/scores/mock-report': [
+    { name: 'module', in: 'query', schema: { type: 'string', enum: [...TASK_MODULES], default: 'academic' } },
+    {
+      name: 'listeningCorrect',
+      in: 'query',
+      required: true,
+      description: 'Correct answers out of 40 in the Listening paper.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+    {
+      name: 'readingCorrect',
+      in: 'query',
+      required: true,
+      description: 'Correct answers out of 40 in the Reading paper.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+    {
+      name: 'writing',
+      in: 'query',
+      description: 'Examiner-graded Writing band; the overall is withheld without it.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'speaking',
+      in: 'query',
+      description: 'Examiner-graded Speaking band; the overall is withheld without it.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+  ],
+  '/v1/mock/exam': [
+    {
+      name: 'seed',
+      in: 'query',
+      description:
+        'Composition seed; identical seeds return identical exams. Defaults to the current UTC date.',
+      schema: { type: 'string' },
+    },
+    { name: 'module', in: 'query', schema: { type: 'string', enum: [...TASK_MODULES], default: 'academic' } },
   ],
   '/v1/topics/writing': [
     QUERY,
@@ -453,9 +509,11 @@ export function openApiDocument(
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
-        'an index of the open IELTS research corpus, and an index of a 2,385-file',
-        'self-study materials collection. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        'an index of the open IELTS research corpus, an index of a 2,385-file',
+        'self-study materials collection, and raw-score conversion tables for the',
+        'objective papers. The toolkit additionally scores any text (readability and',
+        'essay profile), composes the datasets into study plans and deterministic',
+        'mock exams, and reports four-skill mock results as bands.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
