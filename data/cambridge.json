@@ -312,7 +312,7 @@
    "complete": false,
    "items": 4,
    "questions": 80,
-   "meanReadingEase": 41.89,
+   "meanReadingEase": 41.9,
    "listeningAudioSeconds": null
   },
   {
@@ -340,7 +340,7 @@
    "complete": true,
    "items": 12,
    "questions": 320,
-   "meanReadingEase": 40.04,
+   "meanReadingEase": 40.05,
    "listeningAudioSeconds": null
   },
   {

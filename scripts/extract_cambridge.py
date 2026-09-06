@@ -46,6 +46,7 @@ the index byte-identically. Standard library only.
 from __future__ import annotations
 
 import json
+import math
 import re
 import sys
 from collections import Counter, defaultdict
@@ -638,7 +639,7 @@ def distribution(values: list[float]) -> dict[str, float] | None:
     median = ordered[middle] if len(ordered) % 2 else (ordered[middle - 1] + ordered[middle]) / 2
     return {
         "count": len(ordered),
-        "mean": round(sum(ordered) / len(ordered), 2),
+        "mean": round(math.fsum(ordered) / len(ordered), 2),
         "median": round(median, 2),
         "min": round(ordered[0], 2),
         "max": round(ordered[-1], 2),
@@ -664,8 +665,8 @@ def build_volumes(items: list[dict]) -> list[dict]:
                 "complete": all(tests == [1, 2, 3, 4] for tests in by_skill.values()),
                 "items": len(mine),
                 "questions": sum(item["questions"] or 0 for item in mine),
-                "meanReadingEase": round(sum(ease) / len(ease), 2) if ease else None,
-                "listeningAudioSeconds": round(sum(audio), 1) if audio else None,
+                "meanReadingEase": round(math.fsum(ease) / len(ease), 2) if ease else None,
+                "listeningAudioSeconds": round(math.fsum(audio), 1) if audio else None,
             }
         )
     return rows
@@ -747,7 +748,7 @@ def build_stats(items: list[dict], volumes: list[dict], upstream_pages: int) -> 
             "audioSecondsBySection": {str(part): distribution(vals) for part, vals in sorted(audio_by_part.items())},
             "testAudioSeconds": distribution(
                 [
-                    sum(s["audioSeconds"] for s in item["sections"] if s["audioSeconds"])
+                    math.fsum(s["audioSeconds"] for s in item["sections"] if s["audioSeconds"])
                     for item in items
                     if item["skill"] == "listening" and all(s["audioSeconds"] for s in item["sections"])
                 ]
