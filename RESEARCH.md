@@ -3,7 +3,7 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Six parts: four upstream collections, a toolkit and a composition layer:
 
 | Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
@@ -12,6 +12,7 @@ Five parts, four upstream collections:
 | [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
 | [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
 | [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| [Part VI](#part-vi--the-mock-exam-center)                                       | — (composes Parts I-V with the official test format)                                                  | —                              | deterministic, addressable mock-exam papers, vocabulary drills and raw-mark scoring                                |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -681,3 +682,100 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the mock exam center
+
+Parts I-V publish datasets; the toolkit analyses text. Part VI composes: `/v1/exams` assembles the
+published datasets into complete, reproducible mock-exam papers, and `/v1/exams/drill/vocabulary`
+turns the vocabulary dataset into self-testing items. The design question this part answers is
+_negative_: what does it take to publish a practice-paper generator that redistributes nothing,
+invents no content, and still gives a test-center front end everything it needs to run a timed
+mock exam?
+
+### 29. What a paper is
+
+A paper is a pure function of two inputs — the test module and a canonical eight-hex-digit seed —
+framed by the official test format (four papers, sections, question counts, timings, word minimums,
+the twice-weight Task 2 rule; see `src/data/exams.ts`). The content is drawn by seeded selection
+(`lib/rng.ts`, the same mulberry32/FNV-1a machinery as `/v1/vocabulary/daily`):
+
+| Paper                      | Drawn from                                                              | Pool         |
+| -------------------------- | ----------------------------------------------------------------------- | ------------ |
+| Listening                  | full indexed listening tests (Part II)                                  | 201          |
+| Listening audio            | Cambridge volumes whose test numbers survive in the file names (Part V) | 7            |
+| Reading (Academic)         | full indexed reading tests (Part II)                                    | 269          |
+| Reading (General Training) | none — the indexed full tests are Academic papers                       | —            |
+| Writing Task 1             | task families, module-filtered (original dataset)                       | 7 / 3        |
+| Writing Task 2             | the prompt bank (original dataset)                                      | 111          |
+| Speaking Part 1 / 2 / 3    | the speaking bank (original dataset)                                    | 26 / 30 / 24 |
+| Warm-up theme              | the recurring-theme taxonomy (original dataset)                         | 50           |
+
+Every draw is a pointer into a published dataset — an identifier plus an API link — never the
+material itself. A paper is therefore _metadata all the way down_: a front end renders the plan,
+fetches the referenced rows and runs the clock; the API never ships a passage, a recording or an
+answer key it did not already publish as a dataset row.
+
+The Reading paper additionally classifies the drawn test against the four corpus groups of Part II
+by Flesch Reading Ease (nearest group mean), so a client can see whether the drawn test sits at
+full-test difficulty or nearer the graded bands. The General Training paper is deliberately honest:
+the index holds no GT full tests, so the paper publishes the format, the marking table and a pointer
+to the graded-reading collection, and says so in a note rather than silently substituting an
+Academic test.
+
+### 30. Addressability and reproducibility
+
+The canonical seed is the FNV-1a hash of the caller-supplied seed string, and the paper identifier
+embeds module and canonical seed: `mock-academic-370539b8`. Consequences:
+
+- `/v1/exams/papers/:id` re-derives any paper from its identifier alone; papers are never stored,
+  so they can never go stale relative to the datasets.
+- Two different seed strings can collide into one canonical seed (a 32-bit hash over a small input
+  space); one canonical seed always builds exactly one paper. The response echoes the canonical
+  seed, so a citation of a paper cites the paper that was served.
+- Omitting the seed builds today's paper (ISO date), mirroring `/v1/vocabulary/daily`; identical
+  requests on the same day are byte-identical on every replica, and the ETag layer makes the second
+  request free.
+
+The vocabulary drill shares the contract: `?size=10&seed=warmup` builds the same ten items on every
+replica. Each item tests one headword against four published definitions — its own and three
+distractors drawn from other headwords, preferring the same part of speech when the bank provides
+enough of them, the whole bank otherwise — with a lettered key that can be hidden (`?key=false`)
+for self-testing.
+
+### 31. Raw-mark scoring
+
+The exam center closes its own loop through the scoring endpoints: three new concordance scales
+(`listening-raw`, `academic-reading-raw`, `general-training-reading-raw`) map raw marks out of 40 to
+bands through the existing `/v1/scores/interpret`, and `/v1/scores/overall` composes the report. The
+tables are compiled from the marking guides printed inside the Cambridge IELTS volumes, and are
+published as **indicative** with that caveat in every response, because the exact cut-offs vary
+slightly from volume to volume. A reviewer should read them the same way as the Part I concordances:
+provider-published numbers, reproduced faithfully, caveated visibly.
+
+### 32. Threats to validity (Part VI)
+
+- **A paper is a plan, not a test.** The blueprint does not contain questions or audio; it contains
+  pointers. A client that cannot reach the referenced datasets cannot sit the paper — by design,
+  because that is what keeps the layer redistributable.
+- **The format constants are the published ones, rounded to their public form.** The written papers
+  total 160 timed minutes (40 + 60 + 60); official communications often round this to "2 hours 45
+  minutes" including administrative time, and the computer-based Listening test drops the transfer
+  window. Both variants are stated rather than averaged.
+- **Seeded selection is not stratified.** Draws are uniform over the pools; no constraint forces,
+  say, a listening test whose typeCounts match the corpus-wide distribution. The type mix of a
+  paper is whatever the drawn test carries, published verbatim.
+- **The raw-mark tables are indicative.** Volume-to-volume variation means a raw 30 is a band 7 on
+  most, not all, printed guides; the note travels with every response.
+- **Colliding seeds share a paper.** The 32-bit canonical seed space makes deliberate or accidental
+  collisions possible; the identifier disambiguates (it _is_ the canonical seed), and `meta.seed`
+  always reports which seed served the paper.
+
+### 33. Reproducing Part VI
+
+No extraction step exists: the layer is pure composition over Parts I-V plus the original datasets,
+so it is reproduced by the test suite. `test/lib/exam.test.ts` asserts the assembly contract
+(determinism, pool echoes, module differences, the null branches of the audio and difficulty
+pointers), `test/routes/exams.test.ts` asserts the HTTP contract end to end (including that
+`/v1/exams/papers/:id` rebuilds `?seed=` output byte-identically), and `test/data/exams.test.ts`
+asserts the format invariants (section counts, question totals, the gapless 160-minute schedule,
+the 11-14-minute Speaking envelope, paper-id round trips).

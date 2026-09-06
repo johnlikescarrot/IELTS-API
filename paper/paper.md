@@ -26,7 +26,8 @@ English Language Testing System) preparation data through a stable, versioned, m
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
 JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
-and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
+and Writing across bands 0-9; indicative score concordances between IELTS and eight other scales,
+including the Cambridge raw-mark to band tables;
 original Writing and Speaking task banks built on the question families and word lists that recur in
 IELTS preparation material [@coxhead2000]; a canonical taxonomy of the thirteen IELTS Reading and
 Listening question types, onto which 65 free-text annotation labels are normalised, carrying the
@@ -40,7 +41,11 @@ twelve official sample tasks for readability, and summarises 24 marked learner e
 statistics.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
-practical requirement for reproducible corpus and assessment research.
+practical requirement for reproducible corpus and assessment research. The same determinism powers
+a mock-exam center that composes the datasets into complete practice papers: a paper is a pure
+function of its module and seed, its identifier encodes both, and `/v1/exams/papers/:id` re-derives
+any paper from its identifier alone — a study can cite the exact paper its participants sat, and
+replicate it byte-identically.
 
 # Statement of need
 
@@ -178,7 +183,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (554 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

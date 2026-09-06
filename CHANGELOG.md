@@ -6,6 +6,66 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **exam center**, the first layer that assembles the API's datasets into complete, reproducible
+practice papers. Every other layer publishes data or analyses text; this one composes: a mock exam
+is a pure function of its module and seed, built from the same published datasets any client can
+query, and every paper is addressable by an identifier that encodes its inputs — so a paper can be
+cited, archived and re-derived byte-identically years later, the same contract the rest of the API
+gives to data. Nothing new is redistributed: a paper is a plan of pointers into datasets the API
+already serves, framed by the official test format. The API remains free, GET-only,
+authentication-free and dependency-free.
+
+### Added
+
+- **Mock-exam blueprints** (`GET /v1/exams/blueprint?module=&seed=`): a complete IELTS paper
+  assembled deterministically. The Listening paper pairs a full indexed listening test (201 in the
+  pool) with an official Cambridge audio set drawn from the seven archive volumes whose test
+  numbers survive in the file names, and publishes the official four-section structure
+  (conversation/monologue, social/academic, 10 questions each). The Academic Reading paper draws a
+  full indexed reading test (269 in the pool) and classifies its difficulty against the four corpus
+  groups by Flesch Reading Ease; the General Training paper says honestly that the indexed full
+  tests are Academic papers and points at the graded-reading collection instead. The Writing paper
+  pairs a Task 1 family (module-aware, 7 academic / 3 letter families) with a Task 2 prompt (111 in
+  the bank), with the official 150/250-word minimums, the 20/40-minute split and the twice-weight
+  rule. The Speaking paper assembles three Part 1 sets, one Part 2 cue card and one Part 3
+  discussion (26/30/24 in the bank) with the official part timings. Every paper carries the
+  160-minute written schedule (30 min audio + 10 min transfer + 60 + 60, no breaks), the
+  computer-based variant note, a warm-up theme from the 50 recurring themes, and worked marking
+  links.
+- **Addressable papers** (`GET /v1/exams/papers/:paperId`): the identifier
+  (`mock-academic-370539b8`) encodes the module and the canonical eight-hex-digit seed, so any
+  paper is re-derivable from its id alone — never stored, never stale. Omitting the seed builds
+  today's paper, mirroring the `/v1/vocabulary/daily` contract.
+- **The exam-form catalogue** (`GET /v1/exams`): the official test format (four papers, sections,
+  question counts, timings, module differences, the 11-14-minute Speaking envelope), the pool sizes
+  behind every draw, the assembly contract and the content policy.
+- **Vocabulary drills** (`GET /v1/exams/drill/vocabulary?size=&seed=&volume=&pos=&key=`): seeded
+  multiple-choice items over the 4,174 Cambridge headwords. Each item tests one headword against
+  its published definition and three distractor definitions drawn from other headwords — same part
+  of speech when the list provides enough, the whole list otherwise — with a lettered answer key
+  that can be hidden for self-testing and per-item links into `/v1/vocabulary`.
+- **Raw-mark scoring tables**: three new concordance scales (`listening-raw`,
+  `academic-reading-raw`, `general-training-reading-raw`) compiled from the marking guides printed
+  inside the Cambridge IELTS volumes, exposed through the existing `/v1/scores/convert` and
+  `/v1/scores/interpret`. `?scale=listening-raw&score=30` answers `band 7`; the tables carry an
+  indicative-provenance note because exact cut-offs vary slightly between volumes. This closes the
+  exam-center loop: blueprint, sit the paper, convert the raw marks, compute the overall band.
+- `src/data/exams.ts` (the official test-format constants and the paper-id codec),
+  `src/lib/exam.ts` (the deterministic assembly and drill builders) and `src/routes/exams.ts`
+  (four new endpoints), all exported from the library entry point.
+- `RESEARCH.md` Part VI: the assembly methodology, the reproducibility and content-policy
+  arguments, and the threats to validity (papers are metadata plans, the timing constants are the
+  published format, the raw-mark tables are indicative).
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.4.0; the keyword
+  lists now include mock exams.
+- Test suite grown to 554 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material

@@ -119,8 +119,70 @@ const DUOLINGO = ranges([
   [9.0, 160, 170],
 ]);
 
+/**
+ * Raw-mark to band tables for the receptive papers, compiled from the marking
+ * guides published inside the Cambridge IELTS volumes. The exact cut-offs
+ * vary slightly from volume to volume, so these rows are indicative: they
+ * publish the ranges that recur across the printed guides.
+ */
+const LISTENING_RAW = ranges([
+  [2.5, 4, 5],
+  [3.0, 6, 7],
+  [3.5, 8, 9],
+  [4.0, 10, 12],
+  [4.5, 13, 15],
+  [5.0, 16, 17],
+  [5.5, 18, 22],
+  [6.0, 23, 25],
+  [6.5, 26, 29],
+  [7.0, 30, 31],
+  [7.5, 32, 34],
+  [8.0, 35, 36],
+  [8.5, 37, 38],
+  [9.0, 39, 40],
+]);
+
+/** Raw-mark table for the Academic Reading paper (40 questions). */
+const ACADEMIC_READING_RAW = ranges([
+  [2.5, 4, 5],
+  [3.0, 6, 7],
+  [3.5, 8, 9],
+  [4.0, 10, 12],
+  [4.5, 13, 14],
+  [5.0, 15, 18],
+  [5.5, 19, 22],
+  [6.0, 23, 26],
+  [6.5, 27, 29],
+  [7.0, 30, 32],
+  [7.5, 33, 34],
+  [8.0, 35, 36],
+  [8.5, 37, 38],
+  [9.0, 39, 40],
+]);
+
+/** Raw-mark table for the General Training Reading paper (40 questions). */
+const GENERAL_TRAINING_READING_RAW = ranges([
+  [2.5, 6, 8],
+  [3.0, 9, 11],
+  [3.5, 12, 14],
+  [4.0, 15, 18],
+  [4.5, 19, 22],
+  [5.0, 23, 26],
+  [5.5, 27, 29],
+  [6.0, 30, 31],
+  [6.5, 32, 33],
+  [7.0, 34, 35],
+  [7.5, 36, 36],
+  [8.0, 37, 38],
+  [8.5, 39, 39],
+  [9.0, 40, 40],
+]);
+
 const CONCORDANCE_NOTE =
   'Indicative concordance compiled from the providers’ own published comparison tables. Receiving institutions apply their own rules; always verify against the current published table.';
+
+const RAW_MARK_NOTE =
+  'Indicative cut-offs compiled from the marking guides printed inside the Cambridge IELTS volumes; exact cut-offs vary slightly between volumes. The Listening and Reading papers each carry 40 raw marks.';
 
 /** All concordance tables keyed by target scale. */
 export const CONVERSION_TABLES: Record<ConversionTarget, ConversionTable> = {
@@ -173,6 +235,36 @@ export const CONVERSION_TABLES: Record<ConversionTarget, ConversionTable> = {
     provenance: 'indicative',
     note: CONCORDANCE_NOTE,
     entries: DUOLINGO,
+  },
+  'listening-raw': {
+    target: 'listening-raw',
+    name: 'IELTS Listening raw marks',
+    provider: 'Cambridge IELTS marking guides',
+    sourceUrl: 'https://ielts.org/take-a-test/how-ielts-is-scored',
+    unit: 'raw marks out of 40',
+    provenance: 'indicative',
+    note: RAW_MARK_NOTE,
+    entries: LISTENING_RAW,
+  },
+  'academic-reading-raw': {
+    target: 'academic-reading-raw',
+    name: 'IELTS Academic Reading raw marks',
+    provider: 'Cambridge IELTS marking guides',
+    sourceUrl: 'https://ielts.org/take-a-test/how-ielts-is-scored',
+    unit: 'raw marks out of 40',
+    provenance: 'indicative',
+    note: RAW_MARK_NOTE,
+    entries: ACADEMIC_READING_RAW,
+  },
+  'general-training-reading-raw': {
+    target: 'general-training-reading-raw',
+    name: 'IELTS General Training Reading raw marks',
+    provider: 'Cambridge IELTS marking guides',
+    sourceUrl: 'https://ielts.org/take-a-test/how-ielts-is-scored',
+    unit: 'raw marks out of 40',
+    provenance: 'indicative',
+    note: RAW_MARK_NOTE,
+    entries: GENERAL_TRAINING_READING_RAW,
   },
 };
 

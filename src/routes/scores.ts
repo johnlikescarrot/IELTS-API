@@ -120,7 +120,7 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     method: 'GET',
     path: '/v1/scores/convert',
     versioned: true,
-    summary: 'Convert an IELTS band to another scale (CEFR, TOEFL iBT, Cambridge, PTE, DET).',
+    summary: 'Convert an IELTS band to another scale (CEFR, TOEFL iBT, Cambridge, PTE, DET, raw marks).',
     handler: convert,
   },
   {

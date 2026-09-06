@@ -7,6 +7,7 @@
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { EXAM_MODULE_IDS } from '../data/exams.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
@@ -354,6 +355,47 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
     },
   ],
+  '/v1/exams/blueprint': [
+    {
+      name: 'module',
+      in: 'query',
+      description: 'Test module the paper is assembled for.',
+      schema: { type: 'string', enum: [...EXAM_MODULE_IDS], default: 'academic' },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds rebuild identical papers. Defaults to today (ISO date).',
+      schema: { type: 'string', maxLength: 64 },
+    },
+  ],
+  '/v1/exams/drill/vocabulary': [
+    { name: 'size', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 } },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds rebuild identical drills. Defaults to today (ISO date).',
+      schema: { type: 'string', maxLength: 64 },
+    },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Restrict the tested words to one Cambridge IELTS volume.',
+      schema: { type: 'integer', minimum: 1, maximum: 22 },
+    },
+    {
+      name: 'pos',
+      in: 'query',
+      description: 'Restrict the tested words to one part of speech.',
+      schema: { type: 'string', enum: [...PARTS_OF_SPEECH] },
+    },
+    {
+      name: 'key',
+      in: 'query',
+      description: 'Whether to include the answer key.',
+      schema: { type: 'boolean', default: true },
+    },
+  ],
 };
 
 /** The shared JSON envelope schema. */
@@ -455,7 +497,9 @@ export function openApiDocument(
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, and an index of a 2,385-file',
         'self-study materials collection. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        '(readability and essay profile) and composes the datasets into study plans,',
+        'and the exam center assembles them into reproducible, addressable mock-exam',
+        'papers with the official test format, timings and raw-mark scoring.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

@@ -123,6 +123,32 @@ describe('GET /v1/scores/interpret', () => {
     expect(response.data.matched).toBe(false);
   });
 
+  it('maps Listening and Reading raw marks back to bands', async () => {
+    const cases: [string, number, number][] = [
+      ['listening-raw', 30, 7],
+      ['listening-raw', 27, 6.5],
+      ['listening-raw', 40, 9],
+      ['academic-reading-raw', 30, 7],
+      ['academic-reading-raw', 15, 5],
+      ['general-training-reading-raw', 30, 6],
+      ['general-training-reading-raw', 40, 9],
+    ];
+    for (const [scale, score, band] of cases) {
+      const response = await server.json<{ matched: boolean; to: { band: number } }>(
+        `/v1/scores/interpret?scale=${scale}&score=${score}`,
+      );
+      expect(response.data.matched).toBe(true);
+      expect(response.data.to.band).toBe(band);
+    }
+  });
+
+  it('reports raw marks below the lowest band', async () => {
+    const response = await server.json<{ matched: boolean }>(
+      '/v1/scores/interpret?scale=listening-raw&score=3',
+    );
+    expect(response.data.matched).toBe(false);
+  });
+
   it('requires scale and score', async () => {
     expect((await server.json('/v1/scores/interpret')).status).toBe(400);
     expect((await server.json('/v1/scores/interpret?scale=cefr')).status).toBe(400);

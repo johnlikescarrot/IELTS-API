@@ -111,7 +111,15 @@ export type ConversionEntry = {
 };
 
 /** Supported IELTS-equivalent scales. */
-export type ConversionTarget = 'cefr' | 'toefl-ibt' | 'cambridge-english-scale' | 'pte-academic' | 'duolingo';
+export type ConversionTarget =
+  | 'cefr'
+  | 'toefl-ibt'
+  | 'cambridge-english-scale'
+  | 'pte-academic'
+  | 'duolingo'
+  | 'listening-raw'
+  | 'academic-reading-raw'
+  | 'general-training-reading-raw';
 
 /* -------------------------------------------------------------------------- */
 /* Tasks, topics and resources                                                */
@@ -865,6 +873,269 @@ export type ResponseFramework = {
   suggestedMinutes: number | null;
   /** Suggested length in words, when the format fixes one. */
   suggestedWords: number | null;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Mock exams and drills                                                      */
+/* -------------------------------------------------------------------------- */
+
+/** IELTS test modules. */
+export type ExamModule = 'academic' | 'general-training';
+
+/** Official form of one paper of the IELTS test. */
+export type ExamPaperForm = {
+  /** Skill the paper assesses. */
+  skill: Skill;
+  /** Paper name as the IELTS partners publish it. */
+  name: string;
+  /** Sections, parts or tasks in the paper. */
+  parts: number;
+  /** Questions in the paper, when the format fixes the count. */
+  questions: number | null;
+  /** Timed minutes, when the format fixes the count. */
+  minutes: number | null;
+  /** What the paper asks the candidate to do. */
+  description: string;
+};
+
+/** One of the four Listening sections, as the test format defines it. */
+export type ListeningSectionForm = {
+  /** Section number, 1-4 in playback order. */
+  section: number;
+  /** 'conversation' or 'monologue'. */
+  format: 'conversation' | 'monologue';
+  /** The situational context the recording is set in. */
+  context: string;
+  /** Questions in the section. */
+  questions: number;
+};
+
+/** One part of the Speaking test, as the test format defines it. */
+export type SpeakingPartForm = {
+  /** Part number, 1-3. */
+  part: number;
+  /** Name of the part. */
+  name: string;
+  /** Timed minutes, when the format fixes the count. */
+  minutes: string;
+  /** What happens in the part. */
+  description: string;
+};
+
+/** Pointer to one indexed practice test used by a mock-exam paper. */
+export type ExamTestRef = {
+  /** Practice-test index identifier (`rft-001`, `lft-001`). */
+  id: string;
+  /** Title of the indexed test. */
+  title: string;
+  /** Questions the indexed test contains. */
+  questions: number;
+  /** Passages the indexed test contains, when relevant. */
+  passages: number | null;
+  /** Canonical question types observed in the test. */
+  questionTypes: string[];
+  /** Question count per canonical type. */
+  typeCounts: Record<string, number>;
+  /** Passage-level readability of the test, when measured. */
+  readability: ReadabilityStats | null;
+  /** Upstream file the index row was derived from. */
+  sourceUrl: string;
+  /** API link to the index row. */
+  link: string;
+};
+
+/** An official Cambridge IELTS listening audio set referenced by a paper. */
+export type ExamAudioRef = {
+  /** Cambridge IELTS volume (1-18). */
+  volume: number;
+  /** Listening test number inside the volume. */
+  test: number;
+  /** File-naming scheme of the volume (`cassette-side`, `cd-track`, `test-section`). */
+  namingScheme: string;
+  /** Media generation the naming scheme implies. */
+  media: string;
+  /** Whether the volume holds a complete four-test audio set. */
+  complete: boolean;
+  /** Audio tracks that carry the test. */
+  tracks: { id: string; title: string }[];
+  /** API link to the volume table row. */
+  link: string;
+};
+
+/** Difficulty classification of a reading paper. */
+export type ExamDifficulty = {
+  /** Flesch Reading Ease of the indexed test. */
+  fleschReadingEase: number;
+  /** Flesch-Kincaid grade of the indexed test. */
+  fleschKincaidGrade: number;
+  /** Corpus group whose mean reading ease is closest. */
+  nearestGroup: string;
+  /** Mean reading ease of that group. */
+  groupMeanReadingEase: number;
+};
+
+/** The Listening paper of an assembled mock exam. */
+export type ListeningPaper = {
+  /** Sections in the paper. */
+  sections: 4;
+  /** Questions in the paper. */
+  questions: 40;
+  /** Minutes of audio. */
+  audioMinutes: 30;
+  /** Answer-transfer minutes (paper-based test). */
+  transferMinutes: 10;
+  /** Official section structure. */
+  sectionPlan: ListeningSectionForm[];
+  /** The indexed practice test that supplies the questions. */
+  test: ExamTestRef;
+  /** An official Cambridge audio set that can carry the paper. */
+  officialAudio: ExamAudioRef | null;
+};
+
+/** The Reading paper of an assembled mock exam. */
+export type ReadingPaper = {
+  /** Passages in the paper. */
+  passages: 3;
+  /** Questions in the paper. */
+  questions: 40;
+  /** Timed minutes. */
+  minutes: 60;
+  /** The indexed practice test that supplies the questions (Academic module). */
+  test: ExamTestRef | null;
+  /** Why no indexed test is referenced, when that is the case. */
+  note: string | null;
+  /** Measured difficulty of the referenced test. */
+  difficulty: ExamDifficulty | null;
+  /** Practice material for the module's reading paper. */
+  practice: string;
+};
+
+/** One task of the Writing paper. */
+export type WritingTaskPlan = {
+  /** Task number, 1 or 2. */
+  task: 1 | 2;
+  /** Task family (Task 1) or question family (Task 2). */
+  family: string;
+  /** The prompt or task description. */
+  prompt: string;
+  /** Suggested minutes. */
+  suggestedMinutes: number;
+  /** Minimum words. */
+  minimumWords: number;
+  /** API link to the underlying dataset row. */
+  link: string;
+  /** API link to further guidance for this task. */
+  guidance: string | null;
+};
+
+/** The Writing paper of an assembled mock exam. */
+export type WritingPaper = {
+  /** Timed minutes. */
+  minutes: 60;
+  /** The two tasks, in test order. */
+  tasks: [WritingTaskPlan, WritingTaskPlan];
+  /** How the tasks are weighted. */
+  weighting: string;
+  /** API link to the marking descriptors. */
+  descriptors: string;
+};
+
+/** The Speaking paper of an assembled mock exam. */
+export type SpeakingPaper = {
+  /** Total minutes, as published. */
+  minutes: string;
+  /** Part 1: three question sets, four questions each. */
+  part1: { sets: { id: string; topic: string; questions: string[] }[]; minutes: string };
+  /** Part 2: one cue card with its prompts. */
+  part2: {
+    id: string;
+    topic: string;
+    prompt: string;
+    prompts: string[];
+    preparationMinutes: 1;
+    speakingMinutes: string;
+    minutes: string;
+  };
+  /** Part 3: one discussion topic with its questions. */
+  part3: { id: string; topic: string; questions: string[]; minutes: string };
+  /** API link to the marking descriptors. */
+  descriptors: string;
+};
+
+/** Timed schedule of the written papers. */
+export type ExamTiming = {
+  /** Total timed minutes of the written papers (paper-based). */
+  writtenTotalMinutes: number;
+  /** The schedule, paper by paper, without breaks. */
+  schedule: { at: number; paper: string; minutes: number; event: string }[];
+  /** How the computer-based test differs. */
+  computerBased: string;
+  /** How the Speaking test is scheduled. */
+  speaking: string;
+};
+
+/** A reproducible mock-exam paper assembled from the API's datasets. */
+export type ExamPaper = {
+  /** Addressable paper identifier (`mock-academic-3fa2c81d`). */
+  id: string;
+  /** Test module. */
+  module: ExamModule;
+  /** Canonical seed the paper was assembled from. */
+  seed: string;
+  /** Sizes of the pools every paper is drawn from. */
+  pools: Record<string, number>;
+  listening: ListeningPaper;
+  reading: ReadingPaper;
+  writing: WritingPaper;
+  speaking: SpeakingPaper;
+  /** Official timing of the test the paper belongs to. */
+  timing: ExamTiming;
+  /** A recurring exam theme to warm up with before the paper. */
+  theme: { id: string; group: string; name: string; keywords: string[]; link: string };
+  /** Raw-mark to band conversion for the receptive papers. */
+  marking: { listening: string; reading: string; overall: string };
+};
+
+/** One multiple-choice item of a vocabulary drill. */
+export type VocabularyDrillItem = {
+  /** Item number within the drill (`d01`). */
+  id: string;
+  /** The headword being tested. */
+  word: string;
+  /** IPA-style transcription, when published. */
+  phonetic: string | null;
+  /** Part of speech of the tested sense. */
+  partOfSpeech: PartOfSpeech;
+  /** Four definition options, lettered A-D. */
+  options: { letter: string; text: string }[];
+};
+
+/** One answer of a vocabulary drill key. */
+export type VocabularyDrillAnswer = {
+  /** Item number the answer belongs to. */
+  id: string;
+  /** The headword the item tested. */
+  word: string;
+  /** Correct option letter. */
+  answer: string;
+  /** The correct definition. */
+  definition: string;
+  /** API link to the full headword entry. */
+  link: string;
+};
+
+/** A deterministic multiple-choice vocabulary drill. */
+export type VocabularyDrill = {
+  /** Drill identifier (`drill-3fa2c81d`). */
+  id: string;
+  /** Canonical seed the drill was built from. */
+  seed: string;
+  /** Number of items. */
+  size: number;
+  /** The drill items. */
+  items: VocabularyDrillItem[];
+  /** The answer key, or `null` when hidden. */
+  key: VocabularyDrillAnswer[] | null;
 };
 
 /* -------------------------------------------------------------------------- */
