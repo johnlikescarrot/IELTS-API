@@ -95,3 +95,68 @@ describe('GET /v1/study/plan', () => {
     expect(lowHours.status).toBe(400);
   });
 });
+
+describe('GET /v1/study/review', () => {
+  it('advances one review', async () => {
+    const response = await server.json<{
+      start: { repetitions: number; easiness: number; intervalDays: number };
+      steps: {
+        quality: number;
+        lapse: boolean;
+        repetitions: number;
+        easiness: number;
+        intervalDays: number;
+        leitnerBox: number;
+      }[];
+    }>('/v1/study/review?quality=5');
+    expect(response.status).toBe(200);
+    expect(response.data.start).toEqual({ repetitions: 0, easiness: 2.5, intervalDays: 0 });
+    expect(response.data.steps).toHaveLength(1);
+    expect(response.data.steps[0]).toMatchObject({
+      quality: 5,
+      lapse: false,
+      repetitions: 1,
+      easiness: 2.6,
+      intervalDays: 1,
+      leitnerBox: 2,
+    });
+    expect(response.meta.mode).toBe('single');
+    expect(response.meta.algorithm).toContain('SM-2');
+  });
+
+  it('starts from a supplied memory state', async () => {
+    const response = await server.json<{
+      steps: { repetitions: number; easiness: number; intervalDays: number; lapse: boolean }[];
+    }>('/v1/study/review?repetitions=2&easiness=2.7&interval=6&quality=4');
+    expect(response.data.steps[0]).toMatchObject({
+      repetitions: 3,
+      easiness: 2.7,
+      intervalDays: 16,
+      lapse: false,
+    });
+  });
+
+  it('previews a trajectory of grades', async () => {
+    const response = await server.json<{ steps: { intervalDays: number; lapse: boolean }[] }>(
+      '/v1/study/review?qualities=5,5,4',
+    );
+    expect(response.status).toBe(200);
+    expect(response.data.steps.map((step) => step.intervalDays)).toEqual([1, 6, 16]);
+    expect(response.meta.mode).toBe('chain');
+  });
+
+  it('requires exactly one of quality and qualities', async () => {
+    expect((await server.json('/v1/study/review')).status).toBe(400);
+    expect((await server.json('/v1/study/review?quality=5&qualities=5,5')).status).toBe(400);
+  });
+
+  it('rejects invalid states and grades', async () => {
+    expect((await server.json('/v1/study/review?quality=6')).status).toBe(400);
+    expect((await server.json('/v1/study/review?quality=-1')).status).toBe(400);
+    expect((await server.json('/v1/study/review?easiness=1')).status).toBe(400);
+    expect((await server.json('/v1/study/review?repetitions=-1&quality=5')).status).toBe(400);
+    expect((await server.json('/v1/study/review?qualities=5,x')).status).toBe(400);
+    expect((await server.json('/v1/study/review?qualities=5,6')).status).toBe(400);
+    expect((await server.json('/v1/study/review?qualities=')).status).toBe(400);
+  });
+});

@@ -23,6 +23,20 @@ import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { SCENE_SKILLS } from '../data/scenes.js';
+import {
+  SM2_DEFAULT_EASINESS,
+  SM2_MAX_EASINESS,
+  SM2_MAX_INTERVAL,
+  SM2_MAX_QUALITY,
+  SM2_MAX_REPETITIONS,
+  SM2_MIN_EASINESS,
+} from '../lib/spacedRepetition.js';
+import {
+  BLUEPRINT_DEFAULT_ITEMS,
+  BLUEPRINT_MAX_ITEMS,
+  BLUEPRINT_MIN_ITEMS,
+  BLUEPRINT_SKILLS,
+} from '../lib/blueprint.js';
 import { TASK_MODULES } from '../data/tasks.js';
 
 import type { RouteDefinition } from './route.js';
@@ -315,6 +329,32 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/tests/blueprint': [
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...BLUEPRINT_SKILLS], default: 'reading' } },
+    {
+      name: 'focus',
+      in: 'query',
+      description: 'Comma-separated focus question types; papers are ranked by their density.',
+      schema: { type: 'string', enum: [...QUESTION_TYPE_IDS] },
+    },
+    {
+      name: 'items',
+      in: 'query',
+      description: 'How many papers to deal.',
+      schema: {
+        type: 'integer',
+        minimum: BLUEPRINT_MIN_ITEMS,
+        maximum: BLUEPRINT_MAX_ITEMS,
+        default: BLUEPRINT_DEFAULT_ITEMS,
+      },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed; identical seeds deal identical blueprints.',
+      schema: { type: 'string' },
+    },
+  ],
   '/v1/corpus/items': [
     QUERY,
     { name: 'category', in: 'query', schema: { type: 'string' } },
@@ -444,6 +484,43 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       in: 'query',
       description: 'New headwords to learn per day.',
       schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+  ],
+  '/v1/study/review': [
+    {
+      name: 'repetitions',
+      in: 'query',
+      description: 'Consecutive successful recalls before this review.',
+      schema: { type: 'integer', minimum: 0, maximum: SM2_MAX_REPETITIONS, default: 0 },
+    },
+    {
+      name: 'easiness',
+      in: 'query',
+      description: 'Easiness factor before this review.',
+      schema: {
+        type: 'number',
+        minimum: SM2_MIN_EASINESS,
+        maximum: SM2_MAX_EASINESS,
+        default: SM2_DEFAULT_EASINESS,
+      },
+    },
+    {
+      name: 'interval',
+      in: 'query',
+      description: 'Current interval in days.',
+      schema: { type: 'integer', minimum: 0, maximum: SM2_MAX_INTERVAL, default: 0 },
+    },
+    {
+      name: 'quality',
+      in: 'query',
+      description: 'Recall quality (0-5) for a single review.',
+      schema: { type: 'integer', minimum: 0, maximum: SM2_MAX_QUALITY },
+    },
+    {
+      name: 'qualities',
+      in: 'query',
+      description: 'Comma-separated qualities (0-5) for a trajectory preview.',
+      schema: { type: 'string', example: '5,5,4,3' },
     },
   ],
 };

@@ -112,3 +112,56 @@ describe('GET /v1/tests/:id', () => {
     expect(error.message).toContain('rft-999999');
   });
 });
+
+describe('GET /v1/tests/blueprint', () => {
+  it('deals a three-paper reading drill set by default', async () => {
+    const response = await server.json<{
+      seed: string;
+      skill: string;
+      focus: string[];
+      papers: { id: string; questions: number; suggestedMinutes: number; readingEase: number }[];
+      covered: string[];
+      totalQuestions: number;
+      scoringScale: string;
+    }>('/v1/tests/blueprint');
+    expect(response.status).toBe(200);
+    expect(response.data.seed).toBe('ielts-blueprint');
+    expect(response.data.skill).toBe('reading');
+    expect(response.data.focus).toEqual([]);
+    expect(response.data.papers).toHaveLength(3);
+    expect(response.data.totalQuestions).toBeGreaterThan(0);
+    expect(response.data.scoringScale).toBe('academic-reading');
+    expect(response.meta.method).toContain('ranked by focus-type density');
+  });
+
+  it('ranks listening papers by a focus', async () => {
+    const response = await server.json<{
+      skill: string;
+      focus: string[];
+      papers: { focusQuestions: number; readingEase: number | null }[];
+      transferMinutes: number;
+    }>('/v1/tests/blueprint?skill=listening&focus=matching&items=2&seed=drill');
+    expect(response.data.skill).toBe('listening');
+    expect(response.data.focus).toEqual(['matching']);
+    expect(response.data.papers).toHaveLength(2);
+    expect(response.data.papers[0]?.focusQuestions).toBeGreaterThanOrEqual(
+      response.data.papers[1]?.focusQuestions ?? 0,
+    );
+    expect(response.data.papers[0]?.readingEase).toBeNull();
+    expect(response.data.transferMinutes).toBe(10);
+  });
+
+  it('is deterministic for identical parameters', async () => {
+    const path = '/v1/tests/blueprint?skill=reading&focus=summary-completion&seed=stable';
+    const first = await server.json(path);
+    const second = await server.json(path);
+    expect(second.data).toEqual(first.data);
+  });
+
+  it('rejects invalid skills, focuses and sizes', async () => {
+    expect((await server.json('/v1/tests/blueprint?skill=writing')).status).toBe(400);
+    expect((await server.json('/v1/tests/blueprint?focus=nope')).status).toBe(400);
+    expect((await server.json('/v1/tests/blueprint?items=0')).status).toBe(400);
+    expect((await server.json('/v1/tests/blueprint?items=11')).status).toBe(400);
+  });
+});

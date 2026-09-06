@@ -18,6 +18,14 @@ import {
   searchPracticeItems,
 } from '../data/practiceTests.js';
 import { parseList } from '../lib/search.js';
+import {
+  BLUEPRINT_DEFAULT_ITEMS,
+  BLUEPRINT_DEFAULT_SEED,
+  BLUEPRINT_MAX_ITEMS,
+  BLUEPRINT_MIN_ITEMS,
+  BLUEPRINT_SKILLS,
+  buildBlueprint,
+} from '../lib/blueprint.js';
 import { getBoolean, getEnum, getInt, getNumber, getString, toParams } from '../lib/query.js';
 import { notFound } from '../lib/errors.js';
 
@@ -96,6 +104,26 @@ function items(context: RouteContext): HandlerResult {
   };
 }
 
+/** Deal a deterministic drill set from the indexed full tests. */
+function blueprint(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const skill = getEnum(params, 'skill', BLUEPRINT_SKILLS) ?? 'reading';
+  const focus = parseList(getString(params, 'focus'), 'focus', observedQuestionTypes()) as
+    | QuestionTypeId[]
+    | undefined;
+  const items = getInt(params, 'items', BLUEPRINT_MIN_ITEMS, BLUEPRINT_MAX_ITEMS, BLUEPRINT_DEFAULT_ITEMS);
+  const seed = getString(params, 'seed') ?? BLUEPRINT_DEFAULT_SEED;
+  return {
+    data: buildBlueprint({ seed, skill, focus: focus ?? [], items }),
+    meta: {
+      method:
+        'Full tests are ranked by focus-type density with seeded tie-breaking; the top ranks are dealt with timing, coverage and scoring guidance.',
+      focus: 'Focus types outside the skill are ignored; without a focus the densest papers win.',
+      determinism: 'Identical seeds, skills, focuses and sizes deal byte-identical blueprints.',
+    },
+  };
+}
+
 /** One indexed item. */
 function item(context: RouteContext): HandlerResult {
   const id = context.params['id'] as string;
@@ -135,6 +163,13 @@ export const testRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Search indexed practice tests by collection, skill, CEFR band, question type or readability.',
     handler: items,
+  },
+  {
+    method: 'GET',
+    path: '/v1/tests/blueprint',
+    versioned: true,
+    summary: 'Deal a deterministic drill set from the indexed full tests, with timing and coverage.',
+    handler: blueprint,
   },
   {
     method: 'GET',
