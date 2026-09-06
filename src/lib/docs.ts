@@ -9,6 +9,7 @@
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 import { archiveStats } from '../data/archive.js';
+import { blueprintStats } from '../data/blueprints.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
 
@@ -54,6 +55,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const practice = practiceStats();
   const materials = materialsStats();
   const archive = archiveStats();
+  const blueprints = blueprintStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -105,6 +107,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>A canonical question-type taxonomy</strong> onto which ${Object.keys(practice.rawLabels).length} upstream labels are normalised, with strategy guidance and observed frequencies.</li>
   <li><strong>Response frameworks</strong> for Writing Task&nbsp;2 and Speaking Parts&nbsp;2&ndash;3: ordered stage plans with cue language and pitfalls, cross-linked to the task banks.</li>
   <li><strong>${materials.indexedFiles.toLocaleString('en-US')} study-material files</strong> indexed from a ${materials.filesInRepository.toLocaleString('en-US')}-file self-study collection (recall banks, question banks, templates, vocabulary; metadata only).</li>
+  <li><strong>Item-level blueprints of ${blueprints.tests} Cambridge papers</strong> (volumes ${blueprints.volumeRange[0]}&ndash;${blueprints.volumeRange[1]}): ${blueprints.annotatedGroups.toLocaleString('en-US')} question groups labelled with task family, subject scene and difficulty, covering ${blueprints.annotatedQuestions.toLocaleString('en-US')} questions (annotation only).</li>
   <li><strong>A grey-literature archive index</strong>: ${archive.audioTracks.toLocaleString('en-US')} listening tracks across Cambridge IELTS volumes 1&ndash;18 with a naming-scheme and completeness table, the ${archive.readingSamples.files} official sample tasks profiled for readability and question type, and ${archive.assignments.essays} marked learner essays summarised statistically (metadata only).</li>
 </ul>
 

@@ -50,7 +50,10 @@ describe('GET /health', () => {
     const response = await server.json<{ status: string; datasets: Record<string, number> }>('/health');
     expect(response.data.status).toBe('ok');
     expect(response.data.datasets.corpusFiles).toBe(404);
+    expect(response.data.datasets.blueprintGroups).toBe(1099);
+    expect(response.data.datasets.blueprintTests).toBe(136);
     expect(response.meta.checks).toContain('vocabulary-dataset');
+    expect(response.meta.checks).toContain('blueprint-index');
   });
 });
 

@@ -53,4 +53,9 @@ describe('renderDocs', () => {
     expect(injected).not.toContain('<script>alert(1)</script>');
     expect(injected).toContain('&lt;script&gt;');
   });
+  it('advertises the Cambridge blueprint layer', () => {
+    expect(page).toContain('Item-level blueprints of 136 Cambridge papers');
+    expect(page).toContain('1,099 question groups');
+    expect(page).toContain('5,408');
+  });
 });

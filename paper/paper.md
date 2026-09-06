@@ -34,7 +34,8 @@ frequency of each family observed in 27,225 practice questions; an original taxo
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of four open IELTS collections, including a grey-literature archive index that
+metadata indexes of five open IELTS collections, including a grey-literature archive index and an
+item-level blueprint of 136 Cambridge papers, that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
 statistics.
@@ -149,6 +150,24 @@ mean 43.5), confirming that the official exemplars are extracts of real tests ra
 demonstrations. The 24 marked essays (four learners, eight task types, August 2022) are published as
 eleven derived statistics per file — never as text, which the non-substitutive design forbids.
 
+**Cambridge test blueprints.** A fifth open collection [@ieltsblueprints] — an online mock-exam
+centre — carries, under 1,844 PDFs of unrelated material, two hand-annotated files that divide every
+Cambridge IELTS paper from volume 5 to volume 21 into question groups and label each with a task
+type, a subject scene and a difficulty rating. This is the item-level structure of 136 real papers:
+1,099 groups over 5,408 questions, with no volume or test missing. The annotation, not the papers, is
+what is published; the twelve Chinese type labels are normalised onto the same canonical taxonomy
+used elsewhere in the API, and the three mappings that are coarser than that taxonomy (one label for
+both identification tasks, one for every gap-fill variant, none for flow charts) are flagged
+`approximate` on all 445 affected groups rather than silently flattened. Two findings fall out
+immediately. Difficulty tracks position monotonically in both papers — Listening moves from 68% easy
+in Part 1 to 70% hard in Part 4, Reading from 68% easy to 46% hard — which is the test's intended
+design appearing in an independent annotator's judgement. And the task mix drifts across editions:
+between volumes 5-10 and 16-21 the gap-fill share falls from 32.6% to 22.6% while multiple-answer
+multiple choice rises from 6.9% to 19.7%, the exam trading single-answer recall for tasks that
+require holding several options at once. The ratings are one annotator's judgement rather than
+IRT parameters, and 11 of 136 papers are incompletely annotated; both limitations are published per
+paper rather than smoothed away.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -178,15 +197,17 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (537 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
-study-materials index and the grey-literature archive index from the upstream tree (the archive
-derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit), and
-revalidates the internal consistency of the practice-test index (question counts, type normalisation
-and provenance) and of the archive index (facet totals, volume arithmetic, per-essay statistics),
+study-materials index, the grey-literature archive index and the blueprint index from upstream (the
+archive derivation downloads the 38 document blobs it needs by blob SHA, and the blueprint derivation
+its two annotation files, both pinned to the indexed content), and revalidates the internal
+consistency of the practice-test index (question counts, type normalisation and provenance), of the
+archive index (facet totals, volume arithmetic, per-essay statistics) and of the blueprint index
+(facet totals, group arithmetic, scene-slug scoping, annotation completeness recomputed),
 failing if the committed data has drifted — which guards against silent data rot.
 
 # Availability
@@ -200,7 +221,8 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
 assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
+grey-literature archive assembled by `msneloy`, and on the question-group annotations assembled by
+`wanli4473`; all are cited in `CITATION.cff` and in every
 response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.

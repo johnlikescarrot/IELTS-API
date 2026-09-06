@@ -126,7 +126,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive"):
+          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive", "blueprints"):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
           PY
@@ -194,6 +194,82 @@ jobs:
           regenerated = json.load(open('/tmp/archive.json'))
           assert committed == regenerated, 'data/archive.json is out of date'
           print(f"archive index reproducible: {regenerated['stats']['indexedFiles']} files")
+          PY
+
+      - name: Re-derive the Cambridge blueprint index from the upstream annotations
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Only the two annotation files are needed, so the 5.4 GB upstream
+          # working tree is never cloned. Each file is fetched by the blob
+          # SHA-1 the committed index records, which pins the derivation to
+          # exactly the content that was indexed.
+          mkdir -p /tmp/blueprint-source/library
+          python3 - <<'PY' > /tmp/blueprint-blobs.txt
+          import json
+          for source in json.load(open('data/blueprints.json'))['meta']['sources']:
+              print(source['sha1'], source['path'])
+          PY
+          while read -r sha path; do
+            curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+              -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+              "https://api.github.com/repos/wanli4473/yysd-testcenter/git/blobs/${sha}" \
+              -o "/tmp/blueprint-source/${path}"
+          done < /tmp/blueprint-blobs.txt
+          python3 scripts/extract_blueprints.py /tmp/blueprint-source /tmp/blueprints.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/blueprints.json'))
+          regenerated = json.load(open('/tmp/blueprints.json'))
+          assert committed == regenerated, 'data/blueprints.json is out of date'
+          print(f"blueprint index reproducible: {regenerated['stats']['annotatedGroups']} groups")
+          PY
+
+      - name: Check the blueprint index for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+
+          index = json.load(open('data/blueprints.json'))
+          groups, tests, stats = index['groups'], index['tests'], index['stats']
+
+          assert stats['annotatedGroups'] == len(groups), 'group totals differ'
+          assert stats['tests'] == len(tests), 'test totals differ'
+          assert len({group['id'] for group in groups}) == len(groups), 'duplicate group ids'
+          assert len({test['id'] for test in tests}) == len(tests), 'duplicate test ids'
+          assert sum(stats['bySkill'].values()) == len(groups), 'skill totals differ'
+          assert sum(stats['byQuestionType'].values()) == len(groups), 'type totals differ'
+          assert sum(stats['byPart'].values()) == len(groups), 'part totals differ'
+          assert sum(group['questions'] for group in groups) == stats['annotatedQuestions']
+          assert sum(1 for test in tests if test['complete']) == stats['completeTests']
+
+          # Every group belongs to a listed paper, and every scene slug is
+          # scoped by its skill so the two vocabularies stay distinct.
+          test_ids = {test['id'] for test in tests}
+          for group in groups:
+              assert group['testId'] in test_ids, group['id']
+              assert group['questions'] == group['lastQuestion'] - group['firstQuestion'] + 1
+              if group['scene'] is not None:
+                  assert group['scene'].startswith(group['skill'] + '-'), group['id']
+
+          # A paper is complete exactly when its groups tile 1-40 once.
+          for test in tests:
+              members = [g for g in groups if g['testId'] == test['id']]
+              assert len(members) == test['groups'], test['id']
+              covered = {}
+              for group in members:
+                  for number in range(group['firstQuestion'], group['lastQuestion'] + 1):
+                      covered[number] = covered.get(number, 0) + 1
+              assert sorted(n for n in range(1, 41) if n not in covered) == test['missingQuestions']
+              assert sorted(n for n, c in covered.items() if c > 1) == test['duplicatedQuestions']
+              expected = not test['missingQuestions'] and not test['duplicatedQuestions'] \
+                  and not test['outOfRangeQuestions']
+              assert test['complete'] == expected, test['id']
+
+          print(
+              f"blueprint index consistent: {len(groups)} groups, {len(tests)} tests, "
+              f"{stats['completeTests']} completely annotated"
+          )
           PY
 
       - name: Check the archive index for internal consistency

@@ -6,6 +6,53 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **blueprint layer**, a fifth dataset family, and the first that describes real Cambridge papers
+at the level of the individual question group. The upstream platform
+([`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)) is a Chinese-language
+IELTS mock-exam centre whose `library/` directory carries two hand-annotated taxonomy files. Between
+them they label every question group of Cambridge IELTS volumes 5-21 with a task family, a subject
+scene and, for 94% of groups, a difficulty rating. That annotation — not the papers, which are
+copyright Cambridge University Press & Assessment — is what this release normalises and publishes.
+The API remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Item-level test blueprints** (`data/blueprints.json`): 1,099 annotated question groups covering
+  5,408 questions across 136 papers (17 volumes x 4 tests x 2 receptive skills). Endpoints:
+  `/v1/blueprints`, `/v1/blueprints/stats`, `/v1/blueprints/types`, `/v1/blueprints/scenes`,
+  `/v1/blueprints/volumes`, `/v1/blueprints/tests`, `/v1/blueprints/tests/:id`,
+  `/v1/blueprints/groups`, `/v1/blueprints/groups/:id`.
+- **The task-family distribution table** (`/v1/blueprints/types`): where each canonical question
+  type actually falls. Multiple choice clusters late and hard — 94 of its 171 groups sit in Part 3
+  and 95 are rated hard against 15 easy — while identification tasks are front-loaded into Part 1
+  and rated easy three times as often as hard.
+- **Honest mapping onto the canonical taxonomy**: the 12 upstream Chinese labels are normalised onto
+  the same 13 canonical types used by `/v1/tests` and `/v1/question-types`, so the two indexes are
+  comparable. Three of those mappings are lossy — the upstream vocabulary has a single label for
+  true/false/not given and yes/no/not given, a single label for every gap-fill task, and no separate
+  flow-chart family. Every affected group carries `approximate: true`, keeps its original
+  `sourceLabel`, and the type table explains the loss in prose rather than flattening it silently.
+- **Annotation completeness, published**: a paper is `complete` only when its groups tile questions
+  1-40 exactly once. 125 of 136 do; for the other 11 the index reports precisely which question
+  numbers are missing, duplicated or out of range instead of implying full coverage.
+- **Skill-scoped scene vocabularies** (`/v1/blueprints/scenes`): 24 subject scenes, 8 for Reading and
+  16 for Listening, translated from the Chinese. The two papers are annotated with separate
+  vocabularies that happen to contain the same concept written two ways (`医疗健康` and `健康医疗`),
+  so every scene slug is prefixed with its skill and the vocabularies are never conflated.
+- **Per-volume drift table** (`/v1/blueprints/volumes`): task-family and scene mix for each of
+  volumes 5-21, for tracking how the exam's surface has shifted across editions.
+- `scripts/extract_blueprints.py`: deterministic, standard-library-only extraction. CI re-derives
+  the index byte-identically on every run, fetching the two annotation files by the blob SHA-1 the
+  committed index records rather than cloning the 5.4 GB upstream tree, and separately re-checks the
+  index for internal consistency.
+
+### Changed
+
+- The service index, `/health`, `/docs` and `/openapi.json` now report the blueprint dataset.
+- Test suite grown to 537 tests, still at 100% statement, branch, function and line coverage.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material

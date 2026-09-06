@@ -899,3 +899,195 @@ export type RouteInfo = {
   /** Whether the route is part of the versioned `/v1` contract. */
   versioned: boolean;
 };
+
+/* -------------------------------------------------------------------------- */
+/* Test blueprints                                                            */
+/* -------------------------------------------------------------------------- */
+
+/** Difficulty rating carried by an annotated question group. */
+export type BlueprintDifficulty = 'easy' | 'medium' | 'hard';
+
+/** Receptive paper an annotation belongs to. */
+export type BlueprintSkill = 'listening' | 'reading';
+
+/** One annotated question group of a Cambridge paper. */
+export type BlueprintGroup = {
+  /** Stable identifier (`reading-cam16-t2-q14-19`). */
+  id: string;
+  /** Identifier of the paper the group belongs to. */
+  testId: string;
+  /** Receptive paper. */
+  skill: BlueprintSkill;
+  /** Cambridge volume number (5-21). */
+  volume: number;
+  /** Test number within the volume (1-4). */
+  test: number;
+  /** Section (Listening) or passage (Reading) number. */
+  part: number;
+  /** First question number covered by the group. */
+  firstQuestion: number;
+  /** Last question number covered by the group. */
+  lastQuestion: number;
+  /** Questions in the group. */
+  questions: number;
+  /** Canonical question-type identifier, as used by `/v1/question-types`. */
+  questionType: QuestionTypeId;
+  /** English gloss of the upstream label. */
+  questionTypeLabel: string;
+  /** Whether the canonical mapping loses an upstream distinction. */
+  approximate: boolean;
+  /** Original Chinese label. */
+  sourceLabel: string;
+  /** Skill-scoped scene slug, or `null` when unannotated. */
+  scene: string | null;
+  /** English gloss of the scene, or `null`. */
+  sceneLabel: string | null;
+  /** Original Chinese scene label, or `null`. */
+  sourceScene: string | null;
+  /** Annotator's difficulty rating, or `null` when unrated. */
+  difficulty: BlueprintDifficulty | null;
+  /** Identifier used upstream. */
+  sourceId: string;
+};
+
+/** Aggregate row describing one annotated Cambridge paper. */
+export type BlueprintTest = {
+  /** Stable identifier (`reading-cam16-t2`). */
+  id: string;
+  /** Receptive paper. */
+  skill: BlueprintSkill;
+  /** Cambridge volume number. */
+  volume: number;
+  /** Test number within the volume. */
+  test: number;
+  /** Annotated question groups. */
+  groups: number;
+  /** Distinct question numbers covered by the annotation. */
+  annotatedQuestions: number;
+  /** Sections or passages present. */
+  parts: number[];
+  /** Distinct canonical question types, sorted. */
+  questionTypes: QuestionTypeId[];
+  /** Groups per canonical question type. */
+  typeCounts: Record<string, number>;
+  /** Distinct scenes, sorted. */
+  scenes: string[];
+  /** Groups per difficulty rating. */
+  difficultyCounts: Record<string, number>;
+  /** Groups left unrated by the annotator. */
+  unratedGroups: number;
+  /** Whether the groups tile questions 1-40 exactly once. */
+  complete: boolean;
+  /** Question numbers no group covers. */
+  missingQuestions: number[];
+  /** Question numbers covered by more than one group. */
+  duplicatedQuestions: number[];
+  /** Annotated question numbers above 40. */
+  outOfRangeQuestions: number[];
+};
+
+/** Aggregate row describing one canonical question type across the blueprints. */
+export type BlueprintType = {
+  /** Canonical question-type identifier. */
+  questionType: QuestionTypeId;
+  /** Groups of this type. */
+  groups: number;
+  /** Questions of this type. */
+  questions: number;
+  /** Groups per skill. */
+  bySkill: Record<string, number>;
+  /** Groups per section or passage number. */
+  byPart: Record<string, number>;
+  /** Groups per difficulty rating. */
+  difficultyCounts: Record<string, number>;
+  /** Median questions per group. */
+  medianGroupSize: number;
+  /** Upstream labels mapped onto this type. */
+  sourceLabels: string[];
+  /** Whether the mapping loses an upstream distinction. */
+  approximate: boolean;
+  /** Explanation of the approximation, when there is one. */
+  note: string | null;
+};
+
+/** Aggregate row describing one subject scene. */
+export type BlueprintScene = {
+  /** Skill-scoped scene slug. */
+  scene: string;
+  /** English gloss. */
+  label: string;
+  /** Original Chinese label. */
+  sourceLabel: string;
+  /** Receptive paper the scene vocabulary belongs to. */
+  skill: BlueprintSkill;
+  /** Groups set in this scene. */
+  groups: number;
+  /** Questions set in this scene. */
+  questions: number;
+  /** Distinct papers the scene appears in. */
+  tests: number;
+  /** Volumes the scene appears in. */
+  volumes: number[];
+  /** Groups per canonical question type. */
+  questionTypes: Record<string, number>;
+  /** Groups per difficulty rating. */
+  difficultyCounts: Record<string, number>;
+};
+
+/** Aggregate row describing one Cambridge volume. */
+export type BlueprintVolume = {
+  /** Cambridge volume number. */
+  volume: number;
+  /** Annotated papers in the volume. */
+  tests: number;
+  /** Papers whose annotation tiles 1-40 exactly once. */
+  completeTests: number;
+  /** Annotated question groups. */
+  groups: number;
+  /** Groups per canonical question type. */
+  questionTypes: Record<string, number>;
+  /** Groups per canonical question type, split by skill. */
+  questionTypesBySkill: Record<string, Record<string, number>>;
+  /** Groups per scene. */
+  scenes: Record<string, number>;
+  /** Groups per difficulty rating. */
+  difficultyCounts: Record<string, number>;
+  /** Mean questions per group. */
+  meanGroupSize: number;
+};
+
+/** Index-level blueprint statistics. */
+export type BlueprintStats = {
+  /** Annotated question groups. */
+  annotatedGroups: number;
+  /** Questions covered by the annotation. */
+  annotatedQuestions: number;
+  /** Annotated papers. */
+  tests: number;
+  /** Papers whose annotation tiles 1-40 exactly once. */
+  completeTests: number;
+  /** Volumes covered. */
+  volumes: number[];
+  /** Lowest and highest volume. */
+  volumeRange: number[];
+  /** Groups per skill. */
+  bySkill: Record<string, number>;
+  /** Groups per section or passage number. */
+  byPart: Record<string, number>;
+  /** Groups per canonical question type. */
+  byQuestionType: Record<string, number>;
+  /** Groups per canonical question type, split by skill. */
+  byQuestionTypeAndSkill: Record<string, Record<string, number>>;
+  /** Groups per scene. */
+  byScene: Record<string, number>;
+  /** Groups per difficulty rating. */
+  byDifficulty: Record<string, number>;
+  /** Groups the annotator left unrated. */
+  unratedGroups: number;
+  /** Share of groups carrying a difficulty rating. */
+  ratedRatio: number;
+  /** Groups whose canonical type mapping is approximate. */
+  approximateGroups: number;
+  /** Group-size summary. */
+  groupSize: { min: number; max: number; mean: number };
+};

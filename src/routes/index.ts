@@ -7,6 +7,7 @@
 
 import { archiveRoutes } from './archive.js';
 import { bandRoutes } from './bands.js';
+import { blueprintRoutes } from './blueprints.js';
 import { corpusRoutes } from './corpus.js';
 import { frameworkRoutes } from './frameworks.js';
 import { materialRoutes } from './materials.js';
@@ -36,6 +37,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...studyRoutes,
   ...materialRoutes,
   ...archiveRoutes,
+  ...blueprintRoutes,
   ...resourceRoutes,
 ];
 

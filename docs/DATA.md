@@ -13,6 +13,7 @@ This directory holds the archived artefacts of the API contract.
 | `practice-tests.json`           | Structure, question-type normalisation, provenance and readability statistics for 1,702 practice items.                                                                                                   |
 | `materials.json`                | Metadata index of a 2,385-file self-study collection: recall banks, question banks, templates, vocabulary.                                                                                                |
 | `archive.json`                  | Grey-literature archive index: 555 files of the Cambridge 1-18 listening audio archive, the twelve official sample tasks and 24 marked learner essays, with derived structure and readability statistics. |
+| `blueprints.json`               | Cambridge test blueprints: 1,099 question groups from volumes 5-21 (136 papers) annotated by canonical task family, subject scene and difficulty, with per-paper annotation completeness.                 |
 
 The datasets themselves live in [`data/`](../data) and are documented in
 [RESEARCH.md](../RESEARCH.md), which records the extraction methodology and the threats to validity

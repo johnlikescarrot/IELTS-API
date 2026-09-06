@@ -3,6 +3,7 @@
  */
 
 import { archiveStats } from '../data/archive.js';
+import { blueprintStats } from '../data/blueprints.js';
 import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
@@ -21,6 +22,7 @@ function datasetSummary(): Record<string, number> {
   const practice = practiceStats();
   const materials = materialsStats();
   const archive = archiveStats();
+  const blueprints = blueprintStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -34,6 +36,9 @@ function datasetSummary(): Record<string, number> {
     archiveFiles: archive.indexedFiles,
     archiveAudioTracks: archive.audioTracks,
     archiveEssays: archive.assignments.essays,
+    blueprintGroups: blueprints.annotatedGroups,
+    blueprintTests: blueprints.tests,
+    blueprintQuestions: blueprints.annotatedQuestions,
   };
 }
 
@@ -99,7 +104,14 @@ export function createMetaRoutes(
         datasets: datasetSummary(),
       },
       meta: {
-        checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index', 'archive-index'],
+        checks: [
+          'process',
+          'vocabulary-dataset',
+          'corpus-index',
+          'practice-test-index',
+          'archive-index',
+          'blueprint-index',
+        ],
       },
     };
   }

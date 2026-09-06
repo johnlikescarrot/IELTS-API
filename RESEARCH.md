@@ -681,3 +681,122 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the Cambridge test blueprints
+
+_Upstream: [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter), a
+Chinese-language IELTS mock-exam centre. Two files are consumed —
+`library/reading-taxonomy.json` (blob `a276247f`) and `library/listening-taxonomy.json` (blob
+`f8625aa0`) — no licence, 5.4 GB working tree. The dataset is `data/blueprints.json`; the endpoints
+are `/v1/blueprints`, `/v1/blueprints/stats`, `/v1/blueprints/types`, `/v1/blueprints/scenes`,
+`/v1/blueprints/volumes`, `/v1/blueprints/tests`, `/v1/blueprints/tests/:id`,
+`/v1/blueprints/groups` and `/v1/blueprints/groups/:id`._
+
+### 29. Why an annotation layer is worth more than another file index
+
+Parts I, IV and V index **files**: what exists, how big it is, what it is probably about. Part II
+gets closer to content by parsing structure out of an unofficial practice collection. None of them
+can answer the question a teacher actually asks — _which task family occupies questions 14 to 19 of
+Reading Test 2 in volume 16, what is the passage about, and how hard is it?_
+
+The upstream platform can, because somebody sat down and annotated it. Buried under 1,844 PDFs and
+433 HTML pages are two JSON files that carve every Cambridge paper from volume 5 to volume 21 into
+question groups and label each one with a task type, a subject scene and a difficulty rating. That
+is 1,099 groups covering 5,408 questions across 136 papers — 17 volumes x 4 tests x 2 receptive
+skills, with no volume or test missing.
+
+The annotation is the valuable artefact precisely because it is _not_ the paper. It is a description
+of the exam's shape, and a description can be published where the papers themselves cannot be.
+
+### 30. Normalising two vocabularies onto one taxonomy
+
+The upstream labels are Chinese and paper-specific: 8 reading types and 7 listening types, 8 reading
+scenes and 16 listening scenes. To be comparable with `/v1/tests` and `/v1/question-types`, all 12
+distinct type labels are mapped onto the same 13 canonical families used everywhere else in this API.
+
+Nine of those mappings are exact. Three are not, and the index says so on every affected group
+(`approximate: true`, 445 groups) rather than flattening the loss:
+
+| Upstream label | Canonical family           | What is lost                                                              |
+| -------------- | -------------------------- | ------------------------------------------------------------------------- |
+| `判断题`       | `true-false-not-given`     | One label covers both identification tasks; yes/no/not given is invisible |
+| `填空题`       | `sentence-completion`      | One label covers sentence, note, table, form and summary completion       |
+| `流程题`       | `diagram-label-completion` | Flow-chart completion has no separate canonical family                    |
+
+Each group also keeps its `sourceLabel`, so a user who disagrees with a mapping can regroup by the
+original vocabulary. The scene vocabularies are kept apart rather than merged: Reading and Listening
+were annotated independently, and the two happen to encode the same concept with the characters in
+opposite order (`医疗健康` in Reading, `健康医疗` in Listening). Merging them would invent a
+cross-paper category that no annotator intended, so every scene slug is prefixed with its skill.
+
+### 31. What the blueprints show
+
+**Difficulty tracks position, monotonically, in both papers.** Grouping the 1,033 rated groups by
+section or passage number gives an almost textbook gradient:
+
+| Paper     | Part 1            | Part 2             | Part 3            | Part 4            |
+| --------- | ----------------- | ------------------ | ----------------- | ----------------- |
+| Listening | 68% easy, 2% hard | 37% easy, 20% hard | 7% easy, 50% hard | 0% easy, 70% hard |
+| Reading   | 68% easy, 3% hard | 19% easy, 21% hard | 6% easy, 46% hard | —                 |
+
+Both papers open with a part that is roughly two-thirds easy and close with one that is half to
+seven-tenths hard. This is the intended design of the test surfacing in an independent annotator's
+judgement, and it gives the difficulty ratings a sanity check they would not otherwise have.
+
+**Task families are not evenly spread.** Multiple choice is a back-half instrument: 94 of its 171
+groups sit in Part 3, and 95 are rated hard against 15 easy. Identification tasks run the other way
+— 58 of 141 groups in Part 1, rated easy three times as often as hard.
+
+**The mix drifts across editions.** Comparing volumes 5-10, 11-15 and 16-21, the share of groups that
+are gap-fill falls from 32.6% to 24.5% to 22.6%, while multiple-answer multiple choice rises from
+6.9% to 13.1% to 19.7%. The exam has been trading single-answer recall for tasks that require
+holding several options in play at once.
+
+### 32. Threats to validity (Part VI)
+
+- **The difficulty ratings are one annotator's opinion.** They are not IRT parameters, not derived
+  from candidate response data, and carry no inter-rater reliability figure — nobody else annotated
+  the same papers. The Part 1-to-4 gradient in section 31 is consistent with the test's design,
+  which is reassuring, but consistency is not validation. Treat the ratings as informed teaching
+  judgement, not measurement.
+- **The annotation is incomplete on 11 of 136 papers.** 125 papers tile questions 1-40 exactly once.
+  The rest have gaps (`reading-cam19-t4` is missing nine question numbers) or double-annotated
+  ranges (`listening-cam21-t1` covers questions 13-14 twice, and the sibling paper
+  `listening-cam21-t2` is missing exactly those two — an off-by-one the annotator appears to have
+  made across adjacent files). These are published per paper as `missingQuestions`,
+  `duplicatedQuestions` and `outOfRangeQuestions`; aggregate statistics are computed over what was
+  annotated, so type shares are shares _of annotated groups_, not of the true paper.
+- **Coarse labels bias the type distribution.** Because one upstream label absorbs every gap-fill
+  variant, `sentence-completion` is certainly overstated relative to a taxonomy that separated note,
+  table and form completion. The drift finding in section 31 is stated in terms of that combined
+  family and is unaffected, but per-family counts are not directly comparable with the `/v1/tests`
+  distribution, which normalises a finer set of source labels.
+- **The scene vocabulary is closed and unbalanced.** 24 scenes over 1,099 groups leaves some
+  categories very thin (`listening-insurance` has 3 groups). Scene-level statistics on the small
+  categories are illustrative, not reliable.
+- **The upstream repository is unlicensed and mutable.** Only the derived annotation is published,
+  and the two source files are pinned by blob SHA-1 so the derivation is reproducible; but upstream
+  deletion would orphan the permalinks, as with Parts I, II, IV and V.
+- **No examinable content is redistributed.** The index deliberately carries no passage text, no
+  question wording, no answer key and no audio. It describes the papers; it cannot substitute for
+  them, and it is not a route to obtaining them.
+
+### 33. Reproducing Part VI
+
+```bash
+# The two annotation files are ~200 KB; cloning the 5.4 GB upstream tree is unnecessary.
+mkdir -p upstream/library
+for f in reading-taxonomy listening-taxonomy; do
+  curl -fsSL "https://raw.githubusercontent.com/wanli4473/yysd-testcenter/main/library/$f.json" \
+    -o "upstream/library/$f.json"
+done
+python3 scripts/extract_blueprints.py upstream data/blueprints.json
+```
+
+`scripts/extract_blueprints.py` is standard library only and raises rather than guesses on any
+unmapped type, scene or difficulty label, so an upstream vocabulary change fails loudly instead of
+silently dropping data. Continuous integration re-derives the index on every run — fetching the two
+files by the blob SHA-1 recorded in `data/blueprints.json` so the derivation is pinned to the exact
+content indexed — and fails if the committed file disagrees. A second CI step re-checks internal
+consistency: facet totals against group counts, group arithmetic, scene-slug scoping, and the
+`complete` flag recomputed from scratch against the published missing and duplicated question lists.

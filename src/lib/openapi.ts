@@ -9,6 +9,7 @@ import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/pract
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
+import { blueprintFacets, blueprintStats } from '../data/blueprints.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
@@ -254,6 +255,48 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/resources': [
     QUERY,
     { name: 'type', in: 'query', schema: { type: 'string', enum: [...RESOURCE_TYPES] } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/blueprints/tests': [
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: blueprintFacets('skill') } },
+  ],
+  '/v1/blueprints/groups': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: blueprintFacets('skill') } },
+    {
+      name: 'questionType',
+      in: 'query',
+      schema: { type: 'string', enum: blueprintFacets('questionType') },
+    },
+    { name: 'scene', in: 'query', schema: { type: 'string', enum: blueprintFacets('scene') } },
+    { name: 'difficulty', in: 'query', schema: { type: 'string', enum: blueprintFacets('difficulty') } },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Restrict to one or more Cambridge IELTS volumes.',
+      schema: {
+        type: 'integer',
+        minimum: blueprintStats().volumeRange[0] as number,
+        maximum: blueprintStats().volumeRange[1] as number,
+      },
+    },
+    {
+      name: 'part',
+      in: 'query',
+      description: 'Restrict to one Listening section or Reading passage.',
+      schema: { type: 'integer', minimum: 1, maximum: 4 },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: {
+        type: 'string',
+        enum: ['id', 'volume', 'questions', 'difficulty', 'questionType'],
+        default: 'volume',
+      },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
     LIMIT,
     OFFSET,
   ],
