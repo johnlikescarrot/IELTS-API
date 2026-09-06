@@ -4,7 +4,7 @@
  */
 
 /** Semantic version of the service and of the `/v1` HTTP contract. */
-export const API_VERSION = '1.4.0';
+export const API_VERSION = '1.3.0';
 
 /** Canonical URL of the source repository. */
 export const REPOSITORY_URL = 'https://github.com/johnlikescarrot/IELTS-API';

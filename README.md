@@ -36,12 +36,7 @@ writing sample into lexical, structural and theme measurements with descriptor-a
 indexes what preparation material looks like before anyone curates it: `/v1/archive` catalogues a
 5.4 GB grey-literature archive — the Cambridge IELTS 1-18 listening audio with a per-volume
 naming-scheme and completeness table, the twelve official sample tasks measured for readability, and
-24 marked learner essays summarised statistically. The test-centre layer closes the loop that all of
-that material exists to serve: `/v1/scores/raw` converts correct answers out of 40 into a band score
-using the partners' published conversion guidance, and `/v1/exams/blueprint` assembles a
-deterministic, date-seeded full mock exam — the official four-paper format with timings, a
-question-type mix drawn from the frequencies observed in 27,225 practice questions, original Writing
-and Speaking tasks, and links to practice material of a matching difficulty.
+24 marked learner essays summarised statistically.
 
 ## Quick start
 
@@ -65,12 +60,6 @@ curl -s "http://localhost:3000/v1/tools/readability?text=Dogs%20run%20fast.%20Ca
 
 # A deterministic eight-week study plan towards band 7
 curl -s "http://localhost:3000/v1/study/plan?target=7&writing=6&speaking=6.5"
-
-# 27 correct answers out of 40 in Listening -> band 6.5, with the margins to 7.0
-curl -s "http://localhost:3000/v1/scores/raw?skill=listening&correct=27"
-
-# A deterministic mock exam for a date, with graded reading set for band 6.5
-curl -s "http://localhost:3000/v1/exams/blueprint?module=academic&date=2026-09-05&target=6.5"
 
 # The 13 IELTS question types, ranked by how often they occur in 27,225 practice questions
 curl -s "http://localhost:3000/v1/question-types?skill=listening"
@@ -107,8 +96,6 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
 | Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`             | Original compilation                                                           |
 | Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                         |
-| Raw-score conversion tables     |                        3 tables x 13 rows, bands 3.0-9.0 | `/v1/scores/raw`        | Indicative compilation of the partners' published scoring guidance             |
-| Mock-exam format reference      |                       2 modules x 4 papers, full timings | `/v1/exams`             | Original compilation of the public task descriptions                           |
 | Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                   |
 | Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                 |
 | Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`     | Original compilation                                                           |
@@ -146,10 +133,6 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
 | GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
 | GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
-| GET    | `/v1/scores/raw`          | Convert correct answers out of 40 to a band (`skill`, `module`, `correct`)                              |
-| GET    | `/v1/scores/raw/tables`   | The published raw-score conversion tables, with provenance                                              |
-| GET    | `/v1/exams`               | Official four-paper format reference: structure, timings, word counts (`module`)                        |
-| GET    | `/v1/exams/blueprint`     | Deterministic date-seeded mock exam (`module`, `date`, `target`, `seed`)                                |
 | GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
 | GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                        |
 | GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                           |
@@ -193,65 +176,6 @@ GET /v1/scores/overall?listening=7&reading=6&writing=6&speaking=6
     "mean": 6.25, "overall": 6.5, "cefr": "B2", "spread": 1,
     "explanation": "The mean of the four components is 6.25, which falls exactly between two
                     bands; IELTS rounds a .25/.75 mean up, giving 6.5."
-  }
-}
-```
-
-**Raw score to band.** Listening and Reading each carry 40 marks; the conversion below is the
-indicative compilation of the partners' published guidance, and the response names the margins to
-the next band and the score that still keeps the band below.
-
-```jsonc
-GET /v1/scores/raw?skill=reading&module=general-training&correct=35
-{
-  "status": 200,
-  "data": {
-    "table": "reading-general-training", "skill": "reading", "module": "general-training",
-    "correct": 35, "questions": 40, "band": 7,
-    "row": { "min": 34, "max": 35, "band": 7 },
-    "oneBandAhead": { "band": 7.5, "correct": 36 },
-    "oneBandBehind": { "band": 6.5, "correct": 33 }
-  },
-  "meta": { "note": "Indicative conversion ... boundaries vary by test version by up to one mark ..." }
-}
-```
-
-**Mock-exam blueprint.** Everything the API publishes, composed into one reproducible test centre
-session: the official timings, the question-type mix observed in the practice corpus, original tasks,
-and the scoring path from raw marks to the overall band.
-
-```jsonc
-GET /v1/exams/blueprint?module=academic&date=2026-09-05&target=6.5
-{
-  "status": 200,
-  "data": {
-    "session": { "id": "mock-2f674bcb", "module": "academic", "date": "2026-09-05",
-                 "seed": "2026-09-05", "reproducible": true },
-    "listening": {
-      "format": { "durationSeconds": 1800, "transferMinutes": 10, "questions": 40,
-                  "parts": [ { "number": 1, "context": "Everyday social transaction ...", "questions": 10 }, ... ] },
-      "questionTypeMix": [
-        { "id": "summary-completion", "name": "Summary completion", "share": 0.4821, "questions": 24 },
-        { "id": "multiple-choice", "name": "Multiple choice", "share": 0.1906, "questions": 10 },
-        { "id": "matching", "name": "Matching", "share": 0.0974, "questions": 5 },
-        { "id": "diagram-label-completion", "name": "Diagram and label completion", "share": 0.0288, "questions": 1 }
-      ],
-      "sources": [ { "id": "lft-014", "title": "IELTS Listening Practice - Test 14", "collection": "listening-full-test", ... } ]
-    },
-    "reading": {
-      "format": { "durationSeconds": 3600, "transferMinutes": 0, "questions": 40,
-                  "parts": [ { "number": 1, "context": "...", "questions": 13 }, ... ] },
-      "questionTypeMix": [ ... ],
-      "sources": [ { "id": "grd-b1b2-064", "level": "B1-B2", "readingEase": 27.3, ... }, ... ]
-    },
-    "writing": {
-      "task1": { "familyId": "academic-line-graph", "name": "Line graph", "endpoint": "/v1/tasks/writing?module=academic" },
-      "task2": { "prompt": "...", "category": "education", "questionType": "problem-solution",
-                 "endpoint": "/v1/topics/writing?category=education&type=problem-solution" }
-    },
-    "speaking": { "part1": { "topic": "Hometown", ... }, "part2": { "topic": "...", "cueCard": ["You should say:", ...] }, ... },
-    "scoring": { "overallRule": "Overall = mean ... ", "rawEndpoint": "/v1/scores/raw?skill=listening&correct=27", ... },
-    "notes": [ "The blueprint is a pure function of module, date and seed: ...", ... ]
   }
 }
 ```
@@ -448,7 +372,7 @@ dataset has drifted. The practice-test index is validated for internal consisten
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 539 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 502 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -479,7 +403,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.4.0},
+  version = {1.3.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -522,9 +446,6 @@ Please also cite the upstream collections the datasets were derived from:
   you need the authoritative text.
 - **Score concordances:** indicative values compiled from the providers' own published comparison
   tables. Receiving institutions apply their own rules.
-- **Raw-score tables:** indicative, compiled from the partners' published scoring guidance and
-  cross-checked against five independent reproductions; exact boundaries vary by test version, and
-  rows below band 3.0 are omitted because published tables diverge there.
 - **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests` and `/v1/archive` publish
   derived metadata and statistics only — no passage, question, answer key, transcript, recording,
   PDF content, essay text or image.

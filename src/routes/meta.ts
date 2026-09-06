@@ -6,7 +6,6 @@ import { archiveStats } from '../data/archive.js';
 import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
-import { RAW_SCORE_TABLES } from '../data/rawScores.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
@@ -35,7 +34,6 @@ function datasetSummary(): Record<string, number> {
     archiveFiles: archive.indexedFiles,
     archiveAudioTracks: archive.audioTracks,
     archiveEssays: archive.assignments.essays,
-    rawScoreTables: RAW_SCORE_TABLES.length,
   };
 }
 

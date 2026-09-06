@@ -60,10 +60,6 @@ The upstream corpus is third-party material. Publish **metadata only**; never co
 binary, an excerpt of a copyrighted book, or a link that exists only to circumvent a paywall. Band
 descriptor text must remain an original paraphrase, never the official wording.
 
-Published conversion tables (score concordances, raw-score to band rows) follow the same rule in
-numeric form: every row must be verifiable in at least two independent published sources, uncertain
-rows are left out (`null`) rather than estimated, and each table carries its source URL and caveat.
-
 ## Style
 
 - Prettier and ESLint decide formatting; do not argue with them.
