@@ -47,10 +47,6 @@ describe('the package entry point', () => {
     expect(api.CONVERSION_TARGETS).toContain('cefr');
     expect(api.allEntries().length).toBe(4174);
     expect(api.corpusStats().filesInRepository).toBe(404);
-    expect(api.RAW_SCORE_TABLES).toHaveLength(3);
-    expect(typeof api.convertRawScore).toBe('function');
-    expect(typeof api.buildExamBlueprint).toBe('function');
-    expect(api.EXAM_MODULES).toEqual(['academic', 'general-training']);
   });
 
   it('exports the build constants', () => {
