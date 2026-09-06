@@ -7,6 +7,8 @@
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { EXAM_MODULES } from '../data/examStructure.js';
+import { MAX_RAW_SCORE, RAW_SCORE_PAPERS } from '../data/rawScores.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
@@ -128,6 +130,89 @@ const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/scores/interpret': [
     { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...CONVERSION_TARGETS] } },
     { name: 'score', in: 'query', required: true, schema: { type: 'number' } },
+  ],
+  '/v1/scores/raw': [
+    {
+      name: 'paper',
+      in: 'query',
+      required: true,
+      description: 'Objectively marked paper whose table to read.',
+      schema: { type: 'string', enum: [...RAW_SCORE_PAPERS] },
+    },
+    {
+      name: 'correct',
+      in: 'query',
+      required: true,
+      description: 'Correct answers out of 40.',
+      schema: { type: 'integer', minimum: 0, maximum: MAX_RAW_SCORE },
+    },
+  ],
+  '/v1/scores/raw/tables': [
+    { name: 'paper', in: 'query', schema: { type: 'string', enum: [...RAW_SCORE_PAPERS] } },
+  ],
+  '/v1/scores/mock': [
+    {
+      name: 'module',
+      in: 'query',
+      description: 'Selects the Academic or General Training reading table.',
+      schema: { type: 'string', enum: [...EXAM_MODULES], default: 'academic' },
+    },
+    {
+      name: 'listeningCorrect',
+      in: 'query',
+      required: true,
+      schema: { type: 'integer', minimum: 0, maximum: MAX_RAW_SCORE },
+    },
+    {
+      name: 'readingCorrect',
+      in: 'query',
+      required: true,
+      schema: { type: 'integer', minimum: 0, maximum: MAX_RAW_SCORE },
+    },
+    {
+      name: 'writing',
+      in: 'query',
+      required: true,
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'speaking',
+      in: 'query',
+      required: true,
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+  ],
+  '/v1/exam': [
+    { name: 'module', in: 'query', schema: { type: 'string', enum: [...EXAM_MODULES], default: 'academic' } },
+  ],
+  '/v1/exam/papers': [{ name: 'module', in: 'query', schema: { type: 'string', enum: [...EXAM_MODULES] } }],
+  '/v1/tools/mark': [
+    {
+      name: 'key',
+      in: 'query',
+      required: true,
+      description:
+        'Published answers, pipe-delimited. Brackets mark optional words and "/" or "OR" separate alternatives.',
+      schema: { type: 'string', example: '(the) river bank|TRUE|B/C' },
+    },
+    {
+      name: 'answers',
+      in: 'query',
+      description: 'Candidate answers, pipe-delimited; empty slots are blanks.',
+      schema: { type: 'string', example: 'river bank||b' },
+    },
+    {
+      name: 'wordLimit',
+      in: 'query',
+      description: 'Word limit stated by the rubric; answers over it score zero.',
+      schema: { type: 'integer', minimum: 1, maximum: 10 },
+    },
+    {
+      name: 'paper',
+      in: 'query',
+      description: 'Convert the total to a band; requires a full 40-question key.',
+      schema: { type: 'string', enum: [...RAW_SCORE_PAPERS] },
+    },
   ],
   '/v1/topics/writing': [
     QUERY,
@@ -455,7 +540,9 @@ export function openApiDocument(
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, and an index of a 2,385-file',
         'self-study materials collection. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        '(readability and essay profile), marks Listening and Reading answer sheets',
+        'under the published marking rules, converts raw scores out of 40 into bands,',
+        'publishes the test specification, and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

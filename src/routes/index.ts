@@ -8,6 +8,7 @@
 import { archiveRoutes } from './archive.js';
 import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
+import { examRoutes } from './exam.js';
 import { frameworkRoutes } from './frameworks.js';
 import { materialRoutes } from './materials.js';
 import { createMetaRoutes } from './meta.js';
@@ -27,6 +28,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...vocabularyRoutes,
   ...bandRoutes,
   ...scoreRoutes,
+  ...examRoutes,
   ...topicRoutes,
   ...questionTypeRoutes,
   ...frameworkRoutes,

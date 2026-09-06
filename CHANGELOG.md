@@ -6,6 +6,60 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-06
+
+The **scoring layer**: the first procedural datasets in the API. Everything up to 1.3.0 described
+material that already existed; this release encodes what a mock-exam centre _does_ with a finished
+answer sheet — mark it, convert it, report it. The API remains free, GET-only, authentication-free
+and dependency-free.
+
+### Added
+
+- **Raw-score conversion** (`/v1/scores/raw`, `/v1/scores/raw/tables`): three tables — Listening,
+  Academic Reading and General Training Reading — covering 0-40 correct answers exhaustively, with
+  the band, the mark range that holds it, the marks still needed for the next band, and the raw
+  percentage. Reproduced as **indicative** conversions from the Cambridge practice volumes, because
+  live versions are equated individually and no official table exists. Publishing the two reading
+  tables separately matters: 30/40 is band 7 on Academic Reading and band 6 on General Training,
+  and collapsing them overstates a General Training band by up to a full band.
+- **Honest extrapolation**: the source volumes stop printing rows at 4 correct answers (6 for
+  General Training), but an API cannot. Rows below that floor continue the last published step and
+  carry `extrapolated: true` plus a metadata note that they must never be quoted as a cut score —
+  the same discipline as the visibly `null` question counts in 1.3.0.
+- **The answer-marking engine** (`/v1/tools/mark`): marks a Listening or Reading sheet against a
+  published key under the rules Cambridge actually prints. Case is ignored; bracketed words are
+  optional; `/` and `OR` separate alternatives; twelve productive suffix rules make British and
+  American spellings equivalent; an answer over a stated word limit scores zero even when it
+  contains the key; hyphenated compounds and digit-grouped numbers count as one word. The expanded
+  set of accepted forms is returned with every question, which makes the endpoint a teaching
+  artefact as well as a marker.
+- **Near-miss diagnostics**: a wrong answer within one edit of an accepted form is marked wrong and
+  flagged `nearMiss`, separating marks lost to spelling from marks lost to comprehension — the two
+  have entirely different remedies. Pass `paper=` with a full 40-question key and the sheet is
+  converted to a band in the same response.
+- **The mock report** (`/v1/scores/mock`): two raw scores and two marked bands in, a full report
+  form out — per-paper bands, the marks to the next band on each objective paper, the overall band
+  under the IELTS rounding rule, and the `limitingSkills` holding it down.
+- **The test specification** (`/v1/exam`, `/v1/exam/papers`, `/v1/exam/papers/:id`): six papers, 19
+  parts, timings, question counts, marking method, sitting order and per-paper transfer notes,
+  published per module. `writtenMinutes` (150) and `writtenMinutesWithTransfer` (160) are reported
+  separately so an invigilation clock can be driven from whichever the centre means, and the
+  paper-based/computer-delivered transfer difference is recorded per paper rather than buried in
+  prose.
+- `RESEARCH.md` Part VI: why raw-score conversion is not a published table, the extrapolation
+  problem, the marking rules as data, the specification as an invigilation clock, and the threats to
+  validity.
+
+### Changed
+
+- The README endpoint table, dataset table and worked examples cover the new scoring layer;
+  `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.4.0.
+- Test suite grown to 632 tests, still at 100% statement, branch, function and line coverage per
+  file. Part VI has no upstream tree to re-derive, so it is verified by invariant instead: the
+  tables must cover 0-40 without gaps or overlap, be monotonic and contiguous, use only reportable
+  half bands, agree with their declared published floor, and keep the General Training table
+  strictly harsher than the Academic one at every band from 5 to 9.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material

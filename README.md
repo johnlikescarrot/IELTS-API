@@ -31,8 +31,12 @@ metadata and statistics, plus original guidance datasets written for this projec
 
 The API also analyses text, not just publishes it: `/v1/tools/readability` scores any passage with
 the Flesch formulas and places it next to the corpus group means, `/v1/tools/essay-profile` turns a
-writing sample into lexical, structural and theme measurements with descriptor-aligned hints, and
-`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule. And it
+writing sample into lexical, structural and theme measurements with descriptor-aligned hints,
+`/v1/tools/mark` marks a Listening or Reading answer sheet against a published key under the real
+marking rules and converts the total to a band, and `/v1/study/plan` composes every dataset into a
+deterministic week-by-week study schedule. Everything a mock-exam centre needs to run and score a
+paper is now in the contract: `/v1/exam` publishes the timings and question counts,
+`/v1/tools/mark` marks the sheet, and `/v1/scores/mock` turns the sitting into a report form. And it
 indexes what preparation material looks like before anyone curates it: `/v1/archive` catalogues a
 5.4 GB grey-literature archive — the Cambridge IELTS 1-18 listening audio with a per-volume
 naming-scheme and completeness table, the twelve official sample tasks measured for readability, and
@@ -104,7 +108,9 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
 | Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
-| Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
+| Analysis toolkit                |     3 analysers over any text (Flesch, lexical, marking) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Parts III and VI)              |
+| Raw-score conversion tables     |                3 papers x 18 rows, covering 0-40 correct | `/v1/scores/raw`        | Indicative tables reproduced from the Cambridge practice volumes               |
+| Test specification              |            6 papers, 19 parts, timings and sitting order | `/v1/exam`              | The published IELTS test specification                                         |
 | Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
@@ -133,6 +139,12 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/scores/overall`      | Overall band from the four components                                                                   |
 | GET    | `/v1/scores/convert`      | IELTS band to CEFR / TOEFL iBT / Cambridge / PTE / DET                                                  |
 | GET    | `/v1/scores/interpret`    | Another scale back to an indicative IELTS band                                                          |
+| GET    | `/v1/scores/raw`          | Listening or Reading raw score out of 40 to a band (`paper`, `correct`)                                 |
+| GET    | `/v1/scores/raw/tables`   | The three raw-score conversion tables in full (`paper`)                                                 |
+| GET    | `/v1/scores/mock`         | A whole mock sitting to a report form (`module`, `listeningCorrect`, `readingCorrect`, `writing`, ...)  |
+| GET    | `/v1/exam`                | Test specification for one module: papers, timings, sitting order (`module`)                            |
+| GET    | `/v1/exam/papers`         | Every paper with its parts, timings and marking method (`module`)                                       |
+| GET    | `/v1/exam/papers/:id`     | One paper of the test specification                                                                     |
 | GET    | `/v1/topics/writing`      | Writing Task 2 prompts (`category`, `type`, `q`)                                                        |
 | GET    | `/v1/topics/speaking`     | Speaking Parts 1-3 (`part`, `q`)                                                                        |
 | GET    | `/v1/topics/themes`       | Recurring exam themes (`group`, `skill`, `q`)                                                           |
@@ -159,6 +171,7 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/archive/:id`         | One indexed archive item                                                                                |
 | GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
+| GET    | `/v1/tools/mark`          | Mark an answer sheet against a published key and convert it to a band (`key`, `answers`, `wordLimit`)   |
 | GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
 | GET    | `/v1/resources`           | Free preparation resources (`type`, `q`)                                                                |
 
@@ -176,6 +189,76 @@ GET /v1/scores/overall?listening=7&reading=6&writing=6&speaking=6
     "mean": 6.25, "overall": 6.5, "cefr": "B2", "spread": 1,
     "explanation": "The mean of the four components is 6.25, which falls exactly between two
                     bands; IELTS rounds a .25/.75 mean up, giving 6.5."
+  }
+}
+```
+
+**Marking an answer sheet.** The engine implements the rules Cambridge prints in the back of the
+practice volumes: marking is case-insensitive, bracketed words are optional, `/` and `OR` separate
+alternatives, British and American spellings both score, and an answer over the stated word limit
+scores zero even when it contains the key. A wrong answer within one edit of the key is flagged as a
+`nearMiss`, so a candidate can see which marks were lost to spelling rather than to comprehension.
+
+```jsonc
+GET /v1/tools/mark?key=(the)%20river%20bank|TRUE|B/C|colour&answers=The%20River%20Bank|true|c|color
+{
+  "status": 200,
+  "data": {
+    "answers": [
+      { "question": 1, "given": "The River Bank", "expected": "(the) river bank",
+        "accepted": ["the river bank", "river bank"],
+        "correct": true, "reason": "case-insensitive", "nearMiss": false },
+      { "question": 4, "given": "color", "expected": "colour",
+        "correct": true, "reason": "spelling-variant", "nearMiss": false }
+    ],
+    "questions": 4, "correct": 4, "incorrect": 0, "blank": 0, "nearMisses": 0, "accuracy": 1,
+    "band": null
+  }
+}
+```
+
+Pass `paper=listening` together with a full 40-question key and the sheet is converted to a band in
+the same response.
+
+**Raw score to band.** Listening and Reading are marked out of 40. The tables printed in the
+Cambridge volumes are reproduced as **indicative** conversions — live versions are equated
+individually, so a real test day may set a cut score a mark or two either side.
+
+```jsonc
+GET /v1/scores/raw?paper=listening&correct=30
+{
+  "status": 200,
+  "data": {
+    "paper": "listening", "correct": 30, "questions": 40,
+    "band": 7, "cefr": "C1",
+    "bandRange": { "minCorrect": 30, "maxCorrect": 31 },
+    "marksToNextBand": { "band": 7.5, "minCorrect": 32, "marksNeeded": 2 },
+    "extrapolated": false, "percentage": 75
+  }
+}
+```
+
+The same raw score is worth a different band on each paper: 30 correct is band 7 on Academic
+Reading and band 6 on General Training Reading, because the General Training texts are easier.
+Rows below the lowest cut score the volumes actually print are flagged `extrapolated`.
+
+**A whole mock sitting.** `/v1/scores/mock` takes the two raw scores and the two marked bands and
+returns the report form, including which skill is holding the overall band down.
+
+```jsonc
+GET /v1/scores/mock?listeningCorrect=30&readingCorrect=27&writing=6&speaking=6.5
+{
+  "status": 200,
+  "data": {
+    "module": "academic",
+    "papers": {
+      "listening": { "correct": 30, "band": 7,
+                     "marksToNextBand": { "band": 7.5, "marksNeeded": 2 } },
+      "reading":   { "paper": "academic-reading", "correct": 27, "band": 6.5 },
+      "writing":   { "band": 6 }, "speaking": { "band": 6.5 }
+    },
+    "mean": 6.5, "overall": 6.5, "cefr": "B2",
+    "limitingSkills": ["writing"]
   }
 }
 ```
@@ -403,7 +486,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.3.0},
+  version = {1.4.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }

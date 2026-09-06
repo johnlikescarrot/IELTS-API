@@ -868,6 +868,115 @@ export type ResponseFramework = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Raw scores and exam structure                                              */
+/* -------------------------------------------------------------------------- */
+
+/** Papers whose raw score converts directly to a band. */
+export type RawScorePaper = 'listening' | 'academic-reading' | 'general-reading';
+
+/** One row of a raw-score conversion table. */
+export type RawScoreRow = {
+  /** Band awarded for this range of correct answers. */
+  band: BandScore;
+  /** Fewest correct answers that reach the band. */
+  minCorrect: number;
+  /** Most correct answers that still sit at the band. */
+  maxCorrect: number;
+  /** True when the row continues below the lowest published cut score. */
+  extrapolated: boolean;
+};
+
+/** A raw-score conversion table for one paper. */
+export type RawScoreTable = {
+  /** Paper identifier. */
+  paper: RawScorePaper;
+  /** Human-readable paper name. */
+  name: string;
+  /** Module the paper belongs to. */
+  module: 'academic' | 'general-training' | 'both';
+  /** Number of questions on the paper. */
+  questions: number;
+  /** Lowest raw score the source volumes actually print. */
+  publishedFloor: number;
+  /** Caveat surfaced with every conversion. */
+  note: string;
+  /** Where the table is reproduced from. */
+  source: string;
+  /** Rows, ordered from band 9 downwards. */
+  rows: readonly RawScoreRow[];
+};
+
+/** One timed part of a paper. */
+export type ExamPart = {
+  /** Position within the paper, starting at 1. */
+  order: number;
+  /** Part name as printed on the question paper. */
+  name: string;
+  /** Time budget in minutes, when the format fixes one. */
+  minutes: number | null;
+  /** Questions carried by the part, when the format fixes a count. */
+  questions: number | null;
+  /** What the part contains. */
+  detail: string;
+};
+
+/** One paper of the test specification. */
+export type ExamPaper = {
+  /** Stable identifier (`academic-reading`). */
+  id:
+    | 'listening'
+    | 'academic-reading'
+    | 'general-reading'
+    | 'academic-writing'
+    | 'general-writing'
+    | 'speaking';
+  /** Human-readable paper name. */
+  name: string;
+  /** Skill assessed. */
+  skill: Skill;
+  /** Module the paper belongs to. */
+  module: 'academic' | 'general-training' | 'both';
+  /** How the paper is marked. */
+  marking: 'objective' | 'analytic';
+  /** Share of the overall band contributed by the paper. */
+  weightOfOverall: number;
+  /** Working time in minutes. */
+  minutes: number;
+  /** Extra answer-transfer time in minutes. */
+  transferMinutes: number;
+  /** How the transfer time works, including the computer-delivered difference. */
+  transferNote: string;
+  /** Total questions, when the paper has a fixed count. */
+  questions: number | null;
+  /** Position in the sitting order. */
+  order: number;
+  /** Parts of the paper, in order. */
+  parts: readonly ExamPart[];
+  /** Facts an invigilator or candidate needs. */
+  notes: string[];
+};
+
+/** The whole test specification for one module. */
+export type ExamStructure = {
+  /** Module described. */
+  module: 'academic' | 'general-training';
+  /** Papers, in sitting order. */
+  papers: readonly ExamPaper[];
+  /** Total questions across the objectively marked papers. */
+  totalQuestions: number;
+  /** Working minutes of the three written papers. */
+  writtenMinutes: number;
+  /** Working minutes including answer-transfer time. */
+  writtenMinutesWithTransfer: number;
+  /** Length of the Speaking interview in minutes. */
+  speakingMinutes: number;
+  /** Paper names in sitting order. */
+  sittingOrder: string[];
+  /** How the papers combine into the overall band. */
+  scoring: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

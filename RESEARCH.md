@@ -681,3 +681,137 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the scoring layer: raw scores, marking rules and the test specification
+
+The five parts above are all _descriptive_: they measure material that already exists. Part VI is
+the first _procedural_ dataset in the API. It encodes what a mock-exam centre does with a finished
+answer sheet — mark it, convert it, and report it — and it is the part most likely to be quietly
+wrong in any given preparation product, because the rules are printed in the back of a workbook
+rather than published as data.
+
+### 29. Why raw-score conversion is not a published table
+
+Cambridge equates every live version of the Listening and Reading papers: a version whose passages
+turn out marginally harder has its cut scores nudged down so that band 7 means the same thing on
+every test day. There is therefore no single official conversion, and the IELTS partners are
+explicit that none should be quoted.
+
+What does exist, and what every teacher in the world actually uses, is the table printed in the back
+of each _Cambridge IELTS_ practice volume under "How to calculate your score". Those tables have
+been stable for well over a decade — the Academic Reading band-7 cut has sat at 30/40 across
+volumes 1 to 19 — which is precisely what makes them safe to publish as a fixed dataset and
+dangerous to publish without a caveat.
+
+The API resolves this the same way it resolves the score concordances in `/v1/scores/convert`: the
+tables are published, each carries its `source` and a `note` describing exactly what it is, and no
+response ever calls the result an official band. Three tables are published rather than two, because
+the General Training Reading table is materially stricter than the Academic one: its texts are
+easier, so band 6 costs 30 correct answers rather than 23. Publishing a single "reading" table — a
+common error in preparation apps — overstates a General Training candidate's band by up to a full
+band across the middle of the scale.
+
+### 30. The extrapolation problem
+
+The practice volumes stop printing rows at 4 correct answers (6 for General Training). Below that
+the tables simply end, because no candidate whose result matters scores 3 out of 40.
+
+An API cannot end: `?correct=2` is a legal request and must return something. The rows below the
+published floor are therefore computed by continuing the final published step, and every one of them
+carries `extrapolated: true`, with the response metadata spelling out that the row must not be quoted
+as a published cut score. This is the same discipline applied to the `null` question counts in Part V:
+a number that cannot be trusted is published as visibly untrustworthy rather than silently omitted or
+silently invented.
+
+The tables are checked structurally rather than by eye. The test suite asserts that each table covers
+0-40 exhaustively and without overlap, that bands decrease monotonically as marks decrease, that
+adjacent rows are contiguous (`row[n].maxCorrect === row[n-1].minCorrect - 1`), that every band value
+is a reportable half band, that the `extrapolated` flag agrees with the declared `publishedFloor`,
+and that the General Training table is strictly harsher than the Academic table at every band from 5
+to 9. Those invariants are what make the dataset citable: a future edit that breaks the arithmetic
+cannot be merged.
+
+### 31. The marking rules, as data
+
+Marking an IELTS answer sheet is not string equality, and the ways it differs are exactly the ways a
+naive implementation loses a candidate marks they earned. The rules printed in the volumes are:
+
+| Rule                     | Key               | Scores        | Does not score    |
+| ------------------------ | ----------------- | ------------- | ----------------- |
+| Case is ignored          | `true`            | `TRUE`        | —                 |
+| Bracketed words optional | `(the) river`     | `river`       | —                 |
+| Alternatives             | `bicycle OR bike` | `bike`        | `bicycle bike`    |
+| Spelling variants        | `colour`          | `color`       | `colur`           |
+| Word limit is absolute   | `red box` (≤2)    | `red box`     | `the big red box` |
+| Hyphens are one word     | —                 | `twenty-five` | —                 |
+
+`/v1/tools/mark` implements all six as a pure function of two strings. Three design decisions are
+worth recording.
+
+**Alternatives and optional words are the same mechanism.** A key is expanded into the _set_ of
+forms that score: `(the) river bank` becomes `{the river bank, river bank}` and `B/C` becomes
+`{b, c}`. Expansion is recursive over brackets, so `(a) big (red) box` yields four forms. The
+expanded set is returned in the response, which turns the endpoint into a teaching artefact as well
+as a marker: a candidate can see _why_ an answer scored.
+
+**Spelling equivalence is rule-based, not dictionary-based.** Twelve productive suffix rules
+(`-ise/-ize`, `-our/-or`, `-re/-er`, `-ogue/-og`, `-yse/-yze`, doubled `l`, `ae`/`oe` digraphs, and
+their inflected forms) are applied to both sides before comparison. A dictionary would be larger,
+slower to ship, and would still miss the derived forms — `organisation`, `organising`, `organised`
+all fall out of one rule. The engine deliberately does **not** correct typos, because an examiner
+does not either.
+
+**A near miss is reported, not forgiven.** An answer that is wrong but within one edit of an
+accepted form is marked wrong and flagged `nearMiss: true`. This is the single most useful
+diagnostic on a Listening answer sheet: it separates marks lost to spelling from marks lost to
+comprehension, and the two have completely different remedies. The edit-distance check is capped at
+one edit — the full Levenshtein matrix is never computed, because the only question ever asked is
+"is this within one edit?", which a single linear scan answers.
+
+### 32. The test specification as an invigilation clock
+
+`/v1/exam` publishes the timings, question counts, part structure and sitting order of all six
+papers. Unlike every other dataset in the API, none of it is derived: it is the published test
+specification, identical on every test day, which is what makes it safe to hard-code and useful as a
+timing source.
+
+Two details are commonly got wrong and are therefore made explicit. The often-quoted "2 hours 45
+minutes" for the written papers is 150 minutes of working time plus the 10-minute Listening transfer
+window plus administration; the API publishes `writtenMinutes: 150` and
+`writtenMinutesWithTransfer: 160` separately, so a clock can be driven from whichever the centre
+means. And the transfer window itself is paper-based only — computer-delivered tests replace it with
+two minutes to check answers already typed — which is recorded per paper in `transferNote` rather
+than buried in prose.
+
+The structure is checked for internal consistency by the same discipline as the raw-score tables:
+each paper's parts must number contiguously from 1, the questions declared by the parts must sum to
+the questions declared by the paper, each module must yield exactly four papers in
+listening-reading-writing-speaking order, and each paper must weigh exactly a quarter of the overall
+band.
+
+### 33. Threats to validity
+
+- **The raw-score tables are indicative.** They are the practice-volume tables, not the equated cut
+  scores of any live version. A converted practice score is a teaching signal, never a result. Every
+  response says so.
+- **Extrapolated rows are invented arithmetic.** They are flagged, but they are still invented; they
+  should not appear in any analysis.
+- **The marker cannot see the question.** Some question types constrain the answer in ways the key
+  alone does not express (a map-labelling answer must be a letter; a form-completion answer must
+  match the case printed on the form). The engine marks what it is given and does not attempt to
+  infer the type.
+- **Spelling rules are British/American, not global.** They do not cover the spelling conventions of
+  other varieties, and they do not attempt to judge whether a misspelling would have been accepted by
+  a human examiner — a judgement examiners themselves make inconsistently, which is why the near-miss
+  flag reports rather than decides.
+- **The specification can change.** The test specification is stable but not immutable; the 2020
+  change to the Speaking timing is within living memory. The values are versioned with the API, so a
+  cited response pins the specification it was generated against.
+
+### 34. Reproducing Part VI
+
+Part VI has no extraction script, because it has no upstream tree: the raw-score tables are
+transcribed from the printed volumes and the specification is transcribed from the published test
+format. Both are therefore verified by invariant rather than by re-derivation — the assertions listed
+in sections 30 and 32 run on every commit, and they are strong enough that a transcription error in
+any single row fails the build.

@@ -132,3 +132,146 @@ describe('GET /v1/scores/interpret', () => {
     expect((await server.json('/v1/scores/interpret?scale=nope&score=1')).status).toBe(400);
   });
 });
+
+describe('GET /v1/scores/raw', () => {
+  it('converts a Listening raw score into a band', async () => {
+    const response = await server.json<{
+      band: number;
+      cefr: string;
+      percentage: number;
+      extrapolated: boolean;
+      marksToNextBand: { band: number; marksNeeded: number } | null;
+    }>('/v1/scores/raw?paper=listening&correct=30');
+    expect(response.status).toBe(200);
+    expect(response.data.band).toBe(7);
+    expect(response.data.cefr).toBe('C1');
+    expect(response.data.percentage).toBe(75);
+    expect(response.data.extrapolated).toBe(false);
+    expect(response.data.marksToNextBand).toEqual({ band: 7.5, minCorrect: 32, marksNeeded: 2 });
+    expect(response.meta.note).toContain('Indicative');
+  });
+
+  it('applies the stricter General Training table', async () => {
+    const academic = await server.json<{ band: number }>('/v1/scores/raw?paper=academic-reading&correct=30');
+    const general = await server.json<{ band: number }>('/v1/scores/raw?paper=general-reading&correct=30');
+    expect(academic.data.band).toBe(7);
+    expect(general.data.band).toBe(6);
+  });
+
+  it('accepts a blank sheet and reports band 0', async () => {
+    const response = await server.json<{ band: number; marksToNextBand: unknown }>(
+      '/v1/scores/raw?paper=listening&correct=0',
+    );
+    expect(response.data.band).toBe(0);
+    expect(response.data.marksToNextBand).not.toBeNull();
+  });
+
+  it('flags an extrapolated row and says so in the metadata', async () => {
+    const response = await server.json<{ extrapolated: boolean }>('/v1/scores/raw?paper=listening&correct=2');
+    expect(response.data.extrapolated).toBe(true);
+    expect(response.meta.extrapolation).toContain('must not be quoted');
+  });
+
+  it('reports a full mark as band 9 with nothing above it', async () => {
+    const response = await server.json<{ band: number; marksToNextBand: unknown }>(
+      '/v1/scores/raw?paper=listening&correct=40',
+    );
+    expect(response.data.band).toBe(9);
+    expect(response.data.marksToNextBand).toBeNull();
+  });
+
+  it('requires the paper', async () => {
+    const response = await server.request('/v1/scores/raw?correct=30');
+    expect(response.status).toBe(400);
+  });
+
+  it('requires the raw score', async () => {
+    const response = await server.request('/v1/scores/raw?paper=listening');
+    expect(response.status).toBe(400);
+  });
+
+  it('rejects a raw score above 40', async () => {
+    const response = await server.request('/v1/scores/raw?paper=listening&correct=41');
+    expect(response.status).toBe(400);
+  });
+
+  it('rejects an unknown paper', async () => {
+    const response = await server.request('/v1/scores/raw?paper=writing&correct=30');
+    expect(response.status).toBe(400);
+  });
+});
+
+describe('GET /v1/scores/raw/tables', () => {
+  it('publishes all three tables by default', async () => {
+    const response = await server.json<{ paper: string; rows: unknown[] }[]>('/v1/scores/raw/tables');
+    expect(response.data).toHaveLength(3);
+    expect(response.meta.paper).toBeNull();
+    expect(response.data[0]?.rows.length).toBeGreaterThan(10);
+  });
+
+  it('filters to one table', async () => {
+    const response = await server.json<{ paper: string }[]>('/v1/scores/raw/tables?paper=general-reading');
+    expect(response.data).toHaveLength(1);
+    expect(response.data[0]?.paper).toBe('general-reading');
+  });
+
+  it('is routed before the parameterised raw endpoint', async () => {
+    const response = await server.json('/v1/scores/raw/tables');
+    expect(response.meta.endpoint).toBe('/v1/scores/raw/tables');
+  });
+});
+
+describe('GET /v1/scores/mock', () => {
+  it('turns a whole sitting into a report form', async () => {
+    const response = await server.json<{
+      overall: number;
+      papers: { reading: { paper: string; band: number } };
+      limitingSkills: string[];
+    }>('/v1/scores/mock?listeningCorrect=30&readingCorrect=27&writing=6&speaking=6.5');
+    expect(response.status).toBe(200);
+    expect(response.data.papers.reading).toMatchObject({ paper: 'academic-reading', band: 6.5 });
+    expect(response.data.overall).toBe(6.5);
+    expect(response.data.limitingSkills).toEqual(['writing']);
+    expect(response.meta.readingTable).toBe('academic-reading');
+  });
+
+  it('switches to the General Training reading table', async () => {
+    const response = await server.json<{ papers: { reading: { paper: string; band: number } } }>(
+      '/v1/scores/mock?module=general-training&listeningCorrect=30&readingCorrect=27&writing=6&speaking=6',
+    );
+    expect(response.data.papers.reading).toMatchObject({ paper: 'general-reading', band: 5.5 });
+  });
+
+  it('names every limiting skill when components tie', async () => {
+    const response = await server.json<{ limitingSkills: string[] }>(
+      '/v1/scores/mock?listeningCorrect=23&readingCorrect=23&writing=6&speaking=6',
+    );
+    expect(response.data.limitingSkills).toEqual(['listening', 'reading', 'writing', 'speaking']);
+  });
+
+  it('labels the General Training writing paper', async () => {
+    const response = await server.json<{ papers: { writing: { paper: string } } }>(
+      '/v1/scores/mock?module=general-training&listeningCorrect=30&readingCorrect=30&writing=7&speaking=7',
+    );
+    expect(response.data.papers.writing.paper).toBe('general-writing');
+  });
+
+  it('requires both raw scores', async () => {
+    expect((await server.request('/v1/scores/mock?readingCorrect=27&writing=6&speaking=6')).status).toBe(400);
+    expect((await server.request('/v1/scores/mock?listeningCorrect=27&writing=6&speaking=6')).status).toBe(
+      400,
+    );
+  });
+
+  it('requires the two marked bands', async () => {
+    const response = await server.request('/v1/scores/mock?listeningCorrect=30&readingCorrect=27&writing=6');
+    expect(response.status).toBe(400);
+  });
+
+  it('rejects a writing band that is not reportable', async () => {
+    const response = await server.request(
+      '/v1/scores/mock?listeningCorrect=30&readingCorrect=27&writing=6.2&speaking=6',
+    );
+    expect(response.status).toBe(400);
+  });
+});
