@@ -315,6 +315,28 @@ jobs:
           import json
           committed = json.load(open('data/cambridge.json'))
           regenerated = json.load(open('/tmp/cambridge.json'))
+
+          def differences(left, right, path='$', out=None, limit=40):
+              out = [] if out is None else out
+              if len(out) >= limit:
+                  return out
+              if isinstance(left, dict) and isinstance(right, dict):
+                  for key in sorted(set(left) | set(right)):
+                      if key not in left or key not in right:
+                          out.append(f"{path}.{key}: only in {'regenerated' if key not in left else 'committed'}")
+                      else:
+                          differences(left[key], right[key], f"{path}.{key}", out, limit)
+              elif isinstance(left, list) and isinstance(right, list):
+                  if len(left) != len(right):
+                      out.append(f"{path}: length {len(left)} != {len(right)}")
+                  for index, (a, b) in enumerate(zip(left, right)):
+                      differences(a, b, f"{path}[{index}]", out, limit)
+              elif left != right:
+                  out.append(f"{path}: {left!r} != {right!r}")
+              return out
+
+          for line in differences(committed, regenerated):
+              print(line)
           assert committed == regenerated, 'data/cambridge.json is out of date'
           print(f"Cambridge index reproducible: {regenerated['stats']['indexedItems']} tests")
           PY
