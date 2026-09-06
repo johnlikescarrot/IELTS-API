@@ -9,6 +9,7 @@
 import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 import { archiveStats } from '../data/archive.js';
+import { testcenterStats } from '../data/testcenter.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
 
@@ -54,6 +55,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const practice = practiceStats();
   const materials = materialsStats();
   const archive = archiveStats();
+  const testcenter = testcenterStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -106,6 +108,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>Response frameworks</strong> for Writing Task&nbsp;2 and Speaking Parts&nbsp;2&ndash;3: ordered stage plans with cue language and pitfalls, cross-linked to the task banks.</li>
   <li><strong>${materials.indexedFiles.toLocaleString('en-US')} study-material files</strong> indexed from a ${materials.filesInRepository.toLocaleString('en-US')}-file self-study collection (recall banks, question banks, templates, vocabulary; metadata only).</li>
   <li><strong>A grey-literature archive index</strong>: ${archive.audioTracks.toLocaleString('en-US')} listening tracks across Cambridge IELTS volumes 1&ndash;18 with a naming-scheme and completeness table, the ${archive.readingSamples.files} official sample tasks profiled for readability and question type, and ${archive.assignments.essays} marked learner essays summarised statistically (metadata only).</li>
+  <li><strong>A mock-exam test-centre index</strong>: ${testcenter.catalog.items} self-marking papers from an operational online test centre, including ${testcenter.catalog.cambridgePapers} Cambridge papers around an unbroken Cambridge IELTS 4&ndash;21, with a holdings matrix, ${(testcenter.taxonomy.listening.groups + testcenter.taxonomy.reading.groups).toLocaleString('en-US')} hand-tagged question groups (${(testcenter.taxonomy.listening.questions + testcenter.taxonomy.reading.questions).toLocaleString('en-US')} questions) carrying type, scene and difficulty, and the platform&rsquo;s production raw-score-to-band calibration (metadata only).</li>
 </ul>
 
 <h2>Versioned endpoints</h2>

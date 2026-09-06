@@ -6,6 +6,8 @@ import { archiveStats } from '../data/archive.js';
 import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
+import { RAW_SCORE_MODULES } from '../data/rawScores.js';
+import { testcenterStats } from '../data/testcenter.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
@@ -21,6 +23,7 @@ function datasetSummary(): Record<string, number> {
   const practice = practiceStats();
   const materials = materialsStats();
   const archive = archiveStats();
+  const testcenter = testcenterStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -34,6 +37,12 @@ function datasetSummary(): Record<string, number> {
     archiveFiles: archive.indexedFiles,
     archiveAudioTracks: archive.audioTracks,
     archiveEssays: archive.assignments.essays,
+    rawScoreTables: RAW_SCORE_MODULES.length,
+    testcenterPapers: testcenter.catalog.items,
+    testcenterCambridgePapers: testcenter.catalog.cambridgePapers,
+    testcenterGroups: testcenter.taxonomy.listening.groups + testcenter.taxonomy.reading.groups,
+    testcenterTaggedQuestions:
+      testcenter.taxonomy.listening.questions + testcenter.taxonomy.reading.questions,
   };
 }
 
@@ -99,7 +108,15 @@ export function createMetaRoutes(
         datasets: datasetSummary(),
       },
       meta: {
-        checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index', 'archive-index'],
+        checks: [
+          'process',
+          'vocabulary-dataset',
+          'corpus-index',
+          'practice-test-index',
+          'archive-index',
+          'raw-score-tables',
+          'testcenter-index',
+        ],
       },
     };
   }

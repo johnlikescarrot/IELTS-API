@@ -6,6 +6,88 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses
+to do it. IELTS marks Listening and Reading out of 40 and converts to the nine-band scale with a
+lookup table it does not publish — only the average marks scored at whole bands, with the warning
+that the precise thresholds "vary slightly from test version to test version". A de facto table
+circulates instead, copied inline into preparation software without provenance. This release
+publishes that table once, as a citable artefact, validated against every figure IELTS does publish.
+The API remains free, GET-only, authentication-free and dependency-free.
+
+The **test-centre layer**, a fifth dataset family: the API now indexes an operational IELTS
+mock-exam platform rather than a folder of files. The upstream
+([`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)) is the repository
+behind the YYSD IELTS online mock-exam test center - a static exam front end, an Express/SQLite
+account-and-scoring API, and 377 self-marking HTML papers under an auto-rebuilt content manifest,
+including an unbroken Cambridge 4-21 across all three papers (220 volume-bearing papers plus two
+teacher-made secret-set reading mocks). As with every other family, only derived, non-substitutive
+metadata and statistics are published.
+
+### Added
+
+- **Raw-score conversion** (`GET /v1/scores/raw`): a raw score out of 40 to a band, with the band's
+  raw-score range, the marks still needed for the next band, a `sensitivity` block reporting the band
+  at one mark fewer and one mark more, and optional progress towards a `target` band. `module` is
+  required and has three values — `listening`, `reading-academic`, `reading-general` — with no
+  default and no inference.
+- **The three conversion tables** (`GET /v1/scores/raw/tables`), each carrying the official average
+  marks it is validated against. All twelve published anchors fall inside the row the table assigns
+  to them; the rows partition 0-40 exactly; General Training never scores above Academic at any raw
+  score. Every table is labelled `indicative-consensus`, never "official".
+- **Measured disagreement between sources**: three alternative published tables are recorded in full,
+  and the API computes exhaustively — over all 41 raw scores — where each disagrees with the
+  consensus (agreement 97.6%, 87.8% and 53.7%). Modern sources agree almost perfectly from band 5.5
+  up and diverge in the tail below band 4.5.
+- **Short-section rescaling** (`outOf`): a drill of fewer than 40 questions is rescaled
+  proportionally, and the response says so — one mark on a 10-question section moves the scaled
+  score by four, and rescaling is not equating.
+- `RESEARCH.md` Part VI: the missing-table problem, a field survey of a live mock-exam platform
+  ([`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter): 148 papers call the
+  conversion helper, 104 define a table inline, 44 define none and fall back to a shim that guesses
+  the module with `/reading/i.test(examId)` and so has no General Training branch), construction and
+  validation, the disagreement survey, why rescaling is not equating, and the threats to validity.
+- The service index, `/health`, `/docs` and `/openapi.json` now report the raw-score tables.
+
+- **Mock-exam test-centre index** (`data/testcenter.json`): the paper catalogue (377 items with
+  zone, subject, canonical paper facet, exam-shell duration, Cambridge volume/test references,
+  deterministic English titles and per-file blob provenance), the **Cambridge holdings matrix**
+  (19 rows: volume 3 is partial, volumes 4-21 complete - all three papers, four tests each), the
+  **hand-tagged question taxonomy** (1,099 groups over 5,408 questions of Cambridge 5-21, each
+  labelled with a canonical question type, one of 24 teaching scenes crosswalked onto the theme
+  groups, and one of three difficulty judgements), and the **production score calibration** (the
+  two raw-score-to-band tables the platform injects into every exam page, with level labels and an
+  indicative caveat). Endpoints: `/v1/testcenter`, `/v1/testcenter/stats`,
+  `/v1/testcenter/catalog`, `/v1/testcenter/catalog/:id`, `/v1/testcenter/volumes`,
+  `/v1/testcenter/volumes/:id`, `/v1/testcenter/groups`, `/v1/testcenter/scenes`,
+  `/v1/testcenter/scoring` (with band lookup), `/v1/testcenter/drill`.
+- **The drill composer** (`GET /v1/testcenter/drill`): deterministic timed drills composed from
+  the tagged groups under any filter combination, paced with the centre's own budgets (0.8 minutes
+  per listening question, 1.5 per reading question) and carrying the scoring sheet. Stateless and
+  byte-identical for identical requests, like the study planner.
+- **Cross-corpus validation**: the centre's teacher taxonomy, mapped onto the canonical question
+  types, agrees with the Part II practice corpus where the papers overlap - listening completion
+  57.3% against 58.5%, reading identification 27.7% against 28.6% combined - while quantifying the
+  disagreement where the collections differ (multiple choice 8.4% against 17.2%).
+- `scripts/extract_testcenter.py`: standard-library-only, deterministic extraction from four
+  platform-generated artifacts (manifest, two taxonomy files, scoring helper) plus the tree
+  listing; the canonical type list is imported from `scripts/extract_practice_tests.py` so both
+  mappings validate against one taxonomy by construction. CI downloads the four blobs by SHA and
+  re-derives the index byte-identically on every run, then checks it for internal consistency.
+- `RESEARCH.md` Part VII: the platform analysis, the holdings matrix, the label-mapping decisions,
+  the cross-corpus comparison and the threats to validity (single-organisation tags, snapshot lag,
+  disambiguation, unlicensed upstream).
+- The service index, `/health`, `/docs` and `/openapi.json` now report the test-centre dataset.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json`, `.zenodo.json` and the README citation block cite version 1.4.0;
+  the keyword lists now include score conversion, psychometrics, the mock-exam domain and score
+  calibration.
+- Test suite grown to 640 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material
@@ -182,6 +264,9 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
+[1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

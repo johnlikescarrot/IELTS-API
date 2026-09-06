@@ -114,6 +114,145 @@ export type ConversionEntry = {
 export type ConversionTarget = 'cefr' | 'toefl-ibt' | 'cambridge-english-scale' | 'pte-academic' | 'duolingo';
 
 /* -------------------------------------------------------------------------- */
+/* Raw-score to band conversion                                               */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * The three objectively-marked papers, each of which converts a raw score out
+ * of 40 to a band on its own scale.
+ *
+ * Listening uses one table for both modules; Reading uses two, because a
+ * General Training candidate must answer more questions correctly to reach the
+ * same band.
+ */
+export type RawScoreModule = 'listening' | 'reading-academic' | 'reading-general';
+
+/** One contiguous run of raw scores that maps to a single band. */
+export type RawBandRow = {
+  /** Band awarded for any raw score in this row. */
+  band: BandScore;
+  /** Lowest raw score that earns {@link RawBandRow.band}. */
+  minCorrect: number;
+  /** Highest raw score that earns {@link RawBandRow.band}. */
+  maxCorrect: number;
+};
+
+/**
+ * A mark published by IELTS as the *average* raw score seen at a whole band.
+ *
+ * These are the only figures the test partners publish, and they are averages
+ * rather than thresholds; they are used here to validate the consensus table
+ * rather than to build it.
+ */
+export type RawScoreAnchor = {
+  /** Whole band the anchor describes. */
+  band: BandScore;
+  /** Average marks out of 40 reported at that band. */
+  marks: number;
+};
+
+/** A published raw-score conversion table for one paper. */
+export type RawScoreTable = {
+  /** Paper the table applies to. */
+  module: RawScoreModule;
+  /** Human-readable name of the paper. */
+  name: string;
+  /** Number of questions on the paper (always 40). */
+  totalQuestions: number;
+  /** Rows, ordered from the highest band down. */
+  rows: readonly RawBandRow[];
+  /** Average marks published by IELTS for whole bands. */
+  anchors: readonly RawScoreAnchor[];
+  /** Where the anchor marks are published. */
+  anchorSourceUrl: string;
+  /** How the table should be interpreted. */
+  provenance: 'indicative-consensus';
+  /** Caveat surfaced in every response that uses this table. */
+  note: string;
+};
+
+/**
+ * An alternative table published elsewhere, kept so that the API can report
+ * exactly where widely-cited sources disagree with the consensus.
+ */
+export type RawScoreVariant = {
+  /** Stable identifier. */
+  id: string;
+  /** Paper the variant applies to. */
+  module: RawScoreModule;
+  /** Short description of who publishes it. */
+  label: string;
+  /** Where the variant is published. */
+  sourceUrl: string;
+  /** Why the variant differs. */
+  note: string;
+  /** `[minCorrect, band]` thresholds, ordered from the highest band down. */
+  thresholds: readonly (readonly [number, number])[];
+};
+
+/** One raw score at which a variant disagrees with the consensus table. */
+export type RawScoreDisagreement = {
+  /** Raw score out of 40. */
+  correct: number;
+  /** Band awarded by the consensus table. */
+  consensusBand: BandScore;
+  /** Band awarded by the variant. */
+  variantBand: BandScore;
+};
+
+/** How the band would move if the raw score were one mark different. */
+export type RawScoreSensitivity = {
+  /** Band at one mark fewer, or `null` at a raw score of 0. */
+  minusOne: BandScore | null;
+  /** Band at one mark more, or `null` at full marks. */
+  plusOne: BandScore | null;
+  /** `true` when neither neighbouring mark changes the band. */
+  stable: boolean;
+};
+
+/** Progress towards a band the candidate is aiming for. */
+export type RawScoreTarget = {
+  /** Band requested by the client. */
+  band: BandScore;
+  /** Lowest raw score that earns it, or `null` when unreachable. */
+  minCorrect: number | null;
+  /** Additional marks still required (0 once achieved). */
+  marksNeeded: number | null;
+  /** Whether the supplied raw score already earns the target. */
+  achieved: boolean;
+};
+
+/** The result of converting a raw score to a band. */
+export type RawScoreConversion = {
+  /** Paper the conversion used. */
+  module: RawScoreModule;
+  /** Human-readable name of the paper. */
+  moduleName: string;
+  /** Raw score supplied by the client. */
+  correct: number;
+  /** Number of questions the raw score was out of. */
+  outOf: number;
+  /** Raw score rescaled to 40 questions (equal to `correct` when `outOf` is 40). */
+  scaledCorrect: number;
+  /** Percentage of questions answered correctly, to one decimal place. */
+  percentage: number;
+  /** Band awarded. */
+  band: BandScore;
+  /** Indicative CEFR level of the band. */
+  cefr: string;
+  /** IELTS proficiency label for the band. */
+  label: string;
+  /** Raw-score run that earns this band. */
+  bandRange: { minCorrect: number; maxCorrect: number };
+  /** The next band up, or `null` at band 9. */
+  nextBand: { band: BandScore; minCorrect: number; marksNeeded: number } | null;
+  /** How fragile the band is to a single mark. */
+  sensitivity: RawScoreSensitivity;
+  /** Progress towards a requested target band, when one was supplied. */
+  target: RawScoreTarget | null;
+};
+
+/* -------------------------------------------------------------------------- */
 /* Tasks, topics and resources                                                */
 /* -------------------------------------------------------------------------- */
 
@@ -865,6 +1004,197 @@ export type ResponseFramework = {
   suggestedMinutes: number | null;
   /** Suggested length in words, when the format fixes one. */
   suggestedWords: number | null;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Mock-exam test centre                                                      */
+/* -------------------------------------------------------------------------- */
+
+/** The papers the test centre hosts, coarse enough for one filter facet. */
+export type TestcenterPaper = 'listening' | 'reading' | 'writing' | 'full-mock' | 'vocabulary' | 'drill';
+
+/** Difficulty judgement used by the test centre's hand-curated taxonomies. */
+export type TestcenterDifficulty = 'easy' | 'medium' | 'hard';
+
+/** One self-marking paper in the test centre's catalogue. */
+export type TestcenterCatalogItem = {
+  /** Slugified identifier (URL-safe form of `upstreamId`). */
+  id: string;
+  /** The platform's own identifier, verbatim. */
+  upstreamId: string;
+  /** Original title, as published by the platform. */
+  title: string;
+  /** Deterministic English title, when the id structure names the paper. */
+  titleEn: string | null;
+  /** Platform zone (`mock`, `practice`, `study`). */
+  zone: string;
+  /** Platform subject (`cambridge-listening`, `vocab-cet4`, ...). */
+  subject: string;
+  /** Canonical paper facet. */
+  paper: TestcenterPaper;
+  /** The platform's exam-shell time budget in minutes (0 for untimed lists). */
+  durationMinutes: number;
+  /** Cambridge IELTS volume, when the id encodes one (3-21). */
+  volume: number | null;
+  /** Cambridge test number, when the id encodes one (1-4). */
+  test: number | null;
+  /** ISO date the platform added the paper. */
+  added: string;
+  /** Hand-tagged question groups attached to this paper. */
+  taggedGroups: number;
+  /** Path inside the upstream repository. */
+  sourcePath: string;
+  /** Git blob SHA-1 of the paper's HTML file. */
+  sha1: string | null;
+  /** Size of the paper's HTML file in bytes. */
+  sizeBytes: number;
+  /** Public URL of the paper at the indexed commit. */
+  sourceUrl: string;
+};
+
+/** One row of the Cambridge holdings matrix. */
+export type TestcenterVolumeRow = {
+  /** Cambridge IELTS volume number. */
+  volume: number;
+  /** Hosted listening papers and their test numbers. */
+  listening: { papers: number; tests: number[] };
+  /** Hosted reading papers and their test numbers. */
+  reading: { papers: number; tests: number[] };
+  /** Hosted writing papers and their test numbers. */
+  writing: { papers: number; tests: number[] };
+  /** Total hosted papers across the three papers. */
+  papersTotal: number;
+  /** Hand-tagged question groups for the volume's tagged papers. */
+  taggedGroups: number;
+  /** Questions covered by the volume's tagged groups. */
+  taggedQuestions: number;
+  /** Whether all three papers host complete four-test sets. */
+  complete: boolean;
+};
+
+/** One hand-tagged question group of the Cambridge taxonomies. */
+export type TestcenterGroup = {
+  /** The platform's group identifier, verbatim. */
+  id: string;
+  /** Identifier of the exam the group belongs to. */
+  parentId: string;
+  /** Which tagged paper the group belongs to. */
+  paper: 'listening' | 'reading';
+  /** Cambridge IELTS volume (5-21). */
+  volume: number;
+  /** Cambridge test number (1-4). */
+  test: number;
+  /** Listening section (1-4) or reading passage (1-3). */
+  part: number;
+  /** First question number of the group. */
+  qFrom: number;
+  /** Last question number of the group. */
+  qTo: number;
+  /** Number of questions the group covers. */
+  questions: number;
+  /** Canonical question type from the `/v1/question-types` taxonomy. */
+  type: QuestionTypeId;
+  /** The platform's original label, verbatim (Chinese). */
+  rawType: string;
+  /** Teaching scene slug, or `null` when the group carries none. */
+  scene: string | null;
+  /** English name of the teaching scene. */
+  sceneLabel: string | null;
+  /** The platform's original scene label, verbatim (Chinese). */
+  sceneRaw: string | null;
+  /** Difficulty judgement, or `null` when the group carries none. */
+  difficulty: TestcenterDifficulty | null;
+  /** Public URL of the exam page the group belongs to. */
+  sourceUrl: string;
+  /** Git blob SHA-1 of the exam page's HTML file. */
+  sha1: string | null;
+};
+
+/** One teaching scene of the test centre's scene vocabulary. */
+export type TestcenterScene = {
+  /** Slug identifier. */
+  id: string;
+  /** Original Chinese label. */
+  zh: string;
+  /** English gloss. */
+  en: string;
+  /** Nearest theme group of `/v1/topics/themes`. */
+  themeGroup: string;
+  /** Tagged groups carrying the scene. */
+  groups: number;
+  /** Questions covered by those groups. */
+  questions: number;
+};
+
+/** One row of a production raw-score-to-band calibration table. */
+export type TestcenterScoringRow = {
+  /** First raw score (inclusive) the row covers. */
+  rawFrom: number;
+  /** Last raw score (inclusive) the row covers. */
+  rawTo: number;
+  /** Band awarded for the row's raw-score range. */
+  band: number;
+  /** The platform's level label for the row's band. */
+  level: string;
+};
+
+/** One band-level label of a calibration table. */
+export type TestcenterLevelRow = {
+  /** Lowest band the label applies to. */
+  minBand: number;
+  /** The platform's level label. */
+  label: string;
+};
+
+/** One paper's production score calibration. */
+export type TestcenterScoringTable = {
+  /** Human-readable name. */
+  name: string;
+  /** Maximum raw score of the table. */
+  max: number;
+  /** Raw-score ranges in descending band order. */
+  rows: TestcenterScoringRow[];
+  /** Band-level labels in descending band order. */
+  levels: TestcenterLevelRow[];
+};
+
+/** Aggregated statistics about the test-centre index. */
+export type TestcenterStats = {
+  catalog: {
+    items: number;
+    manifestCount: number;
+    byZone: Record<string, number>;
+    byPaper: Record<string, number>;
+    bySubject: Record<string, number>;
+    cambridgePapers: number;
+    cambridgeVolumes: { listening: number[]; reading: number[]; writing: number[] };
+    vocabBooks: number;
+    addedRange: { first: string; last: string } | null;
+  };
+  taxonomy: Record<
+    'listening' | 'reading',
+    {
+      groups: number;
+      parentExams: number;
+      sectionsTagged: number;
+      questions: number;
+      byType: Record<string, number>;
+      byScene: Record<string, number>;
+      byDifficulty: Record<string, number>;
+      noDifficulty: number;
+      noScene: number;
+      overlappingRanges: number;
+      firstVolume: number;
+      lastVolume: number;
+      upstreamGroups: number;
+    }
+  >;
+  rawTypeLabels: readonly {
+    raw: string;
+    paper: string;
+    canonical: QuestionTypeId;
+    occurrences: number;
+  }[];
 };
 
 /* -------------------------------------------------------------------------- */

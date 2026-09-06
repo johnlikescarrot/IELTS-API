@@ -126,9 +126,117 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive"):
+          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive", "testcenter"):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
+          PY
+
+      - name: Re-derive the mock-exam test-centre index from the upstream platform
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/wanli4473/yysd-testcenter/git/trees/HEAD?recursive=1" \
+            -o /tmp/testcenter-tree.json
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          token = os.environ.get('GITHUB_TOKEN')
+          blobs = {entry['path']: entry['sha'] for entry in json.load(
+              open('/tmp/testcenter-tree.json'))['tree'] if entry.get('type') == 'blob'}
+          for name, path in (
+              ('manifest.json', 'library/manifest.json'),
+              ('listening-taxonomy.json', 'library/listening-taxonomy.json'),
+              ('reading-taxonomy.json', 'library/reading-taxonomy.json'),
+              ('cambridge_scoring.py', 'scripts/cambridge_scoring.py'),
+          ):
+              headers = {'Accept': 'application/vnd.github.v3.raw'}
+              if token:
+                  headers['Authorization'] = f'Bearer {token}'
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/wanli4473/yysd-testcenter/git/blobs/{blobs[path]}",
+                  headers=headers)
+              with urllib.request.urlopen(request) as response, open(f"/tmp/{name}", 'wb') as out:
+                  out.write(response.read())
+          print("downloaded the 4 platform-generated blobs for the test-centre derivation")
+          PY
+          python3 scripts/extract_testcenter.py /tmp/manifest.json /tmp/listening-taxonomy.json \
+            /tmp/reading-taxonomy.json /tmp/cambridge_scoring.py /tmp/testcenter-tree.json /tmp/testcenter.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/testcenter.json'))
+          regenerated = json.load(open('/tmp/testcenter.json'))
+          assert committed == regenerated, 'data/testcenter.json is out of date'
+          print(f"test-centre index reproducible: {regenerated['stats']['catalog']['items']} papers")
+          PY
+
+      - name: Check the test-centre index for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+          import sys
+
+          sys.path.insert(0, 'scripts')
+          from extract_practice_tests import CANONICAL_TYPES
+          from extract_testcenter import DIFFICULTY_MAP, SCENES, TYPE_MAP
+
+          index = json.load(open('data/testcenter.json'))
+          catalog, groups, volumes = index['catalog'], index['groups'], index['volumes']
+          stats = index['stats']
+
+          assert stats['catalog']['items'] == len(catalog) == stats['catalog']['manifestCount'], 'catalogue totals differ'
+          assert len({item['id'] for item in catalog}) == len(catalog), 'duplicate catalogue identifiers'
+          assert sum(stats['catalog']['byZone'].values()) == len(catalog), 'zone totals differ'
+          assert sum(stats['catalog']['byPaper'].values()) == len(catalog), 'paper totals differ'
+          assert stats['catalog']['cambridgePapers'] == sum(
+              1 for item in catalog if item['paper'] in {'listening', 'reading', 'writing'}
+          ), 'cambridge totals differ'
+          from urllib.parse import unquote
+
+          for item in catalog:
+              assert item['sourcePath'] in unquote(item['sourceUrl']), item['id']
+              assert len(item['sha1'] or '') == 40, item['id']
+
+          assert len(volumes) == 19, 'holdings matrix incomplete'
+          assert sum(1 for row in volumes if row['complete']) == 18, 'complete volumes differ'
+          hosted = [
+              item for item in catalog
+              if item['paper'] in {'listening', 'reading', 'writing'}
+          ]
+          assert sum(row['papersTotal'] for row in volumes) == sum(
+              1 for item in hosted if item['volume'] is not None
+          ), 'holdings totals differ'
+          # The two teacher-made secret sets sit outside the volume numbering.
+          assert [item['id'] for item in hosted if item['volume'] is None] == [
+              'secret-set-1-reading', 'secret-set-2-reading'
+          ], 'unexpected papers without a Cambridge volume'
+          for row in volumes:
+              assert row['papersTotal'] == sum(row[paper]['papers'] for paper in ('listening', 'reading', 'writing')), row
+
+          assert len(groups) == 1099, 'group totals differ'
+          assert sum(stats['taxonomy'][p]['groups'] for p in ('listening', 'reading')) == len(groups), 'taxonomy totals differ'
+          assert sum(g['questions'] for g in groups) == 5408, 'question totals differ'
+          scene_slugs = {value[0] for paper in SCENES for value in SCENES[paper].values()}
+          for group in groups:
+              assert group['type'] in CANONICAL_TYPES, group['id']
+              assert group['questions'] == group['qTo'] - group['qFrom'] + 1, group['id']
+              assert group['difficulty'] is None or group['difficulty'] in set(DIFFICULTY_MAP.values()), group['id']
+              assert group['scene'] is None or group['scene'] in scene_slugs, group['id']
+
+          for table in ('listening', 'reading'):
+              rows = index['scoring'][table]['rows']
+              assert rows[0]['rawFrom'] == 39 and rows[0]['rawTo'] == 40, table
+              assert rows[-1]['rawFrom'] == 0, table
+              for above, below in zip(rows, rows[1:]):
+                  assert below['rawTo'] == above['rawFrom'] - 1, (table, below)
+              for row in rows:
+                  assert row['level'], row
+
+          print(
+              f"test-centre index consistent: {len(catalog)} papers, {len(volumes)} volumes, "
+              f"{len(groups)} tagged groups over {sum(g['questions'] for g in groups)} questions"
+          )
           PY
 
       - name: Re-derive the study-materials index from the upstream tree

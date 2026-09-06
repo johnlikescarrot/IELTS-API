@@ -4,9 +4,18 @@
 
 import { CONVERSION_TABLES, CONVERSION_TARGETS, convertBand } from '../data/conversions.js';
 import { cefrForBand } from '../data/bands.js';
+import {
+  RAW_SCORE_MODULES,
+  RAW_SCORE_TABLES,
+  RAW_SCORE_TOTAL,
+  RAW_SCORE_VARIANTS,
+  rawScoreTable,
+  variantDisagreements,
+} from '../data/rawScores.js';
 import { assertBand, calculateOverall } from '../lib/band.js';
 import { badRequest } from '../lib/errors.js';
-import { getEnum, getNumber, requireString, toParams } from '../lib/query.js';
+import { convertRawScore } from '../lib/rawScore.js';
+import { getEnum, getInt, getNumber, requireString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -107,6 +116,75 @@ function interpret(context: RouteContext): HandlerResult {
   };
 }
 
+/** Convert a raw score out of 40 into a band score. */
+function raw(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const module = getEnum(params, 'module', RAW_SCORE_MODULES);
+  if (module === undefined) {
+    throw badRequest('Parameter "module" is required.', {
+      parameter: 'module',
+      allowed: RAW_SCORE_MODULES.join(','),
+    });
+  }
+  const table = rawScoreTable(module);
+  const outOf = getInt(params, 'outOf', 1, RAW_SCORE_TOTAL, RAW_SCORE_TOTAL);
+  const correct = getInt(params, 'correct', 0, RAW_SCORE_TOTAL, -1);
+  if (correct < 0) {
+    throw badRequest('Parameter "correct" is required.', { parameter: 'correct' });
+  }
+  const targetRaw = getNumber(params, 'target', 0, 9);
+  const target = targetRaw === undefined ? undefined : assertBand(targetRaw, 'target');
+  const result = convertRawScore(table, correct, outOf, target);
+  const meta: Record<string, string> = {
+    provenance: table.provenance,
+    note: table.note,
+    anchorSource: table.anchorSourceUrl,
+  };
+  if (outOf !== RAW_SCORE_TOTAL) {
+    meta.rescaling = `The score was rescaled proportionally from ${outOf} questions to ${RAW_SCORE_TOTAL}. Rescaling is not equating: a shorter section measures less precisely, and one mark here moves the scaled score by ${(RAW_SCORE_TOTAL / outOf).toFixed(1)}.`;
+  }
+  if (!result.sensitivity.stable) {
+    meta.threshold =
+      'This raw score sits on a band boundary, where the published thresholds are least reliable.';
+  }
+  return { data: result, meta };
+}
+
+/** Publish the raw-score conversion tables and the disagreements between sources. */
+function rawTables(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const module = getEnum(params, 'module', RAW_SCORE_MODULES);
+  const tables = RAW_SCORE_MODULES.filter((id) => module === undefined || id === module).map(
+    (id) => RAW_SCORE_TABLES[id],
+  );
+  const variants = RAW_SCORE_VARIANTS.filter(
+    (variant) => module === undefined || variant.module === module,
+  ).map((variant) => {
+    const disagreements = variantDisagreements(variant);
+    return {
+      id: variant.id,
+      module: variant.module,
+      label: variant.label,
+      sourceUrl: variant.sourceUrl,
+      note: variant.note,
+      disagreements,
+      disagreeingScores: disagreements.length,
+      agreementRate: Math.round((1 - disagreements.length / (RAW_SCORE_TOTAL + 1)) * 1000) / 10,
+    };
+  });
+  return {
+    data: { tables, variants },
+    meta: {
+      count: tables.length,
+      totalQuestions: RAW_SCORE_TOTAL,
+      provenance: 'indicative-consensus',
+      caveat:
+        'IELTS publishes only the average marks scored at whole bands 4-8 and equates every test version separately; no official raw-score table exists. These tables reconstruct the consensus used across preparation providers and are validated against the published averages.',
+      disagreementMethod: `Each variant is compared with the consensus table at all ${RAW_SCORE_TOTAL + 1} possible raw scores; agreementRate is the percentage of raw scores at which the two agree.`,
+    },
+  };
+}
+
 /** Scoring routes. */
 export const scoreRoutes: readonly RouteDefinition[] = [
   {
@@ -115,6 +193,20 @@ export const scoreRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'Calculate an overall band score from the four component scores.',
     handler: overall,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw',
+    versioned: true,
+    summary: 'Convert a Listening or Reading raw score out of 40 into a band score.',
+    handler: raw,
+  },
+  {
+    method: 'GET',
+    path: '/v1/scores/raw/tables',
+    versioned: true,
+    summary: 'The raw-score conversion tables, with the disagreements between published sources.',
+    handler: rawTables,
   },
   {
     method: 'GET',

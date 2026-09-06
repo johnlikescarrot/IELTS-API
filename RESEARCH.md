@@ -3,15 +3,17 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Seven parts, five upstream collections:
 
-| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                        |
-| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                   |
-| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
-| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
-| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                         |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                            |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                       |
+| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                     |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                          |
+| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays     |
+| [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                              | the validated raw-score-to-band conversion tables and the raw-score endpoints                                          |
+| [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -681,3 +683,355 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the raw-score conversion tables
+
+_Upstream: no upstream. Part VI is a reconstruction, validated against the figures published at
+[ielts.org](https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail) and compared against
+a field survey of a working mock-exam platform,
+[`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter). The dataset lives in
+`src/data/rawScores.ts`; the endpoints are `/v1/scores/raw` and `/v1/scores/raw/tables`._
+
+### 29. The table that everyone uses and nobody publishes
+
+Listening and Reading are objectively marked out of 40 and converted to the nine-band scale by a
+lookup table. That conversion is the single most frequently performed calculation in IELTS
+preparation. It is also the one piece of the scoring system that the test partners do **not**
+publish.
+
+What ielts.org publishes is four numbers per paper — the _average_ marks scored at whole bands —
+together with an explicit warning:
+
+> The precise number of marks needed to achieve these band scores will vary slightly from test
+> version to test version.
+
+| Paper                    | Band 4 | Band 5 | Band 6 | Band 7 | Band 8 |
+| ------------------------ | -----: | -----: | -----: | -----: | -----: |
+| Listening                |      — |     16 |     23 |     30 |     35 |
+| Academic Reading         |      — |     15 |     23 |     30 |     35 |
+| General Training Reading |     15 |     23 |     30 |     35 |      — |
+
+The warning is not boilerplate. Every IELTS version is equated separately, so the raw score that
+earns band 7 genuinely differs between sittings. A fixed table is therefore, in the strict
+psychometric sense, wrong — and yet preparation software cannot function without one.
+
+So a _de facto_ table circulates instead. It appears in coaching handouts, score calculators and
+test-centre software, almost always inline and almost always without provenance. Part VI publishes
+that table once, as a citable artefact, with the three properties the circulating copies lack:
+validation against the official averages, honest provenance, and a measurement of where reputable
+sources disagree.
+
+### 30. What a real deployment looks like
+
+The reference platform surveyed here is `yysd-testcenter`, a live IELTS and A-Level mock-exam centre
+serving Cambridge practice papers as static HTML. Its scoring behaviour was measured directly from
+the repository at clone time:
+
+| Measurement                                                | Count |
+| ---------------------------------------------------------- | ----: |
+| Papers that call `lookupBand(correct, total)`              |   148 |
+| Papers that define a `BAND_TABLE` literal inline           |   104 |
+| Distinct table literals among those definitions            |     2 |
+| Papers that call `lookupBand` **without** defining a table |    44 |
+
+Three findings follow, and each of them motivates a design decision in this API.
+
+**The table is copied, not referenced.** 104 papers carry their own copy of the same 14- or 15-row
+array. The copies happen to agree today — the survey found exactly two distinct literals, one per
+skill, with no drift — but agreement is maintained by nothing except care, across 104 files.
+
+**Nearly a third of papers have no table at all.** 44 papers call `lookupBand` without defining it.
+The platform patches this at runtime: a shim in `assets/js/exam-bridge.js` injects a fallback,
+carrying a maintainer's comment recording the failure it was written to fix — older papers "call
+`lookupBand`/`levelLabel` but omit the defs — submit then throws after locking `submitted`", leaving
+the candidate unable to submit. Scoring logic duplicated into content files is scoring logic that
+goes missing.
+
+**The fallback guesses the module from the file name.** The shim selects its table with
+`/reading/i.test(examId)` — a regex over the exam identifier — and so recognises exactly two cases,
+Reading and not-Reading. There is no General Training branch. Any GT Reading paper routed through
+the fallback is scored on the Academic table.
+
+That last one is not a rounding error. Across the 41 possible raw scores the two Reading tables
+differ at 30 of them, and at four raw scores the difference is a **whole band**:
+
+| Raw score | Academic | General Training | Difference |
+| --------: | -------: | ---------------: | ---------: |
+|        35 |      8.0 |              7.0 |        1.0 |
+|        30 |      7.0 |              6.0 |        1.0 |
+|        27 |      6.5 |              5.5 |        1.0 |
+|        23 |      6.0 |              5.0 |        1.0 |
+
+`/v1/scores/raw` therefore makes `module` a **required** parameter with three values
+(`listening`, `reading-academic`, `reading-general`) and no default. There is no inference from a
+file name, and no way to ask for "reading" without saying which one.
+
+### 31. Construction and validation
+
+Each table is written as a list of `[minCorrect, band]` thresholds — the form every published table
+uses — and expanded into contiguous rows by `expandRows`, which derives each row's upper bound from
+the threshold above it. Only the lower bounds are transcribed; the upper bounds are computed. Gaps
+and overlaps are therefore structurally impossible rather than merely checked for.
+
+Validation is executed, not asserted. The test suite enforces four invariants per table:
+
+1. **Anchor reproduction.** Every official average mark must fall inside the row this table assigns
+   to that band. All twelve published anchors pass. A single mistranscribed threshold would move an
+   anchor into a neighbouring row and fail the suite.
+2. **Total coverage.** The rows partition 0–40 exactly: 41 raw scores, each covered once.
+3. **Monotonicity.** Bands decrease strictly down the table, every band is a reportable value on the
+   0–9 half-band scale, and no raw score increase ever lowers the band.
+4. **Cross-table ordering.** For all 41 raw scores, the General Training band never exceeds the
+   Academic band — the direction of difficulty that ielts.org states in prose, checked numerically.
+
+The tables are labelled `indicative-consensus`, never "official", and every response repeats the
+equating caveat.
+
+### 32. Measuring the disagreement between sources
+
+Because no authoritative table exists, the spread between reputable published tables is itself a
+result: it bounds how precisely a raw score can be interpreted. Three alternative tables are
+recorded in full, and the API computes their disagreement with the consensus exhaustively over all
+41 raw scores rather than summarising it in prose.
+
+| Variant                      | Paper                    | Disagreeing scores | Agreement |
+| ---------------------------- | ------------------------ | -----------------: | --------: |
+| Alternative GT bands 7.5/8.0 | General Training Reading |            1 of 41 |     97.6% |
+| Alternative Listening tail   | Listening                |            5 of 41 |     87.8% |
+| Pre-2018 coaching table      | Listening                |           19 of 41 |     53.7% |
+
+The pattern is the useful part. Modern sources agree almost perfectly in the range that matters for
+admissions — bands 5.5 to 9 — and diverge in the tail below band 4.5, where few candidates sit and
+few sources bother to be careful. The pre-2018 table is different in kind: it disagrees at 19 raw
+scores and is stricter at every one of them, which is what a table drifting out of date looks like.
+
+`/v1/scores/raw/tables` returns these disagreements as data — the exact raw scores, the consensus
+band and the variant band — so that a study reporting bands derived from raw scores can state its
+sensitivity to table choice instead of ignoring it.
+
+### 33. Rescaling is not equating
+
+Mock platforms routinely convert a short drill into a band by scaling the raw score to 40, which is
+what `lookupBand`'s `total === 40 ? correct : Math.round(correct / total * 40)` does. The API
+supports this through the `outOf` parameter, because clients need it, and marks it as a hazard in
+the response rather than performing it silently.
+
+A 10-question section carries roughly a quarter of the measurement precision of a full paper: one
+mark moves the scaled score by four, which can move the reported band by a full band or more. Any
+response with `outOf` other than 40 therefore carries a `rescaling` note stating the multiplier and
+the fact that proportional rescaling is not equating.
+
+The same reasoning motivates the `sensitivity` block returned with every conversion. It reports the
+band the candidate would receive at one mark fewer and one mark more, and flags scores sitting on a
+threshold — precisely where the official "varies from version to version" caveat bites hardest. A
+band 7.0 from 30/40 and a band 7.0 from 31/40 are not equally safe, and the API says so.
+
+### 34. Threats to validity (Part VI)
+
+- **The consensus table is a reconstruction, not an equating table.** It cannot be otherwise: no
+  official table exists to reconstruct. It reproduces all twelve published anchors, which is
+  necessary but not sufficient — the anchors constrain four rows per paper, and the remaining rows
+  rest on cross-source agreement alone.
+- **The anchors are averages, not thresholds.** ielts.org describes them as the average marks scored
+  at each band. The validation therefore checks containment (the average falls inside the row), not
+  equality with the row's lower bound. A stricter reading of the published figures is possible and
+  would not change any row in these tables, but the distinction is real.
+- **The variant survey is not exhaustive.** Three alternative tables are recorded, selected because
+  they are widely cited and mutually inconsistent. A systematic survey of preparation publishers
+  would likely find more, and the agreement rates reported here would move.
+- **Source tables are undated and mutable.** Preparation sites revise tables without changelogs. The
+  variants are pinned by URL only; the pre-2018 entry is dated because it is a PDF, and the others
+  are not.
+- **The platform survey is a single case.** The 148/104/44 counts describe one mock-exam platform at
+  one commit. They are evidence that inline duplication fails in practice, not a measurement of how
+  often it fails across the sector.
+- **Band 9 is not the ceiling of ability.** The tables stop at 40 correct because the paper does.
+  Nothing here supports inference above the top row.
+
+### 35. Reproducing Part VI
+
+The tables are code, not generated data, so there is nothing to download. The validation is the test
+suite:
+
+```bash
+npm test -- test/data/rawScores.test.ts test/lib/rawScore.test.ts
+```
+
+The platform survey in §30 is reproducible against the reference repository:
+
+```bash
+git clone --depth 1 https://github.com/wanli4473/yysd-testcenter
+cd yysd-testcenter
+
+# 148 papers call the conversion helper
+grep -rl "lookupBand" library/ | wc -l
+
+# 104 define a table inline; the distinct literals show whether the copies have drifted
+grep -rl "BAND_TABLE" library/ | wc -l
+grep -rho "BAND_TABLE *= *\[\[.*\]\];" library/ | tr -d '[:space:]' | sort | uniq -c
+
+# 44 call the helper without defining a table, and depend on the runtime shim
+comm -23 <(grep -rl "lookupBand" library/ | sort) <(grep -rl "BAND_TABLE" library/ | sort) | wc -l
+```
+
+## Part VII — the mock-exam test centre
+
+**Corpus snapshot:** commit `0956ea375405e30b31bd554822726e4245bf077a` (tree of 2 September 2026),
+3,713 blobs. The upstream manifest itself was generated on 2 September 2026 and its oldest entry is
+dated 18 June 2026: the platform is eleven weeks old at snapshot time and still growing daily.
+
+Parts I-V indexed collections - material that accumulates in folders. Part VI indexes something
+different: an **operational platform**. The repository behind the YYSD IELTS online mock-exam test
+center (优益思达学习中心, live at youyisida.com) is a complete, working IELTS mock-exam business:
+a static exam front end, an Express/SQLite API for phone-number accounts, score synchronisation and
+teacher assignment, a "CDT" (computer-delivered test) shell for full three-hour mocks with a
+three-skill report, an AI admission sub-application and a rankings sub-application. Its self-marking
+exam papers are plain HTML files under `library/<zone>/<subject>/`, a GitHub Action rebuilds
+`library/manifest.json` on every upload via `scripts/build_manifest.py`, and a finished paper
+reports its result to the hosting page with a single `postMessage`: `{type: "yysd:score", score,
+total, band}`. The repository declares no licence, so as with Parts I, IV and V this part publishes
+derived, non-substitutive metadata only - no exam HTML, question text, answer key, audio or
+vocabulary entry.
+
+### 36. What the test centre actually contains
+
+The manifest lists 377 content items in three zones: `mock` (226 exam papers), `practice` (10 drill
+pages) and `study` (141 vocabulary books and one grammar lesson). Classified by the canonical paper
+facet the index derives: 72 Cambridge listening papers, 76 reading papers, 74 writing papers, 140
+vocabulary books, 12 drills (long-sentence analysis, intensive listening, number dictation, a
+grammar lesson and two placement papers) and 3 full three-hour mock exams (180 minutes each), plus
+a 75-minute junior placement. The Cambridge holdings are the headline: **an unbroken Cambridge
+4-21, all three papers, all four tests** - 220 volume-bearing self-marking papers, something no
+other indexed collection in this API provides - plus two teacher-made "secret set" reading papers
+(绝密套卷, 40-question recall-based mocks) filed with the reading papers but outside the volume
+numbering. Volume 3 is present only as reading and writing, tests 1-2. The
+naming is disciplined (`cambridge-10-test-1`, `cambridge-10-test-1-reading`,
+`cambridge-10-test-1-writing`), which is what makes the holdings matrix mechanically derivable.
+
+The platform's own conventions are part of the index: papers carry optional `exam:title`,
+`exam:duration` and `exam:description` metadata; durations are the exam-shell budgets (32 minutes
+for a listening paper, 60 for reading or writing, 180 for a full mock), not official timing; and
+titles are Chinese (剑桥雅思10 · Test 1（听力）), so the index adds a deterministic English title
+wherever the id structure names the paper and keeps the original title everywhere.
+
+### 37. The hand-tagged question taxonomy
+
+Two machine-written JSON files, `library/listening-taxonomy.json` and
+`library/reading-taxonomy.json`, hold what no other indexed collection has: a **per-question-group
+map of the Cambridge corpus, maintained by the centre's teachers**. Every group carries a question
+range, one of 7 listening or 8 reading Chinese type labels, a teaching scene and a difficulty
+judgement (易 easy, 中 medium, 难 hard). At snapshot time the listening file annotates 530 groups
+over 271 of the 272 sections of Cambridge 5-21 (2,720 questions; only Cambridge 20 Test 1 Section 4
+is missing), and the reading file annotates 569 groups over all 204 passages of Cambridge 5-21
+(2,688 questions). The tags are hand-maintained and it shows in honest ways: 32 listening and 34
+reading groups carry no difficulty yet, 11 and 19 carry no scene, the section-scene table lags the
+group table (266 listening sections and 198 reading passages have a section-level scene, against
+271 and 204 touched by groups), volume 4 is untagged altogether, and one listening group and three
+reading groups overlap a neighbour's question range (Cambridge 21 Test 1 Section 2, Cambridge 18
+Test 3 Passage 3, Cambridge 19 Test 2 Passage 3). The index reports all of this instead of quietly
+repairing it.
+
+The 15 label-by-paper pairs map onto the canonical taxonomy of Part II. The mapping is deliberate
+rather than literal: a generic completion label (填空题) means forms and notes in the listening
+paper, where no summary label exists, so it maps to `summary-completion`; in the reading paper a
+distinct summary label (总结题) exists, so the generic label there denotes sentence completion and
+maps to `sentence-completion`. 判断题 merges the practice corpus's separate True/False/Not Given
+and Yes/No/Not Given families into `true-false-not-given`; 段落匹配题 maps to
+`matching-information`, 选段意题 to `matching-headings`, and 细节匹配题 - which does not say what
+is matched to what - to the generic `matching` family.
+
+| Listening (2,720 questions) | Share | Reading (2,688 questions) | Share |
+| --------------------------- | ----: | ------------------------- | ----: |
+| summary-completion          | 57.3% | true-false-not-given      | 27.7% |
+| multiple-choice             | 17.2% | summary-completion        | 17.2% |
+| matching                    | 13.1% | sentence-completion       | 16.1% |
+| multiple-choice (multi)     |  8.2% | matching                  | 11.3% |
+| diagram-label-completion    |  3.7% | matching-information      |  9.6% |
+| short-answer                |  0.6% | multiple-choice           |  8.4% |
+|                             |       | matching-headings         |  6.7% |
+|                             |       | multiple-choice (multi)   |  2.9% |
+
+Cross-validated against Part II, the two independent taxonomies tell one story. Listening
+completion agrees almost perfectly: 57.3% here against 58.5% in the practice corpus. Reading
+identification agrees once the label granularity is aligned: this corpus's 27.7% True/False/Not
+Given sits next to the practice corpus's 18.3% + 10.3% = 28.6% combined identification share. The
+visible disagreement is multiple choice, 8.4% here against 17.2% there - plausibly a real
+collection difference (Cambridge 5-21 versus third-party mock tests) layered on a labelling
+difference. Difficulty, by contrast, is the centre's own pedagogical judgement with no external
+reference: listening is judged hardest (32.1% hard, 36.0% medium, 25.8% easy), reading mildest
+(22.8% hard, 43.9% medium, 27.2% easy).
+
+The 24 teaching scenes (16 listening, 8 reading) are the platform's own vocabulary, kept in the
+original Chinese with an English gloss, and crosswalked onto the eleven theme groups of
+`/v1/topics/themes` (tourism -> transport, accommodation -> family, insurance and business
+management -> economy, and so on). Listening scenes are exactly the operational scenarios the
+paper's first sections are famous for - tourism (368 questions), daily life (340), assignment
+discussion (340), business management (280) - while reading is dominated by society and humanities
+(631 questions) and nature and technology (436).
+
+### 38. The production score calibration
+
+A third platform artefact, `scripts/cambridge_scoring.py`, is injected into every self-marking exam
+page: two raw-score-to-band tables (listening 0-40 -> 2.5-9.0 in 14 rows; academic reading 0-40 ->
+2.0-9.0 in 15 rows) plus six band-level labels, applied after scaling any non-40 total with
+`round(correct / total * 40)`. The extractor parses the tables out of the helper source, converts
+the descending thresholds into explicit raw-score ranges, validates contiguity down to 0 and joins
+each row's level label at build time. These are the community-published conversion charts, not an
+official IELTS conversion - nothing official exists at raw-score granularity - so the endpoint
+carries the same indicative caveat as the concordances of `/v1/scores`, with the added provenance
+note that these are the values a live platform actually grades by.
+
+### 39. What the API publishes from Part VII
+
+`/v1/testcenter` serves the provenance, statistics and timing budgets; `/v1/testcenter/catalog`
+searches the 377-paper catalogue by zone, subject, paper, Cambridge volume or free text;
+`/v1/testcenter/volumes` serves the holdings matrix; `/v1/testcenter/groups` searches the 1,099
+tagged groups by paper, canonical type, scene, difficulty, volume and test;
+`/v1/testcenter/scenes` the crosswalked scene vocabulary; `/v1/testcenter/scoring` the calibration,
+optionally as a band lookup for a raw score. The drill composer `/v1/testcenter/drill` turns the
+taxonomy back into teaching: it selects groups in canonical order under any combination of the
+filters above until a question budget is filled, times the result with the centre's own pacing
+(0.8 minutes per listening question, 1.5 per reading question) and attaches the scoring sheet.
+Like the study planner, it is a pure function of its input: no randomness, no state, byte-identical
+responses.
+
+### 40. Threats to validity (Part VII)
+
+- **Teacher tags are one organisation's judgement.** The scene and difficulty labels come from a
+  single teaching team with unknown annotation guidelines and no inter-annotator agreement data.
+  They are pedagogical judgements, not measurements; the difficulty labels in particular have no
+  item-level performance data behind them.
+- **The tagset is a snapshot of work in progress.** The taxonomies lag the catalogue (volume 4
+  untagged, one listening section missing, six reading passages without a section-level scene) and
+  the platform is eleven weeks old; the pinned commit is the only defence against silent drift.
+- **The label mapping involves disambiguation.** The 填空题 listening/reading split, the 判断题
+  merge and the generic 细节匹配题 fallback are documented decisions, not upstream facts; a
+  researcher who disagrees can re-map from the published raw labels, which the index keeps.
+- **The scene crosswalk is many-to-one approximation.** 24 scenes to 11 theme groups loses
+  information by design; the crosswalk is a bridge between vocabularies, not a equivalence claim.
+- **Durations are platform budgets.** 32 minutes for a listening paper is the exam shell's
+  countdown, not the official 30-plus-transfer; the index labels them as the centre's own budgets.
+- **The calibration is indicative.** Community conversion charts at raw-score granularity; no
+  official table exists to validate against, and the platform's own rounding rule is part of the
+  published note.
+- **The snapshot is mutable and unlicensed.** As with Parts I, IV and V: commit SHA and per-file
+  blob SHA-1s pin the analysis; upstream deletion would orphan permalinks, and the index would need
+  re-deriving after upstream changes.
+
+### 41. Reproducing Part VII
+
+```bash
+curl -sL "https://api.github.com/repos/wanli4473/yysd-testcenter/git/trees/main?recursive=1" -o tree.json
+# Fetch the four content blobs by SHA (manifest, two taxonomies, scoring helper);
+# the tree supplies the per-file provenance for the catalogue and the groups.
+python3 scripts/extract_testcenter.py manifest.json listening-taxonomy.json \
+    reading-taxonomy.json cambridge_scoring.py tree.json data/testcenter.json
+```
+
+`scripts/extract_testcenter.py` is standard library only and imports the canonical type list from
+`scripts/extract_practice_tests.py`, so the two taxonomy mappings are validated against one list by
+construction. The derivation is deterministic: the same five inputs always produce byte-identical
+output. Continuous integration re-derives the index on every run - it downloads the four blobs by
+SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
+internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
+vocabularies, calibration contiguity).

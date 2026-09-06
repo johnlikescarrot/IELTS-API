@@ -149,6 +149,20 @@ mean 43.5), confirming that the official exemplars are extracts of real tests ra
 demonstrations. The 24 marked essays (four learners, eight task types, August 2022) are published as
 eleven derived statistics per file — never as text, which the non-substitutive design forbids.
 
+**Mock-exam test centre.** A fifth collection [@yysdtestcenter] is not a folder but an operational
+platform: the repository behind a live IELTS online mock-exam test centre, whose self-marking HTML
+papers sit under an auto-rebuilt content manifest and report scores to their exam shell with a
+single `postMessage`. The index publishes the platform as data: the 377-paper catalogue (an
+unbroken Cambridge 4-21 across listening, reading and writing), a Cambridge holdings
+matrix, the centre's hand-maintained taxonomy — 1,099 question groups over 5,408 questions of
+Cambridge 5-21, each labelled with canonical question type, teaching scene and difficulty — the
+exam-shell timing budgets, and the production raw-score-to-band calibration the exam pages are
+graded by. Mapped onto the canonical taxonomy, the teachers' labels cross-validate the practice
+corpus: listening completion 57.3% against 58.5%, reading identification 27.7% against 28.6%
+combined, with the multiple-choice share (8.4% against 17.2%) marking where the collections
+genuinely differ. A drill composer turns the taxonomy back into teaching, assembling deterministic
+timed drills from the tagged groups under any filter combination.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 

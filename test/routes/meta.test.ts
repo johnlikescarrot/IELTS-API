@@ -30,6 +30,10 @@ describe('GET /', () => {
     expect(response.data.authentication).toBe('none');
     expect(response.data.licenses).toEqual({ code: 'MIT', data: 'CC BY 4.0' });
     expect(response.data.datasets.vocabularyWords).toBe(4174);
+    expect(response.data.datasets.testcenterPapers).toBe(377);
+    expect(response.data.datasets.testcenterCambridgePapers).toBe(222);
+    expect(response.data.datasets.testcenterGroups).toBe(1099);
+    expect(response.data.datasets.testcenterTaggedQuestions).toBe(5408);
     expect(response.data.endpoints.documentation).toBe('/docs');
     expect(response.meta.count).toBe(DOMAIN_ROUTES.length);
   });
@@ -50,7 +54,9 @@ describe('GET /health', () => {
     const response = await server.json<{ status: string; datasets: Record<string, number> }>('/health');
     expect(response.data.status).toBe('ok');
     expect(response.data.datasets.corpusFiles).toBe(404);
+    expect(response.data.datasets.testcenterGroups).toBe(1099);
     expect(response.meta.checks).toContain('vocabulary-dataset');
+    expect(response.meta.checks).toContain('testcenter-index');
   });
 });
 
