@@ -9,6 +9,7 @@ import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/pract
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
+import { CAMBRIDGE_DIFFICULTIES, CAMBRIDGE_SKILLS, cambridgeFacets } from '../data/cambridge.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
@@ -273,6 +274,57 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       name: 'sort',
       in: 'query',
       schema: { type: 'string', enum: ['title', 'collection', 'volume', 'date', 'size'], default: 'title' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/cambridge/question-types': [
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: ['reading', 'listening'] } },
+  ],
+  '/v1/cambridge/tests': [
+    QUERY,
+    { name: 'skill', in: 'query', schema: { type: 'string', enum: [...CAMBRIDGE_SKILLS] } },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Comma-separated Cambridge IELTS volumes (3-21).',
+      schema: { type: 'string', example: '15,16,17' },
+    },
+    { name: 'test', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 4 } },
+    {
+      name: 'type',
+      in: 'query',
+      description: 'Comma-separated canonical question types; tests must contain all of them.',
+      schema: { type: 'string', enum: [...(cambridgeFacets()['type'] as string[])] },
+    },
+    {
+      name: 'scene',
+      in: 'query',
+      description: 'Comma-separated topic scenes; tests must have a passage or section in one of them.',
+      schema: { type: 'string', enum: [...(cambridgeFacets()['scene'] as string[])] },
+    },
+    { name: 'difficulty', in: 'query', schema: { type: 'string', enum: [...CAMBRIDGE_DIFFICULTIES] } },
+    {
+      name: 'task1',
+      in: 'query',
+      schema: { type: 'string', enum: [...(cambridgeFacets()['task1Family'] as string[])] },
+    },
+    {
+      name: 'task2',
+      in: 'query',
+      schema: { type: 'string', enum: [...(cambridgeFacets()['task2Family'] as string[])] },
+    },
+    { name: 'minReadingEase', in: 'query', schema: { type: 'number' } },
+    { name: 'maxReadingEase', in: 'query', schema: { type: 'number' } },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: {
+        type: 'string',
+        enum: ['id', 'volume', 'reading-ease', 'audio', 'questions'],
+        default: 'volume',
+      },
     },
     { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
     LIMIT,

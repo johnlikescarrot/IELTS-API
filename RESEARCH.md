@@ -3,7 +3,7 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Six parts, five upstream collections:
 
 | Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
@@ -12,6 +12,7 @@ Five parts, four upstream collections:
 | [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
 | [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
 | [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| [Part VI](#part-vi--the-cambridge-test-structure-index)                         | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs | the Cambridge IELTS 3-21 test-structure index: question groups, answer forms, readability, audio, writing families |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -681,3 +682,202 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the Cambridge test-structure index
+
+_Upstream: [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter), commit
+`0956ea375405e30b31bd554822726e4245bf077a` (4 September 2026), 3,713 blobs, 5.4 GB, no licence. The
+dataset is `data/cambridge.json`; the endpoints are `/v1/cambridge`, `/v1/cambridge/stats`,
+`/v1/cambridge/volumes`, `/v1/cambridge/volumes/:id`, `/v1/cambridge/question-types`,
+`/v1/cambridge/tests` and `/v1/cambridge/tests/:id`._
+
+### 29. What the collection actually contains
+
+The upstream repository is the deployed content library of a Chinese online mock-exam centre
+(优益思达, "YYSD"): a static front end, an Express API, vocabulary books, A-Level material and — the
+part that matters here — `library/mock/cambridge-*`, 222 self-grading HTML pages that re-typeset the
+**Cambridge IELTS 3-21 Academic tests**:
+
+| Directory                          | Pages | Volumes            | Payload per page                                                                                                  |
+| ---------------------------------- | ----: | ------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| `library/mock/cambridge-reading`   |    76 | 3-21 (+2 "secret") | three passages as paragraph arrays, question groups with instructions, answer keys and per-question explanations  |
+| `library/mock/cambridge-listening` |    72 | 4-21               | four sections with audio file names, cue points (`audioStart`/`audioEnd` per group), question groups, answer keys |
+| `library/mock/cambridge-writing`   |    74 | 3-21               | the Task 1 prompt with its chart image (or an inline table / SVG plan) and the Task 2 prompt                      |
+
+Every page embeds one JavaScript object, `const TEST = {...}`, that the page's grading engine reads.
+Two editorial files, `library/reading-taxonomy.json` (569 groups) and
+`library/listening-taxonomy.json` (530 groups), tag each question group of volumes 5-21 with a
+question type (7 listening / 8 reading Chinese labels), a topic "scene" (16 / 8 labels) and a
+three-step difficulty.
+
+This is exactly the material the API cannot redistribute: Cambridge IELTS is the copyrighted work of
+Cambridge University Press & Assessment, and the upstream site holds no licence to it either. What
+the site's structured objects make possible, however, is a **complete structural census of 146 real
+tests** — every question group's position, type, answer-length rule and answer form, every passage's
+length and readability, every listening section's duration — which is derived metadata of the kind
+the rest of this API already publishes. Two pages are excluded because they are not Cambridge tests
+(`secret-set-1/2-reading`, the site's own "绝密套卷" material); 220 are indexed.
+
+### 30. Reading the upstream pages
+
+The `TEST` literal is not JSON. It was typed by hand over three months and comes in every dialect a
+human writes: strict JSON (46 pages), unquoted keys with single-quoted strings, template literals,
+`/* Passage 1 */` block comments, trailing commas, and `'a' + 'b'` concatenations. Three pages
+(volumes 16 and 18) hoist the object under a different construction. `scripts/extract_cambridge.py`
+therefore carries a small tolerant literal parser (`LiteralParser`) that accepts **data forms only**
+— strings, numbers, booleans, `null`, arrays, objects — and raises on the first identifier or `${`
+expression, so no upstream code is ever evaluated. All 222 pages parse; the 76 + 72 + 74 counts
+above are the parser's, not the file listing's.
+
+Each question group upstream carries a rendering `kind` (`tfng`, `mcq`, `multi`, `match`, `note`,
+`table`, `wbank`, `map`) that is coarser than the API's taxonomy: `match` covers headings,
+paragraph-information, features and sentence endings alike; `note` covers notes, summaries,
+sentences, diagram labels and short answers. The canonical type is therefore decided from the `kind`
+**and the instruction wording**, using the same cue phrases the practice-corpus normaliser of Part II
+relies on ("Choose the correct heading", "Which paragraph contains", "Complete each sentence with the
+correct ending", "Label the diagram", "Answer the questions below"). The rules are ordinary
+`if` statements in `question_type()` and can be audited line by line.
+
+### 31. Agreement with the upstream editorial labels
+
+The upstream taxonomies are an independent, human classification of 1,100 of the 1,207 groups, so
+they serve as a check on the derivation rather than as its source. The index aligns each derived
+group with the upstream group that overlaps it most in question numbers and publishes the outcome
+per group (`upstreamType`, `agreesWithUpstream`) and in aggregate:
+
+| Measure                                            | Value |
+| -------------------------------------------------- | ----: |
+| Groups with an upstream label                      | 1,100 |
+| Groups without one (volumes 3-4, a few later gaps) |   107 |
+| Derived type agrees with the label (family-level)  | 1,067 |
+| **Agreement rate**                                 | 0.970 |
+
+Agreement is measured at the level the upstream labels can express: the upstream "填空题"
+(completion) covers what the API distinguishes as sentence, summary, diagram-label completion and
+short answer, and "判断题" covers both True/False/Not Given and Yes/No/Not Given. The 33
+disagreements have one dominant pattern: 16 groups the upstream tags as "细节匹配题" (matching
+features) that the instruction "Complete each sentence with the correct ending" marks as
+`matching-sentence-endings` — a real taxonomic difference, not an error on either side. The remaining
+seventeen are scattered and mostly involve groups whose instruction wording is atypical (e.g. a
+Cambridge 4 table filled from a lettered list). The rate is published rather than optimised away
+because it is the honest reliability figure for the type field.
+
+### 32. What the census shows
+
+**Question types are not distributed as the practice corpus suggests.** Part II measured 27,225
+practice questions; Part VI measures the 5,840 questions of the real tests. The two disagree in ways
+that matter to anyone using practice frequency to plan study:
+
+| Reading, share of questions      | Cambridge 3-21 | Practice corpus |
+| -------------------------------- | -------------: | --------------: |
+| `summary-completion` (all forms) |          0.259 |           0.143 |
+| `true-false-not-given`           |          0.168 |           0.183 |
+| `yes-no-not-given`               |          0.106 |           0.103 |
+| `matching-information`           |          0.097 |           0.103 |
+| `matching-features`              |          0.092 |           0.036 |
+| `multiple-choice`                |          0.090 |           0.172 |
+| `matching-headings`              |          0.071 |           0.076 |
+
+Practice material over-represents multiple choice by a factor of two and under-represents matching
+features by a factor of two and a half; completion tasks are the largest reading category in the
+real tests, not the third. In listening the picture is closer (completion 0.54 vs 0.59, multiple
+choice 0.18 vs 0.23), with the multiple-answer variant eight times more frequent in the real tests
+(0.081 vs 0.011) because practice material rarely encodes "Choose TWO letters" as its own type.
+
+**Difficulty is positional, and the editors know it.** The upstream difficulty labels map almost
+monotonically onto position: 73% of reading passage-1 questions are labelled easy and 2% hard; by
+passage 3 it is 7% easy and 45% hard. Listening runs from 65% easy in section 1 to 72% hard in
+section 4, with no section-4 group labelled easy at all. The readability formulas agree in
+direction but see a smaller effect: mean Flesch Reading Ease is 44.0 for passage 1, 41.8 for
+passage 2 and 40.3 for passage 3 (Flesch-Kincaid grade 13.0 overall, mean passage 852 words). The
+textbook claim that passage difficulty rises through the paper is therefore visible in the text,
+but most of the perceived gradient lives in the **tasks**, not the prose.
+
+**The real tests sit where the practice full tests sit.** The 221 measured passages average 42.0
+Flesch Reading Ease against 43.5 for the 269 full practice reading tests of Part II and 41.5 for the
+twelve official sample tasks of Part V — three independently sourced collections, one number. The
+practice-corpus figure was computed over whole tests (three passages concatenated), which is why the
+Cambridge index reports per passage and per volume: volume means range from 38.4 (Cambridge 19) to
+48.2 (Cambridge 20), with no trend across two decades of publication.
+
+**Listening audio has a stable shape.** Cue points survive for 68 of the 72 listening tests (volume
+4 has none). A full test averages 26.96 minutes of recording (median 27.5; range 20.3-31.6), with
+sections 1 and 4 the longest (7.1 min each) and section 2 the shortest (6.2 min). Audio grows with
+volume: 5,291-5,921 s for volumes 5-9 against 6,600-7,180 s for volumes 15-21, a 15-20% increase in
+the recordings themselves that is invisible in any question count.
+
+**Answer form is a proxy for the skill actually tested.** Of the 5,840 answers, 2,451 are single
+letters and 154 are Roman numerals (heading lists) — 45% of all IELTS answers are selections, not
+productions. 1,962 are single words, 269 are phrases, 193 contain digits. The word-limit rule is
+stated for 2,695 questions; `ONE WORD ONLY` (1,081) is by far the most common, and the once-standard
+`NO MORE THAN THREE WORDS` (114 + 192 with a number) has largely given way to one- and two-word
+rules in later volumes.
+
+**Writing prompts are short and follow five families.** Task 2 prompts average 66 words and fall
+into the API's five families (opinion 23, discussion 23, advantages-disadvantages 12, two-part 8,
+problem-solution 8); 15 of 74 pose two explicit questions. Task 1 visuals are dominated by charts
+(22 unspecified "chart" prompts, 11 line graphs, 2 bar, 2 pie), with tables (11), process diagrams
+(11) and maps or plans (12) making up the rest; only three tests combine two visual types.
+
+**Topic scenes are as positional as difficulty.** Listening section 1 is daily life, travel,
+accommodation and job-seeking; section 3 is almost entirely assignment discussion and research
+projects (55 of 72); section 4 is a lecture in the humanities, biology or the built environment.
+Reading is led by society and humanities (48 passages), science and technology (33) and history
+(31). The scene vocabulary is the upstream editors' and is published as such: it is a useful,
+consistent, but single-source labelling.
+
+### 33. What the API publishes from Part VI
+
+- one record per test (`/v1/cambridge/tests/:id`): identifier, volume, test, skill, duration,
+  the full question-group structure (position, count, canonical type, word-limit rule, answer-form
+  counts, upstream type and difficulty, agreement flag), per-passage readability and lettering,
+  per-section audio duration and cue-point count, writing task families and prompt lengths,
+  provenance (path, blob SHA-1, permalink);
+- the volume table (`/v1/cambridge/volumes`): which tests of which skills are indexed, completeness,
+  mean readability and total audio per volume;
+- the frequency table (`/v1/cambridge/question-types`), shaped like `/v1/question-types` so the two
+  corpora can be compared directly;
+- aggregate statistics with the agreement rate stated (`/v1/cambridge/stats`).
+
+Not published: passage text, titles beyond the passage title (a bibliographic fact), any question,
+any answer, any prompt text, any image, any audio, any per-question explanation. Passage titles are
+published because they are how the literature cites individual Cambridge passages ("Stepwells",
+Cambridge 10 Test 1); they are searchable through `q`.
+
+### 34. Threats to validity (Part VI)
+
+- **The pages are transcriptions, not the books.** Upstream re-typed the tests by hand (one
+  passage-1 of Cambridge 7 is missing entirely and left `null`; a Cambridge 19 passage opens with an
+  editor's note that its first paragraph was reconstructed). Readability figures carry transcription
+  noise, and any figure derived from a single passage should be treated as ±2 Flesch points.
+- **Question-type derivation is rule-based.** The rules are published and audited against an
+  independent labelling at 0.970 agreement, but a group with atypical instruction wording can still
+  be misfiled. The per-group `agreesWithUpstream` flag lets a consumer drop the disputed 3%.
+- **Scenes and difficulties are one editorial team's judgement.** They are translated, not
+  re-derived, and their inter-rater reliability is unknown. They cover volumes 5-21 only.
+- **Audio durations come from cue points, not from the files.** The last `audioEnd` of a section is
+  taken as its length; a section whose final group has no cue point is under-measured. Volume 4 has
+  no cue points and is `null`.
+- **Task 1 families are keyword-based.** "The chart below" without a chart type stays `chart`; a
+  prompt describing a diagram of a layout is a map, but a diagram of a life cycle is a process, and
+  the rule is a regular expression, not a reading of the image.
+- **The snapshot is mutable and unlicensed.** The upstream repository is a live product with 500+
+  commits; the commit SHA and per-file blob SHA-1s pin the analysis, but the permalinks depend on the
+  repository remaining public.
+
+### 35. Reproducing Part VI
+
+```bash
+curl -sL "https://api.github.com/repos/wanli4473/yysd-testcenter/git/trees/0956ea375405e30b31bd554822726e4245bf077a?recursive=1" \
+  -o tree.json
+# Only library/mock/cambridge-*/*.html (~10 MB) and the two taxonomy files are
+# read; a full clone also works but is 5.4 GB.
+python3 scripts/extract_cambridge.py tree.json ./upstream data/cambridge.json
+```
+
+`scripts/extract_cambridge.py` is standard library only; the readability formulas are imported from
+`scripts/extract_practice_tests.py`, so Parts II, V and VI remain comparable by construction. The
+derivation is deterministic. Continuous integration re-derives the index on every run — it downloads
+the 224 blobs by blob SHA, runs the extractor and fails if the committed file disagrees — and then
+checks the index for internal consistency (every test has 40 questions numbered 1-40, answer-form
+and type totals add up, the agreement arithmetic holds).

@@ -27,7 +27,10 @@
     "study planning",
     "learner corpus",
     "grey literature",
-    "listening comprehension"
+    "listening comprehension",
+    "Cambridge IELTS",
+    "test structure",
+    "item analysis"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -48,6 +51,11 @@
     },
     {
       "identifier": "https://github.com/msneloy/IELTS",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/wanli4473/yysd-testcenter",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }

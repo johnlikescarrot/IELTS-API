@@ -823,6 +823,190 @@ export type ArchiveStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Cambridge IELTS test-structure index                                       */
+/* -------------------------------------------------------------------------- */
+
+/** Skills covered by the Cambridge test-structure index. */
+export type CambridgeSkill = 'listening' | 'reading' | 'writing';
+
+/** Editorial difficulty labels of the upstream taxonomy. */
+export type CambridgeDifficulty = 'easy' | 'medium' | 'hard';
+
+/** How the answers of a question group are keyed, classified by form only. */
+export type AnswerForm =
+  'letter' | 'roman-numeral' | 'truth-value' | 'number' | 'alphanumeric' | 'phrase' | 'word' | 'unkeyed';
+
+/** One question group (a numbered run of questions sharing an instruction). */
+export type CambridgeGroup = {
+  /** Passage (reading) or section (listening) number, 1-based. */
+  part: number;
+  /** First question number. */
+  from: number;
+  /** Last question number. */
+  to: number;
+  /** Number of questions in the group. */
+  count: number;
+  /** Canonical question type. */
+  questionType: QuestionTypeId;
+  /** Answer-length rule quoted from the instruction, if any. */
+  wordLimit: string | null;
+  /** Count of answers per form. */
+  answerForms: Partial<Record<AnswerForm, number>>;
+  /** Upstream editorial difficulty, if labelled. */
+  difficulty: CambridgeDifficulty | null;
+  /** Upstream editorial question type (coarser than the canonical one), if labelled. */
+  upstreamType: string | null;
+  /** Whether the canonical type agrees with the upstream label; `null` when unlabelled. */
+  agreesWithUpstream: boolean | null;
+};
+
+/** One reading passage of a Cambridge test. */
+export type CambridgePassage = {
+  /** Passage number (1-3). */
+  part: number;
+  /** Passage title as typeset upstream. */
+  title: string | null;
+  /** Paragraph count. */
+  paragraphs: number;
+  /** Paragraphs carrying an A-N label (the layout matching tasks rely on). */
+  letteredParagraphs: number;
+  /** Whether the passage carries a byline or standfirst. */
+  hasByline: boolean;
+  /** Upstream editorial topic scene, translated. */
+  scene: string | null;
+  /** Passage readability; `null` when the upstream text is missing. */
+  readability: ReadabilityStats | null;
+};
+
+/** One listening section of a Cambridge test. */
+export type CambridgeSection = {
+  /** Section number (1-4). */
+  part: number;
+  /** Audio duration recovered from the last cue point, in seconds. */
+  audioSeconds: number | null;
+  /** Number of cue points defined for the section. */
+  cuePoints: number;
+  /** Upstream editorial topic scene, translated. */
+  scene: string | null;
+};
+
+/** Fields shared by every indexed Cambridge test. */
+type CambridgeBase = {
+  /** Stable identifier (`cam-10-t1-reading`). */
+  id: string;
+  /** Cambridge IELTS volume (3-21). */
+  volume: number;
+  /** Test number within the volume (1-4). */
+  test: number;
+  /** Test module; the upstream collection is Academic only. */
+  module: 'academic';
+  /** Timed duration in minutes. */
+  durationMinutes: number | null;
+  /** Total questions (`null` for writing). */
+  questions: number | null;
+  /** Path inside the upstream repository. */
+  sourcePath: string;
+  /** Git blob SHA-1 of the upstream page. */
+  sha1: string | null;
+  /** Size of the upstream page in bytes. */
+  sizeBytes: number;
+  /** Permalink to the upstream page at the indexed commit. */
+  sourceUrl: string;
+};
+
+/** Fields shared by the question-bearing skills. */
+type CambridgeQuestioned = {
+  /** Question groups in test order. */
+  groups: CambridgeGroup[];
+  /** Distinct canonical question types, sorted. */
+  questionTypes: QuestionTypeId[];
+  /** Question count per canonical type. */
+  typeCounts: Partial<Record<QuestionTypeId, number>>;
+};
+
+/** An indexed Cambridge reading test. */
+export type CambridgeReadingTest = CambridgeBase &
+  CambridgeQuestioned & { skill: 'reading'; passages: CambridgePassage[] };
+
+/** An indexed Cambridge listening test. */
+export type CambridgeListeningTest = CambridgeBase &
+  CambridgeQuestioned & { skill: 'listening'; sections: CambridgeSection[] };
+
+/** An indexed Cambridge writing test. */
+export type CambridgeWritingTest = CambridgeBase & {
+  skill: 'writing';
+  task1: { family: string; visuals: number; promptWords: number };
+  task2: { family: EssayQuestionType; promptWords: number; questions: number };
+};
+
+/** Any indexed Cambridge test. */
+export type CambridgeTest = CambridgeReadingTest | CambridgeListeningTest | CambridgeWritingTest;
+
+/** One row per Cambridge volume in the test-structure index. */
+export type CambridgeVolume = {
+  /** Volume number. */
+  volume: number;
+  /** Test numbers indexed per skill. */
+  tests: Record<CambridgeSkill, number[]>;
+  /** Whether all four tests of all three skills are indexed. */
+  complete: boolean;
+  /** Indexed test pages. */
+  items: number;
+  /** Questions across the indexed listening and reading tests. */
+  questions: number;
+  /** Mean Flesch Reading Ease over the volume's reading passages. */
+  meanReadingEase: number | null;
+  /** Total recovered listening audio, in seconds. */
+  listeningAudioSeconds: number | null;
+};
+
+/** Aggregate statistics of the Cambridge test-structure index. */
+export type CambridgeStats = {
+  upstreamPages: number;
+  indexedItems: number;
+  volumes: number;
+  completeVolumes: number;
+  bySkill: Record<string, number>;
+  questions: number;
+  questionGroups: number;
+  questionTypes: Partial<Record<QuestionTypeId, number>>;
+  questionTypesBySkill: Record<string, Partial<Record<QuestionTypeId, number>>>;
+  answerForms: Partial<Record<AnswerForm, number>>;
+  wordLimits: Record<string, number>;
+  difficultyBySkill: Record<string, Partial<Record<CambridgeDifficulty, number>>>;
+  scenesBySkill: Record<string, Record<string, number>>;
+  /** How often this derivation agrees with the upstream editorial question-type labels. */
+  upstreamTypeAgreement: {
+    labelledGroups: number;
+    agreeing: number;
+    unlabelledGroups: number;
+    rate: number | null;
+  };
+  reading: {
+    passages: number;
+    measuredPassages: number;
+    fleschReadingEase: NumericSummary | null;
+    fleschKincaidGrade: NumericSummary | null;
+    words: NumericSummary | null;
+    readingEaseByPassage: Record<string, NumericSummary | null>;
+    letteredPassages: number;
+  };
+  listening: {
+    sections: number;
+    timedSections: number;
+    audioSecondsBySection: Record<string, NumericSummary | null>;
+    testAudioSeconds: NumericSummary | null;
+  };
+  writing: {
+    tests: number;
+    task1Families: Record<string, number>;
+    task2Families: Record<string, number>;
+    task1PromptWords: NumericSummary | null;
+    task2PromptWords: NumericSummary | null;
+  };
+};
+
+/* -------------------------------------------------------------------------- */
 /* Response frameworks                                                        */
 /* -------------------------------------------------------------------------- */
 

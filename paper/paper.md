@@ -34,10 +34,13 @@ frequency of each family observed in 27,225 practice questions; an original taxo
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of four open IELTS collections, including a grey-literature archive index that
+metadata indexes of five open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; and a structural census of the real examination — every question group of the 146
+Cambridge IELTS 3-21 Academic listening and reading tests and the 74 writing tests, with canonical
+question types, answer forms, word-limit rules, passage readability and listening audio durations,
+validated against an independent editorial labelling at 97% agreement.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -149,6 +152,25 @@ mean 43.5), confirming that the official exemplars are extracts of real tests ra
 demonstrations. The 24 marked essays (four learners, eight task types, August 2022) are published as
 eleven derived statistics per file — never as text, which the non-substitutive design forbids.
 
+**Cambridge test-structure index.** A fifth collection [@yysdtestcenter], the content library of
+an online mock-exam centre, re-typesets the Cambridge IELTS 3-21 Academic tests as 222 self-grading
+pages, each carrying a structured test object. A tolerant literal parser that accepts data forms only
+reads all of them, and the index publishes a structural census of the 220 Cambridge pages: 5,840
+questions in 1,207 groups, each group with its position, canonical question type (derived from the
+rendering kind and the instruction wording), answer-length rule, answer-form distribution and the
+upstream editors' difficulty label; 221 measured passages; 272 listening sections with audio
+durations recovered from cue points; and 74 writing tests classified by Task 1 visual family and
+Task 2 question family. Because the upstream site also publishes an independent, human question-type
+labelling, the derivation can be validated rather than asserted: it agrees with the editors on 1,067
+of 1,100 labelled groups (0.970), and the per-group agreement flag is published so that consumers
+can exclude the disputed 3%. The census corrects the practice corpus in ways that matter for study
+planning — practice material over-represents multiple choice in reading by a factor of two and
+under-represents matching features by two and a half, while completion is the largest real reading
+category (0.26) rather than the third — and it shows that the difficulty gradient across a paper
+lives mostly in the tasks (73% of passage-1 questions labelled easy against 7% of passage-3
+questions) rather than in the prose (mean Flesch Reading Ease 44.0, 41.8, 40.3). No passage,
+question, answer, prompt, image or recording is published.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -178,16 +200,18 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (533 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
-study-materials index and the grey-literature archive index from the upstream tree (the archive
-derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit), and
-revalidates the internal consistency of the practice-test index (question counts, type normalisation
-and provenance) and of the archive index (facet totals, volume arithmetic, per-essay statistics),
-failing if the committed data has drifted — which guards against silent data rot.
+study-materials index, the grey-literature archive index and the Cambridge test-structure index
+from the upstream trees (the archive and Cambridge derivations download only the 38 and 224 blobs
+they need by blob SHA, pinned to the indexed commits), and revalidates the internal consistency of
+the practice-test index (question counts, type normalisation and provenance), of the archive index
+(facet totals, volume arithmetic, per-essay statistics) and of the Cambridge index (forty questions
+numbered 1-40 per test, form and type totals, agreement arithmetic), failing if the committed data
+has drifted — which guards against silent data rot.
 
 # Availability
 
@@ -199,8 +223,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
-assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, on the
+grey-literature archive assembled by `msneloy`, and on the mock-exam library assembled by
+`wanli4473`; all are cited in `CITATION.cff` and in every
 response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.

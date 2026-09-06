@@ -6,6 +6,56 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **Cambridge test-structure index**, a fifth dataset family: a structural census of the real
+examination. The upstream collection
+([`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)) is the content library
+of an online mock-exam centre that re-typesets the Cambridge IELTS 3-21 Academic tests as 222
+self-grading HTML pages. The API publishes what those pages reveal about the tests' _structure_ —
+every question group's position, type, answer-length rule and answer form, every passage's
+readability, every listening section's duration, every writing prompt's family — and none of their
+content. The API remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Cambridge test-structure index** (`data/cambridge.json`, 220 of 222 upstream pages indexed: 72
+  listening, 74 reading, 74 writing tests across volumes 3-21; 5,840 questions in 1,207 groups).
+  Endpoints: `/v1/cambridge`, `/v1/cambridge/stats`, `/v1/cambridge/volumes`,
+  `/v1/cambridge/volumes/:id`, `/v1/cambridge/question-types`, `/v1/cambridge/tests`,
+  `/v1/cambridge/tests/:id`.
+- **Per-group structure**: canonical question type (derived from the upstream rendering kind and the
+  instruction wording), word-limit rule, answer-form distribution (letter, Roman numeral, word,
+  phrase, number, alphanumeric, truth value), the upstream editors' topic scene and difficulty, and
+  the upstream type with a per-group agreement flag.
+- **Validation against an independent labelling**: the derived types agree with the upstream
+  editorial taxonomy on 1,067 of 1,100 labelled groups (0.970); the rate is published in
+  `/v1/cambridge/stats` rather than optimised away, and the 33 disagreements are documented.
+- **Per-passage readability** for 221 passages (Flesch Reading Ease mean 42.0, passage 1 → 3: 44.0,
+  41.8, 40.3; Flesch-Kincaid grade 13.0) computed with the same formulas as the practice-test and
+  archive indexes; **per-section audio durations** for 272 listening sections recovered from cue
+  points (full test mean 27.0 min); **writing task families** for 74 tests (Task 1 visual, Task 2
+  question family, prompt lengths).
+- **The real-versus-practice comparison**: `/v1/cambridge/question-types` is shaped like
+  `/v1/question-types`, showing that practice material over-represents reading multiple choice by 2×
+  and under-represents matching features by 2.5×.
+- `scripts/extract_cambridge.py`: a tolerant data-only literal parser for the hand-typed `TEST`
+  objects (strict JSON, unquoted keys, template literals, comments, string concatenation), the type
+  derivation rules, and deterministic output. CI downloads the 224 blobs it needs by blob SHA,
+  re-derives the index byte-identically and checks it for internal consistency on every run.
+- `RESEARCH.md` Part VI (§§29-35): collection contents, parsing, upstream agreement, findings
+  (positional difficulty, stable audio shape, answer form as skill proxy), threats to validity and
+  reproduction.
+- The service index, `/health`, `/docs` and `/openapi.json` now report the Cambridge dataset.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json`, `.zenodo.json` and the README citation block cite version 1.4.0
+  and the fifth upstream collection; the keyword lists now include Cambridge IELTS, test structure
+  and item analysis.
+- Test suite grown to 533 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material
@@ -182,6 +232,9 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
+[1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
+[1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
 [1.1.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.1.0
 [1.0.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.0.0

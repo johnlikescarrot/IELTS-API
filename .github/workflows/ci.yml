@@ -126,7 +126,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive"):
+          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive", "cambridge"):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
           PY
@@ -249,6 +249,112 @@ jobs:
           print(
               f"archive index consistent: {len(items)} files, "
               f"{len(volumes)} volumes, {len(essays)} essays, {len(samples)} samples"
+          )
+          PY
+
+      - name: Re-derive the Cambridge test-structure index from the upstream tree
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          COMMIT=$(python3 -c "import json; print(json.load(open('data/cambridge.json'))['meta']['commit'])")
+          curl -fsSL -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${GITHUB_TOKEN}" \
+            "https://api.github.com/repos/wanli4473/yysd-testcenter/git/trees/${COMMIT}?recursive=1" \
+            -o /tmp/cambridge-tree.json
+          # Only the 222 test pages (~10 MB) and the two taxonomy files are
+          # needed; they are fetched by blob SHA so the derivation is pinned to
+          # the indexed commit. The audio and images are never downloaded.
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+          from concurrent.futures import ThreadPoolExecutor
+          from pathlib import Path
+
+          token = os.environ.get('GITHUB_TOKEN')
+          tree = json.load(open('/tmp/cambridge-tree.json'))
+          assert not tree.get('truncated'), 'upstream tree truncated'
+          wanted = [
+              entry for entry in tree['tree']
+              if entry.get('type') == 'blob' and (
+                  (entry['path'].startswith('library/mock/cambridge-') and entry['path'].endswith('.html'))
+                  or entry['path'] in ('library/reading-taxonomy.json', 'library/listening-taxonomy.json'))
+          ]
+
+          def fetch(entry):
+              target = Path('/tmp/cambridge-source') / entry['path']
+              target.parent.mkdir(parents=True, exist_ok=True)
+              headers = {'Accept': 'application/vnd.github.v3.raw'}
+              if token:
+                  headers['Authorization'] = f'Bearer {token}'
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/wanli4473/yysd-testcenter/git/blobs/{entry['sha']}",
+                  headers=headers)
+              with urllib.request.urlopen(request) as response, open(target, 'wb') as out:
+                  out.write(response.read())
+
+          with ThreadPoolExecutor(max_workers=8) as pool:
+              list(pool.map(fetch, wanted))
+          print(f"downloaded {len(wanted)} blobs for the Cambridge derivation")
+          PY
+          python3 scripts/extract_cambridge.py /tmp/cambridge-tree.json /tmp/cambridge-source /tmp/cambridge.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/cambridge.json'))
+          regenerated = json.load(open('/tmp/cambridge.json'))
+          assert committed == regenerated, 'data/cambridge.json is out of date'
+          print(f"Cambridge index reproducible: {regenerated['stats']['indexedItems']} tests")
+          PY
+
+      - name: Check the Cambridge test-structure index for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+          import sys
+
+          sys.path.insert(0, 'scripts')
+          from extract_practice_tests import CANONICAL_TYPES
+
+          index = json.load(open('data/cambridge.json'))
+          items, stats, volumes = index['items'], index['stats'], index['volumes']
+
+          assert stats['indexedItems'] == len(items), 'indexedItems disagrees with items'
+          assert len({item['id'] for item in items}) == len(items), 'duplicate identifiers'
+          assert sum(stats['bySkill'].values()) == len(items), 'skill totals differ'
+          assert sum(stats['questionTypes'].values()) == stats['questions'], 'type totals differ'
+          assert sum(stats['answerForms'].values()) == stats['questions'], 'answer-form totals differ'
+          assert sum(stats['wordLimits'].values()) == stats['questions'], 'word-limit totals differ'
+          assert sum(item['questions'] or 0 for item in items) == stats['questions'], 'question totals differ'
+          assert len(volumes) == stats['volumes'], 'volume table incomplete'
+          assert sum(1 for row in volumes if row['complete']) == stats['completeVolumes']
+
+          groups = 0
+          for item in items:
+              assert item['sourcePath'] in item['sourceUrl'], item['id']
+              assert len(item['sha1'] or '') == 40, item['id']
+              if item['skill'] == 'writing':
+                  assert item['questions'] is None, item['id']
+                  continue
+              assert item['questions'] == 40, item['id']
+              assert sum(g['count'] for g in item['groups']) == 40, item['id']
+              assert sum(item['typeCounts'].values()) == 40, item['id']
+              assert sorted(item['typeCounts']) == item['questionTypes'], item['id']
+              assert set(item['questionTypes']) <= set(CANONICAL_TYPES), item['id']
+              numbers = sorted(n for g in item['groups'] for n in range(g['from'], g['to'] + 1))
+              assert numbers[0] == 1 and numbers[-1] == 40, item['id']
+              groups += len(item['groups'])
+              for g in item['groups']:
+                  assert sum(g['answerForms'].values()) == g['count'], (item['id'], g['from'])
+                  assert (g['agreesWithUpstream'] is None) == (g['upstreamType'] is None), (item['id'], g['from'])
+          assert groups == stats['questionGroups'], 'group totals differ'
+
+          agreement = stats['upstreamTypeAgreement']
+          assert agreement['labelledGroups'] + agreement['unlabelledGroups'] == groups
+          assert agreement['agreeing'] <= agreement['labelledGroups']
+
+          print(
+              f"Cambridge index consistent: {len(items)} tests over {len(volumes)} volumes, "
+              f"{stats['questions']} questions in {groups} groups"
           )
           PY
 
