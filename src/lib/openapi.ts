@@ -7,7 +7,9 @@
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
+import { EXAM_DELIVERIES, EXAM_MODULES } from '../data/examFormat.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
+import { RAW_SCORE_SCALES } from '../data/rawScores.js';
 import { archiveFacets } from '../data/archive.js';
 import { materialsFacets } from '../data/materials.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
@@ -352,6 +354,124 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       in: 'query',
       description: 'New headwords to learn per day.',
       schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+  ],
+  '/v1/exam/config': [
+    {
+      name: 'module',
+      in: 'query',
+      description: 'Examination paper.',
+      schema: { type: 'string', enum: [...EXAM_MODULES], default: 'academic' },
+    },
+    {
+      name: 'delivery',
+      in: 'query',
+      description: 'Delivery mode.',
+      schema: { type: 'string', enum: [...EXAM_DELIVERIES], default: 'paper' },
+    },
+  ],
+  '/v1/exam/schedule': [
+    {
+      name: 'start',
+      in: 'query',
+      required: true,
+      description: 'Sitting start, `HH:MM` or `YYYY-MM-DDTHH:MM` (24-hour wall clock).',
+      schema: { type: 'string', example: '09:00' },
+    },
+    { name: 'module', in: 'query', schema: { type: 'string', enum: [...EXAM_MODULES], default: 'academic' } },
+    {
+      name: 'delivery',
+      in: 'query',
+      schema: { type: 'string', enum: [...EXAM_DELIVERIES], default: 'paper' },
+    },
+    {
+      name: 'breakMinutes',
+      in: 'query',
+      description:
+        'Minutes inserted between sections (mock centres only; the real test has no scheduled break).',
+      schema: { type: 'integer', minimum: 0, maximum: 60, default: 0 },
+    },
+  ],
+  '/v1/exam/tables': [
+    {
+      name: 'scale',
+      in: 'query',
+      description: 'Return only this scale; by default all three tables are keyed by scale.',
+      schema: { type: 'string', enum: [...RAW_SCORE_SCALES] },
+    },
+  ],
+  '/v1/exam/score': [
+    { name: 'scale', in: 'query', required: true, schema: { type: 'string', enum: [...RAW_SCORE_SCALES] } },
+    {
+      name: 'raw',
+      in: 'query',
+      required: true,
+      description: 'Correct answers out of 40.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+  ],
+  '/v1/exam/report': [
+    {
+      name: 'module',
+      in: 'query',
+      description: 'Selects the Reading conversion table.',
+      schema: { type: 'string', enum: [...EXAM_MODULES], default: 'academic' },
+    },
+    {
+      name: 'listeningRaw',
+      in: 'query',
+      description: 'Correct answers on Listening (0-40).',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+    {
+      name: 'readingRaw',
+      in: 'query',
+      description: 'Correct answers on Reading (0-40).',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+    {
+      name: 'writing',
+      in: 'query',
+      description: 'Examiner band for Writing.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'speaking',
+      in: 'query',
+      description: 'Examiner band for Speaking.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+    {
+      name: 'target',
+      in: 'query',
+      description: 'Target overall band; adds a per-component gap analysis.',
+      schema: { type: 'number', minimum: 0, maximum: 9, multipleOf: 0.5 },
+    },
+  ],
+  '/v1/exam/mock': [
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Composition seed; identical seeds compose identical papers.',
+      schema: { type: 'string', default: 'default' },
+    },
+    { name: 'module', in: 'query', schema: { type: 'string', enum: [...EXAM_MODULES], default: 'academic' } },
+    {
+      name: 'delivery',
+      in: 'query',
+      schema: { type: 'string', enum: [...EXAM_DELIVERIES], default: 'paper' },
+    },
+    {
+      name: 'level',
+      in: 'query',
+      description: 'Swap the Reading full test for two graded lessons at this CEFR band.',
+      schema: { type: 'string', enum: CEFR_BANDS.map((band) => band.toLowerCase()) },
+    },
+    {
+      name: 'words',
+      in: 'query',
+      description: 'Vocabulary warm-up headwords (0 drops the section).',
+      schema: { type: 'integer', minimum: 0, maximum: 20, default: 8 },
     },
   ],
 };

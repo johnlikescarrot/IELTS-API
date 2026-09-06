@@ -3,15 +3,17 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Five parts, four upstream collections:
+Six parts, four upstream collections — and one open test-centre site whose working conventions
+Part VI rebuilds as citable data:
 
-| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                     |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                        |
-| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                   |
-| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                 |
-| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                      |
-| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                        | What it yields                                                                                                          |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs    | the vocabulary dataset and the corpus index                                                                             |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs  | the question-type taxonomy and the practice-test structure and readability index                                        |
+| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                               | the readability analyser, the essay profiler and the study planner                                                      |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs  | the study-materials index and the response-framework taxonomy                                                           |
+| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs    | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays      |
+| [Part VI](#part-vi--the-mock-exam-centre)                                       | — (original rulebook and compiled conversion tables; composes the datasets above)                     | — (2025-2026 published formats) | the mock exam centre: timed test-day rulebook, countdown schedule, raw-score tables, score reports, mock-paper composer |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -681,3 +683,83 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the mock exam centre
+
+### 29. What the layer is, and what it deliberately is not
+
+The mock exam centre answers a question the first five parts could not: not "what data exists about
+IELTS" but "what does it take to _run_ a practice test". Its design model is
+[`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter), an open static
+test-centre site: a GitHub Action regenerates a JSON manifest of every mock exam on disk; an exam
+viewer page times each session from the manifest's duration metadata; captured marks are rendered
+as a score toast and accumulated on a results page ("我的成绩") in `localStorage`. The site is the
+right shape for a candidate and the wrong shape for a researcher: the timing rulebook, the mark
+conversion and the report layout are implicit in hand-written page logic, the scores never leave
+the browser, and the exams themselves are copyrighted material the site mirrors.
+
+This part keeps the _conventions_ and rebuilds them as citable data. `/v1/exam/config` makes the
+test-day rulebook explicit: four rows (Academic and General Training, paper and computer delivery)
+with section order, fixed durations, the Listening transfer window (10 minutes on paper, replaced
+by 2 check minutes on computer delivery), question counts and the marking rules a proctor reads
+out. `/v1/exam/schedule` renders a rulebook row as an invigilated timeline: given an `HH:MM` or
+`YYYY-MM-DDTHH:MM` start it emits wall-clock segments with day rollover plus a `countdownSeconds`
+total — the number a countdown viewer needs, computed by pure minute arithmetic so every replica
+produces the identical timeline. `/v1/exam/tables` publishes the raw-score-to-band conversion
+tables, and `/v1/exam/score` and `/v1/exam/report` apply them. `/v1/exam/mock` inverts the manifest
+idea: instead of indexing files on disk, it composes a mock paper from the API's _own_ datasets —
+a vocabulary warm-up, one indexed listening test, a reading test or two graded lessons, a Writing
+Task 1 family with an original Task 2 prompt and a matching response framework, and one speaking
+topic per part — and the same seed always composes the same paper.
+
+No copyrighted test content crosses the boundary. The paper is structure, timing and links: every
+item is a reference (`/v1/tests/lft-001`, `/v1/frameworks/w2-weighing`) into metadata this project
+derived or original material this project wrote. Candidate marks enter through the query string and
+are never stored; the score report carries no name, ID or venue field, because a research API that
+started collecting them would need the consent machinery this one avoids entirely.
+
+### 30. Compiling the raw-score tables
+
+Listening and both Reading papers are marked out of 40 correct answers, and Cambridge publishes a
+band-conversion table with the answers of most volumes of the Cambridge IELTS series. The tables are
+not byte-identical across volumes: the minimum mark for, say, band 7 in Academic Reading has been
+printed as 30 or 31 depending on the volume. The compilation used here follows the tables printed
+in the Cambridge IELTS 10-18 answer sections as reproduced by the IELTS partners; it keeps one
+variant and says so. Each table is contiguous — 17 rows, bands 1.0 through 9.0 in half-steps, with
+no mark between the table floor and 40 unmapped and no mark mapped twice — a property asserted by
+unit test rather than trusting the source formatting. Results are labelled _indicative_, and marks
+below a table's floor return `band: null` rather than an invented extrapolation: the official report
+for a 0-mark performance is not derivable from public tables, so the API declines to guess.
+
+The rulebook rows sit on the same epistemic footing: durations, question counts and word minimums
+are the published format; wording is original; and the provenance note flags the facts that vary by
+centre (the Speaking window, local check-time practice, device rules) so a citation of
+`/v1/exam/config` cites a convention, not a legal copy of a specific test-day protocol.
+
+### 31. Threats to validity (Part VI)
+
+- **Conversion tables drift.** Test providers revise the mark boundaries; the compiled tables
+  reproduce a snapshot of the public print, and an official TRF for a real sitting always outranks
+  them. This is the same "indicative concordance" treatment `/v1/scores/convert` gives other scales.
+- **Durations are the 2025-2026 published formats.** Computer-delivered check time and the seven-day
+  Speaking window are subject to change and to centre discretion; the dataset is versioned with the
+  API so a citation pins the convention in force.
+- **A mock paper is a pointer, not a test.** `seed`-identical manifests let two researchers verify
+  they composed the same paper, but the copyrighted material to sit through the links is the
+  candidate's own responsibility; the API never fetches, proxies or caches it.
+- **Schedule arithmetic is wall-clock and timezone-free.** A sitting that crosses UTC midnight shows
+  `day: 1` rather than pretending a timezone; local centre time is outside the contract.
+
+### 32. Reproducing Part VI
+
+```bash
+npm test            # unit + route tests for the rulebook, tables, schedule, report and composer
+node dist/cli.js &  # then:
+curl -s "localhost:3000/v1/exam/config" | sha256sum
+curl -s "localhost:3000/v1/exam/mock?seed=2026-09-05" | sha256sum
+```
+
+All five modules are original data and pure functions — no upstream download, no generator script —
+so the test suite _is_ the reproduction procedure: it pins table contiguity, the rulebook
+arithmetic (160 minutes paper-based, 152 computer-based), midnight rollover, every conversion
+boundary row, and the seed determinism of the composer, byte-for-byte.

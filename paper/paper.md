@@ -24,7 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -37,7 +37,10 @@ cross-linked to the task banks; a structure and readability index of
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; and a mock exam centre layer — timed test-day rulebook, countdown schedule, published
+raw-score-to-band tables, test-report-form style score reports and a deterministic mock-paper
+composer — rebuilt as citable data from the working conventions of an open test-centre site
+[@yysdtestcenter].
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -152,6 +155,26 @@ eleven derived statistics per file — never as text, which the non-substitutive
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
+**Mock exam centre.** Static test-centre sites such as `yysd-testcenter` [@yysdtestcenter] show what
+candidates actually need around a practice test — a manifest of exams, a countdown timer, and captured
+marks rendered as bands — but encode it all in page logic, browser storage and mirrored copyrighted
+papers. This work extracts the conventions into data. The test-day rulebook publishes section order,
+durations, the Listening transfer window (10 minutes on paper, 2 check minutes on computer) and
+marking rules for each of the four module-and-delivery combinations, with every claim the published
+IELTS formats support and none a centre might contradict. The schedule endpoint renders a rulebook row
+as wall-clock segments from a caller-supplied start — pure minute arithmetic, no clocks, so replicas
+and years agree on the same timeline. The conversion tables reproduce the raw-score-to-band mapping
+printed in the Cambridge IELTS series answer sections — 17 contiguous rows from the table floor to
+40 marks, labelled indicative because the boundaries drift by a mark across volumes. The score report
+composes those pieces into a test-report-form layout (component rows, overall band under the official
+rounding rule, CEFR level, and a per-component `itemsNeeded` gap against a stated target), deliberately
+without candidate-identifying fields: marks travel through the query string and are never stored. The
+mock-paper composer inverts the site's file manifest into a dataset composition: one request
+deterministically assembles a vocabulary warm-up, an indexed listening test, a reading test (or graded
+lessons at a requested CEFR band), a Task 1 family with an original Task 2 prompt and a matching
+response framework, and one speaking topic per part — structure, time budgets and links, never test
+content.
+
 **Analysis toolkit.** The same datasets also power three text-consuming endpoints. A readability
 analyser applies the Flesch formulas to any supplied text — alphabetic tokenisation, sentence
 splitting on terminators, vowel-group syllable estimation — and places the score next to the corpus
@@ -178,7 +201,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (562 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

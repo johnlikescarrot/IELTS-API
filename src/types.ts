@@ -868,6 +868,240 @@ export type ResponseFramework = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Mock exam centre                                                             */
+/* -------------------------------------------------------------------------- */
+
+/** The examination paper a candidate takes. */
+export type ExamModule = 'academic' | 'general-training';
+
+/** How the centre administers the paper. */
+export type ExamDelivery = 'paper' | 'computer';
+
+/** Sections of the test day, in sitting order. */
+export type ExamSectionId = 'listening' | 'reading' | 'writing' | 'speaking';
+
+/** One section of the test day, as the rulebook prints it. */
+export type ExamSectionInfo = {
+  /** Section identifier. */
+  id: ExamSectionId;
+  /** Human-readable section name. */
+  name: string;
+  /** Skill the section assesses. */
+  skill: Skill;
+  /** Fixed duration in minutes (the maximum, for the range-timed Speaking test). */
+  durationMinutes: number;
+  /** How the centre announces the timing, e.g. `11-14 minutes`. */
+  timingLabel: string;
+  /** Number of questions, when the section is marked by question count. */
+  questions: number | null;
+  /** What the section contains, one line per part or passage group. */
+  format: string[];
+  /** Rules that apply while the section runs. */
+  rules: string[];
+  /** Extra minutes granted after the section (transfer or check time); `0` when none. */
+  afterMinutes: number;
+  /** Name of the extra time (`transfer`, `check`), or `null` when there is none. */
+  afterLabel: string | null;
+};
+
+/** The rulebook row for one module and delivery mode. */
+export type ExamTestDayConfig = {
+  /** Examination paper. */
+  module: ExamModule;
+  /** Delivery mode. */
+  delivery: ExamDelivery;
+  /** Human-readable combination, e.g. `Academic — paper-based`. */
+  label: string;
+  /** Scheduled minutes from the start of Listening to the end of Writing, including transfer or check time. */
+  sittingMinutes: number;
+  /** Sections in sitting order. */
+  sections: ExamSectionInfo[];
+  /** Rules that govern the test day around the sections. */
+  testDayRules: string[];
+  /** Provenance and caveats for the timings in this row. */
+  provenance: string;
+};
+
+/** The scale whose raw-score table converts a mark to a band. */
+export type RawScoreScale = 'listening' | 'academic-reading' | 'general-training-reading';
+
+/** One row of a raw-score conversion table. */
+export type RawScoreRow = {
+  /** Band reported for marks in this range. */
+  band: number;
+  /** Fewest correct answers that reach the band. */
+  minRaw: number;
+  /** Most correct answers that still map to the band. */
+  maxRaw: number;
+};
+
+/** Response of `/v1/exam/score`. */
+export type RawScoreResult = {
+  /** Scale the mark was read against. */
+  scale: RawScoreScale;
+  /** Mark supplied by the caller. */
+  raw: number;
+  /** Estimated band score, or `null` below the published table. */
+  band: number | null;
+  /** Raw range behind the band, when one was found. */
+  range: { minRaw: number; maxRaw: number } | null;
+  /** The next publishable band and how far away it is; `null` at the ceiling. */
+  next: { band: number; minRaw: number; itemsNeeded: number } | null;
+  /** How to read the result. */
+  note: string;
+};
+
+/** One segment of a test-day timeline. */
+export type ExamScheduleSegment = {
+  /** Section identifier, or `transfer`, `check`, `break` for the phases between them. */
+  id: string;
+  /** Segment name. */
+  name: string;
+  /** Minutes elapsed since the sitting began when the segment starts. */
+  startMinutes: number;
+  /** Minutes elapsed when the segment ends. */
+  endMinutes: number;
+  /** Wall-clock start, `HH:MM`. */
+  start: string;
+  /** Wall-clock end, `HH:MM`. */
+  end: string;
+  /** Whole days between the requested start date and the segment's end. */
+  day: number;
+  /** Segment length in minutes. */
+  minutes: number;
+};
+
+/** Response of `/v1/exam/schedule`: the invigilated timeline for a countdown clock. */
+export type ExamSchedule = {
+  /** Start label echoed back. */
+  start: string;
+  /** ISO date anchor, when the caller supplied one. */
+  date: string | null;
+  /** Examination paper. */
+  module: ExamModule;
+  /** Delivery mode. */
+  delivery: ExamDelivery;
+  /** Break minutes inserted between sections. */
+  breakMinutes: number;
+  /** Timeline rows in order. */
+  segments: ExamScheduleSegment[];
+  /** Minutes from the first segment to the last. */
+  totalMinutes: number;
+  /** Total minutes as seconds — the duration a countdown timer should use. */
+  countdownSeconds: number;
+  /** Wall-clock end of the sitting. */
+  end: { time: string; day: number };
+};
+
+/** One component row of `/v1/exam/report`. */
+export type ExamReportComponent = {
+  /** Component. */
+  skill: Skill;
+  /** How the score entered the report. */
+  source: 'raw' | 'band' | 'missing';
+  /** Raw mark, when the component was scored from answers. */
+  raw: number | null;
+  /** Estimated or examiner-assigned band. */
+  band: number | null;
+  /** Raw range the band came from, when derived from a mark. */
+  range: { minRaw: number; maxRaw: number } | null;
+  /** Next band and the marks it takes (raw components only). */
+  next: { band: number; minRaw: number; itemsNeeded: number } | null;
+};
+
+/** One target-gap row of `/v1/exam/report`. */
+export type ExamReportTargetRow = {
+  /** Component. */
+  skill: Skill;
+  /** 'met' when the supplied score reaches the target, 'behind' when it does not, 'unknown' when the component is absent. */
+  status: 'met' | 'behind' | 'unknown';
+  /** Marks still required on the raw scale, when the component was marked from answers. */
+  itemsNeeded: number | null;
+  /** Band distance to the target, when a band is known. */
+  bandGap: number | null;
+};
+
+/** Response of `/v1/exam/report`: a mock score report in test-report-form shape. */
+export type ExamReport = {
+  /** Examination paper the marks were read against. */
+  module: ExamModule;
+  /** Component rows in report order. */
+  components: ExamReportComponent[];
+  /** Overall band, computed when all four components are known. */
+  overall: {
+    components: Record<Skill, number>;
+    mean: number;
+    overall: number;
+    cefr: string;
+    spread: number;
+    explanation: string;
+  } | null;
+  /** Gap analysis against a stated target, when one was requested. */
+  target: { band: number; overallStatus: 'met' | 'behind' | 'unknown'; rows: ExamReportTargetRow[] } | null;
+  /** The reporting convention the layout follows. */
+  convention: string;
+};
+
+/** A pointer to one dataset item used by a mock paper. */
+export type MockPaperItem = {
+  /** Dataset the item comes from (`tests`, `tasks/writing`, `topics/writing`, `topics/speaking`, `frameworks`, `vocabulary`). */
+  dataset: string;
+  /** Item identifier within that dataset. */
+  id: string;
+  /** Display title. */
+  title: string;
+  /** API path serving the full item. */
+  link: string;
+  /** Section-specific guidance for this item, when useful. */
+  note: string | null;
+};
+
+/** One section of a generated mock paper. */
+export type MockPaperSection = {
+  /** Section identifier (`listening`, `reading`, `writing`, `speaking`, `vocabulary`). */
+  id: string;
+  /** Human-readable name. */
+  name: string;
+  /** Skill the section practises; `null` for the vocabulary warm-up. */
+  skill: Skill | null;
+  /** Time budget for the section, in minutes. */
+  minutes: number;
+  /** Invigilation-style instructions for the section. */
+  instructions: string[];
+  /** Chosen items, in the order they should be attempted. */
+  items: MockPaperItem[];
+};
+
+/** Response of `/v1/exam/mock`: a deterministic mock-paper manifest composed from the API's own datasets. */
+export type MockPaper = {
+  /** Stable identifier derived from the canonical inputs. */
+  id: string;
+  /** Seed the composition used. */
+  seed: string;
+  /** Examination paper. */
+  module: ExamModule;
+  /** Delivery mode, which sets the time budgets. */
+  delivery: ExamDelivery;
+  /** CEFR level applied to the reading selection, when requested. */
+  level: CefrBand | null;
+  /** Sections in sitting order. */
+  sections: MockPaperSection[];
+  /** Scheduled minutes across Listening, Reading and Writing (Speaking is held separately). */
+  totalMinutes: number;
+  /** Answer sheet the candidate marks themselves against. */
+  answerSheet: {
+    listening: { questions: number };
+    reading: { questions: number };
+    writing: { task1Words: number; task2Words: number };
+    speaking: { parts: number };
+  };
+  /** Where to take the marks and the timeline next. */
+  next: { schedule: string; report: string; tables: string };
+  /** Provenance of the manifest. */
+  provenance: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

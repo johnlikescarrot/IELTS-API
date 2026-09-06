@@ -6,6 +6,47 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-05
+
+The **mock exam centre**. The API could describe what an IELTS score means and what material exists; it
+could not yet run a test. This release adds a timed test-day layer — rulebook, countdown schedule,
+raw-score conversion, score report and a deterministic mock-paper composer — modelled on the open
+test-centre site [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter) (a static
+mock-exam site whose pages carry a test manifest, a countdown viewer, a score toast and a results page)
+and rebuilt as citable, metadata-only data. As with every other family, no copyrighted passage,
+recording or answer key is redistributed; the API remains free, GET-only, authentication-free and
+dependency-free.
+
+### Added
+
+- **The test-day rulebook** (`/v1/exam/config`): one row per examination paper and delivery mode —
+  four rows in total — giving section order, fixed durations, the Listening transfer window
+  (10 minutes on paper, 2 check minutes on computer), question counts, part lists and the marking
+  rules that a mock centre needs to time a sitting. Timings follow the formats published by the IELTS
+  partners; every sentence is original, and the provenance note says which details vary by centre.
+- **The countdown schedule** (`/v1/exam/schedule`): the rulebook rendered as wall-clock segments from
+  any `HH:MM` or `YYYY-MM-DDTHH:MM` start, with the total sitting length as a `countdownSeconds`
+  duration for exam viewers, optional mock-centre breaks (`breakMinutes`), and correct day rollover.
+  Pure arithmetic — no clocks, so every replica answers identically.
+- **Raw-score conversion tables** (`/v1/exam/tables`, `/v1/exam/score`): the published mark-to-band
+  tables for Academic Listening, Academic Reading and General Training Reading — 17 bands each,
+  contiguous from the table floor to 40 — compiled from the Cambridge IELTS series answer sections and
+  labelled indicative, because a band can sit one item higher or lower across volumes. `/score` adds
+  the distance to the next band (`itemsNeeded`), the missing piece for any self-marking mock.
+- **The mock score report** (`/v1/exam/report`): raw marks for the objective papers and examiner bands
+  for the productive ones, converted into a test-report-form layout — component rows, the overall band
+  under the official rounding rule, an indicative CEFR level, and an optional `target` gap analysis
+  that counts the marks still needed per component. Candidate details are deliberately absent; the API
+  never handles personal data.
+- **The mock-paper composer** (`/v1/exam/mock`): the test-centre manifest idea turned inside out —
+  instead of indexing files, it deterministically assembles a full timed paper from the API's own
+  datasets: a vocabulary warm-up, one indexed listening test, a reading full test (or two graded
+  lessons at a chosen CEFR band), a Writing Task 1 family with an original Task 2 prompt and a matching
+  response framework, and one speaking topic per part. Every entry is metadata and a link, and the
+  same seed always composes the same paper.
+- 60 new tests (562 total), keeping the per-file 100% coverage gate green; the OpenAPI document,
+  `/docs` and the endpoint index pick the six endpoints up automatically.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material
