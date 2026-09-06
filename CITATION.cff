@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.3.0
-date-released: '2026-09-05'
+version: 1.4.0
+date-released: '2026-09-06'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
@@ -18,7 +18,11 @@ abstract: >-
   corpus, and a grey-literature archive index: the Cambridge IELTS 1-18
   listening audio catalogued by naming era, media archaeology and completeness,
   the twelve official sample tasks measured for readability, and 24 marked
-  learner essays summarised as derived statistics. Deterministic analysis tools profile any text for Flesch readability,
+  learner essays summarised as derived statistics. A mock-exam session layer adds indicative
+  Listening and Reading raw-to-band tables with partial-paper scaling, deterministic grading
+  of caller-supplied answer keys, computer-delivered timing blueprints for practice and exam
+  modes, and 24 stable full-suite mocks assembled from the practice-test index and the writing
+  banks. Deterministic analysis tools profile any text for Flesch readability,
   lexical diversity and Cambridge-headword coverage, and compose the datasets
   into a week-by-week study plan towards a target band. Every endpoint is free
   of charge,
@@ -39,6 +43,8 @@ keywords:
   - learner corpus
   - grey literature
   - listening comprehension
+  - mock examination
+  - computer-delivered testing
   - CEFR
   - open data
   - REST API

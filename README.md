@@ -75,6 +75,15 @@ curl -s "http://localhost:3000/v1/materials/items?category=past-paper-recall"
 
 # The Cambridge 1-18 listening archive, volume by volume: naming era, tests, completeness
 curl -s "http://localhost:3000/v1/archive/volumes"
+
+# Raw mark to indicative band (30/40 Academic Reading -> band 7)
+curl -s "http://localhost:3000/v1/mock/raw-to-band?skill=reading-academic&raw=30"
+
+# Grade two answers against a caller-supplied key (no keys stored server-side)
+curl -s "http://localhost:3000/v1/mock/grade?skill=listening&key=1%3Acolour%7Ccolor%3B2%3Abooks&responses=1%3AColor%3B2%3Abooks"
+
+# A 152-minute full-suite timing blueprint under exam conditions
+curl -s "http://localhost:3000/v1/mock/session-plan?skill=full-suite&mode=exam"
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -108,6 +117,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
+| Mock-exam session layer         | 3 raw-to-band tables / deterministic grading / 24 suites | `/v1/mock`              | Operational model informed by the [YYSD test center][yysd]                     |
 | Grey-literature archive         |         555 files / 509 audio tracks / 24 learner essays | `/v1/archive`           | Derived index of [the grey-literature archive][archive]                        |
 
 ## Endpoints
@@ -157,6 +167,12 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/archive/volumes/:id` | One Cambridge volume row                                                                                |
 | GET    | `/v1/archive/items`       | Search the archive index (`collection`, `format`, `media`, `skill`, `volume`, `q`)                      |
 | GET    | `/v1/archive/:id`         | One indexed archive item                                                                                |
+| GET    | `/v1/mock`                | Mock-exam catalogue metadata, table provenance and timing constants                                     |
+| GET    | `/v1/mock/raw-to-band`    | Listening/Reading raw mark to indicative band (`skill`, `raw`, `total`)                                 |
+| GET    | `/v1/mock/grade`          | Grade a response sheet against a caller-supplied key (`skill`, `key`, `responses`)                      |
+| GET    | `/v1/mock/session-plan`   | Computer-delivered timing blueprint (`skill`, `mode`)                                                   |
+| GET    | `/v1/mock/suites`         | Stable full-suite mocks assembled from the index and the writing banks                                  |
+| GET    | `/v1/mock/suites/:id`     | One stable full-suite mock (`mock-001` … `mock-024`)                                                    |
 | GET    | `/v1/tools/readability`   | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile` | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`          | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
@@ -372,7 +388,7 @@ dataset has drifted. The practice-test index is validated for internal consisten
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 502 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 564 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -460,3 +476,4 @@ partners.
 [practice]: https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS
 [materials]: https://github.com/Oxidaner/ielts
 [archive]: https://github.com/msneloy/IELTS
+[yysd]: https://github.com/wanli4473/yysd-testcenter

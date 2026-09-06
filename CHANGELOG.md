@@ -6,6 +6,44 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.4.0] - 2026-09-06
+
+The **mock-exam session layer**, researched from the YYSD IELTS online mock-exam test center
+([`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter), 377-item manifest,
+CDT practice/exam gate, threshold-table band lookup with partial-paper scaling): the API now runs
+timed sittings as well as publishing data. Three indicative raw-score tables (Listening, Academic
+Reading, General Training Reading with its stricter mid-range cuts) map raw marks to bands at
+`/v1/mock/raw-to-band`, scaling partial papers to a 40-question paper first and returning the
+matched row's published range with the table provenance. `/v1/mock/grade` deterministically grades
+a response sheet against a caller-supplied key — NFC normalisation, lower-casing and exact
+matching, never stemming or fuzzy matching — so no upstream answer key is stored or served.
+`/v1/mock/session-plan` publishes computer-delivered timing blueprints (Listening 30+2, Reading
+60, Writing 20+40 with 150/250-word minima, full suite 152 minutes) with the CDT controls and the
+conduct rules of `practice` versus `exam` mode. `/v1/mock/suites` catalogues 24 stable full-suite
+mocks assembled from the practice-test index (rotating through the 201 listening and 269 reading
+items) with seeded Academic Task 1 and Task 2 draws; suites reference items and prompts by
+identifier and embed no upstream content. The API remains free, GET-only, authentication-free and
+dependency-free.
+
+### Added
+
+- Mock-exam session layer (`src/data/mock.ts`, `src/lib/mock.ts`, six routes under `/v1/mock`):
+  indicative raw-to-band tables, deterministic grading, session plans, 24 stable suites.
+- `RESEARCH.md` Part VI: the test-center analysis, the published cuts, and the threats to validity
+  (equated live versions move cuts by ~1 raw mark; the GT table is compiled from secondary
+  reproductions; strict normalisation under-scores; suites are references, not papers).
+- Research paper and bibliography: the mock layer with new citations on test-mode comparability
+  (Chan, Bax & Weir 2018), language-test construction and validation (Bachman 1990; Alderson,
+  Clapham & Wall 1995; Weir 2005) and the studied test-center snapshot.
+- The service index, `/health`, `/docs` and `/openapi.json` now report the mock-exam layer.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json` and the README citation block cite version 1.4.0; the keyword
+  lists now include mock examination and computer-delivered testing.
+- Test suite grown to 564 tests, still at 100% statement, branch, function and line coverage per
+  file.
+
 ## [1.3.0] - 2026-09-05
 
 The **archive layer**, a fourth dataset family: the API now indexes what IELTS preparation material

@@ -10,6 +10,7 @@ import { bandRoutes } from './bands.js';
 import { corpusRoutes } from './corpus.js';
 import { frameworkRoutes } from './frameworks.js';
 import { materialRoutes } from './materials.js';
+import { mockRoutes } from './mock.js';
 import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
@@ -35,6 +36,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...toolRoutes,
   ...studyRoutes,
   ...materialRoutes,
+  ...mockRoutes,
   ...archiveRoutes,
   ...resourceRoutes,
 ];

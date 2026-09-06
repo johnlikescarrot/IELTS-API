@@ -681,3 +681,98 @@ blobs always produce byte-identical output. Continuous integration re-derives th
 - it downloads the 38 document blobs by blob SHA, runs the extractor, and fails if the committed
   file disagrees - and then checks the index for internal consistency (facet totals, volume arithmetic,
   per-essay statistics).
+
+## Part VI — the mock-exam session layer
+
+### 29. What the test center does
+
+The operational model of this release is informed by the YYSD IELTS online mock-exam test center
+(`wanli4473/yysd-testcenter`, commit `0956ea3`, September 2026): an open-source static front end
+plus Node API that delivers Cambridge IELTS listening, reading and writing papers in a
+computer-delivered (CDT) shell. Five behaviours were carried over as requirements:
+
+1. **A manifest, not a pile of files.** `library/manifest.json` (377 items at the studied commit)
+   indexes every paper by zone (`study`, `practice`, `mock`) and subject (`cambridge-listening`,
+   `cambridge-reading`, `cambridge-writing`, vocab books, drills), each with a title, a duration in
+   minutes and a one-line description. The API's suite catalogue (`/v1/mock/suites`) is the same
+   idea reduced to citable metadata: stable identifiers, durations, and references instead of files.
+2. **Two sittings behind one gate.** Every paper opens on a choice between _practice_ (official
+   timer and controls, progress saved, leave and resume later, per-question review with
+   explanations after submit) and _mock test_ (exam conditions, leaving voids the attempt, the full
+   suite runs Listening → Reading → Writing from the suite entry). The API's session plans
+   (`/v1/mock/session-plan`) encode exactly these conduct rules per mode.
+3. **Threshold-table band lookup with scaling.** Papers post `{score, total, band}` to the parent
+   frame; the band comes from a threshold table, and partial papers are scaled to a 40-question
+   paper first (`scaled = round(correct / total * 40)`). Listening and Reading use different tables:
+   the reading table demands 33 for band 7.5 where the listening table asks 32. The API's
+   `/v1/mock/raw-to-band` and `/v1/mock/grade` re-implement this lookup deterministically, with the
+   tables made explicit and citable instead of embedded in page scripts.
+4. **Suite reports.** A full sitting ends in a three-skill report (Listening and Reading as raw
+   marks with bands, Writing as word counts against the 150/250-word minima). The mock suites
+   carry the same scoring contract in their metadata.
+5. **A listening taxonomy alongside the papers.** `library/listening-taxonomy.json` tags question
+   groups by type (7 Chinese labels), scene (16) and difficulty across Cambridge volumes 21 and
+   neighbours. The API already publishes its own canonical 13-type taxonomy (Part II); the mock
+   layer links suites to it through the referenced practice-test items rather than duplicating it.
+
+### 30. What the API publishes from Part VI
+
+**Three indicative raw-score tables** (`/v1/mock/raw-to-band`). Listening and Academic Reading
+start at 39 raw for band 9; General Training Reading starts at a perfect 40 and runs stricter
+mid-range cuts (34 for band 7 against Academic's 30) because its texts — notices, workplace
+documents, short articles — are easier than Academic passages. Partial papers scale to /40 with
+the test center's rounding before the lookup, and every response returns the matched row's
+published range (e.g. `30–32`), the band-scale label and the indicative CEFR level next to the
+table name, source and caveat.
+
+**Deterministic grading** (`/v1/mock/grade`). The caller supplies the key
+(`1:answer|alternative;2:answer`) and the responses (`1:answer;2:answer`) in the query string, so
+no upstream answer key is stored or served. Answers are NFC-normalised, lower-cased, dash-unified
+and stripped of decorative punctuation, then matched exactly — never stemmed or fuzzily matched,
+so a match always means the candidate wrote an accepted form. Blanks and missing numbers score
+zero; the raw mark converts through the paper's table with the same scaling rule.
+
+**Timing blueprints** (`/v1/mock/session-plan`). Computer-delivered plans for `listening`
+(30 + 2 minutes review), `reading-academic` and `reading-general` (60), `writing` (20 + 40 with
+150/250-word minima) and `full-suite` (152 minutes, Listening → Reading → Writing), each in
+`practice` or `exam` mode with the CDT controls (timer, notepad, help, settings, finish-section),
+the mode's conduct rules and the scoring contract of every paper.
+
+**Twenty-four stable full-suite mocks** (`/v1/mock/suites`, `/v1/mock/suites/:id`). Each suite
+pairs one listening-full-test with one reading-full-test from the practice-test index (rotating
+through the 201 listening and 269 reading items) and draws an Academic Task 1 family and a Task 2
+prompt from the task banks through seeded sampling, so suite `mock-001` is byte-identical on every
+replica. Suites reference items and prompts by identifier; no passage, question or key travels
+with them.
+
+### 31. Threats to validity (Part VI)
+
+- **The cuts are indicative by construction.** The IELTS partners equate every live version, so
+  neighbouring Cambridge volumes move individual thresholds by about one raw mark; published
+  reproductions of the tables disagree at exactly that granularity (band 9 listening is 39+ in
+  some reproductions, a perfect 40 in others). The tables follow the most widely reproduced cuts
+  and every response says so.
+- **The General Training table is second-hand.** Unlike the Listening and Academic tables, which
+  the test center's own threshold tables corroborate row for row, the GT cuts are compiled from
+  secondary reproductions of the Cambridge tables. They are labelled indicative twice: once by the
+  endpoint, once here.
+- **Strict normalisation under-scores real candidates.** The live test forgives nothing on
+  spelling either, but human markers accept handwriting ambiguity that exact matching rejects;
+  `/v1/mock/grade` is a practice instrument, and its responses state that writing is never
+  auto-scored at all.
+- **Suites are references, not papers.** A suite without the referenced items is a timetable, and
+  the index items it references are themselves metadata (Part II). Reproducibility is preserved —
+  the references are stable — but no claim is made that twenty-four rotations cover the space of
+  live tests.
+- **The upstream test center is a moving target.** It is an actively developed product (505
+  commits at the studied revision) with accounts, AI grading quotas and tenant configuration that
+  this API deliberately does not model: only the no-authentication, deterministic exam mechanics
+  were adapted. The commit SHA above pins the analysis.
+
+### 32. Reproducing Part VI
+
+There is no extraction script: the layer is original code over already-published datasets. Its
+derivation is the test suite — `test/data/mock.test.ts` locks the tables row for row (order,
+reportable bands, the Academic/General band-7 fork), `test/lib/mock.test.ts` locks the scaling,
+normalisation, grading and suite assembly, and `test/routes/mock.test.ts` locks the HTTP
+contract. `npm run test` enforces the 100% per-file coverage gate over all of it.

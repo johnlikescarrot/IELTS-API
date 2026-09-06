@@ -5,6 +5,7 @@
 import { archiveStats } from '../data/archive.js';
 import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
+import { MOCK_SKILLS, MOCK_SUITE_COUNT } from '../data/mock.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
@@ -34,6 +35,8 @@ function datasetSummary(): Record<string, number> {
     archiveFiles: archive.indexedFiles,
     archiveAudioTracks: archive.audioTracks,
     archiveEssays: archive.assignments.essays,
+    mockRawTables: MOCK_SKILLS.length,
+    mockSuites: MOCK_SUITE_COUNT,
   };
 }
 
@@ -99,7 +102,14 @@ export function createMetaRoutes(
         datasets: datasetSummary(),
       },
       meta: {
-        checks: ['process', 'vocabulary-dataset', 'corpus-index', 'practice-test-index', 'archive-index'],
+        checks: [
+          'process',
+          'vocabulary-dataset',
+          'corpus-index',
+          'practice-test-index',
+          'mock-exam-layer',
+          'archive-index',
+        ],
       },
     };
   }

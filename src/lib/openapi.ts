@@ -6,6 +6,7 @@
  */
 
 import { CEFR_BANDS, PRACTICE_COLLECTIONS, PRACTICE_SKILLS } from '../data/practiceTests.js';
+import { MOCK_MODES, MOCK_SESSION_SKILLS, MOCK_SKILLS } from '../data/mock.js';
 import { CONVERSION_TARGETS } from '../data/conversions.js';
 import { FRAMEWORK_SECTIONS } from '../data/frameworks.js';
 import { archiveFacets } from '../data/archive.js';
@@ -278,6 +279,66 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     LIMIT,
     OFFSET,
   ],
+  '/v1/mock/raw-to-band': [
+    {
+      name: 'skill',
+      in: 'query',
+      required: true,
+      description: 'Receptive paper the conversion applies to.',
+      schema: { type: 'string', enum: [...MOCK_SKILLS] },
+    },
+    {
+      name: 'raw',
+      in: 'query',
+      required: true,
+      description: 'Correct answers.',
+      schema: { type: 'integer', minimum: 0, maximum: 40 },
+    },
+    {
+      name: 'total',
+      in: 'query',
+      description: 'Questions in the paper; partial papers scale to a 40-question paper.',
+      schema: { type: 'integer', minimum: 1, maximum: 40, default: 40 },
+    },
+  ],
+  '/v1/mock/grade': [
+    {
+      name: 'skill',
+      in: 'query',
+      required: true,
+      description: 'Receptive paper the key belongs to.',
+      schema: { type: 'string', enum: [...MOCK_SKILLS] },
+    },
+    {
+      name: 'key',
+      in: 'query',
+      required: true,
+      description: 'Answer key: semicolon-separated "<number>:<answer>" entries, "|" separates alternatives.',
+      schema: { type: 'string' },
+    },
+    {
+      name: 'responses',
+      in: 'query',
+      description: 'Candidate responses in the same format; absent or blank entries score zero.',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/mock/session-plan': [
+    {
+      name: 'skill',
+      in: 'query',
+      required: true,
+      description: 'Paper or suite the plan covers.',
+      schema: { type: 'string', enum: [...MOCK_SESSION_SKILLS] },
+    },
+    {
+      name: 'mode',
+      in: 'query',
+      description: 'Practice (pausable, reviewable) or exam conditions.',
+      schema: { type: 'string', enum: [...MOCK_MODES], default: 'practice' },
+    },
+  ],
+  '/v1/mock/suites': [LIMIT, OFFSET],
   '/v1/tools/readability': [
     {
       name: 'text',
@@ -454,7 +515,9 @@ export function openApiDocument(
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, and an index of a 2,385-file',
-        'self-study materials collection. The toolkit additionally scores any text',
+        'self-study materials collection, and a mock-exam session layer with indicative',
+        'raw-to-band tables, deterministic answer grading, timing blueprints and stable',
+        'full-suite mocks. The toolkit additionally scores any text',
         '(readability and essay profile) and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',

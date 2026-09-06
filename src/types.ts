@@ -868,6 +868,138 @@ export type ResponseFramework = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Mock-exam session layer                                                  */
+/* -------------------------------------------------------------------------- */
+
+/** Receptive papers with a raw-score (`/40`) to band conversion. */
+export type MockSkill = 'listening' | 'reading-academic' | 'reading-general';
+
+/** Papers a timed session plan can be built for, including the full suite. */
+export type MockSessionSkill = MockSkill | 'writing' | 'full-suite';
+
+/** Computer-delivered session modes: untimed practice or exam conditions. */
+export type MockMode = 'practice' | 'exam';
+
+/** One row of an indicative raw-score table: `minRaw` or more scores `band`. */
+export type RawBandThreshold = {
+  /** Lowest raw score (out of 40) that reaches the band. */
+  minRaw: number;
+  /** Indicative band score. */
+  band: number;
+};
+
+/** A raw score mapped onto its indicative band. */
+export type RawBandResult = {
+  /** Receptive paper the conversion applies to. */
+  skill: MockSkill;
+  /** Correct answers as submitted. */
+  raw: number;
+  /** Questions in the submitted paper. */
+  total: number;
+  /** Raw score scaled to a 40-question paper. */
+  scaledRaw: number;
+  /** Indicative band score. */
+  band: number;
+  /** Proficiency label of the band on the IELTS band scale. */
+  level: string;
+  /** Indicative CEFR level of the band. */
+  cefr: string;
+  /** Published raw-score range of the matched row (e.g. `30–32`). */
+  range: string;
+};
+
+/** One question of a deterministically graded answer sheet. */
+export type GradeItem = {
+  /** Question number. */
+  no: number;
+  /** Accepted answers from the key, in sheet order. */
+  expected: string[];
+  /** Response given by the candidate, or `null` when blank. */
+  given: string | null;
+  /** Whether the normalised response matches an accepted answer. */
+  correct: boolean;
+};
+
+/** A graded answer sheet with its indicative band. */
+export type GradeResult = {
+  /** Receptive paper the key belongs to. */
+  skill: MockSkill;
+  /** Questions in the key. */
+  total: number;
+  /** Correct answers. */
+  raw: number;
+  /** Raw score scaled to a 40-question paper. */
+  scaledRaw: number;
+  /** Indicative band score. */
+  band: number;
+  /** Proficiency label of the band on the IELTS band scale. */
+  level: string;
+  /** Indicative CEFR level of the band. */
+  cefr: string;
+  /** Share of questions answered correctly, between 0 and 1. */
+  accuracy: number;
+  /** Key questions left blank. */
+  unanswered: number;
+  /** Per-question detail in ascending question order. */
+  items: GradeItem[];
+};
+
+/** One timed block of a session plan. */
+export type SessionSection = {
+  /** Section name. */
+  name: string;
+  /** Time budget in minutes. */
+  minutes: number;
+  /** Questions to answer, when the section fixes a count. */
+  questions: number | null;
+  /** Minimum words, for writing sections. */
+  minWords: number | null;
+  /** What happens in the block. */
+  notes: string;
+};
+
+/** A deterministic computer-delivered timing blueprint. */
+export type SessionPlan = {
+  /** Paper or suite the plan covers. */
+  skill: MockSessionSkill;
+  /** Session mode. */
+  mode: MockMode;
+  /** Delivery the timing assumes. */
+  delivery: 'computer';
+  /** Total timed minutes, excluding optional breaks. */
+  totalMinutes: number;
+  /** Ordered timed blocks. */
+  sections: SessionSection[];
+  /** On-screen controls available during the session. */
+  controls: string[];
+  /** Conduct rules of the mode. */
+  rules: string[];
+  /** How each paper is scored. */
+  scoring: string[];
+};
+
+/** A stable full-suite mock: one listening test, one reading test, two writing tasks. */
+export type MockSuite = {
+  /** Stable identifier (`mock-001`). */
+  id: string;
+  /** Suite number, 1-based. */
+  n: number;
+  /** Display title. */
+  title: string;
+  /** Listening paper drawn from the practice-test index. */
+  listening: { id: string; title: string; questions: number };
+  /** Reading paper drawn from the practice-test index. */
+  reading: { id: string; title: string; questions: number };
+  /** Writing Task 1 family and Task 2 prompt. */
+  writing: {
+    task1: { familyId: string; family: string; minutes: number; minWords: number };
+    task2: { promptId: string; category: string; questionType: string; minutes: number; minWords: number };
+  };
+  /** Total timed minutes (Listening 32 + Reading 60 + Writing 60). */
+  totalMinutes: number;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

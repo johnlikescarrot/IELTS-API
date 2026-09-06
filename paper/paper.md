@@ -33,7 +33,10 @@ Listening question types, onto which 65 free-text annotation labels are normalis
 frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
-1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; a mock-exam
+session layer with indicative raw-to-band tables, deterministic grading, timing blueprints and 24
+stable full-suite mocks, modelled on an open-source test center [@yysdtestcenter] and grounded in
+language-test validation literature [@bachman1990; @alderson1995; @weir2005; @chan2018]; and curated
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
@@ -126,6 +129,23 @@ overall, because they are ten times longer (2,642 words against roughly 250) at 
 ratio (0.388 against 0.54-0.64): short lessons cannot train reading stamina however dense their
 sentences are.
 
+**Mock-exam session layer.** The operational model is informed by an open-source online mock-exam
+test center [@yysdtestcenter]: a manifest of stable sittings, a practice-vs-exam gate, and
+threshold-table band lookup with partial-paper scaling. The API re-implements that model as citable
+data — indicative raw-to-band tables for Listening, Academic Reading and General Training Reading
+(with the stricter GT mid-range cuts), deterministic grading of caller-supplied answer keys by
+exact matching after NFC normalisation, computer-delivered timing blueprints (Listening 30+2,
+Reading 60, Writing 20+40, full suite 152 minutes), and 24 stable full-suite mocks assembled from
+the practice-test index and the writing banks. The design follows the standard account of test
+method characteristics and construct validity [@bachman1990; @alderson1995; @weir2005]: timing,
+rubrics and scoring rules are part of the measurement instrument, so they are published as versioned
+data rather than buried in page scripts. Computer delivery is the live format — the IELTS partners
+retired paper-based delivery from mid-2026 [@ieltsdelivery] — and mode-comparability evidence for
+high-stakes writing suggests scores transfer across delivery modes under controlled conditions
+[@chan2018]; the layer therefore assumes computer timing (a two-minute listening review, no
+transfer window) and labels every conversion indicative, since live versions are equated and cut
+scores move by about one raw mark between volumes.
+
 **Study materials and response frameworks.** A third open collection (a 2,385-file self-study
 repository) is indexed by category, skill and format — recall banks, question banks, scenario
 vocabulary, templates, idea banks — as descriptive metadata only. On top of it sits an original
@@ -178,7 +198,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (564 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -199,8 +219,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
-assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, on the
+grey-literature archive assembled by `msneloy`, and on the mock-exam mechanics of the test center
+maintained by `wanli4473`; all are cited in `CITATION.cff` and in every
 response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
