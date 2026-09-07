@@ -1035,3 +1035,299 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — the retention layer
+
+_Upstream: [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system), a deployed
+WeChat mini-programme with a Node/SQLite backend serving two IELTS word lists, surveyed for the two
+review schedules and the mastery rule it runs; the comparison class is transcribed from its own
+publications. The dataset lives in `src/data/retention.ts`, the calculations in
+`src/lib/retention.ts`; the endpoints are under `/v1/retention`._
+
+### 42. The schedule that everyone runs and nobody cites
+
+Every IELTS vocabulary application ships a review schedule. Ask any of them why the schedule is what
+it is and the answer is the same three words: **the Ebbinghaus forgetting curve**. The phrase is
+doing a great deal of work. Ebbinghaus published a retention function and seven measurements of his
+own relearning of nonsense syllables; he did not publish a review schedule, and nothing in his data
+says when a learner should next see the word _ambiguous_.
+
+What the applications actually contain is an array of round numbers. The arrays are not the same
+array, they are almost never cited, and — as Part VIII documents — they are not always consistent
+with each other _inside a single deployment_.
+
+This is the same failure mode as Part VI. There, an unpublished conversion table produced a _de
+facto_ table that circulates without provenance; here, an absent scheduling standard produces a
+folklore schedule that circulates the same way. The remedy is the same: publish the artefacts as
+data, state where they came from, and measure the disagreement exhaustively instead of asserting a
+winner.
+
+### 43. What a real deployment looks like
+
+The reference deployment is `ielts-vocab-system`: a WeChat mini-programme front end, an
+Express/SQLite backend, an admin panel, and two word lists — Cambridge IELTS 1-18 (4,464 headwords,
+partitioned by volume) and Liu Hongbo's _IELTS Vocabulary Zhenjing_ (3,674 headwords, partitioned
+into 22 scene groups). It is a serious piece of software: it has a review-session schema
+(`user_word_progress`, `learning_records`, `review_sessions`, `review_session_items`), pronunciation
+scoring, per-user study-day configuration, achievements and an anomaly-detection dashboard.
+
+It also contains two review schedules that disagree with each other.
+
+| Location                                                     | Intervals as written                           | Unit    |
+| ------------------------------------------------------------ | ---------------------------------------------- | ------- |
+| `backend/spaced-repetition-algorithm.js` (`baseIntervals`)   | `[5, 30, 720, 1440, 2880, 5760, 10080, 21600]` | minutes |
+| production HTTPS server (`REVIEW_STAGES`), before 2026-03-22 | `[0, 1, 2, 4, 7, 15, 21, 30]`                  | days    |
+| production HTTPS server (`REVIEW_STAGES`), current           | `[1, 2, 4, 7, 15, 21, 30, 30]`                 | days    |
+
+The first is the class the repository documents as its Ebbinghaus implementation. The second and
+third are hard-coded arrays inside the file that actually answers the mini-programme's requests — the
+class is not what runs. The third replaced the second on 2026-03-22, in a change whose own changelog
+justifies it by observing that "forgetting mainly happens after 24 hours" and by conformity with
+three consumer applications (Maimemo, Shanbay, Anki). None of the three arrays cites a source.
+
+The same file carries a mastery-score rule:
+
+```javascript
+change = isCorrect ? confidence * 5 : -confidence * 8;
+newMastery = Math.max(0, Math.min(100, currentMastery + change));
+```
+
+and the intraday schedule's terminal interval is scaled by it: past the eighth review the gap becomes
+`21600 * (1 + mastery / 100)` minutes, so a fully mastered word settles at thirty days.
+
+### 44. Construction of the catalogue
+
+Seven schedules are recorded, in a single canonical unit (minutes before each review, index 0 being
+the gap between learning and the first review), each with the unit its source states, the year, a URL
+at which the interval list can be verified, and a **terminal rule** describing what happens past the
+published list. The terminal rule matters: SM-2 publishes two intervals and a multiplier, and
+comparing it with an eight-stage array without saying so would compare an assumption with a fact.
+
+| Schedule                                      | Family                    | Provenance              | Published reviews | Horizon |
+| --------------------------------------------- | ------------------------- | ----------------------- | ----------------: | ------: |
+| Deployed IELTS app — intraday                 | ebbinghaus-curve          | deployed-implementation |                 8 |    29 d |
+| Deployed IELTS app — daily, before March 2026 | app-default               | deployed-implementation |                 8 |    80 d |
+| Deployed IELTS app — daily, current           | app-default               | deployed-implementation |                 8 |   110 d |
+| Leitner five-box (1972)                       | leitner-box               | published-algorithm     |                 5 |    31 d |
+| SuperMemo 2, default ease (1987)              | supermemo                 | published-algorithm     |                 2 |     7 d |
+| Anki shipped defaults                         | supermemo                 | shipped-default         |                 3 |     1 d |
+| Pimsleur graduated interval recall (1967)     | graduated-interval-recall | published-algorithm     |                11 |   881 d |
+
+Three of the seven place at least one review on the learning day itself; four do not. That single
+design decision — whether a word is reviewed the evening it is learned — is the largest structural
+difference in the catalogue, and it is the decision the deployed application changed in March 2026.
+
+### 45. The curve, refitted on every request
+
+Ebbinghaus fitted
+
+> b = 100k / ((log t)^c + k), with t in minutes, k = 1.84, c = 1.25
+
+to seven savings measurements. Both the equation and the observations are published here, and the
+API recomputes the residuals on every request to `/v1/retention/curve`:
+
+| t          | Observed savings | Predicted | Residual (pp) |
+| ---------- | ---------------: | --------: | ------------: |
+| 19 minutes |             58.2 |      57.5 |         −0.70 |
+| 63 minutes |             44.2 |      46.9 |         +2.69 |
+| 8 h 45 min |             35.8 |      34.5 |         −1.30 |
+| 1 day      |             33.7 |      30.4 |         −3.29 |
+| 2 days     |             27.8 |      28.1 |         +0.26 |
+| 6 days     |             25.4 |      24.9 |         −0.48 |
+| 31 days    |             21.1 |      21.2 |         +0.13 |
+
+Root-mean-square error 1.71 percentage points, largest residual 3.29. The test suite fails if either
+grows, which is the check that the transcription is right — and it is a check no application that
+invokes "the Ebbinghaus curve" performs.
+
+Two honest limitations belong next to the table. The measurements are _savings_ on nonsense
+syllables, for one subject, with no rehearsal; and the curve says nothing whatever about what a
+second exposure does. It is the weakest possible evidence base for a vocabulary schedule, and it is
+the evidence base every vocabulary schedule invokes. Treating its output as the probability of
+recalling an English headword would be wrong. Using it as a fixed yardstick to _rank_ competing
+schedules is what is done here.
+
+### 46. Scoring a schedule, and the assumption it needs
+
+A schedule cannot be scored without assuming something about repetition, because Ebbinghaus measured
+none. The API assumes the mildest thing that reproduces the expanding intervals every schedule in the
+catalogue exhibits: each successful review multiplies memory stability by a constant `growth`, so
+retention at review _n_ is the curve evaluated at `interval_n / growth^n`. `growth` defaults to 2, is
+reported in the `meta` of every scored response as an assumption rather than a finding, and can be
+set to 1 to remove it entirely.
+
+The headline statistic is deliberately **not** the mean. A schedule designed around a constant target
+retention — which is what SuperMemo and everything descended from it is designed around — produces a
+flat retention profile, so the interesting number is the coefficient of variation across reviews.
+`uniformity` is `1 − CV`.
+
+| Schedule                                      | Mean retention (g=2) | Uniformity (g=2) |
+| --------------------------------------------- | -------------------: | ---------------: |
+| Deployed IELTS app — daily, current           |                0.319 |        **0.936** |
+| SuperMemo 2 (default ease)                    |                0.257 |            0.919 |
+| Leitner five-box                              |                0.327 |            0.896 |
+| Pimsleur graduated interval recall            |                0.806 |            0.747 |
+| Deployed IELTS app — intraday                 |                0.469 |            0.740 |
+| Anki shipped defaults                         |                0.471 |            0.490 |
+| Deployed IELTS app — daily, before March 2026 |                0.422 |            0.483 |
+
+### 47. Sensitivity to the assumption
+
+The ranking is not stable, and saying so is more useful than hiding it. Uniformity across five
+consolidation assumptions:
+
+| Schedule                                      |   g=1 | g=1.5 |   g=2 |   g=3 |   g=4 |
+| --------------------------------------------- | ----: | ----: | ----: | ----: | ----: |
+| Deployed IELTS app — intraday                 | 0.540 | 0.651 | 0.740 | 0.842 | 0.799 |
+| Deployed IELTS app — daily, before March 2026 | 0.274 | 0.391 | 0.483 | 0.607 | 0.648 |
+| Deployed IELTS app — daily, current           | 0.871 | 0.959 | 0.936 | 0.787 | 0.646 |
+| Leitner five-box                              | 0.887 | 0.955 | 0.896 | 0.733 | 0.586 |
+| SuperMemo 2 (default ease)                    | 0.781 | 0.858 | 0.919 | 0.960 | 0.875 |
+| Anki shipped defaults                         | 0.306 | 0.408 | 0.490 | 0.623 | 0.717 |
+| Pimsleur graduated interval recall            | 0.528 | 0.643 | 0.747 | 0.930 | 1.000 |
+
+The leader changes with the assumption: Leitner at g=1, the current deployed array at g=1.5 and g=2,
+SM-2 at g=3, Pimsleur at g=4. That is exactly what one should expect — each schedule is implicitly
+tuned to a different consolidation rate, and the value of `growth` that flatters a schedule _is_ the
+rate it assumes. Two conclusions survive the whole range:
+
+1. **The March 2026 change improved uniformity.** The current array beats the one it replaced at
+   g=1 (0.871 against 0.274), g=1.5, g=2 and g=3 (0.787 against 0.607), and reverses only marginally
+   at g=4 (0.646 against 0.648).
+2. **It bought that uniformity by lowering retention everywhere.** Mean predicted retention falls
+   from the old array to the new at _every_ assumption tested: 0.344 → 0.245 at g=1, 0.422 → 0.319 at
+   g=2, 0.506 → 0.396 at g=3. Removing the same-day review makes the schedule consistent and makes it
+   consistently weaker. The upstream changelog claims the first effect and does not mention the
+   second.
+
+### 48. Measuring the disagreement between schedules
+
+Every pair of schedules is compared review by review over their published intervals only, on the
+calendar day each review falls on. Agreement rate, in per cent, over the reviews where both publish
+an interval:
+
+|                                  | intraday | daily-2026-03 | daily-current | leitner | sm-2 | anki | pimsleur |
+| -------------------------------- | -------: | ------------: | ------------: | ------: | ---: | ---: | -------: |
+| Deployed — intraday              |        — |            12 |         **0** |       0 |    0 |   67 |       38 |
+| Deployed — daily, before 2026-03 |       12 |             — |         **0** |       0 |    0 |   33 |       12 |
+| Deployed — daily, current        |    **0** |         **0** |             — |      60 |   50 |    0 |        0 |
+| Leitner five-box                 |        0 |             0 |            60 |       — |   50 |    0 |        0 |
+| SuperMemo 2                      |        0 |             0 |            50 |      50 |    — |    0 |        0 |
+| Anki defaults                    |       67 |            33 |             0 |       0 |    0 |    — |       67 |
+| Pimsleur                         |       38 |            12 |             0 |       0 |    0 |   67 |        — |
+
+The three cells in bold are the finding. The current production array agrees with the class shipped
+in the same repository at **none** of their eight reviews, and with the array it replaced at
+**none** of theirs. The largest divergence between the two production arrays is **30 days**; between
+the class and the current array it is **81 days**. A learner who upgraded the mini-programme in March
+2026 had every scheduled review moved, silently, by up to a month.
+
+The most-agreeing pairs are instructive too: Anki's defaults agree with the intraday class 67% of the
+time, because both front-load reviews inside the first day, and the current production array agrees
+with Leitner 60% of the time, because `1, 2, 4` is `1, 2, 4` however it is justified.
+
+### 49. The workload nobody publishes
+
+A schedule is a promise about tomorrow's queue, and none of the seven states what that queue will
+contain. `/v1/retention/workload` computes it exactly — the load on day _d_ is the sum, over stages,
+of the words introduced on `d − offset` — so the cost is `O(days × reviews)` no matter how many words
+are involved. The steady state has a closed form: `newPerDay × daysPerWeek × (1 + reviews) / 7`.
+
+At twenty new words a day, seven days a week, eight reviews per word, the pipeline fills on day 110
+and settles at **180 items a day**. Twenty new words is a modest daily commitment; a hundred and
+eighty cards is not, and nothing in the application says so before a learner commits.
+
+Coverage of the three word lists at the same rate, showing the **tail** — the interval after the last
+new word during which reviews keep arriving:
+
+| Schedule                                       | First pass | Mature |   Tail |
+| ---------------------------------------------- | ---------: | -----: | -----: |
+| Deployed IELTS app — intraday                  |      224 d |  253 d |   29 d |
+| Deployed IELTS app — daily, before March 2026  |      224 d |  304 d |   80 d |
+| Deployed IELTS app — daily, current            |      224 d |  334 d |  110 d |
+| Leitner five-box                               |      224 d |  303 d |   79 d |
+| Anki shipped defaults                          |      224 d |  386 d |  162 d |
+| SuperMemo 2 (default ease, 8 reviews)          |      224 d | 2662 d | 2438 d |
+| Pimsleur graduated interval recall (8 reviews) |      224 d |  230 d |    6 d |
+
+(4,464 headwords, 20 per day, seven days a week. SM-2's eighth review at default ease falls nearly
+seven years out, which is a property of the multiplier, not a defect of the table.)
+
+Preparation guides publish the first column. The second is the one that decides whether a candidate
+finishes, and a 60-day deadline makes the list unreachable under every schedule here: it would need
+75 new words a day to introduce, and would not mature under any of them.
+
+### 50. The mastery rule, measured
+
+The deployed rule adds `5 × confidence` for a correct answer and removes `8 × confidence` for a wrong
+one, clamped to 0-100. The asymmetry is undocumented upstream, and it is exactly quantifiable:
+
+- One wrong answer costs **1.6** correct answers at the same confidence.
+- Mastery is therefore stable at an accuracy of `8 / (8 + 5)` = **61.54%**, independent of confidence.
+- Confidence is self-reported and multiplies both terms, so it scales the speed of movement in both
+  directions without moving the break-even point. A learner who reports 5 everywhere reaches full
+  mastery in four answers and loses it in three; one who reports 1 needs twenty and thirteen.
+
+Because mastery drives the intraday schedule's terminal interval, a learner's self-assessment — not
+their measured performance — determines whether a mature word returns in fifteen days or thirty.
+
+### 51. What the API publishes from Part VIII
+
+Nine endpoints, all `GET`, all deterministic: `/v1/retention` (index), `/v1/retention/schedules` and
+`/v1/retention/schedules/:id` (catalogue and one scored schedule), `/v1/retention/curve` (the
+equation, the observations and the residuals), `/v1/retention/plan` (a dated calendar for one item),
+`/v1/retention/workload` (the simulation), `/v1/retention/compare` (the divergence survey),
+`/v1/retention/libraries` (the word lists), `/v1/retention/coverage` (first pass, maturity and
+deadline feasibility) and `/v1/retention/mastery` (the rule replayed).
+
+Nothing from the upstream is redistributed. No word list, no audio, no user data and no application
+code is published: what is published is seven interval arrays, three headword counts, twenty-two
+scene sizes and one arithmetic rule, each with a URL at which it can be verified.
+
+### 52. Threats to validity (Part VIII)
+
+- **The curve is the wrong instrument, used consistently.** Ebbinghaus measured savings on nonsense
+  syllables in one subject. It is used here only as a fixed yardstick applied identically to every
+  schedule, so it supports _comparative_ claims and not absolute ones. No response reports a
+  probability that a learner will recall a word, and none should be read as doing so.
+- **`growth` is an assumption.** Section 47 measures the sensitivity across a fivefold range and
+  reports where the ranking flips. Any claim that depends on a single value of `growth` is not
+  supported by this dataset.
+- **Terminal rules are extrapolation.** Beyond its published intervals a schedule is being _inferred_
+  from a rule its source states in prose. The comparison endpoint therefore refuses to extrapolate at
+  all, and every scored response says which reviews are published and which are inferred.
+- **One deployment.** The two deployed schedules come from a single application. They demonstrate
+  that internal inconsistency happens; they do not establish how often it happens across the market.
+  The comparison class exists to keep that distinction visible.
+- **Snapshot lag.** The upstream is a live repository. CI re-downloads the two source files on every
+  run and fails if the arrays this repository publishes are no longer present in them verbatim, so
+  drift is detected rather than assumed away, but the catalogue is still a snapshot.
+- **Word-list counts are not comparable.** The three headword totals use three unstated inclusion
+  rules and three unstated lemmatisations. `/v1/retention/libraries` says so in its `meta`, and the
+  only internal check any of them permits — that the 22 published Zhenjing scene sizes sum to the
+  published total of 3,674 — is executed by the test suite.
+- **Calendar arithmetic is idealised.** Study days are placed on the first `daysPerWeek` days of each
+  seven-day block, reviews are never deferred to the next study day, and no schedule in the catalogue
+  says what its own implementation does about either. Real queues are lumpier than the simulation.
+
+### 53. Reproducing Part VIII
+
+```bash
+# The two files the deployed schedules were read from.
+curl -sL "https://api.github.com/repos/Iamdacai/ielts-vocab-system/git/trees/HEAD?recursive=1" -o tree.json
+# backend/spaced-repetition-algorithm.js -> the intraday array and the mastery rule
+# REVIEW_STRATEGY_UPDATE.md              -> the two daily arrays and the March 2026 change
+
+# The catalogue is a transcription, not an extraction, so it is verified rather than regenerated:
+npm test          # refits the curve, checks the residuals, and validates the catalogue invariants
+```
+
+Continuous integration performs the upstream check on every run: it downloads the two blobs by SHA
+and fails if `baseIntervals`, the mastery reward and penalty, or the current `REVIEW_STAGES` array
+are no longer present verbatim. Every table in Part VIII can be regenerated from a running instance:
+
+```bash
+curl -s "http://localhost:3000/v1/retention/schedules?growth=2"
+curl -s "http://localhost:3000/v1/retention/compare?a=ielts-app-daily-2026-03&b=ielts-app-daily-current"
+curl -s "http://localhost:3000/v1/retention/coverage?library=cambridge-1-18-app&schedule=ielts-app-daily-current&newPerDay=20"
+```

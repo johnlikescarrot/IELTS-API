@@ -7,6 +7,7 @@ import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { RAW_SCORE_MODULES } from '../data/rawScores.js';
+import { REVIEW_SCHEDULES, vocabularyLibraries } from '../data/retention.js';
 import { testcenterStats } from '../data/testcenter.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
@@ -24,6 +25,7 @@ function datasetSummary(): Record<string, number> {
   const materials = materialsStats();
   const archive = archiveStats();
   const testcenter = testcenterStats();
+  const libraries = vocabularyLibraries();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -43,6 +45,13 @@ function datasetSummary(): Record<string, number> {
     testcenterGroups: testcenter.taxonomy.listening.groups + testcenter.taxonomy.reading.groups,
     testcenterTaggedQuestions:
       testcenter.taxonomy.listening.questions + testcenter.taxonomy.reading.questions,
+    reviewSchedules: REVIEW_SCHEDULES.length,
+    reviewScheduleIntervals: REVIEW_SCHEDULES.reduce(
+      (total, schedule) => total + schedule.intervalsMinutes.length,
+      0,
+    ),
+    vocabularyLibraries: libraries.length,
+    vocabularyLibraryWords: libraries.reduce((total, library) => total + library.words, 0),
   };
 }
 
@@ -116,6 +125,7 @@ export function createMetaRoutes(
           'archive-index',
           'raw-score-tables',
           'testcenter-index',
+          'review-schedules',
         ],
       },
     };

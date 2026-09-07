@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.4.0
-date-released: '2026-09-05'
+version: 1.5.0
+date-released: '2026-09-07'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
@@ -24,7 +24,14 @@ abstract: >-
   writing, a Cambridge holdings matrix, 1,099 hand-tagged question groups
   carrying
   canonical question type, teaching scene and difficulty for 5,408 questions,
-  and the centre's production raw-score-to-band calibration. Deterministic analysis tools profile any text for Flesch readability,
+  and the centre's production raw-score-to-band calibration, and a retention
+  layer that publishes seven spaced-repetition review schedules as data - two of
+  them read out of a single deployed IELTS vocabulary application, where they
+  disagree with each other at every one of their eight reviews - and scores each
+  against Ebbinghaus's own 1885 retention equation, refitted to his seven
+  published observations on every request, with an exhaustive survey of the
+  disagreement between schedules and an exact simulation of the daily review
+  workload each one generates. Deterministic analysis tools profile any text for Flesch readability,
   lexical diversity and Cambridge-headword coverage, and compose the datasets
   into a week-by-week study plan towards a target band. Every endpoint is free
   of charge,
@@ -51,6 +58,11 @@ keywords:
   - mock exam
   - test center
   - score calibration
+  - spaced repetition
+  - forgetting curve
+  - Ebbinghaus
+  - review scheduling
+  - vocabulary learning
   - CEFR
   - open data
   - REST API
@@ -118,6 +130,41 @@ references:
     title: 'IELTS band descriptors'
     url: 'https://www.ielts.org/for-organisations/ielts-scoring-in-detail'
     year: 2025
+  - type: software
+    authors:
+      - name: 'Iamdacai'
+    title: 'ielts-vocab-system: a deployed IELTS vocabulary learning system with spaced repetition'
+    url: 'https://github.com/Iamdacai/ielts-vocab-system'
+    year: 2026
+  - type: book
+    authors:
+      - family-names: 'Ebbinghaus'
+        given-names: 'Hermann'
+    title: 'Memory: a contribution to experimental psychology'
+    publisher:
+      name: 'Teachers College, Columbia University'
+    year: 1885
+    url: 'https://psychclassics.yorku.ca/Ebbinghaus/memory7.htm'
+  - type: article
+    authors:
+      - family-names: 'Cepeda'
+        given-names: 'Nicholas J.'
+      - family-names: 'Vul'
+        given-names: 'Edward'
+      - family-names: 'Rohrer'
+        given-names: 'Doug'
+      - family-names: 'Wixted'
+        given-names: 'John T.'
+      - family-names: 'Pashler'
+        given-names: 'Harold'
+    title: 'Spacing effects in learning: a temporal ridgeline of optimal retention'
+    journal: 'Psychological Science'
+    volume: 19
+    issue: 11
+    start: 1095
+    end: 1102
+    year: 2008
+    doi: '10.1111/j.1467-9280.2008.02209.x'
   - type: article
     authors:
       - family-names: 'Coxhead'
@@ -136,7 +183,7 @@ preferred-citation:
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.4.0
+  version: 1.5.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:

@@ -1198,6 +1198,264 @@ export type TestcenterStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Retention (spaced repetition)                                              */
+/* -------------------------------------------------------------------------- */
+
+/** How a review schedule came to be recorded here. */
+export type ScheduleProvenance =
+  /** Transcribed from the peer-reviewed or archival publication that defines it. */
+  | 'published-algorithm'
+  /** The out-of-the-box configuration of a widely deployed application. */
+  | 'shipped-default'
+  /** Read out of the source code of a running IELTS vocabulary application. */
+  | 'deployed-implementation';
+
+/** Design lineage of a review schedule. */
+export type ScheduleFamily =
+  'ebbinghaus-curve' | 'leitner-box' | 'supermemo' | 'graduated-interval-recall' | 'app-default';
+
+/** What a schedule does once its published intervals are exhausted. */
+export type ScheduleTerminal =
+  /** Repeat the final published interval for ever. */
+  | { readonly kind: 'repeat-last' }
+  /** Multiply the previous interval by a constant ease factor. */
+  | { readonly kind: 'multiply'; readonly factor: number }
+  /**
+   * Scale the final published interval by a mastery score in `[0, 100]`:
+   * `interval = baseMinutes * (1 + mastery / 100)`.
+   */
+  | { readonly kind: 'mastery-scaled'; readonly baseMinutes: number; readonly maxFactor: number };
+
+/** A published or deployed spaced-repetition review schedule. */
+export type ReviewSchedule = {
+  /** Stable identifier used in URLs. */
+  id: string;
+  /** Human-readable name. */
+  name: string;
+  /** Design lineage. */
+  family: ScheduleFamily;
+  /** How the schedule was obtained. */
+  provenance: ScheduleProvenance;
+  /** Year the schedule was published or the year of the commit it was read from. */
+  year: number;
+  /** Where the schedule can be verified. */
+  sourceUrl: string;
+  /** The unit the source itself states the intervals in. */
+  publishedUnit: 'seconds' | 'minutes' | 'days';
+  /**
+   * Gap before each review, in minutes. Index 0 is the gap between first
+   * learning the item and its first review, so a schedule that reviews on the
+   * following day starts with `1440`.
+   */
+  intervalsMinutes: readonly number[];
+  /** Behaviour after the last published interval. */
+  terminal: ScheduleTerminal;
+  /** What the schedule is for and what is known about it. */
+  note: string;
+};
+
+/** One review in a schedule, with the timing the schedule implies. */
+export type ScheduleStage = {
+  /** Zero-based review index. */
+  review: number;
+  /** Gap before this review, in minutes. */
+  intervalMinutes: number;
+  /** Time from first learning the item to this review, in minutes. */
+  elapsedMinutes: number;
+  /** {@link elapsedMinutes} expressed in days, rounded to two decimals. */
+  elapsedDays: number;
+  /** Calendar day the review lands on, counting the learning day as day 0. */
+  calendarDay: number;
+  /** Whether the review happens on the same calendar day as learning. */
+  sameDay: boolean;
+};
+
+/** Ebbinghaus's own retention function and the data it was fitted to. */
+export type RetentionCurveModel = {
+  /** Stable identifier. */
+  id: string;
+  /** Human-readable name. */
+  name: string;
+  /** The equation, written the way Ebbinghaus wrote it. */
+  formula: string;
+  /** Constant `k`. */
+  k: number;
+  /** Constant `c`. */
+  c: number;
+  /** Where the equation and the observations are published. */
+  sourceUrl: string;
+  /** Ebbinghaus's seven retention (savings) observations. */
+  observations: readonly { minutes: number; label: string; savings: number }[];
+  /** Caveats a user of the curve has to carry. */
+  note: string;
+};
+
+/** Predicted retention at one scheduled review. */
+export type RetentionPoint = {
+  /** Zero-based review index. */
+  review: number;
+  /** Gap before this review, in minutes. */
+  intervalMinutes: number;
+  /** Time from learning to this review, in minutes. */
+  elapsedMinutes: number;
+  /** Consolidation multiplier applied to the elapsed gap for this review. */
+  stabilityFactor: number;
+  /** Predicted retention in `[0, 1]`, rounded to four decimals. */
+  retention: number;
+};
+
+/** Predicted-retention profile of a whole schedule. */
+export type RetentionProfile = {
+  /** Schedule the profile describes. */
+  scheduleId: string;
+  /** Assumed stability multiplier per successful review. */
+  stabilityGrowth: number;
+  /** Retention predicted at each scheduled review. */
+  points: readonly RetentionPoint[];
+  /** Lowest predicted retention across the schedule. */
+  floor: number;
+  /** Highest predicted retention across the schedule. */
+  ceiling: number;
+  /** Mean predicted retention. */
+  mean: number;
+  /** Population standard deviation of the predicted retentions. */
+  standardDeviation: number;
+  /**
+   * Coefficient of variation, `standardDeviation / mean`. A schedule designed
+   * around a constant target retention drives this towards zero.
+   */
+  coefficientOfVariation: number;
+  /** `1 - coefficientOfVariation`, clamped to `[0, 1]`. */
+  uniformity: number;
+};
+
+/** One day of a simulated review workload. */
+export type WorkloadDay = {
+  /** Zero-based day index. */
+  day: number;
+  /** ISO date of the day. */
+  date: string;
+  /** Whether new words are introduced on this day. */
+  studyDay: boolean;
+  /** New words introduced. */
+  newWords: number;
+  /** Reviews falling due. */
+  reviews: number;
+  /** `newWords + reviews`. */
+  total: number;
+};
+
+/** Result of simulating a schedule over a horizon. */
+export type WorkloadSimulation = {
+  /** Schedule that was simulated. */
+  scheduleId: string;
+  /** New words introduced per study day. */
+  newPerDay: number;
+  /** Study days per week. */
+  daysPerWeek: number;
+  /** Horizon in days. */
+  days: number;
+  /** Per-day breakdown. */
+  timeline: readonly WorkloadDay[];
+  /** Total new words introduced. */
+  totalNewWords: number;
+  /** Total review events falling inside the horizon. */
+  totalReviews: number;
+  /** Busiest day of the horizon. */
+  peak: { day: number; date: string; total: number };
+  /** Mean daily total over the horizon. */
+  meanDailyTotal: number;
+  /**
+   * Reviews the schedule demands per word once every stage has fired, i.e. the
+   * length of the schedule.
+   */
+  reviewsPerWord: number;
+  /**
+   * Steady-state daily total once the pipeline is full: the load a learner
+   * settles at if they keep introducing `newPerDay` words for ever.
+   */
+  steadyStateDailyTotal: number;
+  /** First day on which the steady state is reached, or `null` if never. */
+  steadyStateDay: number | null;
+};
+
+/** Divergence between two schedules at one review index. */
+export type ScheduleDivergence = {
+  /** Zero-based review index. */
+  review: number;
+  /** Calendar day the first schedule reviews on, or `null` past its end. */
+  a: number | null;
+  /** Calendar day the second schedule reviews on, or `null` past its end. */
+  b: number | null;
+  /** `a - b` when both are defined. */
+  difference: number | null;
+  /** Whether both schedules review on the same calendar day. */
+  agrees: boolean;
+};
+
+/** A vocabulary list an IELTS learner is asked to work through. */
+export type VocabularyLibrary = {
+  /** Stable identifier. */
+  id: string;
+  /** Name as the source gives it. */
+  name: string;
+  /** English gloss of the name. */
+  englishName: string;
+  /** Number of headwords. */
+  words: number;
+  /** How the list is partitioned. */
+  partition: string;
+  /** Number of partitions. */
+  partitions: number;
+  /** Where the count can be verified. */
+  sourceUrl: string;
+  /** How the count was obtained. */
+  provenance: 'deployed-implementation' | 'derived-from-this-api';
+  /** Optional per-partition sizes, when the source publishes them. */
+  breakdown: readonly { id: string; name: string; englishName: string; words: number }[] | null;
+  /** Caveats. */
+  note: string;
+};
+
+/** The mastery-score update rule read out of a deployed IELTS application. */
+export type MasteryRule = {
+  /** Stable identifier. */
+  id: string;
+  /** Where the rule can be verified. */
+  sourceUrl: string;
+  /** Points added per unit of confidence when the answer is correct. */
+  rewardPerConfidence: number;
+  /** Points removed per unit of confidence when the answer is wrong. */
+  penaltyPerConfidence: number;
+  /** Inclusive confidence range the application accepts. */
+  confidenceRange: readonly [number, number];
+  /** Inclusive mastery range. */
+  masteryRange: readonly [number, number];
+  /** `penaltyPerConfidence / rewardPerConfidence`. */
+  penaltyRatio: number;
+  /** What the rule does and does not do. */
+  note: string;
+};
+
+/** One step of a mastery-score trace. */
+export type MasteryStep = {
+  /** One-based answer index. */
+  step: number;
+  /** Whether the answer was correct. */
+  correct: boolean;
+  /** Self-reported confidence. */
+  confidence: number;
+  /** Mastery before the answer. */
+  before: number;
+  /** Signed change applied. */
+  change: number;
+  /** Mastery after the answer, clamped to the mastery range. */
+  after: number;
+  /** Points lost to clamping at 0 or 100. */
+  clamped: number;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

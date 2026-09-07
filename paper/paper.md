@@ -9,13 +9,15 @@ tags:
   - item types
   - open data
   - REST API
+  - spaced repetition
+  - forgetting curve
 authors:
   - name: The IELTS API contributors
     affiliation: 1
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 5 September 2026
+date: 7 September 2026
 bibliography: paper.bib
 ---
 
@@ -37,7 +39,10 @@ cross-linked to the task banks; a structure and readability index of
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; and a retention layer that publishes seven spaced-repetition review schedules as data —
+two of them read out of a single deployed IELTS vocabulary application, where they disagree at every
+review — and scores each against Ebbinghaus's own retention function [@ebbinghaus1885], refitted to
+his seven published observations on every request.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -163,6 +168,37 @@ combined, with the multiple-choice share (8.4% against 17.2%) marking where the 
 genuinely differ. A drill composer turns the taxonomy back into teaching, assembling deterministic
 timed drills from the tagged groups under any filter combination.
 
+**Spaced-repetition schedules.** Every IELTS vocabulary application ships a review schedule and
+justifies it by invoking "the Ebbinghaus forgetting curve"; almost none cites it, and the schedules
+are not the same schedule. A sixth collection [@ieltsvocabsystem] — a deployed WeChat mini-programme
+with a Node/SQLite backend serving two IELTS word lists — contains two of them, and they disagree
+with each other at every one of their eight reviews. A third array replaced one of the two in March 2026. The retention layer records all three alongside four published schedules (Leitner 1972;
+SuperMemo 2 at default ease [@wozniak1990]; Anki's shipped deck defaults; Pimsleur's graduated
+interval recall [@pimsleur1967]), each in a single canonical unit with the unit its source states,
+the year, a verification URL and an explicit terminal rule for the intervals past the published
+list.
+
+Each schedule is scored by evaluating Ebbinghaus's own equation at every review, under an explicit,
+overridable assumption that each successful review multiplies memory stability by a constant. The
+equation is refitted to Ebbinghaus's seven savings observations on every request — root-mean-square
+error 1.71 percentage points, largest residual 3.29 — which is a check no application invoking the
+curve performs. The headline statistic is the coefficient of variation of predicted retention across
+reviews rather than its mean, because a schedule designed around a constant target retention drives
+it towards zero.
+
+Three results follow. First, the two schedules inside the single deployment agree at **none** of
+their eight reviews, and the March 2026 replacement agrees with the array it replaced at none of
+theirs, diverging by up to thirty days: a learner who updated the application had every scheduled
+review silently moved by up to a month. Second, the March 2026 change bought uniformity at the cost
+of retention — uniformity rises from 0.483 to 0.936 while mean predicted retention falls from 0.422
+to 0.319, and the direction of both effects is stable across a fivefold range of the modelling
+assumption, while the upstream changelog claims only the first. Third, an exact workload simulation
+(the load on day _d_ is the sum over stages of the words introduced on `d − offset`, so it costs
+`O(days × reviews)`) shows that twenty new words a day settles at 180 review items a day, and that
+the 4,464-headword list the application ships takes 224 days to introduce and 334 days to mature —
+numbers no preparation guide publishes and no schedule states. Optimal-gap guidance from the spacing
+literature [@cepeda2008] is reported alongside any fixed schedule when a test date is supplied.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -192,7 +228,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (727 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -201,7 +237,10 @@ study-materials index and the grey-literature archive index from the upstream tr
 derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit), and
 revalidates the internal consistency of the practice-test index (question counts, type normalisation
 and provenance) and of the archive index (facet totals, volume arithmetic, per-essay statistics),
-failing if the committed data has drifted — which guards against silent data rot.
+failing if the committed data has drifted — which guards against silent data rot. The
+spaced-repetition catalogue is a transcription rather than a derivation and is verified accordingly:
+CI downloads the two upstream files the deployed schedules were read from and fails if the interval
+arrays this work publishes are no longer present in them verbatim.
 
 # Availability
 
@@ -213,8 +252,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
-assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, on the
+grey-literature archive assembled by `msneloy`, on the mock-exam test centre assembled by
+`wanli4473`, and on the deployed vocabulary system assembled by `Iamdacai`; all are cited in `CITATION.cff` and in every
 response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.

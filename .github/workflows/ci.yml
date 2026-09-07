@@ -360,6 +360,48 @@ jobs:
           )
           PY
 
+      - name: Verify the deployed review schedules against their upstream source
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/Iamdacai/ielts-vocab-system/git/trees/HEAD?recursive=1" \
+            -o /tmp/srs-tree.json
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          import urllib.request
+
+          token = os.environ.get('GITHUB_TOKEN')
+          blobs = {entry['path']: entry['sha'] for entry in json.load(
+              open('/tmp/srs-tree.json'))['tree'] if entry.get('type') == 'blob'}
+          sources = {}
+          for path in ('backend/spaced-repetition-algorithm.js', 'REVIEW_STRATEGY_UPDATE.md'):
+              headers = {'Accept': 'application/vnd.github.v3.raw'}
+              if token:
+                  headers['Authorization'] = f'Bearer {token}'
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/Iamdacai/ielts-vocab-system/git/blobs/{blobs[path]}",
+                  headers=headers)
+              with urllib.request.urlopen(request) as response:
+                  sources[path] = response.read().decode('utf-8')
+
+          def digits(text):
+              return [int(token) for token in re.findall(r'-?\d+', text)]
+
+          algorithm = sources['backend/spaced-repetition-algorithm.js']
+          intraday = digits(re.search(r'baseIntervals\s*=\s*\[([^\]]*)\]', algorithm).group(1))
+          assert intraday == [5, 30, 720, 1440, 2880, 5760, 10080, 21600], intraday
+          assert 'confidence * 5' in algorithm, 'mastery reward changed upstream'
+          assert '-confidence * 8' in algorithm, 'mastery penalty changed upstream'
+
+          change = sources['REVIEW_STRATEGY_UPDATE.md']
+          assert '[1, 2, 4, 7, 15, 21, 30, 30]' in change, 'current daily schedule changed upstream'
+          print('deployed schedules still match the catalogue in src/data/retention.ts')
+          PY
+
       - name: Check the practice-test index for internal consistency
         run: |
           python3 - <<'PY'

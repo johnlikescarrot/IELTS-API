@@ -1,6 +1,6 @@
 {
   "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research. The datasets include a mock-exam test-centre index derived from the YYSD IELTS online mock-exam test center.",
+  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research. The datasets include a mock-exam test-centre index derived from the YYSD IELTS online mock-exam test center. They also include a retention layer that publishes the spaced-repetition review schedules deployed IELTS vocabulary applications run, scored against the Ebbinghaus retention function.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
@@ -33,7 +33,12 @@
     "test equating",
     "mock exam",
     "test center",
-    "score calibration"
+    "score calibration",
+    "spaced repetition",
+    "forgetting curve",
+    "Ebbinghaus",
+    "review scheduling",
+    "vocabulary learning"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -59,6 +64,11 @@
     },
     {
       "identifier": "https://github.com/wanli4473/yysd-testcenter",
+      "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/Iamdacai/ielts-vocab-system",
       "relation": "isDerivedFrom",
       "scheme": "url"
     }

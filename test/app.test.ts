@@ -75,7 +75,11 @@ describe('request handling', () => {
   });
 
   it('leaves small responses uncompressed', async () => {
-    const response = await server.request('/health', { headers: { 'accept-encoding': 'gzip' } });
+    // A response under GZIP_THRESHOLD_BYTES is sent verbatim; the score
+    // calculators are the only endpoints whose bodies are reliably that small.
+    const response = await server.request('/v1/scores/overall?listening=7&reading=7&writing=7&speaking=7', {
+      headers: { 'accept-encoding': 'gzip' },
+    });
     expect(response.headers.get('content-encoding')).toBeNull();
   });
 

@@ -22,6 +22,7 @@ import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
+import { SCHEDULE_FAMILIES, SCHEDULE_IDS, SCHEDULE_PROVENANCES } from '../data/retention.js';
 import { TASK_MODULES } from '../data/tasks.js';
 
 import type { RouteDefinition } from './route.js';
@@ -42,8 +43,174 @@ const OFFSET = {
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
 
+/** Modelling knobs shared by the scored retention endpoints. */
+const RETENTION_MODEL: JsonValue[] = [
+  {
+    name: 'reviews',
+    in: 'query',
+    description: 'Reviews to expand the schedule to, applying its terminal rule past the published list.',
+    schema: { type: 'integer', minimum: 1, maximum: 24, default: 8 },
+  },
+  {
+    name: 'growth',
+    in: 'query',
+    description:
+      'Assumed stability multiplier per successful review. 1 removes the assumption and scores the raw Ebbinghaus curve.',
+    schema: { type: 'number', minimum: 1, maximum: 10, default: 2 },
+  },
+  {
+    name: 'mastery',
+    in: 'query',
+    description: 'Mastery score used by mastery-scaled terminal rules.',
+    schema: { type: 'integer', minimum: 0, maximum: 100, default: 100 },
+  },
+];
+
+/** The schedule selector, required by the endpoints that apply one. */
+const SCHEDULE = {
+  name: 'schedule',
+  in: 'query',
+  required: true,
+  description: 'Schedule identifier.',
+  schema: { type: 'string', enum: [...SCHEDULE_IDS] },
+};
+
+/** Intake-rate parameters shared by the workload and coverage endpoints. */
+const INTAKE: JsonValue[] = [
+  {
+    name: 'newPerDay',
+    in: 'query',
+    description: 'New words introduced per study day.',
+    schema: { type: 'integer', minimum: 1, maximum: 200, default: 20 },
+  },
+  {
+    name: 'daysPerWeek',
+    in: 'query',
+    description: 'Study days per seven-day block.',
+    schema: { type: 'integer', minimum: 1, maximum: 7, default: 7 },
+  },
+];
+
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
+  '/v1/retention/schedules': [
+    {
+      name: 'family',
+      in: 'query',
+      description: 'Restrict to one design lineage.',
+      schema: { type: 'string', enum: [...SCHEDULE_FAMILIES] },
+    },
+    {
+      name: 'provenance',
+      in: 'query',
+      description: 'Restrict to one provenance class.',
+      schema: { type: 'string', enum: [...SCHEDULE_PROVENANCES] },
+    },
+    ...RETENTION_MODEL,
+  ],
+  '/v1/retention/schedules/:id': RETENTION_MODEL,
+  '/v1/retention/curve': [
+    {
+      name: 'at',
+      in: 'query',
+      description: 'Comma-separated times since learning, in minutes (at most 100 values).',
+      schema: { type: 'string', example: '19,63,1440,44640' },
+    },
+  ],
+  '/v1/retention/plan': [
+    SCHEDULE,
+    {
+      name: 'start',
+      in: 'query',
+      description: 'ISO date the item is first learned. Defaults to today.',
+      schema: { type: 'string', format: 'date' },
+    },
+    {
+      name: 'examIn',
+      in: 'query',
+      description: 'Days until the test; adds the Cepeda et al. (2008) optimal-gap band.',
+      schema: { type: 'integer', minimum: 1, maximum: 730 },
+    },
+    ...RETENTION_MODEL,
+  ],
+  '/v1/retention/workload': [
+    SCHEDULE,
+    ...INTAKE,
+    {
+      name: 'days',
+      in: 'query',
+      description: 'Horizon in days.',
+      schema: { type: 'integer', minimum: 1, maximum: 365, default: 90 },
+    },
+    {
+      name: 'start',
+      in: 'query',
+      description: 'ISO date of day zero. Defaults to today.',
+      schema: { type: 'string', format: 'date' },
+    },
+    ...RETENTION_MODEL,
+  ],
+  '/v1/retention/compare': [
+    {
+      name: 'a',
+      in: 'query',
+      required: true,
+      description: 'First schedule identifier.',
+      schema: { type: 'string', enum: [...SCHEDULE_IDS] },
+    },
+    {
+      name: 'b',
+      in: 'query',
+      required: true,
+      description: 'Second schedule identifier; must differ from `a`.',
+      schema: { type: 'string', enum: [...SCHEDULE_IDS] },
+    },
+    {
+      name: 'mastery',
+      in: 'query',
+      description: 'Mastery score used by mastery-scaled terminal rules.',
+      schema: { type: 'integer', minimum: 0, maximum: 100, default: 100 },
+    },
+  ],
+  '/v1/retention/coverage': [
+    SCHEDULE,
+    {
+      name: 'library',
+      in: 'query',
+      required: true,
+      description: 'Vocabulary list identifier, from `/v1/retention/libraries`.',
+      schema: { type: 'string', example: 'cambridge-1-22-api' },
+    },
+    ...INTAKE,
+    {
+      name: 'deadline',
+      in: 'query',
+      description: 'Days until the test; adds a feasibility analysis.',
+      schema: { type: 'integer', minimum: 1, maximum: 1095 },
+    },
+    ...RETENTION_MODEL,
+  ],
+  '/v1/retention/mastery': [
+    {
+      name: 'answers',
+      in: 'query',
+      required: true,
+      description: 'Comma-separated answers, 1/0 or correct/wrong (at most 100).',
+      schema: { type: 'string', example: '1,1,0,1,1' },
+    },
+    {
+      name: 'confidence',
+      in: 'query',
+      description: 'One self-reported confidence for every answer, or one per answer.',
+      schema: { type: 'string', default: '3', example: '4' },
+    },
+    {
+      name: 'initial',
+      in: 'query',
+      description: 'Mastery before the first answer.',
+      schema: { type: 'integer', minimum: 0, maximum: 100, default: 0 },
+    },
+  ],
   '/v1/vocabulary': [
     QUERY,
     {
@@ -586,7 +753,9 @@ export function openApiDocument(
         'an index of the open IELTS research corpus, an index of a 2,385-file',
         'self-study materials collection, and a mock-exam test-centre index with the',
         'Cambridge 4-21 holdings, 1,099 hand-tagged question groups and a production',
-        'raw-score-to-band calibration. The toolkit additionally scores any text',
+        'raw-score-to-band calibration, and a catalogue of the spaced-repetition',
+        'schedules deployed IELTS vocabulary applications run, scored against',
+        "Ebbinghaus's own retention function. The toolkit additionally scores any text",
         '(readability and essay profile) and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',

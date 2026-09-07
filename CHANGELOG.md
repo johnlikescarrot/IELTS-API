@@ -6,6 +6,80 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-07
+
+The **retention layer**: the API now publishes the spaced-repetition schedules IELTS vocabulary
+applications actually run, and scores them against the forgetting curve they all invoke. Every one of
+those applications ships a review schedule justified with the same three words — "the Ebbinghaus
+forgetting curve" — and almost none of them cites it or agrees with the next one. The upstream
+surveyed for this release ([`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system),
+a deployed WeChat mini-programme with a Node/SQLite backend serving two IELTS word lists) contains
+_two_ schedules that disagree with each other at every stage, and replaced one of them in March 2026
+with a third that agrees with neither. This release records all three as data, alongside four
+published schedules from the literature, and measures the disagreement exhaustively. The API remains
+free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **The schedule catalogue** (`GET /v1/retention/schedules`): seven review schedules from four design
+  lineages — the two schedules of the deployed IELTS application plus the array that replaced one of
+  them, the Leitner five-box system (1972), SuperMemo 2 at default ease (1987), Anki's shipped deck
+  defaults, and Pimsleur's eleven-step graduated interval recall (1967). Each carries the unit its
+  source states the intervals in, the year, a URL at which the interval list can be verified, and a
+  terminal rule describing what the schedule does past its published intervals (`repeat-last`,
+  `multiply`, `mastery-scaled`).
+- **The forgetting curve, refitted on every request** (`GET /v1/retention/curve`): Ebbinghaus's own
+  retention equation, `b = 100k / ((log10 t)^c + k)` with `k = 1.84` and `c = 1.25`, published
+  together with the seven savings observations he fitted it to. The API recomputes the residuals on
+  every request: the largest is 3.29 percentage points and the root-mean-square error is 1.71, which
+  the test suite asserts. Quoting "the Ebbinghaus curve" is now checkable against the curve.
+- **Predicted-retention scoring**: every schedule is scored by evaluating the curve at each of its
+  reviews, and summarised by the **coefficient of variation** of the resulting retentions rather
+  than their mean — a schedule designed around a constant target retention drives it towards zero,
+  and one assembled from round numbers does not. The consolidation assumption the scoring needs is
+  exposed as `growth`, reported in the `meta` of every scored response, and can be removed entirely
+  with `growth=1`.
+- **Measured disagreement between schedules** (`GET /v1/retention/compare`): the same exhaustive
+  treatment the raw-score tables get. The two arrays that shipped in the deployed application before
+  and after March 2026 agree at **0 of 8** reviews and diverge by up to **30 days**; Leitner and the
+  current deployed array agree at 3 of 5. Rows where only one schedule publishes an interval are
+  reported as `null` rather than guessed, and excluded from the agreement rate.
+- **Workload simulation** (`GET /v1/retention/workload`): the question a schedule never answers.
+  Twenty new words a day under the current deployed schedule settles at **180 items a day** once the
+  pipeline fills, on day 110. The simulation is exact rather than sampled and costs
+  `O(days x reviews)`, and it reports the closed-form steady state
+  `newPerDay x daysPerWeek x (1 + reviews) / 7` alongside the day-by-day timeline.
+- **Coverage and deadlines** (`GET /v1/retention/coverage`): how long a word list takes to introduce
+  and, separately, how long it takes to _mature_. The 4,464-word Cambridge list the deployed
+  application ships takes 224 days to introduce at twenty words a day and **334 days to mature**; a
+  60-day deadline would need 75 new words a day and still would not mature in time.
+- **The word lists** (`GET /v1/retention/libraries`): the three lists these schedules are pointed at,
+  with their published sizes — the deployed application's Cambridge 1-18 (4,464 headwords), Liu
+  Hongbo's scene-grouped _IELTS Vocabulary Zhenjing_ (3,674 headwords across 22 scene groups, whose
+  published per-scene sizes sum exactly to the published total), and this API's own Cambridge 1-22
+  extraction computed live from `data/vocabulary.json`. The response says plainly that the three
+  counts are not comparable, because none of the sources states its lemmatisation.
+- **The deployed mastery rule** (`GET /v1/retention/mastery`): the reinforcement rule the application
+  feeds its mastery-scaled schedule with, replayed over any sequence of answers. Its reward and
+  penalty are asymmetric and the asymmetry is undocumented upstream: one wrong answer costs exactly
+  1.6 correct answers at the same confidence, so mastery is stable at an accuracy of 61.54%.
+- **A dated review calendar** (`GET /v1/retention/plan`), to the second, for any schedule and any
+  learning date; with `examIn`, it reports the Cepeda et al. (2008) optimal-gap band beside the fixed
+  schedule, which is the one result in the literature no fixed interval list can express.
+- `RESEARCH.md` Part VIII: the missing-schedule problem, the field survey of the deployed
+  application, the construction of the catalogue, the retention scoring and its sensitivity to the
+  consolidation assumption, the disagreement survey, the workload analysis, and the threats to
+  validity.
+- CI now verifies the transcription rather than a derivation: it downloads the two upstream files the
+  deployed schedules were read from and fails if the interval arrays this repository publishes are no
+  longer present in them verbatim.
+- The service index, `/health`, `/docs` and `/openapi.json` now report the retention layer.
+
+### Changed
+
+- `/health` now returns a body above the gzip threshold, so it is compressed for clients that accept
+  gzip. Behaviour is unchanged for clients that do not.
+
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses
@@ -264,7 +338,8 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.5.0
 [1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
 [1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
 [1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
