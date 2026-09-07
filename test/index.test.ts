@@ -38,6 +38,13 @@ describe('the package entry point', () => {
     expect(api.COMMON_HEADERS['access-control-allow-origin']).toBe('*');
   });
 
+  it('exports the vocabulary-learning layer', () => {
+    expect(typeof api.retentionResult).toBe('function');
+    expect(typeof api.buildReviewSchedule).toBe('function');
+    expect(typeof api.buildQuiz).toBe('function');
+    expect(api.DEFAULT_REVIEW_DAYS).toEqual([1, 2, 4, 7, 15, 30]);
+  });
+
   it('exports the datasets', () => {
     expect(api.BAND_SCALE).toHaveLength(19);
     expect(api.WRITING_TOPICS.length).toBeGreaterThan(90);
