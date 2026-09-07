@@ -21,6 +21,8 @@ export * from './lib/band.js';
 export * from './lib/errors.js';
 export * from './lib/query.js';
 export * from './lib/rawScore.js';
+export * from './lib/review.js';
+export * from './lib/quiz.js';
 export * from './lib/rng.js';
 export * from './lib/route.js';
 export * from './lib/search.js';

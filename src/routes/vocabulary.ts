@@ -10,8 +10,8 @@ import {
   PARTS_OF_SPEECH,
 } from '../data/vocabulary.js';
 import { parseList } from '../lib/search.js';
-import { getEnum, getInt, getIsoDate, getString, toParams } from '../lib/query.js';
-import { badRequest, notFound } from '../lib/errors.js';
+import { getEnum, getInt, getIsoDate, getString, parseVolumeList, toParams } from '../lib/query.js';
+import { notFound } from '../lib/errors.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -21,29 +21,11 @@ const MATCH_MODES = ['contains', 'prefix', 'exact'] as const;
 const SORT_KEYS = ['word', 'length', 'volumes', 'senses'] as const;
 const ORDERS = ['asc', 'desc'] as const;
 
-/** Parse a comma-separated list of Cambridge IELTS volume numbers. */
-function parseVolumes(raw: string | undefined): number[] | undefined {
-  const tokens = parseList(raw, 'volume');
-  if (tokens === undefined) {
-    return undefined;
-  }
-  return tokens.map((token) => {
-    const volume = /^\d{1,2}$/.test(token) ? Number.parseInt(token, 10) : Number.NaN;
-    if (!Number.isInteger(volume) || volume < 1 || volume > 22) {
-      throw badRequest('Parameter "volume" must list volumes between 1 and 22.', {
-        parameter: 'volume',
-        received: token,
-      });
-    }
-    return volume;
-  });
-}
-
 /** Search the vocabulary dataset. */
 function search(context: RouteContext): HandlerResult {
   const params = toParams(context.url);
   const query = getString(params, 'q') ?? getString(params, 'query');
-  const volumes = parseVolumes(getString(params, 'volume'));
+  const volumes = parseVolumeList(getString(params, 'volume'));
   const posTokens = parseList(getString(params, 'pos'), 'pos', PARTS_OF_SPEECH);
   const match = getEnum(params, 'match', MATCH_MODES);
   const sort = getEnum(params, 'sort', SORT_KEYS);
