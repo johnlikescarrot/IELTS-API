@@ -15,7 +15,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 5 September 2026
+date: 7 September 2026
 bibliography: paper.bib
 ---
 
@@ -24,7 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service provides: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -34,13 +34,14 @@ frequency of each family observed in 27,225 practice questions; an original taxo
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of four open IELTS collections, including a grey-literature archive index that
+metadata indexes of open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
 statistics.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
-support — so a response archived today can be re-fetched and diffed years later, which is the
-practical requirement for reproducible corpus and assessment research.
+support for public GET data — so results can be reproduced when the software version, dataset
+snapshot and all explicit inputs are preserved. POST review computations are deterministic too,
+but deliberately use no-store responses rather than shared caches.
 
 # Statement of need
 
@@ -177,22 +178,39 @@ composes the gap between a target band and current component scores into a deter
 week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
 pure functions of their inputs, so their outputs are as reproducible as the datasets.
 
+**Client-owned vocabulary review.** A source-level study of `Iamdacai/ielts-vocab-system`
+[@ieltsvocab2026] found several distinct scheduling representations across its standalone backend
+algorithm, frontend stage wheel, retention utility and README-designated HTTPS entry point. Rather
+than importing unlicensed code or learner data, the API adds original seeded flashcards and a
+transparent, bounded day-level SM-2 adaptation [@wozniak1990]. Clients supply and retain their own
+states. Two side-effect-free POST endpoints compute review transitions and budgeted due queues;
+there are no accounts, shared default users or persisted sessions. Previously successful cards
+remain eligible when due. Algorithm version, dates, rounding, same-day drill conventions, input
+limits and operational caps are explicit. The deck shuffles the entire filtered population before
+pagination, giving non-overlapping pages for a fixed version, seed and filters.
+
+Retrieval practice and spacing motivate this design [@roediger2006; @cepeda2006], but the cited
+findings do not validate these exact intervals for IELTS learners. No learner experiment or
+retention calibration was performed; the scheduler is a reproducible research baseline, not an
+IELTS-band or memory-probability predictor. Implementation fidelity and reproducibility can be
+tested without claiming educational efficacy.
+
 # Design
 
 The service has **zero runtime dependencies**: routing, JSON serialisation, ETag generation and gzip
-compression are implemented directly on `node:http` and `node:zlib`. This removes supply-chain risk,
-keeps cold start under a second, and means the code an auditor reads is the code that runs.
+compression are implemented directly on `node:http` and `node:zlib`. This reduces third-party
+runtime dependencies; it does not eliminate risks in the platform, development tooling or deployment.
 
 Responses use a single envelope, `{ "status", "data", "meta" }`, so any endpoint can be parsed
 uniformly. Collections paginate with `limit` and `offset` and report `total` and `hasMore`; errors
 return a machine-readable code and the offending parameter with its allowed range. The OpenAPI 3.1
-document is generated from the live route table, so documentation cannot drift from the
-implementation. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
+document is generated from the live route table. Contract tests compare its archived snapshot
+with runtime output and validate actual review requests and responses against JSON Schema 2020-12. The `/v1/vocabulary/daily` endpoint is seeded from the calendar date, making it a
 reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite enforces **100% statement, branch, function and line coverage, per executable TypeScript file under `src/`**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -203,19 +221,28 @@ revalidates the internal consistency of the practice-test index (question counts
 and provenance) and of the archive index (facet totals, volume arithmetic, per-essay statistics),
 failing if the committed data has drifted — which guards against silent data rot.
 
+The review tests additionally cover hand-computed trajectories, six-grade ease updates, lapses,
+leap years and UTC/DST boundaries, deterministic replay, immutability, paged permutations, due-queue
+budgets and conservation, invalid and oversized JSON, upload timeouts and privacy headers. The
+coverage claim does not extend to the Python extraction scripts or to learning outcomes.
+
 # Availability
 
 Source, datasets, citation metadata and CI configuration are released at
 <https://github.com/johnlikescarrot/IELTS-API> under the MIT licence for code and CC BY 4.0 for data.
 Citation metadata is published in Citation File Format [@citationfileformat] and CodeMeta
-[@codemeta], and tagged releases are archived on Zenodo [@zenodo], which mints a versioned DOI.
+[@codemeta], with Zenodo-ready deposit metadata [@zenodo]. An actual archive deposit is required
+before claiming a versioned DOI. The previous placeholder DOI was removed, CFF reference types
+were corrected and citation metadata is validated in CI. No DOI assignment, peer review, Google
+Scholar indexing or citation count is claimed for this update.
 
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
 assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
 grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
-response that draws on them. IELTS is a jointly owned trademark of the
+response that draws on them. The vocabulary-review design was informed by the application
+assembled by `Iamdacai`, without copying its code, dictionary data or learner records. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

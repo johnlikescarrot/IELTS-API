@@ -15,6 +15,25 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  citation:
+    name: Validate citation metadata (CFF 1.2.0)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate Citation File Format
+        run: |
+          python -m pip install --disable-pip-version-check cffconvert==2.0.0
+          cffconvert --validate
+
   quality:
     name: Typecheck, lint, format, test (Node ${{ matrix.node }})
     runs-on: ubuntu-latest

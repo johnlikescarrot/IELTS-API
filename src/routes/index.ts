@@ -12,6 +12,7 @@ import { frameworkRoutes } from './frameworks.js';
 import { materialRoutes } from './materials.js';
 import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
+import { reviewRoutes } from './review.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
 import { studyRoutes } from './study.js';
@@ -35,6 +36,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...corpusRoutes,
   ...toolRoutes,
   ...studyRoutes,
+  ...reviewRoutes,
   ...materialRoutes,
   ...archiveRoutes,
   ...testcenterRoutes,

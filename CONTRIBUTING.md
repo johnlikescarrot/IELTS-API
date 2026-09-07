@@ -41,6 +41,17 @@ Useful commands:
    parameters do not.
 3. Add tests: the happy path, every filter, every default, and every error branch.
 4. Update `README.md` (endpoint table, dataset table if the data changed).
+5. Regenerate `docs/openapi.json` with `npm run docs:openapi`. Contract tests compare the archived
+   document with the runtime route table. New request/response schemas belong in the OpenAPI
+   components; add tests against actual HTTP messages, not just schema text.
+
+The two review computations deliberately accept POST JSON without storing anything. Keep all
+other data endpoints GET-only. Do not log request bodies or query strings, add authentication,
+or weaken the 256 KiB body limit, 10-second upload deadline or no-store policy for computations.
+See [docs/REVIEW.md](docs/REVIEW.md) for state invariants and scheduler conventions.
+
+Citation metadata is validated against CFF 1.2.0 in CI (`cffconvert==2.0.0`). Never use placeholder
+DOIs: add a DOI only after an actual archive deposit assigns it.
 
 ## Adding data
 

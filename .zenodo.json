@@ -1,6 +1,6 @@
 {
   "title": "IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research",
-  "description": "Archived release of the IELTS API source code and datasets. Cite this record, or the version-specific DOI, when you use the API or the datasets in research. The datasets include a mock-exam test-centre index derived from the YYSD IELTS online mock-exam test center.",
+  "description": "Zenodo-ready metadata for archiving the IELTS API source code and datasets. Includes reproducible vocabulary flashcards and a stateless SM-2 review baseline with client-owned state. An actual archive record and version-specific DOI must be created before claiming a DOI.",
   "upload_type": "software",
   "access_right": "open",
   "creators": [
@@ -33,7 +33,9 @@
     "test equating",
     "mock exam",
     "test center",
-    "score calibration"
+    "score calibration",
+    "spaced repetition",
+    "retrieval practice"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -60,6 +62,16 @@
     {
       "identifier": "https://github.com/wanli4473/yysd-testcenter",
       "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/Iamdacai/ielts-vocab-system/tree/1f5ad56d664c56ae449dacc7618b6d7f23967a69",
+      "relation": "references",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://super-memory.com/english/ol/sm2.htm",
+      "relation": "references",
       "scheme": "url"
     }
   ]

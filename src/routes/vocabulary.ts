@@ -9,8 +9,9 @@ import {
   randomEntries,
   PARTS_OF_SPEECH,
 } from '../data/vocabulary.js';
+import { createVocabularyDeck } from '../lib/deck.js';
 import { parseList } from '../lib/search.js';
-import { getEnum, getInt, getIsoDate, getString, toParams } from '../lib/query.js';
+import { getEnum, getInt, getIsoDate, getString, requireString, toParams } from '../lib/query.js';
 import { badRequest, notFound } from '../lib/errors.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
@@ -101,6 +102,31 @@ function daily(context: RouteContext): HandlerResult {
   return { data: count === 1 ? (entries[0] as VocabularyEntry) : entries, meta: { date, count } };
 }
 
+/** A page of a reproducibly shuffled vocabulary deck, with unsaved initial states. */
+function deck(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const volumes = parseVolumes(getString(params, 'volume'));
+  const partsOfSpeech = parseList(getString(params, 'pos'), 'pos', PARTS_OF_SPEECH) as
+    PartOfSpeech[] | undefined;
+  return {
+    data: createVocabularyDeck({
+      seed: requireString(params, 'seed'),
+      on: requireString(params, 'on'),
+      limit: getInt(params, 'limit', 1, 50, 10),
+      offset: getInt(params, 'offset', 0, 100000, 0),
+      ...(volumes === undefined ? {} : { volumes }),
+      ...(partsOfSpeech === undefined ? {} : { partsOfSpeech }),
+    }),
+    meta: {
+      algorithm: 'sm2-v1',
+      storage: 'client-owned',
+      volume: volumes ?? null,
+      pos: partsOfSpeech ?? null,
+      note: 'Hide the answer until recall. Source glosses are not translated; null means unavailable. No progress is saved.',
+    },
+  };
+}
+
 /** Look up one headword. */
 function lookup(context: RouteContext): HandlerResult {
   const word = context.params.word as string;
@@ -140,6 +166,13 @@ export const vocabularyRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'A deterministic vocabulary entry for a calendar date.',
     handler: daily,
+  },
+  {
+    method: 'GET',
+    path: '/v1/vocabulary/deck',
+    versioned: true,
+    summary: 'Seeded, non-overlapping vocabulary flashcard pages with client-owned initial review states.',
+    handler: deck,
   },
   {
     method: 'GET',

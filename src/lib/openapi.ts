@@ -24,6 +24,13 @@ import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
 
+import {
+  REVIEW_DATE_SCHEMA,
+  REVIEW_REQUEST_SCHEMAS,
+  REVIEW_RESPONSE_SCHEMAS,
+  REVIEW_SCHEMAS,
+} from './reviewSchemas.js';
+
 import type { RouteDefinition } from './route.js';
 import type { JsonValue } from '../types.js';
 
@@ -82,6 +89,36 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       description: 'Seed; identical seeds return identical samples.',
       schema: { type: 'string' },
     },
+  ],
+  '/v1/vocabulary/deck': [
+    {
+      name: 'seed',
+      in: 'query',
+      required: true,
+      description: 'Use the same seed and filters on every page. Archive the API version too.',
+      schema: { type: 'string', minLength: 1, maxLength: 128 },
+    },
+    {
+      name: 'on',
+      in: 'query',
+      required: true,
+      description: 'Initial due date for the unsaved cards.',
+      schema: REVIEW_DATE_SCHEMA,
+    },
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Comma-separated Cambridge volumes; union within this filter.',
+      schema: { type: 'string', example: '1,2' },
+    },
+    {
+      name: 'pos',
+      in: 'query',
+      description: 'Comma-separated parts of speech; combined with volume by intersection.',
+      schema: { type: 'string', example: 'noun,verb' },
+    },
+    { name: 'limit', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 } },
+    { name: 'offset', in: 'query', schema: { type: 'integer', minimum: 0, maximum: 100000, default: 0 } },
   ],
   '/v1/vocabulary/daily': [
     {
@@ -499,16 +536,24 @@ const ENVELOPE = {
 
 const ERROR = {
   type: 'object',
-  required: ['status', 'error'],
+  required: ['status', 'data', 'meta'],
   properties: {
     status: { type: 'integer' },
-    error: {
+    data: { type: 'null' },
+    meta: {
       type: 'object',
-      required: ['code', 'message'],
+      required: ['error', 'version'],
       properties: {
-        code: { type: 'string' },
-        message: { type: 'string' },
-        details: { type: 'object', additionalProperties: { type: 'string' } },
+        version: { type: 'string' },
+        error: {
+          type: 'object',
+          required: ['code', 'message', 'details'],
+          properties: {
+            code: { type: 'string' },
+            message: { type: 'string' },
+            details: { type: 'object', additionalProperties: { type: 'string' } },
+          },
+        },
       },
     },
   },
@@ -545,28 +590,74 @@ export function openApiDocument(
       continue;
     }
     const parameters = [...(PARAMETERS[route.path] ?? []), ...pathParameters(route.path)];
-    paths[route.path] = {
-      get: {
-        operationId: route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, ''),
-        summary: route.summary,
-        tags: route.versioned ? ['v1'] : ['service'],
-        parameters,
-        responses: {
-          '200': {
-            description: 'Successful response.',
-            content: { 'application/json': { schema: ENVELOPE } },
-          },
-          '304': { description: 'Not modified (ETag matched).' },
-          '400': {
-            description: 'Invalid parameters.',
-            content: { 'application/json': { schema: ERROR } },
-          },
-          '404': {
-            description: 'Not found.',
-            content: { 'application/json': { schema: ERROR } },
-          },
+    const path = route.path.replace(/:([a-zA-Z0-9_]+)/g, '{$1}');
+    const inputSchema = route.method === 'POST' ? REVIEW_REQUEST_SCHEMAS[route.path] : undefined;
+    const dataSchema = REVIEW_RESPONSE_SCHEMAS[route.path];
+    const envelope =
+      dataSchema === undefined
+        ? { $ref: '#/components/schemas/ApiResponse' }
+        : {
+            ...ENVELOPE,
+            properties: { ...ENVELOPE.properties, data: { $ref: `#/components/schemas/${dataSchema}` } },
+          };
+    const operation = {
+      operationId:
+        route.path.replace(/[^\w]+/g, '_').replace(/^_|_$/g, '') + (route.method === 'POST' ? '_post' : ''),
+      summary: route.summary,
+      tags: route.versioned ? ['v1'] : ['service'],
+      parameters,
+      ...(inputSchema === undefined
+        ? {}
+        : {
+            requestBody: {
+              required: true,
+              description:
+                'Uncompressed UTF-8 JSON, at most 262144 bytes, received within 10 seconds. No query inputs, authentication or server-side storage.',
+              content: { 'application/json': { schema: { $ref: `#/components/schemas/${inputSchema}` } } },
+            },
+          }),
+      responses: {
+        '200': {
+          description:
+            route.method === 'POST'
+              ? 'Computed result; Cache-Control: no-store. Save the returned state locally.'
+              : 'Successful response.',
+          content: { 'application/json': { schema: envelope } },
+        },
+        ...(route.method === 'GET'
+          ? { '304': { description: 'Not modified (ETag matched).' } }
+          : {
+              '408': {
+                description: 'JSON body upload timed out.',
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
+              },
+              '413': {
+                description: 'JSON body exceeds 262144 bytes.',
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
+              },
+              '415': {
+                description: 'Use uncompressed application/json with UTF-8.',
+                content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
+              },
+            }),
+        '400': {
+          description: 'Invalid inputs.',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
+        },
+        '404': {
+          description: 'Not found.',
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
+        },
+        '405': {
+          description: 'Method not supported by this endpoint.',
+          headers: { Allow: { schema: { type: 'string' }, description: 'Supported methods.' } },
+          content: { 'application/json': { schema: { $ref: '#/components/schemas/ApiError' } } },
         },
       },
+    };
+    paths[path] = {
+      ...((paths[path] as Record<string, JsonValue> | undefined) ?? {}),
+      [route.method.toLowerCase()]: operation,
     };
   }
 
@@ -587,7 +678,8 @@ export function openApiDocument(
         'self-study materials collection, and a mock-exam test-centre index with the',
         'Cambridge 4-21 holdings, 1,099 hand-tagged question groups and a production',
         'raw-score-to-band calibration. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        '(readability and essay profile), composes study plans, and provides seeded',
+        'vocabulary flashcards and stateless, client-owned SM-2 review scheduling.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
@@ -597,13 +689,14 @@ export function openApiDocument(
       },
     },
     servers: [{ url: serverUrl, description: 'This instance' }],
+    security: [],
     tags: [
       { name: 'v1', description: 'Versioned, stable endpoints.' },
       { name: 'service', description: 'Service discovery, health and documentation.' },
     ],
     paths,
     components: {
-      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR },
+      schemas: { ApiResponse: ENVELOPE, ApiError: ERROR, ...REVIEW_SCHEMAS },
     },
     externalDocs: {
       description: 'Source code, citation metadata and data provenance',

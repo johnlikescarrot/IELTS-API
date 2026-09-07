@@ -1,8 +1,8 @@
 name: release
 
-# Cutting a tag publishes a citable, archived release. Zenodo mints a DOI for
-# every tag once the repository is enabled there; the CITATION.cff identifier
-# is updated automatically by the Zenodo integration.
+# Cutting a tag publishes a GitHub release. Zenodo archiving requires its
+# repository integration to be enabled separately. Add a DOI to CITATION.cff
+# only after an actual archive deposit assigns it; this workflow does not mint one.
 
 on:
   push:

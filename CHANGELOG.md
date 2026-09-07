@@ -6,6 +6,56 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-07
+
+The **client-owned vocabulary-review toolkit**, informed by a pinned source-level study of
+[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system/tree/1f5ad56d664c56ae449dacc7618b6d7f23967a69).
+No upstream code, new vocabulary data, learner records or paid services are imported. This prepares
+version 1.5.0; publishing a release or minting a DOI is a separate operation.
+
+### Added
+
+- `GET /v1/vocabulary/deck`: seeded Fisher–Yates permutations of the existing vocabulary, filtered
+  by volumes and parts of speech before pagination. Adjacent pages do not repeat words. Prompts,
+  source-faithful answers and unsaved initial card states are separate.
+- `GET /v1/study/review/policy`: versioned `sm2-v1` policy, all six recall grades, operational bounds,
+  UTC calendar convention and explicit limitations.
+- `POST /v1/study/review`: deterministic bounded day-level SM-2 transitions over client-owned state,
+  with lapse handling, reasons, visible caps and same-day drill guidance. It is not a prediction of
+  mastery, retention probability or IELTS performance.
+- `POST /v1/study/review/queue`: oldest-due-first reviews before new cards; total/new-card budgets,
+  duplicate-ID rejection, input-order independence and pre-budget conservation counts. Successful
+  cards remain eligible when due; no permanent mastery exclusion.
+- Equivalent library exports and public TypeScript types, without changing the zero-runtime-dependency
+  rule. AJV and format validation are development-only.
+- Strict UTF-8 JSON upload handling: 256 KiB actual-byte limit, 10-second elapsed deadline, 400/408/413/415
+  errors, and no compressed bodies. Open CORS supports JSON preflight without accounts or cookies.
+- Full integration guide, source audit in RESEARCH Part VIII, scientific context and verified primary
+  references. Tests cover the state machine, dates, immutability, complete workflow, transport
+  failures and actual request/response conformance to OpenAPI JSON Schemas.
+- Deterministic `npm run docs:openapi` regeneration and a test that rejects stale archived contracts.
+  The published package includes the review guide, research notes, OpenAPI snapshot and data licence.
+
+### Fixed
+
+- OpenAPI now uses actual route methods, valid `{parameter}` templates and the real `meta.error`
+  envelope. Service endpoints are included; relative server URLs work behind HTTPS reverse proxies.
+- POST computations and all errors use `no-store`; POST conditional ETags cannot hide the result.
+  Query strings and request bodies are excluded from application request logs. HTTP 405 includes
+  Allow, and HEAD error responses contain no body.
+- Invalid Host/URL values and invalid percent-encoded path parameters return 400 rather than an
+  unhandled error; request logs report actual 204/304 statuses.
+- Removed the unassigned placeholder DOI and unsupported relationship field from CITATION.cff;
+  corrected invalid CFF reference types and added citation validation in CI. Archiving and Google
+  Scholar impact are no longer represented as already achieved.
+- Version/citation metadata updated to 1.5.0, with no fabricated publication or citation count.
+
+### Compatibility
+
+Existing domain data routes remain GET/HEAD-only with their existing JSON payloads and public ETag
+caching. Only the two new computation endpoints accept POST. The unchanged coverage gate still
+requires 100% statements, branches, functions and lines per executable TypeScript source file.
+
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses

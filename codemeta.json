@@ -3,10 +3,10 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, validated raw-score to band conversion tables, and a mock-exam test-centre index of an operational IELTS online test centre with 1,099 hand-tagged question groups and a production score calibration.",
-  "version": "1.4.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, validated raw-score to band conversion tables, and a mock-exam test-centre index of an operational IELTS online test centre with 1,099 hand-tagged question groups and a production score calibration. Seeded vocabulary flashcards and a client-owned SM-2 review scheduler provide reproducible practice without accounts or saved progress.",
+  "version": "1.5.0",
   "dateCreated": "2026-09-04",
-  "datePublished": "2026-09-05",
+  "datePublished": "2026-09-07",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",
@@ -14,7 +14,7 @@
       "url": "https://www.typescriptlang.org/"
     }
   ],
-  "runtimePlatform": "Node.js >= 20.10",
+  "runtimePlatform": "Node.js >= 20.19.0",
   "operatingSystem": ["Linux", "macOS", "Windows"],
   "codeRepository": "https://github.com/johnlikescarrot/IELTS-API",
   "url": "https://github.com/johnlikescarrot/IELTS-API",
@@ -45,7 +45,9 @@
     "test equating",
     "mock exam",
     "test center",
-    "score calibration"
+    "score calibration",
+    "spaced repetition",
+    "retrieval practice"
   ],
   "author": [
     {
@@ -83,6 +85,15 @@
       "creator": {
         "@type": "Person",
         "name": "wanli4473"
+      }
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "name": "ielts-vocab-system",
+      "url": "https://github.com/Iamdacai/ielts-vocab-system/tree/1f5ad56d664c56ae449dacc7618b6d7f23967a69",
+      "creator": {
+        "@type": "Person",
+        "name": "Iamdacai"
       }
     }
   ]

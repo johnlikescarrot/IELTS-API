@@ -1,13 +1,10 @@
 /**
- * The request dispatcher.
- *
- * Everything between the socket and the route handlers lives here: method
- * checking, route matching, error translation, ETag negotiation, compression
- * and request logging. Handlers stay pure and trivially testable.
+ * Request dispatch, method checks, bounded JSON input, private computation
+ * responses and public dataset caching. Domain handlers remain pure.
  */
-
-import { HttpError, methodNotAllowed, notFound } from './lib/errors.js';
-import { acceptsGzip, sendJson, writeResponse } from './lib/http.js';
+import { badRequest, HttpError, methodNotAllowed, notFound } from './lib/errors.js';
+import { readJsonBody } from './lib/body.js';
+import { acceptsGzip, COMMON_HEADERS, sendJson, writeResponse } from './lib/http.js';
 import { isRawResult, matchRoute, splitPath } from './lib/route.js';
 import { ROUTES } from './routes/index.js';
 import { API_VERSION } from './version.js';
@@ -24,97 +21,136 @@ function sanitizeForLog(value: string): string {
 export interface AppOptions {
   /** Route table to serve; defaults to the full API. */
   routes?: readonly RouteDefinition[];
-  /** Whether to log each request to stdout. */
+  /** Log method, path, status and timing, never query strings or request bodies. */
   log?: boolean;
   /** Version reported in response metadata. */
   version?: string;
 }
 
-/**
- * Create the `node:http` request listener.
- *
- * @param options - Application options.
- */
+/** Create the node:http listener. POST is available only on explicitly registered routes. */
 export function createRequestHandler(
   options: AppOptions = {},
-): (req: IncomingMessage, res: ServerResponse) => void {
+): (req: IncomingMessage, res: ServerResponse) => Promise<void> {
   const routes = options.routes ?? ROUTES;
   const version = options.version ?? API_VERSION;
   const log = options.log ?? false;
 
-  return (req, res) => {
+  return async (req, res) => {
     const started = process.hrtime.bigint();
     const method = (req.method ?? 'GET').toUpperCase();
-    const url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
+    let url = new URL('http://localhost/');
     const gzipAllowed = acceptsGzip(req.headers['accept-encoding']);
-    const ifNoneMatch = req.headers['if-none-match'];
+    const privateResponse = method === 'POST';
+    const ifNoneMatch = privateResponse ? undefined : req.headers['if-none-match'];
+    const cacheControl = privateResponse ? 'no-store' : undefined;
+    const privacyHeaders: Record<string, string> = privateResponse
+      ? { 'x-robots-tag': 'noindex, nofollow' }
+      : {};
     let status = 200;
 
     try {
+      try {
+        url = new URL(req.url ?? '/', `http://${req.headers.host ?? 'localhost'}`);
+      } catch {
+        throw badRequest('The request URL or Host header is invalid.');
+      }
       if (method === 'OPTIONS') {
-        res.writeHead(204, {
-          'access-control-allow-origin': '*',
-          'access-control-allow-methods': 'GET, HEAD, OPTIONS',
-          'access-control-max-age': '86400',
-        });
+        status = 204;
+        res.writeHead(status, COMMON_HEADERS);
         res.end();
-      } else if (method !== 'GET' && method !== 'HEAD') {
-        throw methodNotAllowed();
       } else {
-        const match = matchRoute(routes, splitPath(url.pathname));
-        if (match === undefined) {
+        const segments = splitPath(url.pathname);
+        const candidates = routes.filter((route) => matchRoute([route], segments) !== undefined);
+        const allowed =
+          candidates.length === 0
+            ? 'GET, HEAD, POST, OPTIONS'
+            : [
+                ...new Set(
+                  candidates.flatMap((route) => (route.method === 'GET' ? ['GET', 'HEAD'] : ['POST'])),
+                ),
+                'OPTIONS',
+              ].join(', ');
+        if (!['GET', 'HEAD', 'POST'].includes(method)) {
+          throw methodNotAllowed(`Method ${method} is not supported at this endpoint.`, allowed);
+        }
+        if (candidates.length === 0) {
           throw notFound(`No endpoint matches ${url.pathname}.`, {
             path: url.pathname,
             documentation: '/docs',
           });
         }
-        const result = match.route.handler({ url, params: match.params });
+        const match = matchRoute(
+          candidates,
+          segments,
+          method === 'HEAD' ? 'GET' : (method as 'GET' | 'POST'),
+        );
+        if (match === undefined) {
+          throw methodNotAllowed(`Method ${method} is not supported at this endpoint.`, allowed);
+        }
+        const body = privateResponse ? await readJsonBody(req) : undefined;
+        const result = match.route.handler({ url, params: match.params, body });
+        const responseOptions = {
+          gzipAllowed,
+          ifNoneMatch,
+          cacheControl,
+          headOnly: method === 'HEAD',
+          headers: { 'x-endpoint': match.route.path, ...privacyHeaders },
+        };
         if (isRawResult(result)) {
           writeResponse(res, {
             status: 200,
             contentType: result.raw.contentType,
             body: result.raw.body,
-            gzipAllowed,
-            ifNoneMatch,
-            headOnly: method === 'HEAD',
+            ...responseOptions,
           });
         } else {
-          status = 200;
           const meta: Record<string, JsonValue> = {
             endpoint: match.route.path,
             version,
             ...(result.meta ?? {}),
           };
-          sendJson(res, 200, result.data, meta, {
-            gzipAllowed,
-            ifNoneMatch,
-            headOnly: method === 'HEAD',
-            headers: { 'x-endpoint': match.route.path },
-          });
+          sendJson(res, 200, result.data, meta, responseOptions);
         }
+        status = res.statusCode;
       }
     } catch (error) {
+      if (privateResponse) req.resume();
       const httpError = error instanceof HttpError ? error : undefined;
+      status = httpError?.status ?? 500;
+      const errorOptions = {
+        gzipAllowed,
+        cacheControl: 'no-store',
+        headOnly: method === 'HEAD',
+        headers: {
+          'x-endpoint': url.pathname,
+          'x-robots-tag': 'noindex, nofollow',
+          ...(httpError?.status === 405
+            ? { allow: httpError.details.allow ?? 'GET, HEAD, POST, OPTIONS' }
+            : {}),
+          ...(status === 408 || status === 413 ? { connection: 'close' } : {}),
+        },
+      };
       if (httpError !== undefined) {
-        status = httpError.status;
         sendJson(
           res,
-          httpError.status,
+          status,
           null,
           {
-            error: {
-              code: httpError.code,
-              message: httpError.message,
-              details: httpError.details,
-            },
+            error: { code: httpError.code, message: httpError.message, details: httpError.details },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          errorOptions,
         );
       } else {
-        status = 500;
-        const message = error instanceof Error ? error.message : 'Unknown error';
-        console.error(`ielts-api: unhandled error at ${url.pathname}: ${message}`);
+        // A third-party handler may put submitted data in an exception message.
+        const message = privateResponse
+          ? 'Internal computation failure'
+          : error instanceof Error
+            ? error.message
+            : 'Unknown error';
+        console.error(
+          `ielts-api: unhandled error at ${sanitizeForLog(url.pathname)}: ${sanitizeForLog(message)}`,
+        );
         sendJson(
           res,
           500,
@@ -123,16 +159,14 @@ export function createRequestHandler(
             error: { code: 'internal_error', message: 'An unexpected error occurred.', details: {} },
             version,
           },
-          { gzipAllowed, headers: { 'x-endpoint': url.pathname } },
+          errorOptions,
         );
       }
     }
 
     if (log) {
       const elapsed = Number(process.hrtime.bigint() - started) / 1e6;
-      const safePathname = sanitizeForLog(url.pathname);
-      const safeSearch = sanitizeForLog(url.search);
-      console.log(`${method} ${safePathname}${safeSearch} ${status} ${elapsed.toFixed(2)}ms`);
+      console.log(`${method} ${sanitizeForLog(url.pathname)} ${status} ${elapsed.toFixed(2)}ms`);
     }
   };
 }

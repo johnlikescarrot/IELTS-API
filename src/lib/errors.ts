@@ -34,8 +34,8 @@ export function notFound(message: string, details: Record<string, string> = {}):
 }
 
 /** Create a `405 Method Not Allowed` error. */
-export function methodNotAllowed(message = 'Only GET requests are supported.'): HttpError {
-  return new HttpError(405, 'method_not_allowed', message, { allow: 'GET' });
+export function methodNotAllowed(message = 'Only GET requests are supported.', allow = 'GET'): HttpError {
+  return new HttpError(405, 'method_not_allowed', message, { allow });
 }
 
 /** Create a `406 Not Acceptable` error. */

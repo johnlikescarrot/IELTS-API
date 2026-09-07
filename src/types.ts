@@ -1221,11 +1221,83 @@ export type ApiResponse = {
 /** Description of an exposed route, used for discovery and OpenAPI. */
 export type RouteInfo = {
   /** HTTP method. */
-  method: 'GET';
+  method: 'GET' | 'POST';
   /** Path template. */
   path: string;
   /** Short summary. */
   summary: string;
   /** Whether the route is part of the versioned `/v1` contract. */
   versioned: boolean;
+};
+
+/* -------------------------------------------------------------------------- */
+/* Client-owned vocabulary practice and scheduling                            */
+/* -------------------------------------------------------------------------- */
+
+/** A serialisable, versioned card state. Contains no learner identity or server session. */
+export type ReviewCard = {
+  /** Opaque ASCII item identifier (1-64 characters); vocabulary decks use wNNNNN. */
+  id: string;
+  /** Scheduler contract version; incompatible states are rejected. */
+  algorithm: 'sm2-v1';
+  /** Consecutive successful scheduled recalls since the latest lapse. */
+  repetitions: number;
+  /** Number of scheduled recalls graded below 3. */
+  lapses: number;
+  /** Whole UTC days from lastReviewedOn to dueOn; zero for a new card. */
+  intervalDays: number;
+  /** Ease in 1.3..10, with at most two decimal places; not a probability. */
+  easeFactor: number;
+  /** Last scheduled review date, or null before the first review. */
+  lastReviewedOn: string | null;
+  /** Next eligible UTC date (YYYY-MM-DD). */
+  dueOn: string;
+};
+
+/** A pure review transition with an explanation and visible operational bounds. */
+export type ReviewResult = {
+  card: ReviewCard;
+  grade: number;
+  on: string;
+  reason: 'lapse' | 'first-success' | 'second-success' | 'expanded';
+  /** Local drills are recommended today, without advancing this day-level state. */
+  repeatToday: boolean;
+  intervalCapped: boolean;
+  easeClamped: boolean;
+};
+
+/** One eligible card in a review queue. */
+export type ReviewQueueItem = {
+  card: ReviewCard;
+  status: 'new' | 'due' | 'overdue';
+  overdueDays: number;
+};
+
+/** Budgeted queue, with pre-selection counts that partition the whole input. */
+export type ReviewQueue = {
+  on: string;
+  limit: number;
+  newLimit: number;
+  counts: { total: number; overdue: number; due: number; new: number; scheduled: number };
+  items: ReviewQueueItem[];
+  /** Eligible cards omitted by either budget; no state has been changed. */
+  remaining: number;
+};
+
+/** A vocabulary retrieval-practice card. Keep answer hidden until a recall attempt. */
+export type VocabularyFlashcard = {
+  prompt: Pick<VocabularyEntry, 'id' | 'word' | 'phonetic' | 'partOfSpeech'>;
+  answer: Pick<VocabularyEntry, 'definition' | 'senses' | 'morphemes' | 'volumes'>;
+  state: ReviewCard;
+};
+
+/** A page of one seeded permutation, not a separately sampled daily list. */
+export type VocabularyDeck = {
+  seed: string;
+  on: string;
+  total: number;
+  limit: number;
+  offset: number;
+  hasMore: boolean;
+  cards: VocabularyFlashcard[];
 };

@@ -20,7 +20,7 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is derived from five open collections — [`zhengyishiming/IELTS`][corpus] for the
+The dataset indexes draw on five public collections — [`zhengyishiming/IELTS`][corpus] for the
 vocabulary and the corpus index, [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
 question-type taxonomy and the practice-test structure and readability index,
 [`Oxidaner/ielts`][materials] for the study-materials index, [`msneloy/IELTS`][archive] for the
@@ -51,11 +51,18 @@ IELTS publishes no official conversion table, only the average marks scored at w
 `/v1/scores/raw/tables` publishes the reconstructed tables together with the exact raw scores at
 which widely-cited sources disagree. See [RESEARCH.md](RESEARCH.md) Part VI.
 
+The vocabulary layer now supports **client-owned review**, not just lookup. A source-level study of
+[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system/tree/1f5ad56d664c56ae449dacc7618b6d7f23967a69)
+informs seeded, non-overlapping flashcard decks, a transparent SM-2 scheduling baseline and due queues
+that prioritise reviews over new words. No accounts, paid providers or stored learner progress are
+introduced, and no code or data from that reference is copied. See [the integration guide](docs/REVIEW.md)
+and [RESEARCH.md, Part VIII](RESEARCH.md#part-viii--client-owned-vocabulary-review).
+
 ## Quick start
 
 ```bash
 npx ielts-api                 # or: npm install -g ielts-api
-# ielts-api 1.0.0 listening on http://0.0.0.0:3000
+# ielts-api 1.5.0 listening on http://0.0.0.0:3000
 ```
 
 ```bash
@@ -88,6 +95,9 @@ curl -s "http://localhost:3000/v1/frameworks/w2-concession-rebuttal"
 
 # What a self-study collection looks like: 2,354 preparation files by category and skill
 curl -s "http://localhost:3000/v1/materials/items?category=past-paper-recall"
+
+# A reproducible flashcard deck: explicit seed and start date; no saved progress
+curl -s "http://localhost:3000/v1/vocabulary/deck?seed=class-a&on=2026-09-07&limit=10"
 
 # The Cambridge 1-18 listening archive, volume by volume: naming era, tests, completeness
 curl -s "http://localhost:3000/v1/archive/volumes"
@@ -130,8 +140,11 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 
 ## Endpoints
 
-All endpoints are `GET`, CORS-open, ETag-cached and authentication-free. Every JSON response uses the
-same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
+Every endpoint is CORS-open and authentication-free. Public data uses `GET` with ETag caching;
+only `/v1/study/review` and `/v1/study/review/queue` accept **POST JSON** for private, stateless
+computations (`Cache-Control: no-store`). GET endpoints also support HEAD. Every JSON response uses
+the same envelope: `{ "status": 200, "data": ..., "meta": ... }`; errors have `data: null` and
+`meta.error`. The OpenAPI document uses standard `{parameter}` path templates for client generators.
 
 | Method | Path                         | Description                                                                                             |
 | ------ | ---------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -144,6 +157,10 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/vocabulary/stats`       | Dataset statistics                                                                                      |
 | GET    | `/v1/vocabulary/random`      | Seeded random sample (`count`, `seed`)                                                                  |
 | GET    | `/v1/vocabulary/daily`       | Deterministic entry for a date (`date`, `count`)                                                        |
+| GET    | `/v1/vocabulary/deck`        | Reproducible flashcards (`seed`, `on`, `volume`, `pos`, `limit`, `offset`)                              |
+| GET    | `/v1/study/review/policy`    | Versioned SM-2 policy, recall grades and operational limits                                             |
+| POST   | `/v1/study/review`           | Compute the next card state from `{card, grade, on}`; nothing is saved                                  |
+| POST   | `/v1/study/review/queue`     | Prioritise due reviews from `{cards, on, limit?, newLimit?}`                                            |
 | GET    | `/v1/vocabulary/:word`       | Look up one headword                                                                                    |
 | GET    | `/v1/bands`                  | The band scale with indicative CEFR levels                                                              |
 | GET    | `/v1/bands/descriptors`      | Band descriptors (`set`, `criterion`, `band`)                                                           |
@@ -191,6 +208,26 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/tools/essay-profile`    | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`             | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
 | GET    | `/v1/resources`              | Free preparation resources (`type`, `q`)                                                                |
+
+### Client-owned review example
+
+```js
+import { createVocabularyDeck, scheduleReview, buildReviewQueue } from 'ielts-api';
+
+const deck = createVocabularyDeck({ seed: 'class-a', on: '2026-09-07', limit: 10 });
+const states = deck.cards.map((item) => item.state);
+const queue = buildReviewQueue(states, '2026-09-07', 20, 5);
+const first = queue.items[0];
+if (first) {
+  const result = scheduleReview(first.card, 4, '2026-09-07');
+  // Save result.card in your own storage; next review is due 2026-09-08.
+}
+```
+
+For HTTP, POST the same card, grade and date as JSON. See [docs/REVIEW.md](docs/REVIEW.md) for
+copyable curl examples, the six-grade rubric, lapse behaviour, queue budgets and privacy limits.
+The algorithm is a bounded day-level SM-2 adaptation, **not a validated retention or IELTS-band
+prediction**. Dates are explicit UTC dates; same-day drills do not advance the durable schedule.
 
 ### Worked examples
 
@@ -443,12 +480,18 @@ consistency on the same run.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 640 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). The scope is executable TypeScript under `src/`, not
+  extraction scripts or learning outcomes. Zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
-- **Deterministic responses** — ETags, conditional-request support and seeded sampling make every
-  response reproducible and archivable.
+- **Reproducible review** — explicit dates, versioned state, hand-computed schedule tests, no-repeat
+  deck pagination, due-queue budgets, input validation and no-store POST responses.
+- **Executable contracts** — actual review HTTP requests/responses are validated against OpenAPI
+  3.1 schemas; tests catch archived-contract drift. Regenerate with `npm run docs:openapi`.
+- **Citation integrity** — CFF 1.2.0 is validated in CI. No placeholder DOI or claimed citation count.
+- **Deterministic inputs** — preserve software version, seed, filters and explicit dates to reproduce
+  results. Public GET responses retain ETags; private computations bypass conditional caching.
 
 ```bash
 npm install
@@ -467,21 +510,24 @@ Configuration: `--port` / `PORT`, `--host` / `HOST`, `--silent`, `--help`, `--ve
 
 ## Citing this project
 
-If you use the API or the datasets, please cite it — citations are what keep the project free.
+Please cite the software version and relevant data sources when reporting research results.
 
 ```bibtex
 @software{ielts_api,
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.4.0},
+  version = {1.5.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
 ```
 
 Machine-readable citation metadata: [`CITATION.cff`](CITATION.cff), [`codemeta.json`](codemeta.json),
-[`.zenodo.json`](.zenodo.json). Tagged releases are archived on Zenodo, which mints a versioned DOI.
+[`.zenodo.json`](.zenodo.json). These are **Zenodo-ready metadata**, not evidence of a completed
+archive deposit. Enable the integration and archive a release before adding a real version-specific
+DOI. No DOI has been assigned by this change; the previous placeholder was removed. Valid citation
+metadata supports reproducibility but cannot guarantee Google Scholar indexing, ranking or citations.
 
 Please also cite the upstream collections the datasets were derived from:
 
@@ -530,6 +576,9 @@ Please also cite the upstream collections the datasets were derived from:
 - **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests`, `/v1/archive` and
   `/v1/testcenter` publish derived metadata and statistics only — no passage, question, answer key,
   transcript, recording, PDF content, essay text, exam page or vocabulary entry.
+- **Review toolkit:** original implementation informed by a pinned study of `Iamdacai/ielts-vocab-system`
+  and the published SM-2 equations. No dictionary, source code, audio, database or learner history from
+  that reference is imported. [Provenance and limitations](RESEARCH.md#part-viii--client-owned-vocabulary-review).
 - **Question-type strategies:** original wording. The task families follow the partners' public task
   descriptions; the observed frequencies describe the indexed practice corpus, not the live exam.
 

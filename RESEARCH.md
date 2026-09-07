@@ -3,19 +3,20 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Seven parts, five upstream collections:
+Eight parts: five indexed collections and a source-level study of a vocabulary-learning application:
 
-| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                         |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                            |
-| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                       |
-| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                     |
-| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                          |
-| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays     |
-| [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                              | the validated raw-score-to-band conversion tables and the raw-score endpoints                                          |
-| [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                             | What it yields                                                                                                         |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs         | the vocabulary dataset and the corpus index                                                                            |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs       | the question-type taxonomy and the practice-test structure and readability index                                       |
+| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                                    | the readability analyser, the essay profiler and the study planner                                                     |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs       | the study-materials index and the response-framework taxonomy                                                          |
+| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs         | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays     |
+| [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                                    | the validated raw-score-to-band conversion tables and the raw-score endpoints                                          |
+| [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs       | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration |
+| [Part VIII](#part-viii--client-owned-vocabulary-review)                         | [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system)                       | commit `1f5ad56d`, source inspection | seeded flashcards, a transparent SM-2 baseline and client-owned due queues; no imported dataset                        |
 
-None of the collections is redistributed. All are indexed, measured and cited.
+None of the collections is redistributed. Data sources are indexed, measured and cited; the vocabulary application is studied as a design reference.
 
 ## Part I — the research corpus
 
@@ -1035,3 +1036,160 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — client-owned vocabulary review
+
+**Reference snapshot:** [`Iamdacai/ielts-vocab-system`][review-upstream], commit
+`1f5ad56d664c56ae449dacc7618b6d7f23967a69` (2 April 2026), inspected on 7 September 2026.
+This part is a software-design study, **not another imported vocabulary dataset**. The new cards
+reuse the existing Part I vocabulary; no code, dictionary entries, recordings, databases or learner
+records from the reference repository are redistributed.
+
+### 42. What was studied, and why the README is not an executable specification
+
+The reference is a Node.js / WeChat vocabulary-learning application, with configuration, library
+selection, new-word practice, review sessions, progress storage, pronunciation and later AI-assisted
+features. Its README describes Cambridge and themed vocabulary libraries; the implementation and
+later library-selection documentation are broader. Counts claimed by that README are not treated
+as independently verified dataset counts here: importing its live database was neither necessary
+nor appropriate.
+
+The inspection followed the learning path across documentation, frontend utilities and backend
+handlers, rather than copying one convenient algorithm file:
+
+| Evidence at the pinned revision                                                 | Observation                                                                                                                                                                                            | Consequence for this API                                                                                                                                                                       |
+| ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [README][review-readme] and [multi-select specification][review-multiselect]    | Configurable new-word budgets and multiple vocabulary selections are central, not an incidental search feature.                                                                                        | Add volume/part-of-speech filtered decks and a separate new-card budget, using the vocabulary already available here.                                                                          |
+| [Standalone scheduler][review-minutes]                                          | Eight minute-based steps: 5, 30, 720, 1440, 2880, 5760, 10080, 21600; after the final step, mastery scales that final interval.                                                                        | Do not assume this file alone specifies the active review contract.                                                                                                                            |
+| [Strategy change note][review-change] and [memory wheel][review-wheel]          | A different eight-stage day schedule: 1, 2, 4, 7, 15, 21, 30, 30. Stage transitions and dates are also calculated in the client; the date helper uses local calendar arithmetic.                       | Centralise the transition in a versioned pure function, with explicit UTC dates and tests across DST boundaries.                                                                               |
+| [README-designated HTTPS entry point][review-server]                            | The review-session answer handler accepts the client-supplied stage, contains another day table, and writes a mastery score of 75 for `known`. The session-selection queries require mastery below 75. | Never permanently hide successful cards merely because a threshold was reached: select every reviewed card again when due. Compute the next state rather than trusting a submitted next stage. |
+| [Review-session client][review-session] and [progress manager][review-progress] | The client calls session APIs and also maintains a local progress/history representation. The inspected session handlers contain a default user ID; other controller paths use authenticated users.    | Do not transplant account/session assumptions into an open API. Stateless computation with client-owned state avoids shared-user contamination entirely.                                       |
+| [Retention utility][review-retention]                                           | Another model computes an exponential percentage from elapsed hours and an adjustable constant of 2.5 times a mastery level; it also calculates a separate next-review time.                           | Do not present a heuristic percentage as calibrated recall probability. Return transparent scheduling state instead.                                                                           |
+
+Additional checks included the word/progress controller, mistake controller, review and learning
+pages, library routes, the review-page navigation fix and the review-course implementation report.
+The navigation fix is platform-specific and is not a reason to add WeChat routing to this API.
+The broader product specification documents accounts and paid-provider integrations; neither is
+needed for an unauthenticated, free vocabulary scheduler.
+
+These observations describe the **checked-in files**, not a penetration test or a measurement of
+the running website. No production endpoint was probed. Credentials, private keys, databases,
+archives and bulk audio were not inspected. No reuse licence was identified for the reference
+project, so the contribution is original TypeScript and original explanatory text, with explicit
+attribution to the ideas and documented behaviour that motivated it.
+
+### 43. Scientific motivation, without a fictitious retention guarantee
+
+Two established findings motivate retrieval and spacing, but neither selects universal IELTS
+review intervals:
+
+- Cepeda et al. (2006), [_Distributed practice in verbal recall tasks: A review and quantitative
+  synthesis_](https://doi.org/10.1037/0033-2909.132.3.354), synthesised distributed-practice
+  experiments. The [abstract](https://pubmed.ncbi.nlm.nih.gov/16719566/) reports that the spacing
+  associated with maximal retention varies with the later retention interval. This does not
+  justify treating one eight-step sequence as an experimentally established law for every learner.
+- Roediger and Karpicke (2006), [_Test-enhanced learning: Taking memory tests improves long-term
+  retention_](https://doi.org/10.1111/j.1467-9280.2006.01693.x), compared retrieval with restudy of
+  prose passages. Their [abstract](https://pubmed.ncbi.nlm.nih.gov/16507066/) reports an advantage
+  for testing on delayed tests, despite greater confidence after repeated studying. It supports
+  separating a recall attempt from revealing an answer, not inferring a validated mastery score
+  from a self-report button.
+
+The scheduling baseline is an independent implementation of
+[Wozniak's published SM-2 equations](https://super-memory.com/english/ol/sm2.htm), from
+_Optimization of learning_ (1990; adapted for the web in 1998). It is selected for inspectability
+and small, reproducible state, **not demonstrated superiority** to newer schedulers. No fitted
+parameters, learner trials, retention benchmark or IELTS-band improvement is claimed.
+
+### 44. The new contract and its deliberate departures
+
+The complete integration contract and hand-calculated trajectory are in [docs/REVIEW.md](docs/REVIEW.md).
+Four endpoints form one workflow:
+
+1. `GET /v1/vocabulary/deck`: filter the existing 4,174-headword dataset, order by canonical ID,
+   apply a seeded Fisher–Yates permutation and only then paginate. Two adjacent pages from the
+   same version/seed/filters cannot repeat an entry. Prompts and source-faithful answers are
+   separated for retrieval practice; retrieving a card does not count as learning it.
+2. `GET /v1/study/review/policy`: publish `sm2-v1`, all six grades and the numeric/calendar bounds.
+3. `POST /v1/study/review`: accept one card, recall grade and date; return its replacement state
+   and an explanation. No clock, random choice, session identifier, account, database or provider
+   call is involved. The client decides how and where to persist the result.
+4. `POST /v1/study/review/queue`: validate up to 500 distinct states, select overdue/due reviews
+   before new cards, apply explicit total/new-card budgets, and report pre-budget counts and the
+   number omitted. Mature cards are not removed from circulation. Queue selection is invariant
+   to input order and does not mutate any state.
+
+`sm2-v1` is labelled a **bounded day-level adaptation**. Successful recalls use 1 day, 6 days,
+then `ceil(previous interval × previous ease)`; failed recalls reset the success count and return
+to 1 day. Ease is updated on every grade, including failures, and retained on restart. The state
+keeps ease in hundredths, with a 1.3 floor and an operational ceiling of 10, and caps the interval
+at 36,500 days. These upper caps are guardrails, not estimated learning parameters. The response
+says when either cap is applied. Counter and extended-year overflow are rejected.
+
+All dates are explicit Gregorian UTC dates. Early reviews are rejected, late reviews start the
+next interval on the actual review date, and there is no inferred timezone or overdue bonus.
+Grades below 4 recommend **local same-day drills**, but those drills do not advance the durable
+daily schedule. This distinction prevents repeated clicks from artificially growing the interval
+and makes the interpretation of the source's same-session repetition instruction explicit.
+
+POST was added narrowly, rather than sending learning history in GET query strings. Both routes
+are still unauthenticated and side-effect-free. Requests are bounded by actual UTF-8 byte size and
+elapsed upload time; responses and errors are `no-store`; request logging excludes bodies and
+query strings. No hosting-provider privacy guarantee is implied: deployments must separately
+configure proxies and transport encryption. Existing public GET caching remains intact.
+
+### 45. Reproducibility, licensing and threats to validity
+
+- **Pin the software as well as the stimulus.** Archive the API version, `sm2-v1`, seed, filters,
+  explicit dates, original state and grade sequence. Determinism is within that contract and
+  dataset snapshot; a later vocabulary revision can change the permutation. Replaying unchanged
+  input is intentionally idempotent as a computation, not a server-side progress update.
+- **Self-report is not observed mastery.** Validating the shape of a card cannot prove that a
+  learner actually answered it. The service is not an assessment record, anti-cheating system,
+  proctor or synchronisation service. Clients must resolve concurrent edits to their own state.
+- **A deck is not a validated test.** Vocabulary glosses may be multilingual or polysemous, the
+  source ordering is not a difficulty scale, and revealing all senses may introduce multiple
+  retrieval targets. The API leaves task design and grading to the client. No new translations,
+  proprietary sentence banks or pronunciations were generated or imported.
+- **Calendar and workload are conventions.** UTC dates avoid DST-dependent results but may not
+  match a learner's local study-day boundary. The 500-card input limit and per-call budgets are
+  operational limits, not a recommended daily workload or a global budget across multiple calls.
+- **Coverage is not efficacy.** The unchanged 100% per-file V8 gate covers executable TypeScript
+  under `src/`; it does not cover Python extraction scripts or establish educational benefit.
+  Evidence includes hand-computed sequences, six-grade updates, lapses, date/counter boundaries,
+  replay/immutability, shuffled pagination, queue conservation and prioritisation, malformed and
+  oversized uploads, timeouts and actual HTTP messages validated against JSON Schema 2020-12.
+- **Citation integrity.** The earlier CFF contained a placeholder DOI and invalid reference-type
+  values. The placeholder and unsupported relationship field were removed; reference types were
+  corrected, the new sources attributed, and the file validated with `cffconvert` against CFF
+  1.2.0. Metadata is ready for a real archive deposit, not evidence that one exists. This addition
+  does not claim a DOI, peer review, Google Scholar indexing or any citation count.
+
+### 46. Reproducing Part VIII
+
+No upstream extraction or private learner data is required:
+
+```bash
+npm ci
+npm run validate
+npm run docs:openapi
+TZ=America/New_York npx vitest run test/lib/review.test.ts test/lib/deck.test.ts
+TZ=Pacific/Auckland npx vitest run test/lib/review.test.ts test/lib/deck.test.ts
+```
+
+For a source audit, inspect the pinned links below and compare the standalone scheduler with the
+frontend wheel, retention utility and HTTPS entry point. Do not execute the upstream deployment
+scripts or fetch its environment files, databases, key material or bundled archives. The two cited
+articles' bibliographic fields were checked against PubMed and Crossref; their citation counts are
+not used as evidence of this API's impact.
+
+[review-upstream]: https://github.com/Iamdacai/ielts-vocab-system/tree/1f5ad56d664c56ae449dacc7618b6d7f23967a69
+[review-readme]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/README.md
+[review-multiselect]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/FEATURE_LIBRARY_MULTISELECT.md
+[review-minutes]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/backend/spaced-repetition-algorithm.js
+[review-change]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/REVIEW_STRATEGY_UPDATE.md
+[review-wheel]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/frontend/utils/memoryWheel.js
+[review-server]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/backend/simple-server-https.js#L964-L1166
+[review-session]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/frontend/utils/reviewSession.js
+[review-progress]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/frontend/utils/progressManager.js
+[review-retention]: https://github.com/Iamdacai/ielts-vocab-system/blob/1f5ad56d664c56ae449dacc7618b6d7f23967a69/frontend/utils/memoryRetention.js

@@ -34,7 +34,9 @@ function routeRow(route: RouteDefinition): string {
   return [
     '    <tr>',
     `      <td><span class="badge">${escapeHtml(route.method)}</span></td>`,
-    `      <td><a class="path" href="${escapeHtml(route.path)}">${escapeHtml(route.path)}</a></td>`,
+    route.method === 'GET'
+      ? `      <td><a class="path" href="${escapeHtml(route.path)}">${escapeHtml(route.path)}</a></td>`
+      : `      <td><code class="path">${escapeHtml(route.path)}</code></td>`,
     `      <td>${escapeHtml(route.summary)}</td>`,
     '    </tr>',
   ].join('\n');
@@ -91,10 +93,20 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
 <body>
 <h1>IELTS API</h1>
 <p class="lede">A free, open, no-authentication REST API for IELTS preparation research. Version ${escapeHtml(version)}.</p>
-<p>No API key. No registration. No rate limiting by key. Every response carries an ETag and open CORS headers.</p>
+<p>No API key. No registration. No rate limiting by key. Open CORS on every endpoint. Public GET responses support ETags; POST computations use JSON and <code>Cache-Control: no-store</code>.</p>
 <pre><code>curl -s "https://ielts-api.example/v1/vocabulary?q=environment&amp;limit=3"
 curl -s "https://ielts-api.example/v1/scores/overall?listening=7&amp;reading=6.5&amp;writing=6&amp;speaking=7"
 curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
+
+<h2>Vocabulary review without an account</h2>
+<p><a href="/v1/vocabulary/deck?seed=demo&amp;on=2026-09-07&amp;limit=5">Try a seeded flashcard deck</a> and read the <a href="/v1/study/review/policy">SM-2 review policy</a>.
+Keep answers hidden until recall. Save card states locally; the API does not store progress.</p>
+<pre><code>curl -s -X POST "https://ielts-api.example/v1/study/review" \\
+  -H "Content-Type: application/json" \\
+  -d '{"card":{"id":"w00001","algorithm":"sm2-v1","repetitions":0,"lapses":0,"intervalDays":0,"easeFactor":2.5,"lastReviewedOn":null,"dueOn":"2026-09-07"},"grade":4,"on":"2026-09-07"}'</code></pre>
+<p>Use the returned <code>data.card</code> next time. <code>POST /v1/study/review/queue</code> accepts up to 500 cards and returns overdue reviews before new cards.
+Dates are explicit and evaluated in UTC. This is a scheduling baseline, not a retention or IELTS-band prediction.
+See the <a href="${escapeHtml(repository)}/blob/main/docs/REVIEW.md">integration guide</a>.</p>
 
 <h2>Datasets</h2>
 <ul>
@@ -151,13 +163,13 @@ ${service.map(routeRow).join('\n')}
 
 <h2>Citing this API</h2>
 <p>If you use this API in research, please cite it; the <code>CITATION.cff</code> file in the repository
-and the archived Zenodo release both carry full metadata.</p>
+and Zenodo-ready deposit metadata describe the software. An actual archive deposit is required before adding a DOI; no DOI or citation impact is claimed here.</p>
 <pre><code>@software{ielts_api,
   title  = {IELTS API: a free, no-authentication REST API for IELTS preparation research},
   author = {IELTS API contributors},
   url    = {${escapeHtml(repository)}},
   version= {${escapeHtml(version)}},
-  license= {MIT}
+  license= {MIT, CC-BY-4.0}
 }</code></pre>
 
 <footer>

@@ -13,7 +13,7 @@ import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
 import { CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME, API_VERSION } from '../version.js';
 
-import type { RouteContext, HandlerResult } from '../lib/route.js';
+import type { HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
 
 /** Summary of the datasets behind the API. */
@@ -122,12 +122,11 @@ export function createMetaRoutes(
   }
 
   /** The OpenAPI 3.1 document, served without the response envelope. */
-  function openapi(context: RouteContext): HandlerResult {
-    const base = `${context.url.origin}/`;
+  function openapi(): HandlerResult {
     return {
       raw: {
         contentType: 'application/json; charset=utf-8',
-        body: `${JSON.stringify(openApiDocument(routes, base, API_VERSION), null, 2)}\n`,
+        body: `${JSON.stringify(openApiDocument([...routes, ...serviceRoutes], '/', API_VERSION), null, 2)}\n`,
       },
     };
   }

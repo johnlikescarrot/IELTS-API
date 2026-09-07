@@ -59,3 +59,19 @@ export function seededIndices(seed: string, population: number, count: number): 
   }
   return indices.slice(0, size).sort((a, b) => a - b);
 }
+
+/**
+ * Return a seeded Fisher-Yates permutation without mutating the input.
+ * Unlike seededIndices, order is preserved so pages of one permutation cannot overlap.
+ */
+export function shuffled<T>(seed: string, values: readonly T[]): T[] {
+  const result = [...values];
+  const random = mulberry32(hashString(seed));
+  for (let index = result.length - 1; index > 0; index -= 1) {
+    const swap = Math.floor(random() * (index + 1));
+    const value = result[index] as T;
+    result[index] = result[swap] as T;
+    result[swap] = value;
+  }
+  return result;
+}

@@ -1,7 +1,7 @@
 {
   "name": "ielts-api",
-  "version": "1.4.0",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, validated raw-score to band conversion tables, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and marked learner essays, and a mock-exam test-centre index of an operational IELTS online test centre.",
+  "version": "1.5.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, validated raw-score to band conversion tables, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and marked learner essays, and a mock-exam test-centre index of an operational IELTS online test centre. Includes seeded vocabulary flashcards and stateless, client-owned spaced-repetition scheduling.",
   "keywords": [
     "api",
     "assessment",
@@ -11,13 +11,15 @@
     "ielts",
     "language-testing",
     "learner-corpus",
-    "grey-literature",
     "listening-comprehension",
     "score-conversion",
     "psychometrics",
     "mock-exam",
     "test-center",
-    "score-calibration"
+    "score-calibration",
+    "spaced-repetition",
+    "retrieval-practice",
+    "research-software"
   ],
   "license": "MIT",
   "type": "module",
@@ -34,7 +36,11 @@
     "data",
     "README.md",
     "CITATION.cff",
-    "LICENSE"
+    "LICENSE",
+    "DATA-LICENSE",
+    "RESEARCH.md",
+    "docs/REVIEW.md",
+    "docs/openapi.json"
   ],
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
@@ -53,13 +59,16 @@
     "data:practice-tests": "python3 scripts/extract_practice_tests.py",
     "data:materials": "python3 scripts/extract_materials.py",
     "data:archive": "python3 scripts/extract_archive.py",
-    "data:testcenter": "python3 scripts/extract_testcenter.py"
+    "data:testcenter": "python3 scripts/extract_testcenter.py",
+    "docs:openapi": "npm run build && node scripts/openapi.mjs && prettier --write docs/openapi.json"
   },
   "dependencies": {},
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@types/node": "^22.10.7",
     "@vitest/coverage-v8": "^5.0.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
     "prettier": "^3.4.2",

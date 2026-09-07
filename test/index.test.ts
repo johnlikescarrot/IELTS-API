@@ -38,6 +38,16 @@ describe('the package entry point', () => {
     expect(api.COMMON_HEADERS['access-control-allow-origin']).toBe('*');
   });
 
+  it('exports the stateless review and vocabulary-deck library contract', () => {
+    const deck = api.createVocabularyDeck({ seed: 'sdk', on: '2026-09-07', limit: 1 });
+    const card = deck.cards[0]!.state;
+    expect(api.REVIEW_POLICY.algorithm).toBe('sm2-v1');
+    expect(api.buildReviewQueue([card], '2026-09-07').items[0]?.card).toEqual(card);
+    const next = api.scheduleReview(card, 4, '2026-09-07');
+    expect(api.parseReviewCard(next.card).dueOn).toBe('2026-09-08');
+    expect(api.createReviewCard('local-card', '2026-09-07').id).toBe('local-card');
+  });
+
   it('exports the datasets', () => {
     expect(api.BAND_SCALE).toHaveLength(19);
     expect(api.WRITING_TOPICS.length).toBeGreaterThan(90);
