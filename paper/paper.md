@@ -15,7 +15,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 5 September 2026
+date: 7 September 2026
 bibliography: paper.bib
 ---
 
@@ -24,7 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -33,11 +33,13 @@ Listening question types, onto which 65 free-text annotation labels are normalis
 frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
-1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of four open IELTS collections, including a grey-literature archive index that
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; curated
+metadata indexes of six open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; and a cross-exam word-bank concordance of a deployed vocabulary-learning system —
+seven exam word banks as an overlap matrix, joined against the Cambridge headwords, with the
+platform's spaced-repetition review engine published as a deterministic calculator.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -163,6 +165,23 @@ combined, with the multiple-choice share (8.4% against 17.2%) marking where the 
 genuinely differ. A drill composer turns the taxonomy back into teaching, assembling deterministic
 timed drills from the tagged groups under any filter combination.
 
+**Word-bank concordance.** A sixth collection [@vocabsystem] is a deployed product rather than a
+data dump: the repository behind an operational WeChat mini-program IELTS vocabulary-learning
+platform — an Express/SQLite backend, an Ebbinghaus spaced-repetition review engine, an admin
+statistics panel and AI-assisted speaking and writing practice. Its live database materialises seven
+Chinese-market exam word banks (IELTS, CET-4, CET-6, the postgraduate-entrance examination, TOEFL,
+GRE and a general compilation) as 47,044 rows over 15,930 distinct words. The concordance measures
+that deployment rather than redistributing it: bank inventories, per-word membership, the 21-pair
+overlap matrix (intersection, Jaccard, containment), collocation aggregates, the prompt banks, and
+the review engine's parameters, verified against the upstream source at derivation time and exposed
+as a stateless calculator over relative times. An original cross-dataset analysis joins every bank
+against the Cambridge 1-22 headwords of this API and quantifies how the vocabulary market is built:
+the platform's IELTS bank and the past-paper extraction agree on barely half their contents (2,153
+of 4,531 words; 47.5% and 51.6% in each direction), 261 Cambridge headwords belong to none of the
+seven banks, the IELTS bank shares 64.0% of its words with the TOEFL bank but only 38.0% with
+CET-4, and the deployment's "TOEFL" bank is set-identical to its general compilation — a
+data-quality signal about the material learners actually receive.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -192,16 +211,21 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (682 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
 study-materials index and the grey-literature archive index from the upstream tree (the archive
-derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit), and
-revalidates the internal consistency of the practice-test index (question counts, type normalisation
-and provenance) and of the archive index (facet totals, volume arithmetic, per-essay statistics),
-failing if the committed data has drifted — which guards against silent data rot.
+derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit),
+re-derives the test-centre index from the platform's four content blobs, and re-derives the
+word-bank concordance from the deployed learning system's live database and review-engine source
+(two blobs, pinned by SHA), and revalidates the internal consistency of the practice-test index
+(question counts, type normalisation and provenance), of the archive index (facet totals, volume
+arithmetic, per-essay statistics), of the test-centre index (catalogue and taxonomy totals,
+calibration contiguity) and of the word-bank concordance (bank and overlap arithmetic, membership
+distribution, Cambridge join totals, review-engine constants), failing if the committed data has
+drifted — which guards against silent data rot.
 
 # Availability
 

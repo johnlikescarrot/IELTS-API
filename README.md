@@ -20,12 +20,13 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is derived from five open collections — [`zhengyishiming/IELTS`][corpus] for the
+Everything here is derived from six open collections — [`zhengyishiming/IELTS`][corpus] for the
 vocabulary and the corpus index, [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
 question-type taxonomy and the practice-test structure and readability index,
 [`Oxidaner/ielts`][materials] for the study-materials index, [`msneloy/IELTS`][archive] for the
-grey-literature archive index, and [`wanli4473/yysd-testcenter`][testcenter] for the mock-exam
-test-centre index. None is redistributed: the API publishes derived, non-substitutive
+grey-literature archive index, [`wanli4473/yysd-testcenter`][testcenter] for the mock-exam
+test-centre index, and [`Iamdacai/ielts-vocab-system`][wordbanks] for the word-bank concordance.
+None is redistributed: the API publishes derived, non-substitutive
 metadata and statistics, plus original guidance datasets written for this project. See
 [RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every dataset, and
 [paper/paper.md](paper/paper.md) for the short research paper.
@@ -41,7 +42,13 @@ naming-scheme and completeness table, the twelve official sample tasks measured 
 looks like from the inside: `/v1/testcenter` opens up a live online mock-exam centre — its paper
 catalogue, its Cambridge holdings, the hand-tagged question-type, scene and difficulty taxonomy its
 teachers maintain across Cambridge 5-21, its exam-shell timing budgets, and the production
-raw-score-to-band calibration its exam pages are graded with.
+raw-score-to-band calibration its exam pages are graded with. And it measures how the vocabulary
+market itself is built: `/v1/wordbanks` turns a deployed vocabulary-learning platform into a
+cross-exam concordance — seven Chinese-market exam word banks (IELTS, CET-4, CET-6,
+postgraduate-entrance, TOEFL, GRE and a general compilation) totalling 47,044 rows over 15,930
+words, the pairwise overlap matrix between them, an original join of every bank against the
+Cambridge 1-22 vocabulary, the platform's collocation and prompt banks as aggregates, and the
+parameters of its Ebbinghaus spaced-repetition review engine as a deterministic calculator.
 
 And it closes the gap between a mark sheet and a band: `/v1/scores/raw` converts a Listening or
 Reading raw score out of 40 into a band on the right table — Academic and General Training Reading
@@ -91,6 +98,12 @@ curl -s "http://localhost:3000/v1/materials/items?category=past-paper-recall"
 
 # The Cambridge 1-18 listening archive, volume by volume: naming era, tests, completeness
 curl -s "http://localhost:3000/v1/archive/volumes"
+
+# How seven exam word banks overlap: the IELTS bank against every other bank
+curl -s "http://localhost:3000/v1/wordbanks/banks/ielts"
+
+# The deployed review engine: the next interval after eight reviews at mastery 50
+curl -s "http://localhost:3000/v1/wordbanks/review?reviews=8&mastery=50"
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -127,6 +140,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
 | Grey-literature archive         |         555 files / 509 audio tracks / 24 learner essays | `/v1/archive`           | Derived index of [the grey-literature archive][archive]                        |
 | Mock-exam test-centre index     |    377 papers / 222 Cambridge 4-21 / 1,099 tagged groups | `/v1/testcenter`        | Derived index of [the YYSD mock-exam test centre][testcenter]                  |
+| Word-bank concordance           |     7 banks / 47,044 rows / 15,930 words / 21 bank pairs | `/v1/wordbanks`         | Derived concordance of [the deployed learning system][wordbanks]               |
 
 ## Endpoints
 
@@ -187,6 +201,16 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/testcenter/scenes`      | The teaching-scene vocabulary of both tagged papers, crosswalked to the themes                          |
 | GET    | `/v1/testcenter/scoring`     | The production raw-score-to-band calibration, with optional band lookup (`paper`, `raw`)                |
 | GET    | `/v1/testcenter/drill`       | Compose a deterministic timed drill from tagged groups (`paper` required, `questions`, `minutes`, ...)  |
+| GET    | `/v1/wordbanks`              | Concordance provenance and headline statistics                                                          |
+| GET    | `/v1/wordbanks/banks`        | The seven exam word banks materialised by the deployed learning system                                  |
+| GET    | `/v1/wordbanks/banks/:id`    | One bank, with its overlap profile against every other bank                                             |
+| GET    | `/v1/wordbanks/overlaps`     | The pairwise overlap matrix: intersection, union, Jaccard, containment (`bank`)                         |
+| GET    | `/v1/wordbanks/cambridge`    | The join of every bank against the Cambridge IELTS 1-22 vocabulary                                      |
+| GET    | `/v1/wordbanks/words`        | Search the concordance (`bank`, `cambridge`, `collocated`, `sort`, `q`, `limit`, `offset`)              |
+| GET    | `/v1/wordbanks/words/:word`  | One word: bank memberships, collocation count, Cambridge cross-reference                                |
+| GET    | `/v1/wordbanks/collocations` | Per-headword collocation aggregates (`category`, `bank`, `cambridge`, `sort`, `q`)                      |
+| GET    | `/v1/wordbanks/review`       | The deployed Ebbinghaus review engine, with optional computation (`reviews`, `mastery`, `correct`, ...) |
+| GET    | `/v1/wordbanks/topics`       | The system's Speaking and Writing prompt banks (`skill`, `part`, `taskType`, `difficulty`, `q`)         |
 | GET    | `/v1/tools/readability`      | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile`    | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`             | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
@@ -405,6 +429,44 @@ assembles a deterministic ten-question listening drill on hard tourism sections,
 centre's own 0.8 min/question budget and attaches the scoring sheet — stateless, seeded by nothing,
 byte-identical on every request.
 
+### What the word-bank concordance measures
+
+The sixth collection is an operational WeChat mini-program vocabulary-learning platform: an
+Express/SQLite backend, a spaced-repetition review engine, an admin statistics panel and AI-assisted
+speaking and writing practice, deployed over HTTPS. Its live database materialises seven
+Chinese-market exam word banks as 47,044 rows over 15,930 distinct words. The concordance measures
+that deployment rather than redistributing it:
+
+| Bank                            |  Rows | Distinct | In Cambridge 1-22 |
+| ------------------------------- | ----: | -------: | ----------------: |
+| IELTS word list                 | 4,541 |    4,531 |             47.5% |
+| CET-4 word list                 | 4,428 |    4,424 |             59.9% |
+| CET-6 word list                 | 5,523 |    5,518 |             56.3% |
+| Postgraduate-entrance word list | 5,493 |    5,490 |             56.4% |
+| TOEFL word list                 | 9,782 |    9,735 |             31.4% |
+| GRE word list                   | 7,496 |    7,496 |             19.2% |
+| General compilation word list   | 9,781 |    9,735 |             31.4% |
+
+Four results fall out of the aggregate. First, the two artefacts that both claim the label "IELTS
+vocabulary" agree on barely half their contents: only 2,153 of the platform's 4,531 IELTS-bank
+words (47.5%) are Cambridge 1-22 headwords, and only 51.6% of the Cambridge headwords are in the
+IELTS bank — a learner who studies either list alone meets about half of the other's vocabulary for
+the first time in the exam room. Second, 261 Cambridge 1-22 headwords (6.3%) belong to none of the
+seven banks: the past-paper extraction reaches vocabulary the entire commercial word-bank market
+misses, while the banks' modal Cambridge word sits in five lists at once. Third, the IELTS bank is
+closest to the TOEFL bank (64.0% of it shared) and the general compilation, and furthest from CET-4
+(38.0%): IELTS vocabulary sits with the other international English examinations, not with the
+domestic ones. Fourth, the deployment itself carries a data-quality signal: the "TOEFL" bank and the
+general compilation are set-identical (9,735 words each, zero symmetric difference), and 10 of the
+413 collocation headwords belong to no bank at all. [RESEARCH.md](RESEARCH.md) Part VIII works
+through all four.
+
+The review engine is published as a calculator, not just a description:
+`/v1/wordbanks/review?reviews=8&mastery=50` returns the deployed Ebbinghaus ladder
+(5 min, 30 min, 12 h, 1, 2, 4, 7, 15 days), the dynamic rule that takes over once the ladder is
+exhausted (15 days x (1 + mastery/100)), and the mastery update for a graded answer — stateless,
+relative times only, byte-identical on every request.
+
 ### What the practice-test index measures
 
 The 1,232 CEFR-graded lessons and the 470 machine-readable full tests are indexed by structure and by
@@ -432,18 +494,20 @@ python3 scripts/extract_corpus.py tree.json data/corpus.json
 python3 scripts/extract_practice_tests.py tree.json ./upstream data/practice-tests.json
 python3 scripts/extract_archive.py tree.json ./upstream data/archive.json
 python3 scripts/extract_testcenter.py manifest.json listening-taxonomy.json reading-taxonomy.json cambridge_scoring.py tree.json data/testcenter.json
+python3 scripts/extract_wordbanks.py ielts_vocab.db spaced-repetition-algorithm.js data/wordbanks.json
 ```
 
-CI re-derives the vocabulary, study-materials, archive and test-centre datasets from upstream on
-every push — the archive derivation downloads the 38 document blobs it needs by blob SHA, the
-test-centre derivation the four content blobs the platform generates — and fails if any committed
-dataset has drifted. The practice-test and test-centre indexes are validated for internal
-consistency on the same run.
+CI re-derives the vocabulary, study-materials, archive, test-centre and word-bank datasets from
+upstream on every push — the archive derivation downloads the 38 document blobs it needs by blob
+SHA, the test-centre derivation the four content blobs the platform generates, and the word-bank
+derivation the live database and review-engine source of the deployed learning system — and fails
+if any committed dataset has drifted. The practice-test, test-centre and word-bank indexes are
+validated for internal consistency on the same run.
 
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 640 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 682 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -474,7 +538,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.4.0},
+  version = {1.5.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -527,9 +591,10 @@ Please also cite the upstream collections the datasets were derived from:
 - **Score calibration:** the `/v1/testcenter/scoring` tables are the conversion charts a production
   mock-exam platform embeds in its own exam pages; they are community-published charts, indicative
   rather than official, and carry that caveat in every response.
-- **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests`, `/v1/archive` and
-  `/v1/testcenter` publish derived metadata and statistics only — no passage, question, answer key,
-  transcript, recording, PDF content, essay text, exam page or vocabulary entry.
+- **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests`, `/v1/archive`,
+  `/v1/testcenter` and `/v1/wordbanks` publish derived metadata and statistics only — no passage,
+  question, answer key, transcript, recording, PDF content, essay text, exam page, vocabulary
+  definition, phonetic transcription, full collocation pair list or user record.
 - **Question-type strategies:** original wording. The task families follow the partners' public task
   descriptions; the observed frequencies describe the indexed practice corpus, not the live exam.
 
@@ -542,3 +607,4 @@ partners.
 [materials]: https://github.com/Oxidaner/ielts
 [archive]: https://github.com/msneloy/IELTS
 [testcenter]: https://github.com/wanli4473/yysd-testcenter
+[wordbanks]: https://github.com/Iamdacai/ielts-vocab-system

@@ -3,7 +3,7 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Seven parts, five upstream collections:
+Eight parts, six upstream collections:
 
 | Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                         |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
@@ -1035,3 +1035,147 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — the deployed vocabulary-learning system
+
+**Upstream snapshot:** commit `1f5ad56d664c56ae449dacc7618b6d7f23967a69` (2 April 2026), 269
+commits, `master` branch, 3,638 blobs, no licence file. Two blobs are used:
+`backend/ielts_vocab.db` (19,152,896 bytes, SHA-1 `4b4cfc9c…`, the live SQLite database) and
+`backend/spaced-repetition-algorithm.js` (3,116 bytes, SHA-1 `0eb51ec0…`, the review engine).
+
+### 42. What the system actually is
+
+The sixth collection is not a folder of files but an operational product:
+[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system) is the repository
+behind a deployed WeChat mini-program IELTS vocabulary-learning platform - an Express/SQLite backend
+served over HTTPS with JWT authentication, an Ebbinghaus spaced-repetition review engine, an admin
+statistics panel (data overview, word-bank statistics, wrong-answer top-10), and AI-assisted
+speaking and writing practice built on the Bailian API. The repository also carries the vocabulary
+workbooks the platform was seeded from: a 4,541-word "IELTS essential vocabulary" list from a
+commercial vocabulary outline (词汇总汇大纲), the CET-4/CET-6/postgraduate/TOEFL/GRE workbook set,
+and a general 9,400-word compilation.
+
+The database is the research object. The repository ships it alongside a SQLite write-ahead log
+(`ielts_vocab.db-wal`); the derivation opens the database read-only and **immutable**, so it is
+pinned to the blob bytes and ignores the log entirely. Applying the log changes file-level bytes
+only - the concordance derived from the raw blob and from the log-applied file is identical, which
+was verified by deriving both and comparing. Its `ielts_words` table holds **47,044 rows** across seven
+bank categories; lower-cased and de-duplicated they collapse to **15,930 distinct words**. Three
+further tables carry derived teaching assets: `word_collocations` (3,099 verb-object and
+noun-adjective pairs), `ielts_speaking_topics` (26 prompts with cue cards, difficulty and an
+estimated test-occurrence rating) and `writing_topics` (26 prompts across Task 1 Academic, Task 1
+General and Task 2). Learner tables (`users`, `user_word_progress`, `learning_records`, review
+sessions, practice records) exist but are **never read** by the derivation: no user record is
+published, and none is needed for the concordance.
+
+### 43. The concordance
+
+Extraction (`scripts/extract_wordbanks.py`, standard library only, SQLite opened read-only and
+immutable so the derivation ignores any write-ahead log and is pinned to the blob bytes):
+
+1. **Open immutably.** The database is opened `mode=ro&immutable=1`, so the derivation reads the
+   pinned blob bytes, never mutates the input, and is unaffected by any write-ahead log shipped
+   beside it.
+2. **Normalise.** Every `ielts_words` row is lower-cased and trimmed; empty headwords are dropped
+   (exactly one row). The seven categories map to stable bank ids: `ielts`, `cet4`, `cet6`,
+   `kaoyan`, `toefl`, `gre`, `compilation`.
+3. **Inventory.** Per bank: row count, distinct-word count, phonetic coverage, definition
+   coverage, and the case-collision count (rows collapsed by lower-casing - 607 rows across the
+   system, e.g. `AI`/`ai`).
+4. **Membership.** One row per distinct word: which banks contain it, how many, whether it is a
+   collocation headword (and with how many partners), and whether it is a Cambridge 1-22 headword.
+   Identifiers `wb00001`… are assigned after sorting by word, so they never move between releases.
+5. **Overlaps.** For each of the 21 unordered bank pairs: intersection, union, Jaccard similarity
+   and containment in both directions, rounded to four decimals.
+6. **The Cambridge join.** Every bank is intersected with the 4,174 Cambridge IELTS 1-22 headwords
+   published by `/v1/vocabulary` - an original cross-dataset analysis joining two upstreams.
+7. **Collocation aggregates.** Per headword: category, distinct partner count, bank memberships,
+   Cambridge membership. The 3,099 individual pairs are **not** published.
+8. **The review engine.** The ladder, mastery rule and review window are parsed out of the
+   deployed `spaced-repetition-algorithm.js` and the derivation **fails loudly** if the source
+   drifts from the published constants.
+9. **The prompt banks.** Part, topic, question text, cue-card lines, chart type, difficulty and
+   the platform's own estimated test-occurrence rating (60-95). Sample answers and vocabulary
+   highlights are `NULL` upstream and are not published.
+
+| Bank                            |  Rows | Distinct | With phonetic | With definition |
+| ------------------------------- | ----: | -------: | ------------: | --------------: |
+| IELTS word list                 | 4,541 |    4,531 |         4,540 |           4,541 |
+| CET-4 word list                 | 4,428 |    4,424 |         4,428 |           4,428 |
+| CET-6 word list                 | 5,523 |    5,518 |         5,523 |           5,523 |
+| Postgraduate-entrance word list | 5,493 |    5,490 |         5,493 |           5,493 |
+| TOEFL word list                 | 9,782 |    9,735 |         9,208 |           9,782 |
+| GRE word list                   | 7,496 |    7,496 |         7,493 |           7,496 |
+| General compilation word list   | 9,781 |    9,735 |         9,781 |           9,781 |
+
+### 44. Findings
+
+1. **Two artefacts both called "IELTS vocabulary" overlap by less than half.** Only 2,153 of the
+   platform's 4,531 IELTS-bank words (47.5%) are Cambridge 1-22 headwords; reciprocally, only
+   51.6% of the Cambridge headwords are in the IELTS bank. 425 IELTS-bank words appear in none of
+   the other six banks. "IELTS vocabulary" is therefore not one object: a list marketed for exam
+   preparation and the vocabulary extracted from 22 volumes of past papers are related but
+   substantially different populations.
+2. **IELTS vocabulary clusters with the international examinations.** The IELTS bank shares 64.0%
+   of its words with the TOEFL bank and the (identical) general compilation, 62.1% with the
+   postgraduate-entrance list, 59.9% with CET-6, 52.7% with GRE - and only 38.0% with CET-4. By
+   Jaccard similarity the closest pair is IELTS/postgraduate (0.391), then IELTS/CET-6 (0.370);
+   CET-4 is the most peripheral bank to IELTS (0.238).
+3. **567 words belong to all seven banks** and 4,417 to exactly one. The membership distribution
+   is bimodal (peaks at 1 and 5 banks), consistent with a core of general academic English
+   surrounded by exam-specific peripheries.
+4. **The deployment carries its own data-quality signals.** The "TOEFL" bank and the general
+   compilation are set-identical - 9,735 words each, zero symmetric difference, one row apart in
+   total - so the platform's TOEFL offering is in fact the general compilation list. Ten of the
+   413 collocation headwords belong to no bank at all. One headword is the numeral `1`, a row that
+   survived an import whose only filter was a minimum length.
+5. **The Cambridge headwords are the most shared population in the system - but not a subset of
+   it.** The modal membership of Cambridge words is 5 banks (1,121 words) and only 3.4% sit in a
+   single bank, yet 261 Cambridge headwords (6.3%) belong to none of the seven banks at all: the
+   past-paper extraction reaches vocabulary that the entire commercial word-bank market misses.
+
+### 45. Threats to validity
+
+- **The banks are commercial compilations, not the examinations.** Each bank is one publisher's
+  word list for an examination, not a corpus-derived frequency list published by the examiner. The
+  concordance measures the vocabulary _market_, and the Cambridge join measures one workbook
+  tradition against one past-paper extraction - neither is a claim about the construct "IELTS
+  vocabulary" itself.
+- **Bank attribution follows the platform's own reorganisation.** The live database assigns no
+  source to individual rows (the `source` column is NULL for all 47,044); the categories were
+  created by the platform's `restructure-vocab-v2.js` import, whose row counts match the workbook
+  set the repository carries. Attribution is therefore at bank level, documented as such in the
+  dataset's `provenanceNote`, and cannot be audited row by row.
+- **Lower-casing merges case variants and exact duplicates.** 115 rows collapse (0.2% of the
+  system). Acronyms that survive as lowercase words (`ai`, `usa`) remain; no attempt is made to
+  restore case, because the banks themselves are inconsistent.
+- **Collocation aggregates are not the collocation bank.** Publishing only per-headword counts
+  keeps the derivation non-substitutive but loses the pair structure; researchers who need the
+  pairs must go to the upstream (unlicensed) repository.
+- **The prompt banks are seed data, not observed exams.** The difficulty and frequency ratings are
+  the platform's own estimates (single-administrator judgements, not learner data); the questions
+  are generic prompts, and sample answers are absent upstream.
+- **The review engine is a design, not a result.** The ladder and mastery rule are the deployed
+  parameters; no learner outcome data is published (or read), so nothing here validates the
+  schedule pedagogically.
+- **The snapshot is mutable and unlicensed.** As with Parts I, IV, V and VII: the commit SHA and
+  the two blob SHA-1s pin the analysis; upstream deletion would orphan permalinks and the index
+  would need re-deriving after upstream changes.
+
+### 46. Reproducing Part VIII
+
+```bash
+# Fetch the tree at the pinned commit, then the two blobs by SHA:
+#   backend/ielts_vocab.db            (the live database, fully checkpointed)
+#   backend/spaced-repetition-algorithm.js  (the review engine)
+python3 scripts/extract_wordbanks.py ielts_vocab.db spaced-repetition-algorithm.js data/wordbanks.json
+```
+
+`scripts/extract_wordbanks.py` is standard library only. The Cambridge join reads
+`data/vocabulary.json` from the repository, so the derivation is reproducible inside a checkout and
+Part I is a transitive input. The derivation is deterministic: the same two blobs (plus the Part I
+dataset) always produce byte-identical output. Continuous integration re-derives the concordance on
+every run - it downloads the two blobs by SHA, runs the extractor, and fails if the committed file
+disagrees - and then checks the index for internal consistency (bank and row totals, word
+identifiers, overlap arithmetic, membership distribution, Cambridge join totals, collocation
+totals, review-engine constants, prompt-bank structure).

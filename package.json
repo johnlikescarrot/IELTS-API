@@ -1,7 +1,7 @@
 {
   "name": "ielts-api",
-  "version": "1.4.0",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, validated raw-score to band conversion tables, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and marked learner essays, and a mock-exam test-centre index of an operational IELTS online test centre.",
+  "version": "1.5.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, validated raw-score to band conversion tables, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and marked learner essays, a mock-exam test-centre index of an operational IELTS online test centre, and a cross-exam word-bank concordance of a deployed vocabulary-learning system: seven banks, 47,044 rows, the pairwise overlap matrix, the Cambridge coverage join and the parameters of its Ebbinghaus review engine.",
   "keywords": [
     "api",
     "assessment",
@@ -17,7 +17,11 @@
     "psychometrics",
     "mock-exam",
     "test-center",
-    "score-calibration"
+    "score-calibration",
+    "word-bank concordance",
+    "spaced repetition",
+    "vocabulary overlap",
+    "learning system"
   ],
   "license": "MIT",
   "type": "module",
@@ -53,7 +57,8 @@
     "data:practice-tests": "python3 scripts/extract_practice_tests.py",
     "data:materials": "python3 scripts/extract_materials.py",
     "data:archive": "python3 scripts/extract_archive.py",
-    "data:testcenter": "python3 scripts/extract_testcenter.py"
+    "data:testcenter": "python3 scripts/extract_testcenter.py",
+    "data:wordbanks": "python3 scripts/extract_wordbanks.py"
   },
   "dependencies": {},
   "devDependencies": {

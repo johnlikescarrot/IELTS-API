@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.4.0
-date-released: '2026-09-05'
+version: 1.5.0
+date-released: '2026-09-07'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
@@ -24,7 +24,13 @@ abstract: >-
   writing, a Cambridge holdings matrix, 1,099 hand-tagged question groups
   carrying
   canonical question type, teaching scene and difficulty for 5,408 questions,
-  and the centre's production raw-score-to-band calibration. Deterministic analysis tools profile any text for Flesch readability,
+  and the centre's production raw-score-to-band calibration, and a cross-exam word-bank
+  concordance of a deployed vocabulary-learning system: seven Chinese-market exam word banks
+  (IELTS, CET-4, CET-6, postgraduate-entrance, TOEFL, GRE and a general compilation) as 47,044
+  rows over 15,930 words, the pairwise overlap matrix between them, the join of every bank
+  against the Cambridge 1-22 headwords, per-headword collocation aggregates, the platform's
+  Speaking and Writing prompt banks, and the parameters of its Ebbinghaus
+  spaced-repetition review engine as a deterministic calculator. Deterministic analysis tools profile any text for Flesch readability,
   lexical diversity and Cambridge-headword coverage, and compose the datasets
   into a week-by-week study plan towards a target band. Every endpoint is free
   of charge,
@@ -51,6 +57,9 @@ keywords:
   - mock exam
   - test center
   - score calibration
+  - word-bank concordance
+  - spaced repetition
+  - vocabulary overlap
   - CEFR
   - open data
   - REST API
@@ -98,6 +107,12 @@ references:
     title: 'IELTS: a grey-literature archive of Cambridge listening audio, official sample tasks and marked assignments'
     url: 'https://github.com/msneloy/IELTS'
     year: 2022
+  - type: dataset
+    authors:
+      - name: 'Iamdacai'
+    title: 'ielts-vocab-system: a deployed WeChat mini-program IELTS vocabulary-learning platform'
+    url: 'https://github.com/Iamdacai/ielts-vocab-system'
+    year: 2026
   - type: article
     authors:
       - family-names: 'Flesch'
@@ -136,7 +151,7 @@ preferred-citation:
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.4.0
+  version: 1.5.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:

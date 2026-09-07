@@ -40,7 +40,13 @@ selection, normalisation, de-duplication, part-of-speech tagging and
 provenance metadata added by this project. It does not transfer any rights in
 the upstream files themselves, which remain the property of their respective
 copyright holders and are never redistributed by this project. The corpus index
-in `data/corpus.json` publishes metadata only.
+in `data/corpus.json` publishes metadata only, as do the practice-test, materials,
+archive, test-centre and word-bank indexes (`data/practice-tests.json`,
+`data/materials.json`, `data/archive.json`, `data/testcenter.json`,
+`data/wordbanks.json`): the word-bank concordance publishes bank inventories,
+memberships, overlap statistics, per-headword collocation counts and
+review-engine parameters only — no definition, phonetic transcription, example
+sentence, full collocation pair list or user record.
 
 The band descriptors in `src/data/bands.ts` are original condensed paraphrases
 written for this project. They are not the official IELTS band descriptors,
