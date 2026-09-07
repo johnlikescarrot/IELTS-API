@@ -32,8 +32,9 @@ metadata and statistics, plus original guidance datasets written for this projec
 
 The API also analyses text, not just publishes it: `/v1/tools/readability` scores any passage with
 the Flesch formulas and places it next to the corpus group means, `/v1/tools/essay-profile` turns a
-writing sample into lexical, structural and theme measurements with descriptor-aligned hints, and
-`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule. And it
+writing sample into lexical, structural and theme measurements with descriptor-aligned hints,
+`/v1/study/plan` composes every dataset into a deterministic week-by-week study schedule, and
+`/v1/study/review` schedules vocabulary review on the SuperMemo SM-2 forgetting curve. And it
 indexes what preparation material looks like before anyone curates it: `/v1/archive` catalogues a
 5.4 GB grey-literature archive — the Cambridge IELTS 1-18 listening audio with a per-volume
 naming-scheme and completeness table, the twelve official sample tasks measured for readability, and
@@ -76,6 +77,9 @@ curl -s "http://localhost:3000/v1/tools/readability?text=Dogs%20run%20fast.%20Ca
 
 # A deterministic eight-week study plan towards band 7
 curl -s "http://localhost:3000/v1/study/plan?target=7&writing=6&speaking=6.5"
+
+# The next vocabulary review after a "hesitant" recall: SM-2 schedule and projection
+curl -s "http://localhost:3000/v1/study/review?quality=4&repetitions=2&interval=6&today=2026-09-07"
 
 # The 13 IELTS question types, ranked by how often they occur in 27,225 practice questions
 curl -s "http://localhost:3000/v1/question-types?skill=listening"
@@ -123,6 +127,7 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 | Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
 | Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
 | Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
+| Spaced-repetition scheduler     |                SuperMemo SM-2 next review and projection | `/v1/study/review`      | Deterministic forgetting-curve schedule ([RESEARCH.md](RESEARCH.md) Part VIII) |
 | Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
 | Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
 | Grey-literature archive         |         555 files / 509 audio tracks / 24 learner essays | `/v1/archive`           | Derived index of [the grey-literature archive][archive]                        |
@@ -190,6 +195,7 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/tools/readability`      | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile`    | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`             | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
+| GET    | `/v1/study/review`           | SuperMemo SM-2 review schedule (`quality`, `repetitions`, `easiness`, `interval`, `today`)              |
 | GET    | `/v1/resources`              | Free preparation resources (`type`, `q`)                                                                |
 
 ### Worked examples
@@ -296,6 +302,29 @@ GET /v1/study/plan?target=7&writing=6&speaking=6.5&weeks=8&hoursPerWeek=10
     ],
     "vocabulary": { "headwordsAvailable": 4174, "wordsPerDay": 10, "wordsPerWeek": 70, "headwordsOverPlan": 560 },
     "notes": ["Components not supplied default to 5.5 (target − 1.5 bands); ...", ...]
+
+**Spaced repetition.** The scheduler turns a recall grade into the next review date using SuperMemo
+SM-2, the canonical forgetting-curve schedule. Grade the item 0-5 (`quality`), pass its history
+(`repetitions`, `interval`, `easiness`) and pin the reference date with `today`; the response is the
+next review plus the five after it, projected on the same grade.
+
+```jsonc
+GET /v1/study/review?quality=4&repetitions=2&interval=6&today=2026-09-07
+{
+  "status": 200,
+  "data": {
+    "inputs": { "quality": 4, "repetitions": 2, "easiness": 2.5, "interval": 6, "today": "2026-09-07" },
+    "recall": { "quality": 4, "description": "correct response recalled after a hesitation", "forgotten": false },
+    "schedule": { "easiness": 2.5, "repetitions": 3, "interval": 15, "due": "2026-09-22" },
+    "projected": [
+      { "easiness": 2.5, "repetitions": 4, "interval": 38, "due": "2026-10-30" },
+      ...
+    ],
+    "note": "SuperMemo SM-2: a grade below 3 resets the repetition counter ..."
+  },
+  "meta": { "method": "SuperMemo SM-2: ...", "reference": "Wozniak, P. (1998). SuperMemo SM-2 algorithm." }
+}
+```
 
 **Response framework for an opinion prompt.**
 

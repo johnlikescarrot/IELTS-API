@@ -6,6 +6,27 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-07
+
+The **spaced-repetition layer**. The study planner tells a candidate _what_ to study; this release
+tells them _when to review it again_. Every learner forgets vocabulary on a curve, and the
+canonical schedule for flattening that curve is SuperMemo's SM-2 — the first algorithm to separate
+the review interval from the item and to adapt it to the learner's performance. The API now
+publishes that schedule as a deterministic, citable endpoint instead of leaving it to proprietary
+flashcard apps. The API remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Spaced-repetition review scheduling** (`GET /v1/study/review`): a self-assessed recall grade
+  (0-5) plus an item's repetition history produces the next review date and a projection of the five
+  reviews after it, computed with the SuperMemo SM-2 update rules. A grade below 3 resets the
+  repetition counter and reschedules the item for tomorrow with the easiness factor unchanged;
+  grades 3-5 lengthen the interval (1 day, 6 days, then the previous interval times the easiness
+  factor, floored at 1.3). The reference date defaults to today (UTC) and can be pinned with `today`
+  for reproducible schedules.
+- `paper/paper.md` and `RESEARCH.md` Part VIII: the forgetting curve, the SM-2 algorithm, and why a
+  GET-only API can publish a schedule it cannot mutate.
+
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses

@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.4.0
+version: 1.5.0
 date-released: '2026-09-05'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
@@ -25,8 +25,9 @@ abstract: >-
   carrying
   canonical question type, teaching scene and difficulty for 5,408 questions,
   and the centre's production raw-score-to-band calibration. Deterministic analysis tools profile any text for Flesch readability,
-  lexical diversity and Cambridge-headword coverage, and compose the datasets
-  into a week-by-week study plan towards a target band. Every endpoint is free
+  lexical diversity and Cambridge-headword coverage, compose the datasets
+  into a week-by-week study plan towards a target band, and schedule vocabulary
+  review with the SuperMemo SM-2 forgetting-curve algorithm. Every endpoint is free
   of charge,
   requires no authentication, returns a uniform JSON envelope with a stable
   ETag, and is covered by a test suite with 100% statement, branch, function
@@ -51,6 +52,8 @@ keywords:
   - mock exam
   - test center
   - score calibration
+  - spaced repetition
+  - SuperMemo SM-2
   - CEFR
   - open data
   - REST API
@@ -130,13 +133,27 @@ references:
     end: 238
     year: 2000
     doi: '10.2307/3587951'
+  - type: website
+    authors:
+      - family-names: 'Wozniak'
+        given-names: 'Piotr A.'
+    title: 'SuperMemo SM-2 algorithm'
+    url: 'https://www.supermemo.com/en/archives1990-2015/english/ol/sm2'
+    year: 1998
+  - type: book
+    authors:
+      - family-names: 'Ebbinghaus'
+        given-names: 'Hermann'
+    title: 'Memory: A Contribution to Experimental Psychology'
+    year: 1885
+    publisher: 'Teachers College, Columbia University'
 preferred-citation:
   type: software
   title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.4.0
+  version: 1.5.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:

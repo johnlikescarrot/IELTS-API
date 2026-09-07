@@ -484,6 +484,39 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
     },
   ],
+  '/v1/study/review': [
+    {
+      name: 'quality',
+      in: 'query',
+      required: true,
+      description: 'SM-2 response quality: 0-2 forgotten, 3 recalled with difficulty, 4 hesitant, 5 perfect.',
+      schema: { type: 'integer', minimum: 0, maximum: 5 },
+    },
+    {
+      name: 'repetitions',
+      in: 'query',
+      description: 'Consecutive successful repetitions before this review.',
+      schema: { type: 'integer', minimum: 0, default: 0 },
+    },
+    {
+      name: 'easiness',
+      in: 'query',
+      description: 'Current easiness factor (SM-2 floor: 1.3).',
+      schema: { type: 'number', minimum: 1.3, default: 2.5 },
+    },
+    {
+      name: 'interval',
+      in: 'query',
+      description: 'Current interval in days before this review.',
+      schema: { type: 'integer', minimum: 0, default: 0 },
+    },
+    {
+      name: 'today',
+      in: 'query',
+      description: 'Reference date (YYYY-MM-DD). Defaults to today (UTC).',
+      schema: { type: 'string', format: 'date' },
+    },
+  ],
 };
 
 /** The shared JSON envelope schema. */
@@ -587,7 +620,8 @@ export function openApiDocument(
         'self-study materials collection, and a mock-exam test-centre index with the',
         'Cambridge 4-21 holdings, 1,099 hand-tagged question groups and a production',
         'raw-score-to-band calibration. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        '(readability and essay profile), composes the datasets into study plans and',
+        'schedules vocabulary review with SM-2 spaced repetition.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

@@ -796,6 +796,57 @@ export type StudyPlan = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Spaced-repetition review scheduling                                        */
+/* -------------------------------------------------------------------------- */
+
+/** Self-assessed response quality on the SuperMemo SM-2 grade scale. */
+export type RecallQuality = 0 | 1 | 2 | 3 | 4 | 5;
+
+/** One scheduled review of an item, with the date it falls due. */
+export type ScheduledReview = {
+  /** Easiness factor after this review (floored at 1.3). */
+  easiness: number;
+  /** Consecutive successful repetitions after this review. */
+  repetitions: number;
+  /** Days until the next review. */
+  interval: number;
+  /** ISO date (UTC) on which the next review falls due. */
+  due: string;
+};
+
+/** Response of `/v1/study/review`. */
+export type ReviewSchedule = {
+  /** Validated and defaulted inputs. */
+  inputs: {
+    /** Response quality graded by the learner (0-5). */
+    quality: RecallQuality;
+    /** Repetition count before this review. */
+    repetitions: number;
+    /** Easiness factor before this review. */
+    easiness: number;
+    /** Current interval in days before this review. */
+    interval: number;
+    /** Reference date (YYYY-MM-DD) the schedule is computed from. */
+    today: string;
+  };
+  /** What the learner reported and what it means. */
+  recall: {
+    /** The grade as supplied. */
+    quality: RecallQuality;
+    /** SM-2 description of the grade. */
+    description: string;
+    /** Whether the item was forgotten (grade below 3). */
+    forgotten: boolean;
+  };
+  /** The next review, computed with the SM-2 update rules. */
+  schedule: ScheduledReview;
+  /** The following reviews, projected assuming the same grade each time. */
+  projected: ScheduledReview[];
+  /** Provenance of the scheduling algorithm. */
+  note: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* Study-materials index                                                      */
 /* -------------------------------------------------------------------------- */
 

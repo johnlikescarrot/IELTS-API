@@ -37,7 +37,10 @@ cross-linked to the task banks; a structure and readability index of
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics. On top of the datasets, the service schedules vocabulary review on the SuperMemo SM-2
+forgetting curve [@wozniak1998sm2; @ebbinghaus1885]: a recall grade and an item's repetition history
+produce the next review date and a projection, published as a deterministic endpoint rather than
+left to proprietary flashcard applications.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -174,8 +177,12 @@ the Cambridge headword list, sentence-length spread, discourse-marker density an
 and maps the measurements onto hints phrased after the four analytic criteria, at fixed published
 thresholds; the response states that the hints are teaching heuristics, not scores. A study planner
 composes the gap between a target band and current component scores into a deterministic
-week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
-pure functions of their inputs, so their outputs are as reproducible as the datasets.
+week-by-week schedule whose every activity links to the endpoint that publishes it, and a
+spaced-repetition scheduler applies the SuperMemo SM-2 update rules [@wozniak1998sm2] to a recall
+grade and an item's history, returning the next review date and the five reviews after it so that
+vocabulary practice follows the forgetting curve [@ebbinghaus1885] rather than arbitrary intervals.
+All of them are pure functions of their inputs, so their outputs are as reproducible as the
+datasets.
 
 # Design
 
@@ -192,7 +199,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (667 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous

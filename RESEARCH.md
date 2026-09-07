@@ -1035,3 +1035,60 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — the spaced-repetition review scheduler
+
+The study planner (Part III) tells a candidate _what_ to study each week; it does not say _when_ to
+return to a word already learned. That second question is the one the reference vocabulary systems
+answer with proprietary spaced-repetition engines, and it is the gap `/v1/study/review` closes: a
+recall grade plus an item's repetition history produces the next review date, published by the API
+as a deterministic schedule rather than locked inside a flashcard app.
+
+### 42. Why a forgetting curve
+
+Ebbinghaus's forgetting curve is the empirical starting point: memory for newly learned material
+decays roughly exponentially, and each successful recall flattens the curve — the memory survives
+longer, so the next review can be delayed further. Spaced repetition operationalises that principle
+as a schedule: review an item just before it would be forgotten, and each review stretches the
+interval to the next one. The schedule is therefore _adaptive_: it depends on the learner's own
+recall quality, which no static plan (Part III) can observe.
+
+### 43. SuperMemo SM-2
+
+The endpoint implements SuperMemo SM-2, the schedule Wozniak published in 1998 and the reference
+against which later schedulers are benchmarked. It has three parts:
+
+1. **Grade each recall 0-5.** 5 is a perfect response; 4 correct after hesitation; 3 correct with
+   serious difficulty; 2 and 1 are incorrect responses of differing severity; 0 is a complete
+   blackout.
+2. **Update the interval.** A grade below 3 means the item was forgotten: reset the repetition
+   counter and review it again tomorrow. A grade of 3 or more lengthens the interval — 1 day, then
+   6 days, then the previous interval times the item's easiness factor.
+3. **Update the easiness factor.** `EF' = EF + (0.1 − (5 − q) · (0.08 + (5 − q) · 0.02))`, floored
+   at 1.3, so perfect recalls make an item easier and hesitant recalls make it harder.
+
+The endpoint applies those rules to a single review and projects the next five reviews on the same
+grade, with every date computed in UTC from a `today` the client may pin for reproducibility.
+
+### 44. Why the API publishes a schedule it does not mutate
+
+The API is GET-only and stateless — it has no account, no deck and no flashcard database, which is
+precisely what makes the schedule citable: it is a pure function of its inputs, so a schedule
+archived today can be regenerated and diffed years later. A client that wants stateful
+spaced repetition (a deck of cards, a day-by-day due queue) can drive it entirely from this
+endpoint, one item at a time, without surrendering the schedule to a proprietary service. The
+limitations follow from the same design: the schedule assumes the learner grades honestly and
+reviews on schedule, and the projection assumes the same grade every time, so it is a forecast, not
+a promise.
+
+### 45. Reproducing the schedule
+
+The endpoint is deterministic and needs no upstream data; its outputs are pinned by the test suite.
+
+```bash
+curl -s "http://localhost:3000/v1/study/review?quality=4&repetitions=2&interval=6&today=2026-09-07"
+```
+
+The unit tests assert the classic SM-2 ladder exactly — interval 1, then 6, then 15, then 38 for a
+hesitant-but-correct grade at the default 2.5 easiness factor — and the floor behaviour (the
+easiness factor never falls below 1.3), so a regression in the schedule is a failing test.
