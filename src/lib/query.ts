@@ -3,7 +3,6 @@
  */
 
 import { badRequest } from './errors.js';
-import { parseList } from './search.js';
 
 import type { QueryParams } from '../types.js';
 
@@ -80,31 +79,6 @@ export function getNumber(params: QueryParams, key: string, min: number, max: nu
     });
   }
   return parsed;
-}
-
-/**
- * Parse a comma-separated list of Cambridge IELTS volume numbers.
- *
- * @param raw - Raw parameter value (`1,2,3`), or `undefined` when absent.
- * @param key - Parameter name used in error messages.
- * @param max - Highest Cambridge IELTS volume number accepted.
- * @returns The volumes, or `undefined` when the parameter is absent.
- */
-export function parseVolumeList(raw: string | undefined, key = 'volume', max = 22): number[] | undefined {
-  const tokens = parseList(raw, key);
-  if (tokens === undefined) {
-    return undefined;
-  }
-  return tokens.map((token) => {
-    const volume = /^\d{1,2}$/.test(token) ? Number.parseInt(token, 10) : Number.NaN;
-    if (!Number.isInteger(volume) || volume < 1 || volume > max) {
-      throw badRequest(`Parameter "${key}" must list volumes between 1 and ${max}.`, {
-        parameter: key,
-        received: token,
-      });
-    }
-    return volume;
-  });
 }
 
 /** Read an enumeration parameter, returning `undefined` when absent. */

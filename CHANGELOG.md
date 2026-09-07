@@ -6,52 +6,6 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
-## [1.5.0] - 2026-09-07
-
-The **vocabulary-learning layer**, a study-engine family built over the Cambridge IELTS 1-22
-headword set. The reference design is the ecosystem of "smart vocabulary" learning systems — most
-directly the unlicensed WeChat system at
-[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system), whose pedagogy is
-to learn a fixed number of new headwords a day and re-present each word on an expanding review
-ladder (1-2-4-7-15-30 days). That repository declares no licence and mixes commercial wordbook
-content with live learner data, so nothing in it is copied: this release re-implements the method
-as transparent, reproducible, stateless model code over this API's own CC BY 4.0 dataset, and
-documents the study of the reference system in RESEARCH.md Part VIII. The API remains free,
-GET-only, authentication-free and dependency-free.
-
-### Added
-
-- **Forgetting-curve calculator** (`GET /v1/study/retention`): the single-exponential curve
-  `R = exp(-days / stabilityDays)` (Ebbinghaus 1885; replicated by Murre & Dros 2015) with an
-  explicit stability parameter, half-life, and an optional inversion towards a target retention
-  (`target`) that reports the last whole day retention stays above it. The default stability is
-  anchored so the 24-hour prediction (`e^(-1) ≈ 0.37`) sits near Ebbinghaus's one-day savings
-  value (≈ 0.34); the savings anchors are echoed in the response metadata so the model is never
-  mistaken for a measurement.
-- **Deterministic review calendar** (`GET /v1/study/review`): a day-by-day study plan over the
-  headword list — `date` start, `days` window, `newPerDay`, optional `volume`/`pos` scope filters,
-  `order` (`list`, `length`, `recurrence`), a configurable `reviewDays` ladder and the stability
-  model's `stability`/`growth`. Every scheduled review carries the gap and the model's predicted
-  retention at that review; the scope cycles after one pass, and UTC days keep every response
-  byte-identical across replicas.
-- **Definition-recognition practice sets** (`GET /v1/study/quiz`): deterministic multiple-choice
-  items in which the learner matches a headword to one of four definitions from the CC BY dataset.
-  Distractors are other headwords' definitions, same part of speech first with cross-part
-  fallback; options, answer positions and item sets are seeded by date and scope; the answer key
-  is public because these are study aids, not assessments.
-- `RESEARCH.md` Part VIII: a field study of the reference vocabulary-learning system (multi-word
-  banks, Ebbinghaus review, collocation and example-sentence features, its licence and privacy
-  walls), a new measurement of the Cambridge headword list itself — only 133 of 4,174 headwords
-  (3.2%) occur in more than one volume, so per-volume lists are almost disjoint — the design and
-  defaults of the retention model with its literature anchors, the scheduling and item-generation
-  algorithms, the threats to validity, and full reproducibility notes.
-- The service index, `/docs` and `/openapi.json` now advertise the three study-engine endpoints,
-  and the package exports the new library functions (`retentionResult`, `buildReviewSchedule`,
-  `buildQuiz`, ...) for dependency use.
-- `README.md` quick-start examples, endpoint table rows and citation block updated; `CHANGELOG.md`
-  metadata (`CITATION.cff`, `codemeta.json`, `.zenodo.json`, package and version constants) cites
-  version 1.5.0.
-
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses
@@ -310,8 +264,7 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.5.0...HEAD
-[1.5.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.5.0
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
 [1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
 [1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
 [1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
