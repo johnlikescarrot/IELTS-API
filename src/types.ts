@@ -1198,6 +1198,251 @@ export type TestcenterStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Retention and review scheduling                                            */
+/* -------------------------------------------------------------------------- */
+
+/** A forgetting-curve study whose savings data the API republishes. */
+export type ForgettingStudyId = 'ebbinghaus' | 'mack' | 'seitz' | 'dros';
+
+/** Provenance of one forgetting-curve dataset. */
+export type ForgettingStudy = {
+  /** Stable identifier. */
+  id: ForgettingStudyId;
+  /** Investigator and label. */
+  name: string;
+  /** Year the data were published. */
+  year: number;
+  /** Bibliographic source. */
+  source: string;
+  /** Where the figures were transcribed from. */
+  sourceUrl: string;
+  /** Whether this is the original 1885 series or a replication. */
+  role: 'original' | 'replication';
+  /** Anything a reader needs in order to read the column correctly. */
+  note: string;
+};
+
+/** Savings observed at one retention interval, across every study. */
+export type ForgettingObservation = {
+  /** Retention interval in minutes, as used by Murre and Dros when fitting. */
+  minutes: number;
+  /** Interval as the studies label it. */
+  label: string;
+  /** Savings per study, as a proportion of original learning effort (0-1). */
+  savings: Record<ForgettingStudyId, number>;
+  /** Savings predicted by Ebbinghaus's own 1885 equation, as a proportion. */
+  predicted: number;
+  /** `savings.ebbinghaus - predicted`, the residual of the original fit. */
+  residual: number;
+};
+
+/** How a scheduler computes the next interval. */
+export type SchedulerFamily = 'fixed-ladder' | 'multiplicative' | 'half-life';
+
+/** How well sourced a scheduler's intervals are. */
+export type SchedulerProvenance = 'published-algorithm' | 'published-schedule' | 'folk-pedagogical';
+
+/** Identifier of a review scheduler published by the API. */
+export type SchedulerId = 'ebbinghaus-folk' | 'pimsleur-1967' | 'leitner-5box' | 'sm-2' | 'half-life';
+
+/** One review scheduler, with the provenance of its intervals. */
+export type Scheduler = {
+  /** Stable identifier. */
+  id: SchedulerId;
+  /** Display name. */
+  name: string;
+  /** How the next interval is computed. */
+  family: SchedulerFamily;
+  /** How well sourced the intervals are. */
+  provenance: SchedulerProvenance;
+  /** Year of first publication. */
+  year: number;
+  /** Bibliographic source. */
+  source: string;
+  /** Where the intervals were transcribed from. */
+  sourceUrl: string;
+  /** Fixed interval ladder in seconds; empty for purely parametric schedulers. */
+  ladder: number[];
+  /** Labels for the ladder entries, as the source writes them. */
+  ladderLabels: string[];
+  /** Multiplier applied once the ladder is exhausted, or `null`. */
+  growth: number | null;
+  /** Longest interval the scheduler can ever schedule, in seconds; `null` if unbounded. */
+  ceilingSeconds: number | null;
+  /** Whether the scheduler's own documentation attributes it to Ebbinghaus. */
+  claimsEbbinghaus: boolean;
+  /** What the scheduler actually specifies, and what it does not. */
+  note: string;
+};
+
+/** A competing rendering of a fixed-ladder scheduler. */
+export type SchedulerVariant = {
+  /** Stable identifier. */
+  id: string;
+  /** Scheduler the variant renders differently. */
+  scheduler: SchedulerId;
+  /** Display name. */
+  label: string;
+  /** Where this rendering is published. */
+  sourceUrl: string;
+  /** The rendering's ladder, in seconds. */
+  ladder: number[];
+  /** Why the renderings differ. */
+  note: string;
+};
+
+/** Disagreement between a variant rendering and the canonical ladder. */
+export type SchedulerDisagreement = {
+  /** 1-based review number. */
+  review: number;
+  /** Canonical interval, in seconds. */
+  canonicalSeconds: number;
+  /** Variant interval, in seconds. */
+  variantSeconds: number;
+  /** `variantSeconds / canonicalSeconds`, rounded to two decimals. */
+  ratio: number;
+};
+
+/** Mutable state a scheduler carries between reviews. */
+export type ReviewState = {
+  /** Number of successful reviews completed. */
+  repetitions: number;
+  /** Number of failed reviews. */
+  lapses: number;
+  /** The interval that preceded this state, in seconds; `0` before the first review. */
+  intervalSeconds: number;
+  /** SM-2 easiness factor, or `null` for schedulers that have none. */
+  easeFactor: number | null;
+  /** Leitner box (1-5), or `null`. */
+  box: number | null;
+  /** Estimated memory half-life in days, or `null`. */
+  halfLifeDays: number | null;
+  /** Mastery score 0-100 as kept by the folk ladder, or `null`. */
+  mastery: number | null;
+};
+
+/** One review in a generated schedule. */
+export type ScheduledReview = {
+  /** 1-based review number. */
+  review: number;
+  /** Interval since the previous review, in seconds. */
+  intervalSeconds: number;
+  /** Interval since the previous review, in days. */
+  intervalDays: number;
+  /** Time since first learning, in days. */
+  elapsedDays: number;
+  /** Scheduled instant, ISO-8601 in UTC. */
+  at: string;
+  /** Savings predicted at this lag by Ebbinghaus's 1885 equation, as a percentage. */
+  predictedSavings: number;
+  /** Recall predicted at this lag by the half-life model, as a probability. */
+  predictedRecall: number;
+  /** Scheduler state after the review. */
+  state: ReviewState;
+};
+
+/** A generated review calendar. */
+export type ReviewSchedule = {
+  /** Scheduler used. */
+  scheduler: SchedulerId;
+  /** Display name of the scheduler. */
+  schedulerName: string;
+  /** Validated and defaulted inputs. */
+  inputs: {
+    start: string;
+    quality: number;
+    horizonDays: number;
+    maxReviews: number;
+    targetRecall: number;
+  };
+  /** The reviews that fall inside the horizon. */
+  reviews: ScheduledReview[];
+  /** Aggregates over the horizon. */
+  summary: {
+    reviews: number;
+    firstIntervalDays: number;
+    terminalIntervalDays: number;
+    coveredDays: number;
+    reachedHorizon: boolean;
+    meanPredictedRecall: number;
+  };
+  /** Method notes. */
+  notes: string[];
+};
+
+/** One scheduler's behaviour over a shared horizon. */
+export type SchedulerProjection = {
+  /** Scheduler identifier. */
+  scheduler: SchedulerId;
+  /** Display name. */
+  name: string;
+  /** How the next interval is computed. */
+  family: SchedulerFamily;
+  /** How well sourced the intervals are. */
+  provenance: SchedulerProvenance;
+  /** Reviews scheduled inside the horizon. */
+  reviews: number;
+  /** Longest interval scheduled inside the horizon, in days. */
+  terminalIntervalDays: number;
+  /** Days covered by the scheduled reviews. */
+  coveredDays: number;
+  /** Whether the scheduler reached the end of the horizon. */
+  reachedHorizon: boolean;
+  /** Mean predicted recall at the moment of review. */
+  meanPredictedRecall: number;
+  /** Reviews per item per year implied by the horizon. */
+  reviewsPerYear: number;
+};
+
+/** Steady-state review workload for a daily intake of new words. */
+export type WorkloadProjection = {
+  /** Scheduler used. */
+  scheduler: SchedulerId;
+  /** Display name. */
+  schedulerName: string;
+  /** Validated and defaulted inputs. */
+  inputs: { wordsPerDay: number; horizonDays: number; quality: number; headwords: number };
+  /** Reviews each word receives inside the horizon. */
+  reviewsPerWord: number;
+  /** Reviews due on the busiest day of the horizon. */
+  peakDailyReviews: number;
+  /** Mean reviews per day over the second half of the horizon. */
+  steadyStateDailyReviews: number;
+  /** Total reviews across the horizon. */
+  totalReviews: number;
+  /** Days needed to introduce every Cambridge headword at this rate. */
+  daysToCoverHeadwords: number;
+  /** New words plus reviews on the busiest day. */
+  peakDailyItems: number;
+  /** Method notes. */
+  notes: string[];
+};
+
+/** Result of grading a single review. */
+export type ReviewGrade = {
+  /** Scheduler used. */
+  scheduler: SchedulerId;
+  /** Display name. */
+  schedulerName: string;
+  /** Grade supplied by the caller, on the SM-2 0-5 quality scale. */
+  quality: number;
+  /** Whether the grade counts as a successful recall (`quality >= 3`). */
+  correct: boolean;
+  /** State before the review. */
+  before: ReviewState;
+  /** State after the review. */
+  after: ReviewState;
+  /** Interval until the next review, in seconds. */
+  intervalSeconds: number;
+  /** Interval until the next review, in days. */
+  intervalDays: number;
+  /** Recall predicted at the next review under the half-life model. */
+  predictedRecall: number;
+  /** Whether the scheduler clamped the interval at its ceiling. */
+  atCeiling: boolean;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

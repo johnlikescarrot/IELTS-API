@@ -7,6 +7,7 @@ import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { RAW_SCORE_MODULES } from '../data/rawScores.js';
+import { retentionStats } from '../data/retention.js';
 import { testcenterStats } from '../data/testcenter.js';
 import { vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
@@ -24,6 +25,7 @@ function datasetSummary(): Record<string, number> {
   const materials = materialsStats();
   const archive = archiveStats();
   const testcenter = testcenterStats();
+  const retention = retentionStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -43,6 +45,11 @@ function datasetSummary(): Record<string, number> {
     testcenterGroups: testcenter.taxonomy.listening.groups + testcenter.taxonomy.reading.groups,
     testcenterTaggedQuestions:
       testcenter.taxonomy.listening.questions + testcenter.taxonomy.reading.questions,
+    forgettingCurveStudies: retention.studies,
+    forgettingCurveIntervals: retention.intervals,
+    forgettingCurveMeasurements: retention.measurements,
+    reviewSchedulers: retention.schedulers,
+    reviewSchedulerVariants: retention.variants,
   };
 }
 
@@ -116,6 +123,7 @@ export function createMetaRoutes(
           'archive-index',
           'raw-score-tables',
           'testcenter-index',
+          'retention-schedulers',
         ],
       },
     };

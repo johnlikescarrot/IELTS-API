@@ -3,6 +3,7 @@ import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from 'vitest
 import { createRequestHandler } from '../src/app.js';
 import { startApiServer } from '../src/server.js';
 import { HttpError } from '../src/lib/errors.js';
+import { GZIP_THRESHOLD_BYTES } from '../src/lib/http.js';
 import { API_VERSION } from '../src/version.js';
 import { startTestServer } from './helpers/server.js';
 
@@ -75,8 +76,13 @@ describe('request handling', () => {
   });
 
   it('leaves small responses uncompressed', async () => {
-    const response = await server.request('/health', { headers: { 'accept-encoding': 'gzip' } });
+    // The fixture must genuinely be below the threshold, so the test asserts
+    // that too: a response that quietly grows past 1 KiB would otherwise turn
+    // this into a test of nothing.
+    const path = '/v1/scores/overall?listening=7&reading=7&writing=7&speaking=7';
+    const response = await server.request(path, { headers: { 'accept-encoding': 'gzip' } });
     expect(response.headers.get('content-encoding')).toBeNull();
+    expect(Buffer.byteLength(await response.text())).toBeLessThan(GZIP_THRESHOLD_BYTES);
   });
 
   it('adds the endpoint to the envelope metadata and an x-endpoint header', async () => {

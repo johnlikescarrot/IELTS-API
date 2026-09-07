@@ -13,6 +13,7 @@ import { materialRoutes } from './materials.js';
 import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
+import { retentionRoutes } from './retention.js';
 import { scoreRoutes } from './scores.js';
 import { studyRoutes } from './study.js';
 import { testcenterRoutes } from './testcenter.js';
@@ -35,6 +36,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...corpusRoutes,
   ...toolRoutes,
   ...studyRoutes,
+  ...retentionRoutes,
   ...materialRoutes,
   ...archiveRoutes,
   ...testcenterRoutes,

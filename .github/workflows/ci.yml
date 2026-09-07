@@ -395,3 +395,67 @@ jobs:
               f"{len(TYPE_ALIASES)} aliases -> {len(CANONICAL_TYPES)} canonical types"
           )
           PY
+
+  citation:
+    name: Validate the citation metadata
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # An invalid CITATION.cff is silently ignored by GitHub's "Cite this
+      # repository" widget and by Zenodo, so a schema error costs citations
+      # without ever failing a build. Validate it on every run.
+      - name: Validate CITATION.cff against the CFF 1.2.0 schema
+        run: |
+          pip install --quiet cffconvert==2.0.0
+          cffconvert --validate -i CITATION.cff
+          echo "--- APA ---"
+          cffconvert -i CITATION.cff -f apalike
+          echo "--- BibTeX ---"
+          cffconvert -i CITATION.cff -f bibtex
+
+      - name: Check that every metadata file agrees on the version
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+
+          source = open('src/version.ts').read()
+          match = re.search(r"API_VERSION\s*(?::[^=]+)?=\s*'([^']+)'", source)
+          assert match, 'could not read API_VERSION from src/version.ts'
+          version = match.group(1)
+
+          package = json.load(open('package.json'))['version']
+          codemeta = json.load(open('codemeta.json'))['version']
+          cff = re.search(r"^version: (\S+)$", open('CITATION.cff').read(), re.M).group(1)
+
+          mismatched = {
+              name: value
+              for name, value in (
+                  ('package.json', package),
+                  ('codemeta.json', codemeta),
+                  ('CITATION.cff', cff),
+              )
+              if value != version
+          }
+          assert not mismatched, f'version {version} disagrees with {mismatched}'
+          print(f'every metadata file declares version {version}')
+          PY
+
+      - name: Validate the release metadata as JSON
+        run: |
+          python3 - <<'PY'
+          import json
+
+          for name in ('codemeta.json', '.zenodo.json', 'docs/openapi.json'):
+              json.load(open(name))
+          print('release metadata is valid JSON')
+          PY

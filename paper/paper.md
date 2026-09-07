@@ -7,6 +7,8 @@ tags:
   - vocabulary
   - readability
   - item types
+  - spaced repetition
+  - forgetting curve
   - open data
   - REST API
 authors:
@@ -15,7 +17,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 5 September 2026
+date: 7 September 2026
 bibliography: paper.bib
 ---
 
@@ -24,7 +26,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -37,7 +39,10 @@ cross-linked to the task banks; a structure and readability index of
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; and a retention layer that publishes the savings Ebbinghaus measured in 1885
+[@ebbinghaus1885] beside three independent replications [@murre2015], and reimplements five
+published review schedulers as stateless, deterministic functions [@pimsleur1967; @leitner1972;
+@wozniak1990; @settles2016].
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -67,6 +72,10 @@ The API addresses three concrete needs:
 3. **A service that does not gate access.** No API key, no registration, no per-key rate limiting and
    no CORS restrictions, so the API is usable from a browser, a notebook or an offline archive
    snapshot.
+4. **An auditable reference implementation of the scheduling literature.** Vocabulary trainers
+   routinely ship a review ladder under the name of a paper it does not come from. Publishing the
+   primary data and the published algorithms side by side, as pure functions with fixed intervals,
+   makes the difference between a citation and an implementation checkable rather than rhetorical.
 
 # Datasets
 
@@ -163,6 +172,33 @@ combined, with the multiple-choice share (8.4% against 17.2%) marking where the 
 genuinely differ. A drill composer turns the taxonomy back into teaching, assembling deterministic
 timed drills from the tagged groups under any filter combination.
 
+**Retention data and review schedulers.** Ebbinghaus measured _savings_ — the proportion of
+relearning time spared — on himself at seven retention intervals from 19 minutes to 31 days, and fit
+them with `b = 100k / ((log10 t)^c + k)`, `k = 1.84`, `c = 1.25` [@ebbinghaus1885]. The API publishes
+those seven points, the three independent replications reported by @murre2015 (Mack 1927, Seitz 1942,
+Dros 2013), and the residuals of the 1885 fit against its author's own data: mean absolute residual
+0.013, maximum 0.033, and the maximum falls exactly on the 24-hour point with a positive sign — the
+sleep-consolidation bump @murre2015 identify, visible in the residuals of a 140-year-old equation.
+
+Alongside the data, five published schedulers are reimplemented as stateless functions of an
+explicit review state: Pimsleur's graduated interval recall, an exact power ladder of ratio five
+[@pimsleur1967]; the Leitner box system [@leitner1972]; SM-2 [@wozniak1990]; half-life regression,
+under which recall is `p = 2^(-Δ/h)` and Leitner and Pimsleur are special cases with fixed weights
+[@settles2016]; and the fixed eight-rung ladder that IELTS vocabulary trainers deploy under
+Ebbinghaus's name [@ieltsvocabsystem]. Every scheduler is scored on one shared retention model, so
+they can be compared rather than merely listed. Over a 365-day horizon of perfect recall they order
+5, 10, 19, 25 and 49 reviews per item — a 9.8-fold spread in study cost between algorithms that a
+learner would recognise as interchangeable — and at 20 new words a day the folk ladder demands a
+peak of 380 reviews a day against SM-2's 100. The folk ladder is also the only one of the five whose
+schedule advances on a _failed_ review, because it indexes its rungs by total attempts; it matches
+the intervals Ebbinghaus actually measured at just two of eight rungs, both round numbers (1 day and
+2 days), and it caps at 30 days forever. Where sources disagree — the Leitner box intervals are
+rendered as 1/2/4/8/16, 1/2/7/14/30 and 1/2/4.5/9.5/21 days by different secondary accounts of a
+1972 popular-science book that specified review _frequencies_ rather than a day ladder — the API
+publishes the variants as data and reports the per-box ratios between them, rather than silently
+picking one. The value of this layer for research is that the spacing literature's central claim
+[@cepeda2006] can be tested against named, versioned, executable schedules.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -192,7 +228,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (761 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -213,8 +249,9 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
-assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, on the
+grey-literature archive assembled by `msneloy`, and on the vocabulary trainer published by
+`Iamdacai`, whose deployed review ladder prompted the retention layer; all are cited in `CITATION.cff` and in every
 response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.

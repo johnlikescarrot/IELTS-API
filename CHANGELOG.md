@@ -6,6 +6,90 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-07
+
+The **retention layer**: the API now publishes the forgetting-curve data and the review schedulers
+that cite it, and keeps the two apart. The occasion was
+[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system), a working IELTS
+vocabulary trainer whose scheduler is labelled, in its code and in its API responses, as the
+Ebbinghaus algorithm. Ebbinghaus (1885) measured _savings_ — the share of relearning time spared —
+at seven intervals and fit them with a decay equation containing no review term. He proposed no
+schedule. The ladder in wide deployment is folk pedagogy with a citation attached, and this release
+publishes both the primary data and five actual published algorithms so the difference is checkable
+rather than rhetorical. Nothing is simulated, nothing is fitted at request time, and every scheduler
+is a pure function of an explicit state. The API remains free, GET-only, authentication-free and
+dependency-free.
+
+### Added
+
+- **Retention overview** (`GET /v1/retention`): the four forgetting-curve studies, the five
+  schedulers, their sources and the shared retention model used to compare them.
+- **The forgetting curve** (`GET /v1/retention/curve`): Ebbinghaus's savings at his seven true
+  retention intervals — 19 min, 63 min, 8.75 h, 1 d, 2 d, 6 d, 31 d, not the rounded retellings —
+  together with the three independent replications tabulated by Murre and Dros (2015): Mack (1927),
+  Seitz (1942) and Dros (2013). 28 observations across four series, each carrying its study and its
+  published figure. The endpoint also evaluates the 1885 equation against its author's own data and
+  returns the residuals: mean absolute 0.013, maximum 0.033, with the maximum falling exactly on the
+  24-hour point with a _positive_ sign — the sleep-consolidation bump Murre and Dros identify,
+  visible in the residuals of a 140-year-old two-parameter fit.
+- **Five published review schedulers** (`GET /v1/retention/schedulers`, `/v1/retention/schedulers/:id`):
+  Pimsleur's graduated interval recall (1967), the Leitner box system (1972), SM-2 (Woźniak, 1990),
+  half-life regression (Settles and Meeder, 2016), and the folk ladder deployed by IELTS vocabulary
+  trainers — the last flagged `provenance: folk-pedagogical` and `claimsEbbinghaus: true`.
+  Intervals are stored as integer seconds, from 5 seconds to 565 days.
+- **Measured disagreement between renderings**: Pimsleur's ladder is exact powers of five in seconds
+  and is usually quoted rounded, so the published label sits beside the computed value (the rung
+  printed as "1 hour" is 3,125 s, i.e. 52.08 minutes). Leitner's five-box day intervals are rendered
+  incompatibly by different secondary sources — 1/2/4/8/16, 1/2/7/14/30, 1/2/4.5/9.5/21 — of a 1972
+  popular-science book that specified box _frequencies_ and used three boxes, not five. Rather than
+  pick one silently, the API publishes the doubling rendering as canonical and the others as named
+  variants with the per-box ratios computed: `leitner-calendar` diverges at boxes 3, 4 and 5 by 1.75,
+  1.75 and 1.88.
+- **Schedule projection** (`GET /v1/retention/schedule`): the full review timeline for one item under
+  any scheduler, from any starting state, with each review's interval, elapsed time, predicted
+  savings under the 1885 curve, and predicted recall under the shared model.
+- **Single-review grading** (`GET /v1/retention/grade`): grade one review and get the resulting state
+  and next interval. The fold is interval-then-grade, so the state a caller stores is the state the
+  next call needs; the response reports the before and after state explicitly.
+- **Scheduler comparison** (`GET /v1/retention/compare`): all five schedulers over one horizon,
+  scored on one retention model so none is graded by its own. Over 365 days of perfect recall they
+  order 5, 10, 19, 25 and 49 reviews per item — a **9.8-fold spread in study cost** between
+  algorithms treated as interchangeable — at mean predicted recall of 0.179, 0.781, 0.490, 0.515 and
+  0.900 respectively.
+- **Workload projection** (`GET /v1/retention/workload`): the daily review load of a vocabulary
+  programme. At 20 new words a day against the 4,174-headword Cambridge list (209 days to cover), the
+  folk ladder demands 19 reviews per word, peaking at **380 reviews a day** and settling at 313;
+  SM-2 demands 5, peaking at 100. Three times the daily cost for lower predicted recall than Leitner
+  at two-thirds of Leitner's price.
+- **Two defects documented rather than silently fixed.** The folk ladder indexes its rungs by total
+  attempts, so a _failed_ review advances the schedule exactly as a successful one does — it is the
+  only one of the five that never rewinds on failure. And its mastery score cannot be reconstructed
+  from success and failure counts alone, because the 0-100 clamp destroys order information: four
+  successes then one failure gives 92, not 60. Both are reproduced faithfully and reported in the
+  scheduler's notes.
+- **RESEARCH.md Part VIII**, working through the provenance of each algorithm, the residual analysis,
+  the Leitner source conflict, and six threats to validity — including that the comparison model is
+  itself one of the contestants, and that savings on nonsense syllables are not word recall.
+- Citation metadata for the primary sources: Ebbinghaus (1885), Murre and Dros (2015,
+  doi:10.1371/journal.pone.0120644), Pimsleur (1967), Leitner (1972), Woźniak (1990), Settles and
+  Meeder (2016, doi:10.18653/v1/P16-1174) and Cepeda et al. (2006) are recorded in `CITATION.cff`,
+  `paper/paper.bib` and the README, and are carried in the responses that use them.
+
+### Changed
+
+- `GET /health` and the dataset summary now report the retention dataset: scheduler count,
+  forgetting-curve studies, observations and scheduler variants.
+- The OpenAPI document gains the eight `/v1/retention/*` operations with their full parameter ranges.
+- `paper/paper.md` gains a retention dataset section and a fourth statement-of-need item: an
+  auditable reference implementation of the scheduling literature.
+
+### Fixed
+
+- `test/app.test.ts` asserted that a small response is not gzipped using `/health` as its fixture.
+  `/health` had grown to within 3% of the 1 KiB compression threshold, so the test was one field away
+  from silently inverting. It now uses a genuinely small response and asserts that the body is under
+  the threshold, so the fixture's smallness is self-checking.
+
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses
@@ -264,7 +348,8 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.5.0
 [1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
 [1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
 [1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0

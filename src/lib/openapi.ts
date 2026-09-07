@@ -22,6 +22,7 @@ import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
+import { SCHEDULER_IDS } from '../data/retention.js';
 import { TASK_MODULES } from '../data/tasks.js';
 
 import type { RouteDefinition } from './route.js';
@@ -41,6 +42,37 @@ const OFFSET = {
   schema: { type: 'integer', minimum: 0, default: 0 },
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
+
+const SCHEDULER = {
+  name: 'scheduler',
+  in: 'query',
+  required: true,
+  description: 'Review scheduler to use.',
+  schema: { type: 'string', enum: [...SCHEDULER_IDS] },
+};
+const START = {
+  name: 'start',
+  in: 'query',
+  description: 'ISO date (YYYY-MM-DD) the item was first learned. Defaults to today.',
+  schema: { type: 'string', format: 'date' },
+};
+const QUALITY = {
+  name: 'quality',
+  in: 'query',
+  description: 'Grade applied to every review, on the SM-2 0-5 scale.',
+  schema: { type: 'integer', minimum: 0, maximum: 5, default: 5 },
+};
+const HORIZON = {
+  name: 'horizonDays',
+  in: 'query',
+  description: 'Length of the projection, in days.',
+};
+const TARGET_RECALL = {
+  name: 'targetRecall',
+  in: 'query',
+  description: 'Recall probability the half-life scheduler schedules at.',
+  schema: { type: 'number', minimum: 0.5, maximum: 0.99, default: 0.9 },
+};
 
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
@@ -432,6 +464,97 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       description: 'Maximum detected themes to report.',
       schema: { type: 'integer', minimum: 1, maximum: 10, default: 5 },
     },
+  ],
+  '/v1/retention/curve': [
+    {
+      name: 'minutes',
+      in: 'query',
+      description: "Evaluate Ebbinghaus's 1885 equation at this lag, in minutes.",
+      schema: { type: 'number', minimum: 1, maximum: 5256000 },
+    },
+  ],
+  '/v1/retention/schedulers': [
+    {
+      name: 'provenance',
+      in: 'query',
+      description: 'Filter by how well sourced the intervals are.',
+      schema: {
+        type: 'string',
+        enum: ['published-algorithm', 'published-schedule', 'folk-pedagogical'],
+      },
+    },
+  ],
+  '/v1/retention/schedule': [
+    SCHEDULER,
+    START,
+    QUALITY,
+    { ...HORIZON, schema: { type: 'integer', minimum: 1, maximum: 3650, default: 365 } },
+    {
+      name: 'maxReviews',
+      in: 'query',
+      description: 'Hard cap on the number of reviews returned.',
+      schema: { type: 'integer', minimum: 1, maximum: 200, default: 200 },
+    },
+    TARGET_RECALL,
+  ],
+  '/v1/retention/grade': [
+    SCHEDULER,
+    {
+      name: 'quality',
+      in: 'query',
+      required: true,
+      description: 'Grade on the SM-2 0-5 scale; 3 is the lowest passing grade.',
+      schema: { type: 'integer', minimum: 0, maximum: 5 },
+    },
+    {
+      name: 'repetitions',
+      in: 'query',
+      description: 'Successful reviews before this one.',
+      schema: { type: 'integer', minimum: 0, maximum: 1000, default: 0 },
+    },
+    {
+      name: 'lapses',
+      in: 'query',
+      description: 'Failed reviews before this one.',
+      schema: { type: 'integer', minimum: 0, maximum: 1000, default: 0 },
+    },
+    {
+      name: 'previousIntervalSeconds',
+      in: 'query',
+      description: 'Interval that preceded this review, needed by SM-2 beyond its second review.',
+      schema: { type: 'integer', minimum: 0, maximum: 315360000, default: 0 },
+    },
+    {
+      name: 'easeFactor',
+      in: 'query',
+      description: 'SM-2 easiness factor before this review.',
+      schema: { type: 'number', minimum: 1.3, maximum: 5, default: 2.5 },
+    },
+    TARGET_RECALL,
+  ],
+  '/v1/retention/compare': [
+    START,
+    QUALITY,
+    { ...HORIZON, schema: { type: 'integer', minimum: 1, maximum: 3650, default: 365 } },
+    {
+      name: 'maxReviews',
+      in: 'query',
+      description: 'Hard cap on the number of reviews rolled forward per scheduler.',
+      schema: { type: 'integer', minimum: 1, maximum: 500, default: 500 },
+    },
+    TARGET_RECALL,
+  ],
+  '/v1/retention/workload': [
+    SCHEDULER,
+    QUALITY,
+    {
+      name: 'wordsPerDay',
+      in: 'query',
+      description: 'New headwords introduced every day.',
+      schema: { type: 'integer', minimum: 1, maximum: 200, default: 20 },
+    },
+    { ...HORIZON, schema: { type: 'integer', minimum: 7, maximum: 730, default: 365 } },
+    TARGET_RECALL,
   ],
   '/v1/study/plan': [
     {

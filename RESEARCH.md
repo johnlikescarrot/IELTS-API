@@ -1035,3 +1035,186 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — the forgetting curve and the schedulers that cite it
+
+**Corpus snapshot:** `Iamdacai/ielts-vocab-system` at branch `master`, tree read 7 September 2026,
+649 blobs outside `node_modules`. Unlike Parts I-VII, this part indexes almost no upstream data. The
+upstream repository is a working Chinese-language IELTS vocabulary trainer — 269 commits, JavaScript
+on SQLite behind JWT authentication, seven word libraries totalling 47,044 words, ten AI-backed
+services (Bailian Qwen-max for definitions, MiniMax for speech synthesis, Paraformer for
+pronunciation scoring). None of that is reproducible without paid API keys, and its word lists are
+substitutive copies of copyrighted lists, so none of it is republished here. What the repository
+contributed is a **question**, asked by one file: `backend/spaced-repetition-algorithm.js`.
+
+### 42. The algorithm that cites a book with no algorithm in it
+
+The upstream scheduler is 60 lines long and is labelled, in comments and in the API responses it
+feeds, as the Ebbinghaus algorithm. Reduced to its arithmetic:
+
+```js
+const baseIntervals = [5, 30, 720, 1440, 2880, 5760, 10080, 21600]; // minutes
+calculateNextReview(reviewCount, mastery) =
+  reviewCount < 8 ? baseIntervals[reviewCount] : 21600 * (1 + mastery / 100);
+updateMasteryScore(m, isCorrect, confidence) =
+  clamp(m + (isCorrect ? confidence * 5 : -confidence * 8), 0, 100);
+```
+
+Five minutes, thirty minutes, twelve hours, then one, two, four, seven and fifteen days, then a
+permanent fifteen-to-thirty-day ceiling scaled by a mastery score. It is a competent piece of
+software. It is not Ebbinghaus.
+
+Ebbinghaus (1885) did not propose a review schedule. He memorised lists of nonsense
+syllables, relearned them after a delay, and reported **savings** — the proportion of the original
+learning time that the relearning spared. He measured seven retention intervals: 19 minutes, 63
+minutes, 8.75 hours, 1 day, 2 days, 6 days and 31 days. (The familiar "20 minutes, 1 hour, 9 hours"
+are rounded retellings; Murre and Dros ([2015](https://doi.org/10.1371/journal.pone.0120644)) recover the true figures.) He then fit those seven points with
+
+```text
+b = 100k / ((log10 t)^c + k),    k = 1.84,  c = 1.25,  t in minutes
+```
+
+where `t` is counted from one minute before the end of learning. That equation is a _description of
+decay_, with no review term in it at all. A schedule cannot be derived from it without adding
+assumptions Ebbinghaus never made — most importantly, what a review does to the curve, which is
+precisely the thing he did not measure.
+
+The API therefore separates the two things the upstream file conflates. `/v1/retention/curve`
+publishes the measurement; `/v1/retention/schedulers` publishes the algorithms, each attributed to
+the source that actually contains it, including the upstream ladder itself — attributed honestly, as
+`folk-pedagogical` provenance with a `claimsEbbinghaus: true` flag.
+
+### 43. The data: four series, one equation, and a residual with a story
+
+`/v1/retention/curve` returns Ebbinghaus's own savings at his seven intervals, together with the
+three independent replications tabulated by Murre and Dros (2015): Mack (1927), Seitz (1942) and Dros (2013),
+the last a full modern replication run by the authors on themselves under the original protocol.
+Four series, 28 observations, at intervals spanning 19 minutes to 31 days.
+
+Refitting is not the interesting operation; checking the fit is. Evaluating Ebbinghaus's own 1885
+equation against Ebbinghaus's own 1885 data gives a mean absolute residual of **0.013** and a
+maximum of **0.033** — a 140-year-old two-parameter curve tracking its data to within about one
+percentage point of savings. The maximum residual is where it gets interesting: it falls exactly on
+the **1-day** point, and it is _positive_ — the observation sits above the curve. Retention at 24
+hours is better than a monotone decay function predicts. Murre and Dros attribute the bump to sleep
+consolidation, and it is visible in the residuals of an equation fit before anyone proposed it.
+The endpoint publishes the residuals rather than asserting the conclusion.
+
+### 44. Five schedulers, five different sources
+
+| Scheduler        | Source                                                                                                                                         | What it actually specifies                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `pimsleur-1967`  | Pimsleur (1967), _Modern Language Journal_ 51(2), [doi:10.1111/j.1540-4781.1967.tb06700.x](https://doi.org/10.1111/j.1540-4781.1967.tb06700.x) | A fixed ladder of 11 intervals in a ratio of 5: 5 s, 25 s, 2 min … 2 years |
+| `leitner-1972`   | Leitner (1972), _So lernt man lernen_                                                                                                          | Boxes; a correct answer promotes, a wrong answer returns the card to box 1 |
+| `sm2-1990`       | Wozniak (1990), [super-memory.com/english/ol2.htm](https://super-memory.com/english/ol2.htm)                                                   | 1 d, 6 d, then `I(n) = I(n-1) x EF`, with `EF` updated from a 0-5 grade    |
+| `half-life-2016` | Settles and Meeder (2016), ACL 1848-1858, [doi:10.18653/v1/P16-1174](https://doi.org/10.18653/v1/P16-1174)                                     | `p = 2^(-Δ/h)`, `h = 2^(Θ·x)`; review when `p` hits a target               |
+| `folk-ladder`    | The trainer under study, [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system)                                       | Eight fixed rungs, 5 min to 15 d, then a mastery-scaled ceiling            |
+
+Two of these are exactly specified by their sources and two are not, and the API records which is
+which rather than smoothing it over.
+
+**Pimsleur is exact and is usually quoted wrong.** The published ladder is powers of five in
+seconds: `5^1 = 5 s`, `5^2 = 25 s`, up to `5^11`. The familiar labels round hard — the rung printed
+as "1 hour" is 3,125 s, i.e. 52.08 minutes; "1 day" is 21.7 hours; "2 years" is 565 days. The API
+stores the exact `5^n` seconds and publishes the labels beside them in `ladderLabels`, so that a
+study can state which one it used.
+
+**Leitner is not exact, and the secondary literature disagrees with itself.** Leitner was a science
+journalist, and _So lernt man lernen_ (1972) describes a physical card box in which boxes are
+reviewed at different _frequencies_; it does not tabulate a canonical day ladder, and the original
+system had three compartments, not five. Present-day sources confidently render the five-box
+intervals as 1/2/4/8/16 days, 1/2/7/14/30, 1/2/4.5/9.5/21, and 1/2/4/7/30 — mutually incompatible
+numbers, all attributed to the same book. The API publishes the doubling rendering as canonical
+because it is the one implied by the box-frequency description, and publishes the others as named
+variants under `/v1/retention/schedulers` with the disagreements _measured_: `leitner-calendar`
+diverges at boxes 3, 4 and 5 by ratios of 1.75, 1.75 and 1.88; `leitner-45910` at the same boxes by
+1.13, 1.19 and 1.31. A ratio of 1.88 on box 5 is not a rounding difference; it is a different
+schedule wearing the same citation.
+
+### 45. Comparing schedulers instead of listing them
+
+Publishing five algorithms is only useful if they can be run against each other, which requires a
+retention model none of them share. `/v1/retention/compare` scores all five on one: half-life
+regression's `p = 2^(-Δ/h)` with `h` derived from the pre-review state, so every scheduler is graded
+by the same yardstick and none is graded by its own. Over a 365-day horizon with perfect recall:
+
+| Scheduler        | Reviews / year | Terminal interval | Mean predicted recall at review |
+| ---------------- | -------------- | ----------------- | ------------------------------- |
+| `sm2-1990`       | 5              | 131.5 d           | 0.179                           |
+| `pimsleur-1967`  | 10             | —                 | 0.781                           |
+| `folk-ladder`    | 19             | 30 d (its cap)    | 0.490                           |
+| `leitner-1972`   | 25             | 16 d              | 0.515                           |
+| `half-life-2016` | 49             | 13.7 d            | 0.900                           |
+
+A **9.8-fold spread in study cost** between algorithms that a learner, or an app store listing,
+would treat as interchangeable. The recall column shows what the cost buys and where each algorithm
+sits on the trade-off: SM-2 is cheap and lets items decay to 0.18 before touching them; half-life
+regression holds 0.90 and charges ten times as many reviews for it. Neither is wrong. But an app
+that ships one while citing the other is making a claim about the trade-off that it has not tested.
+
+`/v1/retention/workload` converts this into the number a curriculum designer needs. At 20 new words
+a day against the 4,174-headword Cambridge list — 209 days to cover — the folk ladder demands 19
+reviews per word, peaking at **380 reviews a day** and settling at 313; SM-2 demands 5, peaking at 100. Three times the daily cost, for lower predicted recall than Leitner at two-thirds of Leitner's
+price. That comparison is the argument for publishing the schedulers as data.
+
+### 46. Two defects the reimplementation exposed
+
+Writing the upstream ladder out as a pure function, next to four algorithms that were specified in
+their sources, made two properties visible that are invisible in the original code:
+
+- **A failed review advances the schedule.** The upstream scheduler indexes `baseIntervals` by
+  `reviewCount`, and `reviewCount` increments on every attempt. Every other scheduler here rewinds
+  on failure — Leitner to box 1, SM-2 to its first interval — and half-life regression shortens `h`.
+  In the folk ladder, forgetting a word promotes it exactly as remembering it would. The mastery
+  score drops, which affects only the post-ladder ceiling, so for the first eight reviews a learner
+  who fails every time is on the same schedule as one who succeeds every time. The API reproduces
+  the behaviour faithfully and documents it in the scheduler's `notes`.
+- **Mastery reconstruction is path-dependent.** `updateMasteryFrom(repetitions, lapses)` cannot be a
+  function of the counts alone, because the 0-100 clamp destroys order information: four successes
+  then one failure gives 92, not the 60 that the same tally in a different order produces. The
+  helper documents that it reconstructs the _best-case_ path and that the true value requires the
+  event sequence — which is the argument for storing review history rather than counters.
+
+### 47. Threats to validity (Part VIII)
+
+- **Savings are not recall.** Ebbinghaus measured relearning time saved on nonsense syllables by a
+  single subject: himself. Every scheduler in this part is used for word learning, and the two
+  quantities are related by assumption, not measurement. The API never converts savings to a
+  recall probability.
+- **The comparison model is one of the contestants.** Scoring all five schedulers with half-life
+  regression's retention function structurally favours half-life regression, which is why it posts
+  the best recall column. The comparison is a common yardstick, not a neutral one, and no yardstick
+  here is neutral; the endpoint states the model it used in every response.
+- **The HLR weights are illustrative.** Settles and Meeder fit `Θ` on 12.85 million Duolingo review
+  traces. This API ships fixed, hand-set weights (bias 0.5, +1 per correct, -1 per incorrect) so
+  that responses stay deterministic and dependency-free. They reproduce the _shape_ of the model,
+  not Duolingo's fitted parameters, and the response says so.
+- **The Leitner ladder is a reconstruction.** See section 44: no canonical day ladder exists in the
+  1972 source. The canonical choice is defensible, not authoritative, and the variants are
+  published so a researcher can pick a different one.
+- **Cost is not learning.** Reviews per year measures effort. Whether more reviews produce more
+  durable knowledge is the spacing question (Cepeda et al., 2006, [doi:10.1037/0033-2909.132.3.354](https://doi.org/10.1037/0033-2909.132.3.354)), and it needs learner data this API does
+  not have and does not simulate.
+- **Grade semantics are not shared across schedulers.** SM-2's 0-5 scale, Leitner's binary
+  right/wrong and the folk ladder's 1-5 confidence are different instruments. The API maps a single
+  `quality` parameter onto each, which is a convenience for comparison and a distortion of each
+  source's intent.
+
+### 48. Reproducing Part VIII
+
+There is nothing to extract. The retention data is 28 published observations transcribed from Table
+3 of Murre and Dros (2015) and five algorithms transcribed from their primary sources; all of it lives in
+`src/data/retention.ts` with a per-record citation, and the arithmetic is in `src/lib/retention.ts`.
+Verification is by reading the sources against the constants — the reason every observation carries
+its study, its interval in minutes and its savings as published. The upstream ladder can be checked
+against its origin with:
+
+```bash
+curl -s "https://api.github.com/repos/Iamdacai/ielts-vocab-system/contents/backend/spaced-repetition-algorithm.js?ref=master" \
+  | python3 -c "import base64,json,sys; print(base64.b64decode(json.load(sys.stdin)['content']).decode())"
+```
+
+The 88 unit tests over the data and library modules assert the transcription against the published
+figures directly (Ebbinghaus's seven intervals, Pimsleur's `5^n` seconds, SM-2's ease-factor update,
+the residual maximum falling on the 1-day point), so a transcription error fails the build rather
+than propagating into a citation.

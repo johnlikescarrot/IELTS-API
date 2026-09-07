@@ -3,10 +3,10 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, validated raw-score to band conversion tables, and a mock-exam test-centre index of an operational IELTS online test centre with 1,099 hand-tagged question groups and a production score calibration.",
-  "version": "1.4.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, validated raw-score to band conversion tables, and a mock-exam test-centre index of an operational IELTS online test centre with 1,099 hand-tagged question groups and a production score calibration, and a retention layer: the Ebbinghaus (1885) savings data with three independent replications, and five published review schedulers (Pimsleur 1967, Leitner 1972, SM-2, half-life regression, and the misattributed folk ladder deployed in IELTS vocabulary trainers) reimplemented as stateless, deterministic endpoints with measured divergence.",
+  "version": "1.5.0",
   "dateCreated": "2026-09-04",
-  "datePublished": "2026-09-05",
+  "datePublished": "2026-09-07",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",
@@ -45,7 +45,13 @@
     "test equating",
     "mock exam",
     "test center",
-    "score calibration"
+    "score calibration",
+    "spaced repetition",
+    "forgetting curve",
+    "Ebbinghaus",
+    "review scheduling",
+    "memory retention",
+    "vocabulary learning"
   ],
   "author": [
     {
@@ -83,6 +89,15 @@
       "creator": {
         "@type": "Person",
         "name": "wanli4473"
+      }
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "ielts-vocab-system: an IELTS vocabulary learning system",
+      "url": "https://github.com/Iamdacai/ielts-vocab-system",
+      "creator": {
+        "@type": "Person",
+        "name": "Iamdacai"
       }
     }
   ]
