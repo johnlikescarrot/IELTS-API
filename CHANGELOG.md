@@ -6,6 +6,38 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-07
+
+The **vocabulary learning loop**: the API now does what spaced-repetition learning systems do —
+schedule reviews and predict recall — without the account, the database or the API key. The design
+was informed by a survey of [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system),
+an operational WeChat vocabulary trainer (seven standardised wordbooks, 47,044 words, a
+new-word/review loop behind JWT accounts). Everything that system keeps per learner, this API
+exposes as a pure, stateless function of its inputs: same words, same start date, same calendar.
+See [RESEARCH.md](RESEARCH.md) Part VIII.
+
+### Added
+
+- **Review scheduling** (`GET /v1/vocabulary/schedule`): a deterministic spaced-repetition calendar
+  for up to 50 headwords (`words`) or a seeded sample (`count`, `seed`), on the Ebbinghaus day table
+  (1, 2, 4, 7, 15, 30) or Leitner doubling (1, 2, 4, 8, 16, 32). Each event carries the modelled
+  probability of recall immediately before the review, under exponential forgetting with the
+  half-life doubling after every review; the plan reports the aggregated review load per calendar
+  date and the projected retention one month after the final review.
+- **Cross-volume recurrence** (`GET /v1/vocabulary/recurrence`): how headwords repeat across the
+  Cambridge IELTS 1-22 volume lists — a distribution over recurrence, and the 133 recurring
+  headwords with their volume sets (`abnormal`, in volumes 1, 17 and 21, is the only word listed in
+  three volumes).
+- The service index and `/health` now report `vocabularyRecurringWords`.
+
+### Changed
+
+- The OpenAPI description and the citation metadata (CITATION.cff, codemeta.json, .zenodo.json)
+  mention the review scheduler; CITATION.cff now also references Ebbinghaus (1885) and Settles &
+  Meeder (2016).
+- `docs/openapi.json` was regenerated from the live route table; the committed snapshot had been
+  stale since 1.3.0.
+
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses

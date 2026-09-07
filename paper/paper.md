@@ -174,8 +174,14 @@ the Cambridge headword list, sentence-length spread, discourse-marker density an
 and maps the measurements onto hints phrased after the four analytic criteria, at fixed published
 thresholds; the response states that the hints are teaching heuristics, not scores. A study planner
 composes the gap between a target band and current component scores into a deterministic
-week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
-pure functions of their inputs, so their outputs are as reproducible as the datasets.
+week-by-week schedule whose every activity links to the endpoint that publishes it. A review
+scheduler closes the vocabulary learning loop without accounts or state: given headwords (or a
+seeded sample) and a learning day, it lays out a spaced-repetition calendar on the Ebbinghaus
+(1885) exponential forgetting curve as formalised by half-life regression
+[@settles2016] — retention halves every half-life, each review doubles the half-life — and reports
+the modelled recall probability immediately before every review, on either the classic Ebbinghaus
+day table or Leitner doubling. All four are pure functions of their inputs, so their outputs are as
+reproducible as the datasets.
 
 # Design
 
@@ -192,7 +198,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (666 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -213,9 +219,10 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
-assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
-response that draws on them. IELTS is a jointly owned trademark of the
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, on the
+grey-literature archive assembled by `msneloy`, and on the mock-exam test centre and the vocabulary
+trainer operated by `wanli4473` and `Iamdacai` respectively [@ieltsvocabsystem]; all are cited in
+`CITATION.cff` and in every response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

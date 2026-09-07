@@ -92,6 +92,39 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     },
     { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 10, default: 1 } },
   ],
+  '/v1/vocabulary/schedule': [
+    {
+      name: 'words',
+      in: 'query',
+      description: 'Comma-separated headwords (1-50) to schedule. Mutually exclusive with "count"/"seed".',
+      schema: { type: 'string', example: 'abandon,hydrogen' },
+    },
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Words to sample when "words" is absent.',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description:
+        'Seed for the sampled word set; identical seeds return identical schedules. Defaults to a seed derived from "start".',
+      schema: { type: 'string' },
+    },
+    {
+      name: 'start',
+      in: 'query',
+      description: 'Learning day (ISO date YYYY-MM-DD). Defaults to today.',
+      schema: { type: 'string', format: 'date' },
+    },
+    {
+      name: 'scheme',
+      in: 'query',
+      description: 'Review-interval scheme.',
+      schema: { type: 'string', enum: ['ebbinghaus', 'leitner'], default: 'ebbinghaus' },
+    },
+  ],
   '/v1/bands/descriptors': [
     {
       name: 'set',
@@ -587,7 +620,9 @@ export function openApiDocument(
         'self-study materials collection, and a mock-exam test-centre index with the',
         'Cambridge 4-21 holdings, 1,099 hand-tagged question groups and a production',
         'raw-score-to-band calibration. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        '(readability and essay profile), composes the datasets into study plans, and',
+        'schedules spaced-repetition reviews with predicted retention under an',
+        'exponential-forgetting model.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

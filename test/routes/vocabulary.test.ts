@@ -3,6 +3,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { startTestServer } from '../helpers/server.js';
 
 import type { TestServer } from '../helpers/server.js';
+import type { ReviewPlan } from '../../src/lib/review.js';
 import type { VocabularyEntry } from '../../src/types.js';
 
 let server: TestServer;
@@ -135,6 +136,121 @@ describe('GET /v1/vocabulary/daily', () => {
   it('rejects malformed dates', async () => {
     expect((await server.json('/v1/vocabulary/daily?date=01-05-2024')).status).toBe(400);
     expect((await server.json('/v1/vocabulary/daily?date=2024-02-30')).status).toBe(400);
+  });
+});
+
+describe('GET /v1/vocabulary/recurrence', () => {
+  it('publishes the cross-volume recurrence analysis', async () => {
+    const response = await server.json<{
+      totalWords: number;
+      recurringWords: number;
+      maxRecurrence: number;
+      distribution: { volumes: number; words: number; share: number }[];
+      recurring: { id: string; word: string; volumes: number[]; count: number }[];
+    }>('/v1/vocabulary/recurrence');
+    expect(response.status).toBe(200);
+    expect(response.data.totalWords).toBe(4174);
+    expect(response.data.recurringWords).toBe(133);
+    expect(response.data.maxRecurrence).toBe(3);
+    expect(response.data.distribution[0]?.volumes).toBe(1);
+    expect(response.data.recurring[0]?.word).toBe('abnormal');
+    expect(response.meta.method).toContain('Recurrence');
+  });
+});
+
+describe('GET /v1/vocabulary/schedule', () => {
+  it('schedules named headwords on the Ebbinghaus table', async () => {
+    const response = await server.json<ReviewPlan>(
+      '/v1/vocabulary/schedule?words=abandon,Hydrogen&start=2026-03-01',
+    );
+    expect(response.status).toBe(200);
+    expect(response.data.scheme).toBe('ebbinghaus');
+    expect(response.data.start).toBe('2026-03-01');
+    expect(response.data.words.map((word) => word.word)).toEqual(['abandon', 'hydrogen']);
+    expect(response.data.words[0]?.events).toHaveLength(6);
+    expect(response.data.words[0]?.events[0]).toEqual({
+      stage: 1,
+      day: 1,
+      date: '2026-03-02',
+      predictedRetention: 0.5,
+    });
+    expect(response.data.totals.totalReviews).toBe(12);
+    expect(response.data.totals.lastReview).toBe('2026-03-31');
+    expect(response.data.calendar[0]).toEqual({ date: '2026-03-02', reviews: 2 });
+    expect(response.meta.scheme).toBe('ebbinghaus');
+    expect(response.meta.seed).toBeNull();
+  });
+
+  it('de-duplicates repeated headwords case-insensitively', async () => {
+    const response = await server.json<ReviewPlan>(
+      '/v1/vocabulary/schedule?words=abandon,ABANDON,Abandon&start=2026-03-01',
+    );
+    expect(response.data.words).toHaveLength(1);
+    expect(response.data.totals.totalReviews).toBe(6);
+  });
+
+  it('supports the Leitner scheme', async () => {
+    const response = await server.json<ReviewPlan>(
+      '/v1/vocabulary/schedule?words=abandon&start=2026-03-01&scheme=leitner',
+    );
+    expect(response.data.intervals).toEqual([1, 2, 4, 8, 16, 32]);
+    expect(response.data.totals.lastReview).toBe('2026-04-02');
+    expect(response.meta.scheme).toBe('leitner');
+  });
+
+  it('samples a deterministic word set from count and seed', async () => {
+    const first = await server.json<ReviewPlan>(
+      '/v1/vocabulary/schedule?count=4&seed=research-seed&start=2026-03-01',
+    );
+    const second = await server.json<ReviewPlan>(
+      '/v1/vocabulary/schedule?count=4&seed=research-seed&start=2026-03-01',
+    );
+    expect(first.data).toEqual(second.data);
+    expect(first.data.words).toHaveLength(4);
+    expect(first.data.totals.totalReviews).toBe(24);
+    expect(first.meta.seed).toBe('research-seed');
+  });
+
+  it('derives the sample seed from the start date when none is supplied', async () => {
+    const response = await server.json<ReviewPlan>('/v1/vocabulary/schedule?count=3');
+    const today = new Date().toISOString().slice(0, 10);
+    expect(response.data.start).toBe(today);
+    expect(response.meta.seed).toBe(`ielts-api:schedule:${today}`);
+    expect(response.data.words).toHaveLength(3);
+  });
+
+  it('defaults to ten sampled words for today', async () => {
+    const response = await server.json<ReviewPlan>('/v1/vocabulary/schedule');
+    expect(response.status).toBe(200);
+    expect(response.data.words).toHaveLength(10);
+    expect(response.data.totals.totalReviews).toBe(60);
+  });
+
+  it('rejects mixing words with count or seed', async () => {
+    expect((await server.json('/v1/vocabulary/schedule?words=abandon&count=3')).status).toBe(400);
+    expect((await server.json('/v1/vocabulary/schedule?words=abandon&seed=x')).status).toBe(400);
+  });
+
+  it('rejects unknown headwords, naming every offender', async () => {
+    const response = await server.json('/v1/vocabulary/schedule?words=abandon,zzz1,zzz2');
+    expect(response.status).toBe(400);
+    const error = response.meta.error as { code: string; details: Record<string, string> };
+    expect(error.code).toBe('bad_request');
+    expect(error.details.unknown).toBe('zzz1,zzz2');
+  });
+
+  it('rejects an empty word list', async () => {
+    expect((await server.json('/v1/vocabulary/schedule?words=%20,')).status).toBe(400);
+  });
+
+  it('rejects more than fifty headwords', async () => {
+    const words = Array.from({ length: 51 }, () => 'abandon').join(',');
+    expect((await server.json(`/v1/vocabulary/schedule?words=${words}`)).status).toBe(400);
+  });
+
+  it('rejects an unknown scheme and a malformed start date', async () => {
+    expect((await server.json('/v1/vocabulary/schedule?words=abandon&scheme=pimsleur')).status).toBe(400);
+    expect((await server.json('/v1/vocabulary/schedule?words=abandon&start=2026-13-45')).status).toBe(400);
   });
 });
 

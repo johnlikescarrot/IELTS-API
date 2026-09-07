@@ -8,7 +8,7 @@ import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { RAW_SCORE_MODULES } from '../data/rawScores.js';
 import { testcenterStats } from '../data/testcenter.js';
-import { vocabularyStats } from '../data/vocabulary.js';
+import { recurrenceAnalysis, vocabularyStats } from '../data/vocabulary.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
 import { CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME, API_VERSION } from '../version.js';
@@ -27,6 +27,7 @@ function datasetSummary(): Record<string, number> {
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
+    vocabularyRecurringWords: recurrenceAnalysis().recurringWords,
     cambridgeVolumes: words.volumes,
     corpusFiles: corpus.filesInRepository,
     corpusIeltsRelevantFiles: corpus.ieltsRelevantFiles,

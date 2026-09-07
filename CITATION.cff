@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.4.0
-date-released: '2026-09-05'
+version: 1.5.0
+date-released: '2026-09-07'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
@@ -26,7 +26,10 @@ abstract: >-
   canonical question type, teaching scene and difficulty for 5,408 questions,
   and the centre's production raw-score-to-band calibration. Deterministic analysis tools profile any text for Flesch readability,
   lexical diversity and Cambridge-headword coverage, and compose the datasets
-  into a week-by-week study plan towards a target band. Every endpoint is free
+  into a week-by-week study plan towards a target band, and turn any set of
+  headwords into a spaced-repetition review calendar with the modelled recall
+  probability before each review under an exponential-forgetting model. Every
+  endpoint is free
   of charge,
   requires no authentication, returns a uniform JSON envelope with a stable
   ETag, and is covered by a test suite with 100% statement, branch, function
@@ -52,6 +55,9 @@ keywords:
   - test center
   - score calibration
   - CEFR
+  - spaced repetition
+  - forgetting curve
+  - review scheduling
   - open data
   - REST API
   - TypeScript
@@ -130,13 +136,39 @@ references:
     end: 238
     year: 2000
     doi: '10.2307/3587951'
+  - type: article
+    authors:
+      - family-names: 'Settles'
+        given-names: 'Burr'
+      - family-names: 'Meeder'
+        given-names: 'Brent'
+    title: 'A trainable spaced repetition model for language learning'
+    journal: 'Proceedings of the 54th Annual Meeting of the Association for Computational Linguistics'
+    start: 1848
+    end: 1859
+    year: 2016
+    doi: '10.18653/v1/P16-1174'
+  - type: book
+    authors:
+      - family-names: 'Ebbinghaus'
+        given-names: 'Hermann'
+    title: 'Über das Gedächtnis: Untersuchungen zur experimentellen Psychologie'
+    publisher: 'Duncker & Humblot'
+    year: 1885
+  - type: software
+    authors:
+      - name: 'Iamdacai'
+    title: 'ielts-vocab-system: an operational IELTS vocabulary trainer'
+    url: 'https://github.com/Iamdacai/ielts-vocab-system'
+    year: 2026
+    notes: 'Surveyed at commit 1f5ad56d for the learning-loop design of /v1/vocabulary/schedule.'
 preferred-citation:
   type: software
   title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.4.0
+  version: 1.5.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:

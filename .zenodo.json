@@ -33,7 +33,10 @@
     "test equating",
     "mock exam",
     "test center",
-    "score calibration"
+    "score calibration",
+    "spaced repetition",
+    "forgetting curve",
+    "review scheduling"
   ],
   "license": "other-open",
   "related_identifiers": [
@@ -60,6 +63,11 @@
     {
       "identifier": "https://github.com/wanli4473/yysd-testcenter",
       "relation": "isDerivedFrom",
+      "scheme": "url"
+    },
+    {
+      "identifier": "https://github.com/Iamdacai/ielts-vocab-system",
+      "relation": "isSupplementedBy",
       "scheme": "url"
     }
   ]

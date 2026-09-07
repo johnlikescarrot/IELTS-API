@@ -5,6 +5,7 @@ import {
   allEntries,
   findWord,
   randomEntries,
+  recurrenceAnalysis,
   searchVocabulary,
   vocabulary,
   vocabularyStats,
@@ -151,5 +152,40 @@ describe('vocabularyStats', () => {
     const byPart = Object.values(stats.byPartOfSpeech).reduce((total, count) => total + count, 0);
     expect(byPart).toBe(stats.words);
     expect(Object.keys(stats.byVolume).length).toBe(22);
+  });
+});
+
+describe('recurrenceAnalysis', () => {
+  const analysis = recurrenceAnalysis();
+
+  it('partitions the dataset by cross-volume recurrence', () => {
+    expect(analysis.totalWords).toBe(4174);
+    const bucketWords = analysis.distribution.reduce((total, row) => total + row.words, 0);
+    expect(bucketWords).toBe(analysis.totalWords);
+    expect(analysis.distribution.map((row) => row.volumes)).toEqual([1, 2, 3]);
+    const shareTotal = analysis.distribution.reduce((total, row) => total + row.share, 0);
+    expect(shareTotal).toBeGreaterThan(99.5);
+    expect(shareTotal).toBeLessThanOrEqual(100.5);
+  });
+
+  it('lists exactly the headwords that recur, most recurrent first', () => {
+    expect(analysis.recurringWords).toBe(analysis.recurring.length);
+    expect(analysis.recurringWords).toBe(133);
+    expect(analysis.maxRecurrence).toBe(3);
+    const counts = analysis.recurring.map((row) => row.count);
+    expect([...counts].sort((left, right) => right - left)).toEqual(counts);
+    for (const row of analysis.recurring) {
+      expect(row.count).toBe(row.volumes.length);
+      expect(row.count).toBeGreaterThanOrEqual(2);
+      const entry = findWord(row.word);
+      expect(entry?.id).toBe(row.id);
+      expect(entry?.volumes).toEqual(row.volumes);
+    }
+  });
+
+  it('sorts equal-recurrence rows by headword', () => {
+    const twoVolume = analysis.recurring.filter((row) => row.count === 2);
+    const words = twoVolume.map((row) => row.word);
+    expect([...words].sort((left, right) => left.localeCompare(right))).toEqual(words);
   });
 });

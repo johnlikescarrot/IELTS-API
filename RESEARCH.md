@@ -3,7 +3,7 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Seven parts, five upstream collections:
+Eight parts, six upstream collections:
 
 | Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                         |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
@@ -14,6 +14,7 @@ Seven parts, five upstream collections:
 | [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays     |
 | [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                              | the validated raw-score-to-band conversion tables and the raw-score endpoints                                          |
 | [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration |
+| [Part VIII](#part-viii--the-vocabulary-learning-loop)                           | [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system)                       | commit `1f5ad56d`, 269 commits | the review scheduler: spaced-repetition calendars with predicted retention, plus the cross-volume recurrence analysis  |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -1035,3 +1036,115 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — the vocabulary learning loop
+
+**Platform snapshot:** commit `1f5ad56d664c56ae449dacc7618b6d7f23967a69` of
+[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system) (2 April 2026), 269
+commits, single active branch `master`.
+
+### 42. What the surveyed platform does
+
+The upstream is not a corpus but an operational vocabulary trainer: a WeChat mini-program front end,
+an Express/SQLite back end with JWT-protected accounts, and an admin console. Its commit history
+records the shape of the product: 4,464 imported IELTS words at first deployment (February 2026);
+a consolidation to seven standardised wordbooks totalling 47,044 words (March 2026); a staged
+syllabus of wordbooks from primary school through middle school, high school, university, IELTS and
+GRE; a learning loop of new-word sessions and scheduled reviews (新词学习和复习) behind the login;
+and admin analytics built around per-learner state — wordbook statistics, top-ten error words
+(错题 TOP10) and an achievements system.
+
+Two design facts follow for this API. First, the platform's value sits in its **loop** — learn,
+schedule, review, measure — not in any single word list; a vocabulary dataset that cannot schedule
+reviews serves only lookup. Second, the platform implements that loop with **per-account state**:
+what you learned, when you were right, which words you keep missing. A free, no-authentication,
+GET-only API cannot hold that state — and deliberately does not. The question this part answers is
+therefore narrower and cleaner: _how much of the learning loop can a stateless service publish as a
+pure function of its inputs?_ The answer published here is the review schedule and its retention
+model, computed identically for every caller; the learner's own recall history stays on the client.
+
+### 43. Cross-volume recurrence: what the volume lists say about frequency
+
+The vocabulary dataset merges 22 editorial word lists (one per Cambridge IELTS volume). A headword
+listed in several volumes was selected by the compilers more than once — a sparse but genuinely
+exam-specific repetition signal, distinct from corpus token frequency. Counting volumes per
+headword over all 4,174 entries:
+
+| Volumes listing the word | Headwords |   Share |
+| -----------------------: | --------: | ------: |
+|                        1 |     4,041 | 96.81 % |
+|                        2 |       132 |  3.16 % |
+|                        3 |         1 |  0.02 % |
+
+133 headwords (3.19 %) recur at all; `abnormal` (volumes 1, 17, 21) is the only word listed three
+times. The distribution is the finding: Cambridge volume lists barely overlap, so "appears in many
+volumes" cannot serve as a general frequency proxy, and any study using recurrence must treat the
+133 recurring words as a distinct set rather than the head of a smooth distribution.
+`/v1/vocabulary/recurrence` publishes the full distribution and the complete recurring set with
+volume identifiers.
+
+### 44. The review scheduler: spaced repetition as a pure function
+
+`/v1/vocabulary/schedule` turns a set of headwords into a review calendar. The model is the
+classical exponential forgetting curve of Ebbinghaus (1885), in the formulation used by half-life
+regression for language learning (Settles & Meeder, 2016): the probability of recalling a word
+decays as
+
+> R(t) = 2^(−t / H)
+
+where `t` is the elapsed time in days and `H` is the memory half-life. Each completed review doubles
+the half-life — Leitner's box principle — so `H(k) = 2^k` days after `k` reviews, starting from
+`H(0) = 1` day for freshly learned material. Two interval schemes are published:
+
+| Scheme       | Review days after the learning day | Rationale                                                  |
+| ------------ | ---------------------------------- | ---------------------------------------------------------- |
+| `ebbinghaus` | 1, 2, 4, 7, 15, 30                 | The classic day-level Ebbinghaus review table              |
+| `leitner`    | 1, 2, 4, 8, 16, 32                 | Pure interval doubling, matching the half-life progression |
+
+Every scheduled event carries the modelled retention **immediately before** the review — for the
+Ebbinghaus table: 0.500, 0.707, 0.707, 0.771, 0.707, 0.723 — so a client can rank today's queue by
+predicted fragility rather than by insertion order. The plan also aggregates the review load per
+calendar date (the shape a client's daily reminder needs) and projects retention 30 days after the
+final review (0.723 under both schemes, since `H(6) = 64` days).
+
+Because the endpoint is a pure function — of the word set, the start date and the scheme — it needs
+no account and stays reproducible: the same query is the same calendar on every replica, forever,
+and can be cited, archived and diffed like any other response. Word selection without an explicit
+list is seeded (`count` + `seed`), following the `/v1/vocabulary/daily` pattern, so sampled
+schedules are reproducible too.
+
+### 45. Threats to validity (Part VIII)
+
+- **The retention model is a population-average fiction.** Real recall depends on the learner, the
+  word, encoding context and interference; a single doubling half-life curve is a teaching
+  approximation, not a prediction about any individual. The endpoint's `meta` says so on every
+  response.
+- **No feedback, no adaptation.** The surveyed platform reschedules from actual recall outcomes;
+  this API cannot see outcomes. A client that wants adaptation must re-query with the words it
+  actually missed — the schedule will be deterministic, but the word set is the client's to keep.
+- **The interval tables are conventions, not measurements.** The Ebbinghaus day table and Leitner
+  doubling are widely used published conventions; neither was fitted to Cambridge vocabulary, and
+  sub-day reviews (Ebbinghaus's original minutes-and-hours intervals) are out of scope for a
+  day-granular calendar.
+- **Recurrence measures editorial behaviour, not exam frequency.** The volume lists are selections;
+  96.81 % single-volume recurrence reflects list curation as much as word usage, and the recurring
+  set of 133 is too small to support distributional claims.
+- **The platform survey is a snapshot.** The upstream repository is unlicensed and mutable; the
+  pinned commit is the only defence against drift, and the platform's own review algorithm is not
+  published in its documentation — the model here is reconstructed from the public literature, not
+  extracted from the platform.
+
+### 46. Reproducing Part VIII
+
+Both endpoints derive from the committed vocabulary dataset and pure functions in `src/lib/review.ts`;
+there is no second extraction pipeline. The numbers in this part are pinned by the test suite:
+
+```bash
+curl -s "http://localhost:3000/v1/vocabulary/recurrence"
+curl -s "http://localhost:3000/v1/vocabulary/schedule?words=abandon,hydrogen&start=2026-03-01"
+curl -s "http://localhost:3000/v1/vocabulary/schedule?count=10&seed=research&scheme=leitner"
+```
+
+`test/lib/review.test.ts` asserts the exact retention values, the calendar arithmetic (including
+leap-day and year boundaries) and both interval tables; `test/data/vocabulary.test.ts` asserts the
+recurrence partition (4,041 / 132 / 1) and the ordering of the recurring set.

@@ -146,6 +146,84 @@ export function randomEntries(seed: string, count: number): VocabularyEntry[] {
   return seededIndices(seed, entries.length, count).map((index) => entries[index] as VocabularyEntry);
 }
 
+/** One headword that recurs across several Cambridge IELTS volumes. */
+export type RecurrenceRow = {
+  /** Stable dataset identifier (`w00001`). */
+  id: string;
+  /** Headword. */
+  word: string;
+  /** Cambridge IELTS volumes listing the word, ascending. */
+  volumes: number[];
+  /** Number of volumes listing the word. */
+  count: number;
+};
+
+/** One bucket of the recurrence distribution. */
+export type RecurrenceBucket = {
+  /** Number of volumes a headword is listed in. */
+  volumes: number;
+  /** Headwords with exactly that recurrence. */
+  words: number;
+  /** Share of the dataset, in percent, rounded to two decimals. */
+  share: number;
+};
+
+/** Cross-volume recurrence analysis of the vocabulary dataset. */
+export type RecurrenceAnalysis = {
+  /** Unique headwords in the dataset. */
+  totalWords: number;
+  /** Headwords listed in two or more volumes. */
+  recurringWords: number;
+  /** Largest recurrence observed. */
+  maxRecurrence: number;
+  /** Headword count per recurrence, ascending. */
+  distribution: RecurrenceBucket[];
+  /** Every recurring headword, most recurrent first. */
+  recurring: RecurrenceRow[];
+};
+
+/**
+ * Analyse how headwords recur across the Cambridge IELTS volumes.
+ *
+ * Recurrence is the number of volumes (out of 1-22) whose published word list
+ * contains the headword. The volume lists are editorial selections, not token
+ * counts, so recurrence measures editorial repetition across exam volumes —
+ * a sparse but genuinely exam-specific frequency signal.
+ */
+export function recurrenceAnalysis(): RecurrenceAnalysis {
+  const entries = allEntries();
+  const buckets = new Map<number, number>();
+  const recurring: RecurrenceRow[] = [];
+  let maxRecurrence = 0;
+
+  for (const entry of entries) {
+    const count = entry.volumes.length;
+    buckets.set(count, (buckets.get(count) ?? 0) + 1);
+    maxRecurrence = Math.max(maxRecurrence, count);
+    if (count >= 2) {
+      recurring.push({ id: entry.id, word: entry.word, volumes: [...entry.volumes], count });
+    }
+  }
+
+  const total = entries.length;
+  const distribution = [...buckets.entries()]
+    .sort((left, right) => left[0] - right[0])
+    .map(([volumes, words]) => ({
+      volumes,
+      words,
+      share: Math.round((words / total) * 10000) / 100,
+    }));
+  recurring.sort((left, right) => right.count - left.count || left.word.localeCompare(right.word));
+
+  return {
+    totalWords: total,
+    recurringWords: recurring.length,
+    maxRecurrence,
+    distribution,
+    recurring,
+  };
+}
+
 /** Aggregate statistics about the vocabulary dataset. */
 export type VocabularyStats = {
   /** Number of unique headwords. */
