@@ -1198,6 +1198,240 @@ export type TestcenterStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Word banks (the deployed learning-system concordance)                      */
+/* -------------------------------------------------------------------------- */
+
+/** The seven exam word banks materialised by the deployed learning system. */
+export type WordbankId = 'ielts' | 'cet4' | 'cet6' | 'kaoyan' | 'toefl' | 'gre' | 'compilation';
+
+/** One word bank of the deployed learning system. */
+export type Wordbank = {
+  /** Stable bank identifier. */
+  id: WordbankId;
+  /** English label. */
+  label: string;
+  /** Upstream Chinese label, as stored by the platform. */
+  labelZh: string;
+  /** The examination or context the bank targets. */
+  context: string;
+  /** Rows in the live database (case variants included). */
+  rows: number;
+  /** Distinct lower-cased headwords. */
+  distinctWords: number;
+  /** Rows carrying a phonetic transcription. */
+  withPhonetic: number;
+  /** Rows carrying a part of speech. */
+  withPartOfSpeech: number;
+  /** Rows carrying a definition. */
+  withDefinition: number;
+  /** Rows collapsed by lower-casing (`rows` minus `distinctWords`). */
+  caseCollisions: number;
+  /** Upstream workbook the bank was imported from. */
+  sourceWorkbook: string;
+  /** Upstream URL of that workbook. */
+  sourceUrl: string;
+};
+
+/** One unordered pair of banks with their overlap statistics. */
+export type WordbankOverlap = {
+  /** First bank, in canonical order. */
+  a: WordbankId;
+  /** Second bank, in canonical order. */
+  b: WordbankId;
+  /** Words in both banks. */
+  intersection: number;
+  /** Words in either bank. */
+  union: number;
+  /** Intersection over union, rounded to four decimals. */
+  jaccard: number;
+  /** Intersection as a share of bank `a`. */
+  shareOfA: number;
+  /** Intersection as a share of bank `b`. */
+  shareOfB: number;
+};
+
+/** The original join of every bank against the Cambridge 1-22 vocabulary. */
+export type WordbankCambridgeCoverage = {
+  /** How the join was computed. */
+  note: string;
+  /** Cambridge IELTS 1-22 headwords published by `/v1/vocabulary`. */
+  cambridgeWords: number;
+  /** Per-bank coverage rows. */
+  banks: {
+    bank: WordbankId;
+    words: number;
+    shareOfBank: number;
+    shareOfCambridge: number;
+  }[];
+  /** The IELTS bank's headline coverage. */
+  ielts: {
+    words: number;
+    inCambridge: number;
+    exclusiveToBank: number;
+    shareInCambridge: number;
+    shareOfCambridge: number;
+  };
+  /** How many banks each Cambridge headword belongs to. */
+  membershipOfCambridgeWords: Record<string, number>;
+};
+
+/** One collocation headword with aggregate partner counts. */
+export type WordbankCollocationHeadword = {
+  /** Lower-cased headword. */
+  word: string;
+  /** Whether the pairs are verb-object (`verb`) or noun-adjective (`noun`). */
+  category: 'verb' | 'noun';
+  /** Distinct collocation partners recorded for the headword. */
+  partners: number;
+  /** Banks containing the headword. */
+  banks: WordbankId[];
+  /** Whether the headword is a Cambridge 1-22 headword. */
+  cambridge: boolean;
+};
+
+/** One step of the deployed review engine's interval ladder. */
+export type WordbankReviewInterval = {
+  /** Ladder position, 1-8. */
+  step: number;
+  /** Interval in minutes. */
+  minutes: number;
+  /** Human-readable interval. */
+  label: string;
+};
+
+/** The deployed spaced-repetition review engine, as parameters. */
+export type WordbankReviewModel = {
+  /** Upstream file the parameters were verified against. */
+  source: { path: string; sha1: string; sourceUrl: string };
+  /** Model family. */
+  model: string;
+  /** The eight base intervals. */
+  intervals: WordbankReviewInterval[];
+  /** The rule applied once the ladder is exhausted. */
+  postBaseRule: { description: string; baseMinutes: number; formula: string };
+  /** The mastery-score update rule. */
+  masteryRule: {
+    range: [number, number];
+    correctStep: number;
+    incorrectStep: number;
+    confidenceRange: [number, number];
+    rounding: number;
+    description: string;
+  };
+  /** The daily review window around the learner's configured time. */
+  reviewWindow: { hours: number; description: string };
+};
+
+/** One Speaking prompt of the system's seed bank. */
+export type WordbankSpeakingTopic = {
+  /** Stable identifier (`sp01` … `sp26`). */
+  id: string;
+  /** Speaking part, 1-3. */
+  part: number;
+  /** Topic label. */
+  topic: string;
+  /** The prompt. */
+  question: string;
+  /** Cue-card lines for Part 2 prompts, `null` otherwise. */
+  cueCard: string[] | null;
+  /** The system's difficulty judgement. */
+  difficulty: 'easy' | 'medium' | 'hard';
+  /** The system's estimated test-occurrence rating, in percent. */
+  frequency: number;
+};
+
+/** One Writing prompt of the system's seed bank. */
+export type WordbankWritingTopic = {
+  /** Stable identifier (`wr01` … `wr26`). */
+  id: string;
+  /** Writing task type. */
+  taskType: 'task1-academic' | 'task1-general' | 'task2';
+  /** Topic label. */
+  topic: string;
+  /** The prompt. */
+  question: string;
+  /** Chart type for Task 1 Academic prompts, `null` otherwise. */
+  chartType: string | null;
+  /** The system's difficulty judgement. */
+  difficulty: 'easy' | 'medium' | 'hard';
+  /** The system's estimated test-occurrence rating, in percent. */
+  frequency: number;
+};
+
+/** One word of the concordance: its memberships and cross-references. */
+export type WordbankWord = {
+  /** Stable identifier (`wb00001` …), assigned in sorted word order. */
+  id: string;
+  /** Lower-cased headword. */
+  word: string;
+  /** Banks containing the word, in canonical order. */
+  banks: WordbankId[];
+  /** Number of banks containing the word. */
+  bankCount: number;
+  /** Collocation partners recorded for the word, `null` when it is not a headword. */
+  collocations: number | null;
+  /** Whether the word is a Cambridge 1-22 headword. */
+  cambridge: boolean;
+};
+
+/** Headline statistics of the concordance. */
+export type WordbankStats = {
+  rows: number;
+  banks: number;
+  distinctWords: number;
+  membershipDistribution: { banks: number; words: number }[];
+  wordsInAllBanks: number;
+  identicalBankPairs: { a: WordbankId; b: WordbankId; distinctWords: number }[];
+  ielts: { words: number; exclusive: number; inCambridge: number };
+  collocations: { pairs: number; headwords: number; partners: number };
+  topics: { speaking: number; writing: number };
+  reviewIntervals: number;
+};
+
+/** Shape of `data/wordbanks.json`. */
+export type WordbanksIndex = {
+  meta: {
+    name: string;
+    repository: string;
+    system: string;
+    commit: string;
+    snapshot: string;
+    sources: Record<string, { path: string; sha1: string; sourceUrl: string }>;
+    license: string;
+    attribution: string;
+    note: string;
+    provenanceNote: string;
+  };
+  banks: Wordbank[];
+  overlaps: WordbankOverlap[];
+  cambridge: WordbankCambridgeCoverage;
+  collocations: {
+    stats: {
+      note: string;
+      pairs: number;
+      headwords: number;
+      partners: number;
+      verbPairs: number;
+      nounPairs: number;
+      verbHeadwords: number;
+      nounHeadwords: number;
+      headwordsInIelts: number;
+      headwordsInCambridge: number;
+      headwordsOutsideBanks: number;
+    };
+    headwords: WordbankCollocationHeadword[];
+  };
+  review: WordbankReviewModel;
+  topics: { speaking: WordbankSpeakingTopic[]; writing: WordbankWritingTopic[] };
+  words: WordbankWord[];
+  stats: WordbankStats;
+};
+
+/** A prompt of either bank, tagged with its skill for unified search. */
+export type WordbankTopicItem =
+  (WordbankSpeakingTopic & { skill: 'speaking' }) | (WordbankWritingTopic & { skill: 'writing' });
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

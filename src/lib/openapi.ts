@@ -17,6 +17,12 @@ import {
   testcenterCatalogFacets,
   testcenterGroupFacets,
 } from '../data/testcenter.js';
+import {
+  WORDBANK_COLLOCATION_CATEGORIES,
+  WORDBANK_DIFFICULTIES,
+  WORDBANK_IDS,
+  WORDBANK_TASK_TYPES,
+} from '../data/wordbanks.js';
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
@@ -408,6 +414,131 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       schema: { type: 'integer', minimum: 1, maximum: 180 },
     },
   ],
+  '/v1/wordbanks/overlaps': [
+    {
+      name: 'bank',
+      in: 'query',
+      description: 'Restrict the matrix to pairs involving one bank.',
+      schema: { type: 'string', enum: [...WORDBANK_IDS] },
+    },
+  ],
+  '/v1/wordbanks/words': [
+    QUERY,
+    {
+      name: 'bank',
+      in: 'query',
+      description: 'Comma-separated banks; a word matches when it belongs to any of them.',
+      schema: { type: 'string', enum: [...WORDBANK_IDS] },
+    },
+    {
+      name: 'cambridge',
+      in: 'query',
+      description: 'Restrict to words that are (not) Cambridge IELTS 1-22 headwords.',
+      schema: { type: 'boolean' },
+    },
+    {
+      name: 'collocated',
+      in: 'query',
+      description: 'Restrict to words that are (not) collocation headwords.',
+      schema: { type: 'boolean' },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['word', 'banks', 'collocations'], default: 'word' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/wordbanks/collocations': [
+    QUERY,
+    {
+      name: 'bank',
+      in: 'query',
+      description: 'Comma-separated banks; a headword matches when it belongs to any of them.',
+      schema: { type: 'string', enum: [...WORDBANK_IDS] },
+    },
+    {
+      name: 'category',
+      in: 'query',
+      description: 'Verb-object or noun-adjective pairs.',
+      schema: { type: 'string', enum: [...WORDBANK_COLLOCATION_CATEGORIES] },
+    },
+    {
+      name: 'cambridge',
+      in: 'query',
+      description: 'Restrict to headwords that are (not) Cambridge IELTS 1-22 headwords.',
+      schema: { type: 'boolean' },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['word', 'partners'], default: 'word' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
+  '/v1/wordbanks/review': [
+    {
+      name: 'reviews',
+      in: 'query',
+      description: 'Review count already completed (0 = new word); computes the next interval.',
+      schema: { type: 'integer', minimum: 0, maximum: 30 },
+    },
+    {
+      name: 'mastery',
+      in: 'query',
+      description: 'Mastery score 0-100; required with `correct`, used once the ladder is exhausted.',
+      schema: { type: 'integer', minimum: 0, maximum: 100 },
+    },
+    {
+      name: 'correct',
+      in: 'query',
+      description: 'Whether the graded answer was correct; requires `mastery` and `confidence`.',
+      schema: { type: 'boolean' },
+    },
+    {
+      name: 'confidence',
+      in: 'query',
+      description: "The learner's self-reported confidence (1-5); requires `correct`.",
+      schema: { type: 'integer', minimum: 1, maximum: 5 },
+    },
+  ],
+  '/v1/wordbanks/topics': [
+    QUERY,
+    {
+      name: 'skill',
+      in: 'query',
+      schema: { type: 'string', enum: ['speaking', 'writing'] },
+    },
+    {
+      name: 'part',
+      in: 'query',
+      description: 'Speaking part (1-3); applies to speaking prompts only.',
+      schema: { type: 'integer', minimum: 1, maximum: 3 },
+    },
+    {
+      name: 'taskType',
+      in: 'query',
+      description: 'Writing task type; applies to writing prompts only.',
+      schema: { type: 'string', enum: [...WORDBANK_TASK_TYPES] },
+    },
+    {
+      name: 'difficulty',
+      in: 'query',
+      schema: { type: 'string', enum: [...WORDBANK_DIFFICULTIES] },
+    },
+    {
+      name: 'sort',
+      in: 'query',
+      schema: { type: 'string', enum: ['topic', 'frequency', 'difficulty'], default: 'topic' },
+    },
+    { name: 'order', in: 'query', schema: { type: 'string', enum: ['asc', 'desc'], default: 'asc' } },
+    LIMIT,
+    OFFSET,
+  ],
   '/v1/tools/readability': [
     {
       name: 'text',
@@ -584,9 +715,12 @@ export function openApiDocument(
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, an index of a 2,385-file',
-        'self-study materials collection, and a mock-exam test-centre index with the',
+        'self-study materials collection, a mock-exam test-centre index with the',
         'Cambridge 4-21 holdings, 1,099 hand-tagged question groups and a production',
-        'raw-score-to-band calibration. The toolkit additionally scores any text',
+        'raw-score-to-band calibration, and a cross-exam word-bank concordance of a',
+        'deployed vocabulary-learning system: seven banks, 47,044 rows, 15,930 words,',
+        'the pairwise overlap matrix, the Cambridge coverage join and the parameters',
+        'of its Ebbinghaus review engine. The toolkit additionally scores any text',
         '(readability and essay profile) and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',

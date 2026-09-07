@@ -6,6 +6,62 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-07
+
+The **word-bank concordance**, a sixth dataset family: the API now indexes a deployed learning
+system rather than another folder of files. The upstream
+([`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system)) is the repository
+behind an operational WeChat mini-program IELTS vocabulary-learning platform — an Express/SQLite
+backend, an Ebbinghaus spaced-repetition review engine, an admin statistics panel and AI-assisted
+speaking and writing practice, deployed over HTTPS. Its live database materialises seven
+Chinese-market exam word banks (IELTS, CET-4, CET-6, the postgraduate-entrance examination, TOEFL,
+GRE and a general compilation) as 47,044 word rows over 15,930 distinct words. As with every other
+family, only derived, non-substitutive metadata is published: no definition, phonetic transcription,
+example sentence, full collocation pair list or user record is served.
+
+### Added
+
+- **The concordance** (`GET /v1/wordbanks`): provenance, the bank inventories and the headline
+  statistics — membership distribution, the words shared by all seven banks, the identical-bank-pair
+  detection, and the IELTS bank's Cambridge coverage.
+- **The seven banks** (`GET /v1/wordbanks/banks`, `…/banks/:id`): rows, distinct words, phonetic and
+  definition coverage, case-collision counts and source workbooks; one bank's detail reframes its
+  overlap profile against every other bank from its own perspective.
+- **The overlap matrix** (`GET /v1/wordbanks/overlaps`, optional `bank`): intersection, union,
+  Jaccard similarity and containment in both directions for all 21 unordered bank pairs.
+- **The Cambridge join** (`GET /v1/wordbanks/cambridge`): every bank intersected with the 4,174
+  Cambridge IELTS 1-22 headwords of `/v1/vocabulary` — an original cross-dataset analysis. Two
+  headline results: the platform's IELTS bank and the Cambridge extraction agree on barely half
+  their contents (2,153 of 4,531 words; 47.5% / 51.6% in each direction), and 261 Cambridge
+  headwords (6.3%) belong to none of the seven banks — vocabulary the entire commercial word-bank
+  market misses.
+- **The word index** (`GET /v1/wordbanks/words`, `…/words/:word`): all 15,930 words with bank
+  memberships (`bank`, any-of semantics), Cambridge-headword status (`cambridge`), collocation
+  headword status (`collocated`), free-text search and three sort keys.
+- **Collocation aggregates** (`GET /v1/wordbanks/collocations`): the 413 headwords of the platform's
+  3,099-pair verb-object and noun-adjective collocation bank, as per-headword partner counts with
+  category, bank and Cambridge filters. The pair list itself is not redistributed.
+- **The review engine** (`GET /v1/wordbanks/review`): the deployed Ebbinghaus ladder (5 minutes,
+  30 minutes, 12 hours, 1, 2, 4, 7, 15 days), the mastery update rule (+5 x confidence when correct,
+  -8 x confidence when wrong, clamped to 0-100) and the ±2-hour review window, each verified against
+  the upstream source at derivation time — plus optional deterministic computation: `reviews` and
+  `mastery` return the next interval (ladder step or the dynamic 15 days x (1 + mastery/100) rule),
+  `correct` with `confidence` returns the mastery update. All times are relative minutes; the engine
+  stores no absolute times, so responses stay byte-identical.
+- **The prompt banks** (`GET /v1/wordbanks/topics`): the system's 26 Speaking prompts (Parts 1-3,
+  cue cards for Part 2) and 26 Writing prompts (Task 1 Academic with chart types, Task 1 General,
+  Task 2), searchable by skill, part, task type and difficulty, each carrying the platform's own
+  estimated test-occurrence rating (60-95%). Sample answers are absent upstream and are not
+  published.
+- `data:wordbanks` npm script; CI re-derivation and internal-consistency checks for the new dataset;
+  RESEARCH.md Part VIII with the methodology, the findings and the threats to validity; the JOSS
+  paper, README, citation metadata (`CITATION.cff`, `codemeta.json`, `.zenodo.json`) and the OpenAPI
+  description updated for the sixth family.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json`, `.zenodo.json` and the README citation block cite version 1.5.0.
+
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses
@@ -264,7 +320,8 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...v1.5.0
 [1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
 [1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
 [1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0

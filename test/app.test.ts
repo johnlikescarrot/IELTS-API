@@ -75,7 +75,11 @@ describe('request handling', () => {
   });
 
   it('leaves small responses uncompressed', async () => {
-    const response = await server.request('/health', { headers: { 'accept-encoding': 'gzip' } });
+    // `/health` crossed the 1 KiB compression threshold in 1.5.0, when the
+    // dataset summary gained the word-bank fields; this response is 642 bytes.
+    const response = await server.request('/v1/scores/overall?listening=6&reading=6&writing=6&speaking=6', {
+      headers: { 'accept-encoding': 'gzip' },
+    });
     expect(response.headers.get('content-encoding')).toBeNull();
   });
 

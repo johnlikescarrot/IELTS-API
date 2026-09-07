@@ -10,6 +10,7 @@ import { vocabularyStats } from '../data/vocabulary.js';
 import { corpusStats } from '../data/corpus.js';
 import { archiveStats } from '../data/archive.js';
 import { testcenterStats } from '../data/testcenter.js';
+import { wordbanksStats } from '../data/wordbanks.js';
 import { materialsStats } from '../data/materials.js';
 import { practiceStats } from '../data/practiceTests.js';
 
@@ -56,6 +57,7 @@ export function renderDocs(routes: readonly RouteDefinition[], version: string, 
   const materials = materialsStats();
   const archive = archiveStats();
   const testcenter = testcenterStats();
+  const wordbanks = wordbanksStats();
 
   return `<!doctype html>
 <html lang="en">
@@ -109,6 +111,7 @@ curl -s "https://ielts-api.example/v1/vocabulary/atmosphere"</code></pre>
   <li><strong>${materials.indexedFiles.toLocaleString('en-US')} study-material files</strong> indexed from a ${materials.filesInRepository.toLocaleString('en-US')}-file self-study collection (recall banks, question banks, templates, vocabulary; metadata only).</li>
   <li><strong>A grey-literature archive index</strong>: ${archive.audioTracks.toLocaleString('en-US')} listening tracks across Cambridge IELTS volumes 1&ndash;18 with a naming-scheme and completeness table, the ${archive.readingSamples.files} official sample tasks profiled for readability and question type, and ${archive.assignments.essays} marked learner essays summarised statistically (metadata only).</li>
   <li><strong>A mock-exam test-centre index</strong>: ${testcenter.catalog.items} self-marking papers from an operational online test centre, including ${testcenter.catalog.cambridgePapers} Cambridge papers around an unbroken Cambridge IELTS 4&ndash;21, with a holdings matrix, ${(testcenter.taxonomy.listening.groups + testcenter.taxonomy.reading.groups).toLocaleString('en-US')} hand-tagged question groups (${(testcenter.taxonomy.listening.questions + testcenter.taxonomy.reading.questions).toLocaleString('en-US')} questions) carrying type, scene and difficulty, and the platform&rsquo;s production raw-score-to-band calibration (metadata only).</li>
+  <li><strong>A cross-exam word-bank concordance</strong>: ${wordbanks.banks} word banks (${wordbanks.rows.toLocaleString('en-US')} rows, ${wordbanks.distinctWords.toLocaleString('en-US')} distinct words) materialised by a deployed vocabulary-learning system, with the pairwise overlap matrix, the join against the Cambridge 1&ndash;22 vocabulary, per-headword collocation counts, the system&rsquo;s Speaking and Writing prompt banks, and the parameters of its Ebbinghaus spaced-repetition review engine (metadata only).</li>
 </ul>
 
 <h2>Versioned endpoints</h2>

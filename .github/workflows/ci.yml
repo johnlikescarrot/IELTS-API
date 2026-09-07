@@ -126,7 +126,7 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive", "testcenter"):
+          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive", "testcenter", "wordbanks"):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
           PY
@@ -236,6 +236,132 @@ jobs:
           print(
               f"test-centre index consistent: {len(catalog)} papers, {len(volumes)} volumes, "
               f"{len(groups)} tagged groups over {sum(g['questions'] for g in groups)} questions"
+          )
+          PY
+
+      - name: Re-derive the word-bank concordance from the deployed learning system
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/Iamdacai/ielts-vocab-system/git/trees/1f5ad56d664c56ae449dacc7618b6d7f23967a69?recursive=1" \
+            -o /tmp/wordbanks-tree.json
+          # The concordance needs only the live database (19 MB SQLite) and the
+          # spaced-repetition engine source, fetched by blob SHA so the
+          # derivation is pinned to the indexed commit. The extractor opens the
+          # database immutable, so the raw blob bytes are authoritative; the
+          # write-ahead log the repository ships beside it changes file-level
+          # bytes only, never the derived concordance.
+          python3 - <<'PY'
+          import json
+          import os
+          import urllib.request
+
+          token = os.environ.get('GITHUB_TOKEN')
+          blobs = {entry['path']: entry['sha'] for entry in json.load(
+              open('/tmp/wordbanks-tree.json'))['tree'] if entry.get('type') == 'blob'}
+          for name, path in (
+              ('ielts_vocab.db', 'backend/ielts_vocab.db'),
+              ('spaced-repetition-algorithm.js', 'backend/spaced-repetition-algorithm.js'),
+          ):
+              headers = {'Accept': 'application/vnd.github.v3.raw'}
+              if token:
+                  headers['Authorization'] = f'Bearer {token}'
+              request = urllib.request.Request(
+                  f"https://api.github.com/repos/Iamdacai/ielts-vocab-system/git/blobs/{blobs[path]}",
+                  headers=headers)
+              with urllib.request.urlopen(request) as response, open(f'/tmp/{name}', 'wb') as out:
+                  out.write(response.read())
+          print("downloaded the 2 platform blobs for the word-bank derivation")
+          PY
+          python3 scripts/extract_wordbanks.py /tmp/ielts_vocab.db \
+            /tmp/spaced-repetition-algorithm.js /tmp/wordbanks.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/wordbanks.json'))
+          regenerated = json.load(open('/tmp/wordbanks.json'))
+          assert committed == regenerated, 'data/wordbanks.json is out of date'
+          print(f"word-bank concordance reproducible: {regenerated['stats']['distinctWords']} words")
+          PY
+
+      - name: Check the word-bank concordance for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+          import re
+
+          index = json.load(open('data/wordbanks.json'))
+          meta, banks, overlaps = index['meta'], index['banks'], index['overlaps']
+          words, stats, cambridge = index['words'], index['stats'], index['cambridge']
+
+          assert stats['rows'] == sum(bank['rows'] for bank in banks) == 47044, 'row totals differ'
+          assert len(banks) == stats['banks'] == 7, 'bank totals differ'
+          assert len({bank['id'] for bank in banks}) == len(banks), 'duplicate bank identifiers'
+          assert stats['distinctWords'] == len(words) == 15930, 'word totals differ'
+          for bank in banks:
+              assert bank['distinctWords'] <= bank['rows'], bank['id']
+              assert bank['withPhonetic'] <= bank['rows'], bank['id']
+              assert bank['sourceWorkbook'].split('/')[-1] in bank['sourceUrl'], bank['id']
+          for source in meta['sources'].values():
+              assert re.fullmatch(r'[0-9a-f]{40}', source['sha1']), source
+              assert source['path'] in source['sourceUrl'], source
+
+          assert len(overlaps) == 21, 'overlap matrix incomplete'
+          by_id = {bank['id']: bank for bank in banks}
+          for row in overlaps:
+              assert row['intersection'] <= min(by_id[row['a']]['distinctWords'], by_id[row['b']]['distinctWords']), row
+              assert row['union'] >= max(by_id[row['a']]['distinctWords'], by_id[row['b']]['distinctWords']), row
+              assert row['jaccard'] == round(row['intersection'] / row['union'], 4), row
+          assert stats['identicalBankPairs'] == [
+              {'a': 'toefl', 'b': 'compilation', 'distinctWords': 9735}
+          ], 'identical-pair detection differs'
+
+          ids = [word['id'] for word in words]
+          assert len(set(ids)) == len(ids), 'duplicate word identifiers'
+          assert ids == sorted(ids), 'word identifiers are not sequential'
+          for word in words:
+              assert word['bankCount'] == len(word['banks']), word['id']
+          assert sum(row['words'] for row in stats['membershipDistribution']) == len(words), \
+              'membership distribution differs'
+          assert stats['wordsInAllBanks'] == 567, 'all-bank total differs'
+
+          assert cambridge['cambridgeWords'] == 4174, 'Cambridge join total differs'
+          assert cambridge['ielts']['inCambridge'] == 2153, 'IELTS coverage differs'
+          assert sum(cambridge['membershipOfCambridgeWords'].values()) == 4174, 'membership join differs'
+          for row in cambridge['banks']:
+              assert row['words'] <= by_id[row['bank']]['distinctWords'], row
+
+          collocations = index['collocations']
+          headword_stats = collocations['stats']
+          assert headword_stats['verbPairs'] + headword_stats['nounPairs'] == headword_stats['pairs'], 'pair totals differ'
+          assert headword_stats['verbHeadwords'] + headword_stats['nounHeadwords'] == headword_stats['headwords'], 'headword totals differ'
+          assert headword_stats['headwordsInCambridge'] <= headword_stats['headwords'], 'Cambridge headword total differs'
+          assert len(collocations['headwords']) == headword_stats['headwords'], 'headword list differs'
+
+          review = index['review']
+          assert [step['minutes'] for step in review['intervals']] == [
+              5, 30, 720, 1440, 2880, 5760, 10080, 21600
+          ], 'review ladder differs'
+          assert review['masteryRule']['correctStep'] == 5, 'mastery rule differs'
+          assert review['masteryRule']['incorrectStep'] == -8, 'mastery rule differs'
+          assert review['reviewWindow']['hours'] == 2, 'review window differs'
+
+          speaking, writing = index['topics']['speaking'], index['topics']['writing']
+          assert len(speaking) == stats['topics']['speaking'] == 26, 'speaking totals differ'
+          assert len(writing) == stats['topics']['writing'] == 26, 'writing totals differ'
+          for topic in speaking:
+              assert topic['part'] in (1, 2, 3), topic['id']
+              assert (topic['cueCard'] is not None) == (topic['part'] == 2), topic['id']
+              assert topic['difficulty'] in ('easy', 'medium', 'hard'), topic['id']
+              assert 0 <= topic['frequency'] <= 100, topic['id']
+          for topic in writing:
+              assert topic['taskType'] in ('task1-academic', 'task1-general', 'task2'), topic['id']
+              assert (topic['chartType'] is not None) == (topic['taskType'] == 'task1-academic'), topic['id']
+              assert topic['difficulty'] in ('easy', 'medium', 'hard'), topic['id']
+
+          print(
+              f"word-bank concordance consistent: {len(banks)} banks, {stats['rows']} rows, "
+              f"{len(words)} words, {len(overlaps)} bank pairs, "
+              f"{len(collocations['headwords'])} collocation headwords"
           )
           PY
 
