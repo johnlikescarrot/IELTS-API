@@ -74,7 +74,7 @@ const PARAMETERS: Record<string, JsonValue[]> = {
     {
       name: 'frequency',
       in: 'query',
-      description: 'Comma-separated frequency tiers (high: 4+ volumes, medium: 2-3, low: 1).',
+      description: 'Comma-separated frequency tiers (high: 3 volumes, medium: 2, low: 1).',
       schema: { type: 'string', enum: ['high', 'medium', 'low'] },
     },
     {
