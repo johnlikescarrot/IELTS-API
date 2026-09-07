@@ -1,7 +1,7 @@
 {
   "name": "ielts-api",
-  "version": "1.5.0",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, validated raw-score to band conversion tables, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and marked learner essays, a mock-exam test-centre index of an operational IELTS online test centre, and a stateless vocabulary-learning layer (forgetting-curve model, review calendars and practice items) over the Cambridge headword set.",
+  "version": "1.4.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, band descriptors, score conversion, task and topic banks, a canonical question-type taxonomy, a structure and readability index of 1,702 practice tests, validated raw-score to band conversion tables, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and marked learner essays, and a mock-exam test-centre index of an operational IELTS online test centre.",
   "keywords": [
     "api",
     "assessment",
@@ -17,9 +17,7 @@
     "psychometrics",
     "mock-exam",
     "test-center",
-    "score-calibration",
-    "spaced-repetition",
-    "vocabulary-learning"
+    "score-calibration"
   ],
   "license": "MIT",
   "type": "module",

@@ -42,28 +42,6 @@ const OFFSET = {
 };
 const QUERY = { name: 'q', in: 'query', description: 'Free-text search.', schema: { type: 'string' } };
 
-/** ISO-8601 calendar date parameter. */
-const DATE = {
-  name: 'date',
-  in: 'query',
-  description: 'ISO date (YYYY-MM-DD). Defaults to today (UTC).',
-  schema: { type: 'string', format: 'date' },
-};
-/** Cambridge volume filter shared by the vocabulary-family endpoints. */
-const VOLUME = {
-  name: 'volume',
-  in: 'query',
-  description: 'Comma-separated Cambridge IELTS volumes (1-22).',
-  schema: { type: 'string', example: '10,11,12' },
-};
-/** Part-of-speech filter shared by the vocabulary-family endpoints. */
-const POS = {
-  name: 'pos',
-  in: 'query',
-  description: 'Comma-separated parts of speech.',
-  schema: { type: 'string', enum: [...PARTS_OF_SPEECH] },
-};
-
 /** Query parameters per path. */
 const PARAMETERS: Record<string, JsonValue[]> = {
   '/v1/vocabulary': [
@@ -74,8 +52,18 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       description: 'How `q` is matched against the dataset.',
       schema: { type: 'string', enum: ['contains', 'prefix', 'exact'], default: 'contains' },
     },
-    VOLUME,
-    POS,
+    {
+      name: 'volume',
+      in: 'query',
+      description: 'Comma-separated Cambridge IELTS volumes (1-22).',
+      schema: { type: 'string', example: '10,11,12' },
+    },
+    {
+      name: 'pos',
+      in: 'query',
+      description: 'Comma-separated parts of speech.',
+      schema: { type: 'string', enum: [...PARTS_OF_SPEECH] },
+    },
     {
       name: 'sort',
       in: 'query',
@@ -495,78 +483,6 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       description: 'New headwords to learn per day.',
       schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
     },
-  ],
-  '/v1/study/retention': [
-    {
-      name: 'days',
-      in: 'query',
-      description: 'Days elapsed since learning.',
-      schema: { type: 'integer', minimum: 0, maximum: 3650, default: 1 },
-    },
-    {
-      name: 'stability',
-      in: 'query',
-      description: 'Memory-stability parameter in days (S in R = exp(-days / S)).',
-      schema: { type: 'number', minimum: 0.05, maximum: 365, default: 1 },
-    },
-    {
-      name: 'target',
-      in: 'query',
-      description: 'Optional retention target: also report whole days until retention decays below it.',
-      schema: { type: 'number', minimum: 0.05, maximum: 0.999 },
-    },
-  ],
-  '/v1/study/review': [
-    DATE,
-    {
-      name: 'days',
-      in: 'query',
-      description: 'Number of days in the plan window.',
-      schema: { type: 'integer', minimum: 1, maximum: 90, default: 7 },
-    },
-    {
-      name: 'newPerDay',
-      in: 'query',
-      description: 'New headwords scheduled per day.',
-      schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
-    },
-    VOLUME,
-    POS,
-    {
-      name: 'order',
-      in: 'query',
-      description: 'Headword ordering: dataset order, length, or cross-volume recurrence.',
-      schema: { type: 'string', enum: ['list', 'length', 'recurrence'], default: 'list' },
-    },
-    {
-      name: 'reviewDays',
-      in: 'query',
-      description: 'Strictly increasing days-after-first-study review ladder.',
-      schema: { type: 'string', example: '1,2,4,7,15,30' },
-    },
-    {
-      name: 'stability',
-      in: 'query',
-      description: 'Initial stability in days.',
-      schema: { type: 'number', minimum: 0.05, maximum: 365, default: 1 },
-    },
-    {
-      name: 'growth',
-      in: 'query',
-      description: 'Stability multiplier per completed review.',
-      schema: { type: 'number', minimum: 1, maximum: 5, default: 2 },
-    },
-  ],
-  '/v1/study/quiz': [
-    DATE,
-    {
-      name: 'count',
-      in: 'query',
-      description: 'Number of items requested.',
-      schema: { type: 'integer', minimum: 1, maximum: 20, default: 5 },
-    },
-    VOLUME,
-    POS,
   ],
 };
 

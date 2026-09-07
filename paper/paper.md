@@ -15,7 +15,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 7 September 2026
+date: 5 September 2026
 bibliography: paper.bib
 ---
 
@@ -24,8 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships multiple families of research data: a 4,174-headword vocabulary
-dataset derived
+JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -38,12 +37,7 @@ cross-linked to the task banks; a structure and readability index of
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics. Since release 1.5.0 the service also ships a stateless vocabulary-learning
-layer over the headword dataset: the classic exponential forgetting curve with an explicit
-stability parameter [@ebbinghaus1885; @murre2015], deterministic day-by-day review calendars on
-an expanding-rehearsal ladder [@landauer1978; @cepeda2006], and reproducible
-definition-recognition practice items whose answers, distractors and option order are seeded by
-date and scope.
+statistics.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -172,23 +166,6 @@ timed drills from the tagged groups under any filter combination.
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
-**Vocabulary-learning layer.** The study engine turns the Cambridge headword list into a
-spaced-practice plan without storing any learner state. `/v1/study/retention` evaluates the
-single-exponential forgetting curve `R = exp(-days / stabilityDays)` — the standard first model of
-Ebbinghaus's savings data, replicated by Murre and Dros [@murre2015] — with an explicit stability
-parameter, half-life, and an inversion that returns the last whole day predicted retention stays
-above a target. `/v1/study/review` assigns `newPerDay` headwords to each UTC day in a deterministic
-cycle and schedules every word again on a configurable expanding ladder of review days (default
-1-2-4-7-15-30, the expanding-rehearsal design of Landauer and Bjork [@landauer1978]; distributed
-practice reliably beats massed practice [@cepeda2006]), attaching the model's predicted retention
-to each due review under stability that grows per completed review. `/v1/study/quiz` generates
-definition-recognition items from the dataset's own glosses: the correct definition plus three
-deterministic distractor definitions from other headwords, same part of speech first, with the
-answer key published because the items are study aids rather than assessments. A corpus-level
-measurement motivated the design: only 133 of the 4,174 headwords (3.2%) occur in more than one
-Cambridge volume, so per-volume lists are almost disjoint and recurrence — the only
-within-corpus frequency signal — is a real but weak ranking criterion.
-
 **Analysis toolkit.** The same datasets also power three text-consuming endpoints. A readability
 analyser applies the Flesch formulas to any supplied text — alphabetic tokenisation, sentence
 splitting on terminators, vowel-group syllable estimation — and places the score next to the corpus
@@ -215,7 +192,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (704 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
