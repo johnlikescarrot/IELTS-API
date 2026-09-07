@@ -3,7 +3,7 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, validated raw-score to band conversion tables, and a mock-exam test-centre index of an operational IELTS online test centre with 1,099 hand-tagged question groups and a production score calibration. Seeded vocabulary flashcards and a client-owned SM-2 review scheduler provide reproducible practice without accounts or saved progress.",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, validated raw-score to band conversion tables, and a mock-exam test-centre index of an operational IELTS online test centre with 1,099 hand-tagged question groups and a production score calibration. Seeded vocabulary flashcards and a client-owned SM-2 review scheduler provide reproducible practice without accounts or saved progress. Companion tools expose 44 vocabulary collections, transparent difficulty heuristics, illustrative rehearsal-model comparisons, streaks and synthetic calendars.",
   "version": "1.5.0",
   "dateCreated": "2026-09-04",
   "datePublished": "2026-09-07",
@@ -47,7 +47,15 @@
     "test center",
     "score calibration",
     "spaced repetition",
-    "retrieval practice"
+    "retrieval practice",
+    "Ebbinghaus",
+    "Leitner",
+    "SM-2",
+    "SRS",
+    "calendar heatmap",
+    "streak",
+    "thematic collections",
+    "vocabulary difficulty"
   ],
   "author": [
     {

@@ -7,7 +7,9 @@ date-released: '2026-09-07'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
-  Cambridge IELTS volumes 1-22 vocabulary lists, condensed analytic band
+  Cambridge IELTS volumes 1-22 vocabulary lists, 44 volume/thematic collections,
+  transparent difficulty heuristics and illustrative rehearsal, streak and
+  calendar helpers, condensed analytic band
   descriptors for Speaking and Writing across bands 0-9, indicative score
   concordances for CEFR, TOEFL iBT, the Cambridge English Scale, PTE Academic
   and the Duolingo English Test, Writing and Speaking task banks, a canonical
@@ -60,6 +62,13 @@ keywords:
   - open data
   - REST API
   - TypeScript
+  - SRS
+  - Ebbinghaus
+  - Leitner
+  - SM-2
+  - vocabulary difficulty
+  - thematic collections
+  - calendar heatmap
 license:
   - MIT
   - CC-BY-4.0
@@ -154,6 +163,22 @@ references:
     title: 'Application of a computer to improve the results obtained in working with the SuperMemo method'
     url: 'https://super-memory.com/english/ol/sm2.htm'
     year: 1990
+  - type: book
+    authors:
+      - family-names: 'Ebbinghaus'
+        given-names: 'Hermann'
+    title: 'Über das Gedächtnis: Untersuchungen zur experimentellen Psychologie'
+    year: 1885
+    publisher:
+      name: 'Duncker & Humblot'
+  - type: book
+    authors:
+      - family-names: 'Leitner'
+        given-names: 'Sebastian'
+    title: 'So lernt man lernen: Angewandte Lernpsychologie - ein Weg zum Erfolg'
+    publisher:
+      name: 'Herder'
+    year: 1972
 preferred-citation:
   type: software
   title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'

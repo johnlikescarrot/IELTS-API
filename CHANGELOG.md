@@ -15,6 +15,11 @@ version 1.5.0; publishing a release or minting a DOI is a separate operation.
 
 ### Added
 
+- Retained the companion rehearsal layer from the concurrent branch update: 44 Cambridge/thematic
+  vocabulary collections, transparent difficulty heuristics, GET rehearsal-model comparison,
+  streak/calendar helpers and seeded synthetic vocabulary samples. These are distinguished from
+  the versioned client-state scheduler below, rather than silently changing their calculations.
+
 - `GET /v1/vocabulary/deck`: seeded Fisher–Yates permutations of the existing vocabulary, filtered
   by volumes and parts of speech before pagination. Adjacent pages do not repeat words. Prompts,
   source-faithful answers and unsaved initial card states are separate.
@@ -37,6 +42,12 @@ version 1.5.0; publishing a release or minting a DOI is a separate operation.
   The published package includes the review guide, research notes, OpenAPI snapshot and data licence.
 
 ### Fixed
+
+- Reconciled the companion tools' documentation with their actual formulas (including the Leitner
+  ladder, SM-2 variant, difficulty components, calendar cutoffs and mistake-priority helper).
+  Corrected an erroneous spacing-paper citation and labelled simulated output as unvalidated.
+  Collection mean size now counts all collection memberships, not just unique headwords.
+- Removed inherited coverage-ignore comments; the per-file gate is satisfied by executable tests.
 
 - OpenAPI now uses actual route methods, valid `{parameter}` templates and the real `meta.error`
   envelope. Service endpoints are included; relative server URLs work behind HTTPS reverse proxies.

@@ -8,6 +8,7 @@ tags:
   - readability
   - item types
   - open data
+  - spaced repetition
   - REST API
 authors:
   - name: The IELTS API contributors
@@ -37,7 +38,7 @@ cross-linked to the task banks; a structure and readability index of
 metadata indexes of open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; a rehearsal layer that turns the 4,174 headwords into 44 deterministic vocabulary collections (22 Cambridge volumes plus 22 thematic scenes keyworded from the [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system) 真经 library) with a transparent 0-100 difficulty score per headword; and a stateless spaced-repetition toolkit that exposes Ebbinghaus expanding intervals, Leitner boxes and SM-2 side by side, plus streak arithmetic and a GitHub-style calendar heat-map.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support for public GET data — so results can be reproduced when the software version, dataset
 snapshot and all explicit inputs are preserved. POST review computations are deterministic too,
@@ -177,6 +178,14 @@ thresholds; the response states that the hints are teaching heuristics, not scor
 composes the gap between a target band and current component scores into a deterministic
 week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
 pure functions of their inputs, so their outputs are as reproducible as the datasets.
+
+**Companion rehearsal tools.** The same release retains the comparison layer's 44 volume/thematic
+collections, transparent vocabulary difficulty heuristics, illustrative fixed-interval, box and
+SM-2-like calculators, streak arithmetic and synthetic calendars. Thematic hash fallback guarantees
+assignment, not semantic validity; CEFR-style labels are not calibrated placements. The comparison
+calculator's rounding/update convention differs deliberately from the versioned state contract
+below, and its clock defaults must be supplied explicitly for reproducibility. These are teaching
+and research fixtures, not observed learner outcomes.
 
 **Client-owned vocabulary review.** A source-level study of `Iamdacai/ielts-vocab-system`
 [@ieltsvocab2026] found several distinct scheduling representations across its standalone backend

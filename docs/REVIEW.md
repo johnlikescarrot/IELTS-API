@@ -22,6 +22,15 @@ with `data: null` and `meta.error: { code, message, details }`. The [OpenAPI doc
 includes request and response schemas. All other existing domain endpoints remain GET-only, with
 HEAD and OPTIONS support.
 
+### Relationship to the companion GET tools
+
+The existing `/v1/srs/*` endpoints remain illustrative model comparisons. Their `sm2` variant
+rounds using the **updated** ease, whereas `sm2-v1` uses ceiling and the **previous** ease with
+strict state/date validation. Do not interchange the two state representations. Likewise,
+`/v1/vocabulary/review-queue` is a seeded synthetic sample, not a queue based on your review history.
+Use the POST queue below for genuine due-card selection. Comparison schedules/calendars default
+to the clock unless `now`/`endDate` is supplied explicitly; this new review contract never does.
+
 ## 1. Obtain a deck
 
 ```bash

@@ -1165,7 +1165,61 @@ configure proxies and transport encryption. Existing public GET caching remains 
   1.2.0. Metadata is ready for a real archive deposit, not evidence that one exists. This addition
   does not claim a DOI, peer review, Google Scholar indexing or any citation count.
 
-### 46. Reproducing Part VIII
+### 46. Companion collections and rehearsal calculators
+
+The concurrent rehearsal-layer contribution is retained, with its documentation checked against
+its executable functions. It adds GET calculators, not another source vocabulary download. This
+section supersedes the earlier draft's inconsistent formulas and the misidentified 2008 spacing
+reference; the verified distributed-practice synthesis is Cepeda et al. **2006**, cited above.
+
+**Difficulty.** `estimateDifficulty` sums five point contributions: scarcity
+`40 × clamp01(1 − volumes/22)`, length `20 × clamp01((length−3)/10)`, senses
+`15 × clamp01((senses−1)/4)`, missing phonetic transcription (10 points), and morphology
+`min(15, (missingMorphemes ? 8 : 0) + syllableBonus)`.
+The syllable bonus is zero below three syllables, otherwise `min(7, (syllables−2)×2)`.
+The total is capped at 100 and rounded to two decimals. Upper thresholds 20/40/60/80/90 divide six
+CEFR-style labels A1/A2/B1/B2/C1/C2. These labels are sampling heuristics, not measured CEFR
+placements. Missing transcription can reflect source incompleteness, not genuine word difficulty;
+volume scarcity is not a population frequency estimate. No weights or thresholds were fitted.
+
+**Collections.** Twenty-two Cambridge collections use the existing `volumes` provenance; 22 scene
+collections use original English keywords. First case-insensitive substring match on word,
+definition or morphemes wins; otherwise an FNV-derived hash assigns one of the scenes. The fallback
+is arbitrary, not evidence of semantic membership. Keywords can match inside other words and
+assignment depends on dataset/keyword ordering, so preserve the software snapshot. All 4,174
+headwords have one thematic assignment and may have several volume memberships. Consequently the
+sum across **all 44** collection counts exceeds the number of unique headwords; mean collection
+size is total memberships divided by 44. Counts are recomputed by the current helper, not a cached
+constant-time index. No reference application's vocabulary or audio is imported.
+
+**Comparative scheduling.** `/v1/srs/schedule` retains three educational calculators. Its
+minute ladder is `[5,30,720,1440,2880,5760,10080,21600]`, scaling the last step by
+`1 + clamp(mastery,0,100)/100` after exhaustion. The local Leitner-style implementation uses
+`[1,3,7,14,30]` days: correct promotes one box, incorrect returns to box 1. This exact box table is
+an implementation convention, not a universal sequence established by Leitner's book. Its
+SM-2-like comparison function updates ease first and uses `round(old interval × updated ease)`.
+That deliberately preserved compatibility behaviour is **not `sm2-v1`**, which uses ceiling and
+old ease, a validated card state, explicit dates and due-date gating. Do not interchange their
+states. For real local progress, prefer the versioned POST workflow.
+
+**Illustrative helpers.** `forgettingRetention` returns rounded `exp(-t/S)`, with time floored at
+zero and stability floored at 0.1 days; `retentionHalfLife` returns rounded `S × ln(2)`. They are
+unfitted curves, not estimated recall probabilities. The comparison builder chooses stability
+from its own interval, so its displayed retention is circular rather than independent evidence
+of learning. `mistakePriority` uses `10×errors + 0.5×days + 0.2×(100−mastery)`, plus 5 when errors
+are at least 5, after the documented clamps. It is not the ordering used by the real due queue.
+`calendarLevel` floors minutes and maps 0 / 1–14 / 15–29 / 30–59 / 60+ to levels 0–4;
+`demoCalendar` uses the existing mulberry32 generator and emits synthetic observations.
+`computeStreak` ends its "current" streak at the latest supplied date, not necessarily today.
+The GET vocabulary review-queue endpoint is a seeded **sample with synthetic intervals**, not a
+selection from learner history; its items need not be due. Application responses carry caveats.
+
+Supply `now` and `endDate` explicitly for reproducible comparison/calendar requests: their defaults
+consult the clock. The new stateful-in-the-client workflow never does. Neither layer stores
+accounts or results. No claim of better retention, IELTS improvement or semantic classification
+accuracy follows from a deterministic calculation or from 100% code coverage.
+
+### 47. Reproducing Part VIII
 
 No upstream extraction or private learner data is required:
 

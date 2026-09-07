@@ -521,6 +521,49 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
     },
   ],
+  '/v1/vocabulary/collections/:id/words': [LIMIT, OFFSET],
+  '/v1/vocabulary/review-queue': [
+    { name: 'count', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 } },
+    { name: 'seed', in: 'query', schema: { type: 'string' } },
+  ],
+  '/v1/vocabulary/difficulty': [{ name: 'word', in: 'query', required: true, schema: { type: 'string' } }],
+  '/v1/srs/schedule': [
+    { name: 'reviewCount', in: 'query', schema: { type: 'integer', minimum: 0, maximum: 100, default: 0 } },
+    { name: 'mastery', in: 'query', schema: { type: 'number', minimum: 0, maximum: 100, default: 50 } },
+    { name: 'quality', in: 'query', schema: { type: 'integer', minimum: 0, maximum: 5, default: 4 } },
+    { name: 'interval', in: 'query', schema: { type: 'number', minimum: 1, maximum: 365, default: 1 } },
+    { name: 'repetitions', in: 'query', schema: { type: 'integer', minimum: 0, maximum: 100, default: 0 } },
+    { name: 'easeFactor', in: 'query', schema: { type: 'number', minimum: 1.3, maximum: 5, default: 2.5 } },
+    { name: 'leitnerBox', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 5, default: 1 } },
+    {
+      name: 'leitnerCorrect',
+      in: 'query',
+      schema: { type: 'string', enum: ['true', 'false', '1', '0'], default: 'true' },
+    },
+    { name: 'method', in: 'query', schema: { type: 'string', enum: ['ebbinghaus', 'leitner', 'sm2'] } },
+    { name: 'now', in: 'query', schema: { type: 'string', format: 'date-time' } },
+  ],
+  '/v1/srs/streak': [
+    {
+      name: 'dates',
+      in: 'query',
+      description: 'Comma-separated ISO dates (YYYY-MM-DD).',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/srs/calendar': [
+    { name: 'seed', in: 'query', schema: { type: 'string', default: 'ielts-api' } },
+    { name: 'days', in: 'query', schema: { type: 'integer', minimum: 1, maximum: 365, default: 30 } },
+    { name: 'endDate', in: 'query', schema: { type: 'string', format: 'date' } },
+  ],
+  '/v1/srs/helpers': [
+    { name: 'minutes', in: 'query', schema: { type: 'number', minimum: 0, maximum: 1440 } },
+    { name: 'elapsedDays', in: 'query', schema: { type: 'number', minimum: 0, maximum: 3650 } },
+    { name: 'stabilityDays', in: 'query', schema: { type: 'number', minimum: 0.1, maximum: 3650 } },
+    { name: 'errors', in: 'query', schema: { type: 'number', minimum: 1, maximum: 100 } },
+    { name: 'daysSince', in: 'query', schema: { type: 'number', minimum: 0, maximum: 3650 } },
+    { name: 'mastery', in: 'query', schema: { type: 'number', minimum: 0, maximum: 100 } },
+  ],
 };
 
 /** The shared JSON envelope schema. */
@@ -680,6 +723,8 @@ export function openApiDocument(
         'raw-score-to-band calibration. The toolkit additionally scores any text',
         '(readability and essay profile), composes study plans, and provides seeded',
         'vocabulary flashcards and stateless, client-owned SM-2 review scheduling.',
+        'Companion GET tools retain 44 volume/thematic collections, difficulty heuristics,',
+        'illustrative rehearsal-model comparisons, streaks and synthetic calendars.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),
