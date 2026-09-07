@@ -20,6 +20,7 @@ import {
 import { QUESTION_TYPE_FAMILIES, QUESTION_TYPE_IDS } from '../data/questionTypes.js';
 import { THEME_GROUPS } from '../data/themes.js';
 import { ESSAY_QUESTION_TYPES, WRITING_CATEGORIES } from '../data/topics.js';
+import { COLLECTION_IDS } from '../data/collections.js';
 import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { RESOURCE_TYPES } from '../data/resources.js';
 import { TASK_MODULES } from '../data/tasks.js';
@@ -63,6 +64,18 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       in: 'query',
       description: 'Comma-separated parts of speech.',
       schema: { type: 'string', enum: [...PARTS_OF_SPEECH] },
+    },
+    {
+      name: 'collection',
+      in: 'query',
+      description: 'Comma-separated thematic collections (22 Zhenjing-inspired).',
+      schema: { type: 'string', enum: [...COLLECTION_IDS] },
+    },
+    {
+      name: 'frequency',
+      in: 'query',
+      description: 'Comma-separated frequency tiers (high: 4+ volumes, medium: 2-3, low: 1).',
+      schema: { type: 'string', enum: ['high', 'medium', 'low'] },
     },
     {
       name: 'sort',
@@ -433,6 +446,139 @@ const PARAMETERS: Record<string, JsonValue[]> = {
       schema: { type: 'integer', minimum: 1, maximum: 10, default: 5 },
     },
   ],
+  '/v1/tools/srs': [
+    {
+      name: 'quality',
+      in: 'query',
+      description: 'SM-2 quality 0-5 (or use result).',
+      schema: { type: 'integer', minimum: 0, maximum: 5 },
+    },
+    {
+      name: 'result',
+      in: 'query',
+      description: 'Shorthand: again|hard|good|easy.',
+      schema: { type: 'string', enum: ['again', 'hard', 'good', 'easy'] },
+    },
+    {
+      name: 'ease',
+      in: 'query',
+      description: 'Current ease factor (1.3-3.0).',
+      schema: { type: 'number', minimum: 1.3, maximum: 3.0, default: 2.5 },
+    },
+    {
+      name: 'interval',
+      in: 'query',
+      description: 'Current interval in days.',
+      schema: { type: 'integer', minimum: 0, maximum: 36500, default: 0 },
+    },
+    {
+      name: 'repetitions',
+      in: 'query',
+      description: 'Consecutive successful repetitions.',
+      schema: { type: 'integer', minimum: 0, maximum: 1000, default: 0 },
+    },
+    {
+      name: 'lapses',
+      in: 'query',
+      description: 'Total lapses.',
+      schema: { type: 'integer', minimum: 0, maximum: 1000, default: 0 },
+    },
+  ],
+  '/v1/tools/retention': [
+    {
+      name: 'strength',
+      in: 'query',
+      required: true,
+      description: 'Memory stability S in days (1-365).',
+      schema: { type: 'integer', minimum: 1, maximum: 365 },
+    },
+    {
+      name: 'days',
+      in: 'query',
+      description: 'Horizon in days.',
+      schema: { type: 'integer', minimum: 1, maximum: 365, default: 30 },
+    },
+  ],
+  '/v1/tools/queue': [
+    {
+      name: 'cards',
+      in: 'query',
+      description: 'JSON array of {nextReviewInDays, easeFactor}.',
+      schema: { type: 'string' },
+    },
+    {
+      name: 'limit',
+      in: 'query',
+      description: 'Demo queue size when cards not supplied.',
+      schema: { type: 'integer', minimum: 1, maximum: 100, default: 20 },
+    },
+  ],
+  '/v1/tools/quiz': [
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Quiz items to generate (1-50).',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed for deterministic sampling.',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/tools/flashcards': [
+    {
+      name: 'count',
+      in: 'query',
+      description: 'Flashcards to generate (1-50).',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+    {
+      name: 'seed',
+      in: 'query',
+      description: 'Seed for deterministic sampling.',
+      schema: { type: 'string' },
+    },
+  ],
+  '/v1/tools/phonetics': [
+    {
+      name: 'text',
+      in: 'query',
+      description: 'Word or short phrase (<=200 chars).',
+      schema: { type: 'string' },
+    },
+    { name: 'word', in: 'query', description: 'Alias for text.', schema: { type: 'string' } },
+  ],
+  '/v1/tools/simulation': [
+    {
+      name: 'newPerDay',
+      in: 'query',
+      description: 'New words per day (1-50).',
+      schema: { type: 'integer', minimum: 1, maximum: 50, default: 10 },
+    },
+    {
+      name: 'days',
+      in: 'query',
+      description: 'Horizon in days (1-120).',
+      schema: { type: 'integer', minimum: 1, maximum: 120, default: 30 },
+    },
+    {
+      name: 'strength',
+      in: 'query',
+      description: 'Memory stability S in days (1-365).',
+      schema: { type: 'number', minimum: 1, maximum: 365, default: 7 },
+    },
+    {
+      name: 'threshold',
+      in: 'query',
+      description: 'Retention threshold (0-1).',
+      schema: { type: 'number', minimum: 0, maximum: 1, default: 0.5 },
+    },
+  ],
+  '/v1/vocabulary/collections': [],
+  '/v1/vocabulary/collections/:id/entries': [],
+  '/v1/vocabulary/:word/collection': [],
   '/v1/study/plan': [
     {
       name: 'target',
@@ -579,15 +725,16 @@ export function openApiDocument(
       description: [
         'A free, open, no-authentication REST API for IELTS research and preparation.',
         '',
-        'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords), analytic band',
+        'Datasets: Cambridge IELTS 1-22 vocabulary (4,174 headwords) with a 22-category Zhenjing-inspired thematic index and frequency tiers, analytic band',
         'descriptors, score concordances, Writing and Speaking task banks, a canonical',
         'question-type taxonomy with observed frequencies, response frameworks for the',
         'productive papers, a structure and readability index of 1,702 practice tests,',
         'an index of the open IELTS research corpus, an index of a 2,385-file',
         'self-study materials collection, and a mock-exam test-centre index with the',
         'Cambridge 4-21 holdings, 1,099 hand-tagged question groups and a production',
-        'raw-score-to-band calibration. The toolkit additionally scores any text',
-        '(readability and essay profile) and composes the datasets into study plans.',
+        'raw-score-to-band calibration. The toolkit scores any text (readability, essay profile, phonetics),',
+        'schedules spaced repetition (SM-2, Leitner, Ebbinghaus), generates deterministic quizzes and flashcards,',
+        'ranks review queues and simulates learning trajectories, and composes the datasets into study plans.',
         '',
         'No API key, no registration, no rate limiting by key: every endpoint is open.',
       ].join('\n'),

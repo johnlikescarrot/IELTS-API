@@ -1198,6 +1198,153 @@ export type TestcenterStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Vocabulary collections (thematic, Zhenjing-inspired)                       */
+/* -------------------------------------------------------------------------- */
+
+/** Frequency tier derived from Cambridge volume spread. */
+export type VocabularyFrequency = 'high' | 'medium' | 'low';
+
+/** One thematic vocabulary collection (22-category, Zhenjing-inspired). */
+export type VocabularyCollection = {
+  /** Stable identifier (slug). */
+  id: string;
+  /** English name. */
+  name: string;
+  /** Chinese name from the Zhenjing source for provenance. */
+  zhName: string;
+  /** Thematic group shared with `/v1/topics/themes` where applicable. */
+  themeGroup: string;
+  /** Short description of the collection's domain. */
+  description: string;
+  /** Keyword seeds used to assign headwords to the collection. */
+  keywords: readonly string[];
+  /** Number of headwords currently assigned. */
+  size?: number;
+};
+
+/* -------------------------------------------------------------------------- */
+/* SRS, quiz, phonetics and simulation                                        */
+/* -------------------------------------------------------------------------- */
+
+/** Quality response for SM-2 (0-5, 5 = perfect recall). */
+export type SrsQuality = 0 | 1 | 2 | 3 | 4 | 5;
+
+/** Simplified answer used by the `result` shorthand. */
+export type SrsResult = 'again' | 'hard' | 'good' | 'easy';
+
+/** State of one flashcard in an SM-2 schedule. */
+export type SrsCardState = {
+  /** Ease factor (1.3-3.0). */
+  easeFactor: number;
+  /** Current interval in days. */
+  intervalDays: number;
+  /** Consecutive successful repetitions. */
+  repetitions: number;
+  /** Total lapses (quality < 3). */
+  lapses: number;
+};
+
+/** Result of scheduling one SM-2 review. */
+export type SrsSchedule = SrsCardState & {
+  /** Quality that produced the schedule. */
+  quality: SrsQuality;
+  /** Whether the review was considered successful. */
+  success: boolean;
+  /** Next interval in days after applying the algorithm. */
+  nextIntervalDays: number;
+  /** Next ease factor after applying the algorithm. */
+  nextEaseFactor: number;
+  /** Next repetition count. */
+  nextRepetitions: number;
+  /** Due in days from today (equals nextIntervalDays). */
+  dueInDays: number;
+  /** Estimated retention at due date using Ebbinghaus `R = e^{-t/S}`. */
+  estimatedRetention: number;
+  /** Leitner box after the review (1-5). */
+  leitnerBox: number;
+  /** Human-readable recommendation. */
+  recommendation: string;
+};
+
+/** Ebbinghaus retention at a given elapsed time. */
+export type RetentionPoint = {
+  /** Days since last review. */
+  days: number;
+  /** Retention `R` in [0,1]. */
+  retention: number;
+  /** Forgetting expressed as percentage. */
+  forgettingPercent: number;
+};
+
+/** One quiz item generated from the headword list. */
+export type QuizItem = {
+  /** Headword tested. */
+  word: string;
+  /** Phonetic transcription when available. */
+  phonetic: string | null;
+  /** Correct definition. */
+  correctDefinition: string;
+  /** Shuffled options (correct + distractors). */
+  options: string[];
+  /** Index of the correct option in `options`. */
+  answerIndex: number;
+  /** Collection the word belongs to, when known. */
+  collection: string | null;
+  /** Part of speech of the headword. */
+  partOfSpeech: PartOfSpeech;
+};
+
+/** One flashcard (front/back). */
+export type Flashcard = {
+  /** Front: headword. */
+  front: string;
+  /** Back: definition. */
+  back: string;
+  /** Phonetic transcription when available. */
+  phonetic: string | null;
+  /** Example cue language or sense count. */
+  cue: string;
+  /** Collection the word belongs to, when known. */
+  collection: string | null;
+};
+
+/** One point of a simulated learning trajectory. */
+export type SimulationPoint = {
+  /** Day index (0 = start). */
+  day: number;
+  /** Cumulative new words introduced. */
+  newWords: number;
+  /** Reviews due that day. */
+  due: number;
+  /** Cumulative reviews completed. */
+  reviews: number;
+  /** Estimated retained words at day end. */
+  retained: number;
+};
+
+/** Phonetics analysis of a word or short phrase. */
+export type PhoneticsReport = {
+  /** Input text. */
+  input: string;
+  /** Lower-cased word tokens. */
+  tokens: string[];
+  /** Per-token analysis. */
+  details: {
+    token: string;
+    syllables: number;
+    phonetic: string | null;
+    consonantClusters: number;
+    vowelGroups: number;
+  }[];
+  /** Total syllables. */
+  totalSyllables: number;
+  /** Average syllables per token. */
+  avgSyllables: number;
+  /** Heuristic difficulty label. */
+  difficulty: string;
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

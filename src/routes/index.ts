@@ -17,6 +17,8 @@ import { scoreRoutes } from './scores.js';
 import { studyRoutes } from './study.js';
 import { testcenterRoutes } from './testcenter.js';
 import { testRoutes } from './tests.js';
+import { collectionRoutes } from './collections.js';
+import { learningScienceRoutes } from './srs.js';
 import { toolRoutes } from './tools.js';
 import { topicRoutes } from './topics.js';
 import { vocabularyRoutes } from './vocabulary.js';
@@ -25,6 +27,7 @@ import type { RouteDefinition } from '../lib/route.js';
 
 /** Domain routes (all versioned under `/v1`). */
 export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
+  ...collectionRoutes,
   ...vocabularyRoutes,
   ...bandRoutes,
   ...scoreRoutes,
@@ -34,6 +37,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...testRoutes,
   ...corpusRoutes,
   ...toolRoutes,
+  ...learningScienceRoutes,
   ...studyRoutes,
   ...materialRoutes,
   ...archiveRoutes,

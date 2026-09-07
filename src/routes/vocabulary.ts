@@ -2,6 +2,7 @@
  * Vocabulary routes (`/v1/vocabulary`).
  */
 
+import { COLLECTION_IDS } from '../data/collections.js';
 import {
   searchVocabulary,
   vocabularyStats,
@@ -9,9 +10,10 @@ import {
   randomEntries,
   PARTS_OF_SPEECH,
 } from '../data/vocabulary.js';
-import { parseList } from '../lib/search.js';
-import { getEnum, getInt, getIsoDate, getString, toParams } from '../lib/query.js';
+import { paginate, parseList } from '../lib/search.js';
+import { collectionForEntry } from '../lib/collections.js';
 import { badRequest, notFound } from '../lib/errors.js';
+import { getEnum, getInt, getIsoDate, getString, toParams } from '../lib/query.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
@@ -20,6 +22,7 @@ import type { PartOfSpeech, VocabularyEntry } from '../types.js';
 const MATCH_MODES = ['contains', 'prefix', 'exact'] as const;
 const SORT_KEYS = ['word', 'length', 'volumes', 'senses'] as const;
 const ORDERS = ['asc', 'desc'] as const;
+const FREQUENCIES = ['high', 'medium', 'low'] as const;
 
 /** Parse a comma-separated list of Cambridge IELTS volume numbers. */
 function parseVolumes(raw: string | undefined): number[] | undefined {
@@ -45,33 +48,53 @@ function search(context: RouteContext): HandlerResult {
   const query = getString(params, 'q') ?? getString(params, 'query');
   const volumes = parseVolumes(getString(params, 'volume'));
   const posTokens = parseList(getString(params, 'pos'), 'pos', PARTS_OF_SPEECH);
+  const collectionTokens = parseList(getString(params, 'collection'), 'collection', COLLECTION_IDS);
+  const frequencyTokens = parseList(getString(params, 'frequency'), 'frequency', FREQUENCIES);
   const match = getEnum(params, 'match', MATCH_MODES);
   const sort = getEnum(params, 'sort', SORT_KEYS);
   const order = getEnum(params, 'order', ORDERS);
   const limit = getInt(params, 'limit', 1, 100, 20);
   const offset = getInt(params, 'offset', 0, 100000, 0);
 
-  const page = searchVocabulary({
-    limit,
-    offset,
+  // Base search without collection (data layer handles frequency/volumes/pos).
+  const base = searchVocabulary({
+    limit: 100000,
+    offset: 0,
     ...(query === undefined ? {} : { query }),
     ...(volumes === undefined ? {} : { volumes }),
     ...(posTokens === undefined ? {} : { partsOfSpeech: posTokens as PartOfSpeech[] }),
+    ...(frequencyTokens === undefined
+      ? {}
+      : { frequencies: frequencyTokens as ('high' | 'medium' | 'low')[] }),
     ...(match === undefined ? {} : { match }),
     ...(sort === undefined ? {} : { sort }),
     ...(order === undefined ? {} : { order }),
   });
 
+  let filtered: VocabularyEntry[] = base.items as VocabularyEntry[];
+  if (collectionTokens !== undefined && collectionTokens.length > 0) {
+    const allowed = new Set(collectionTokens);
+    filtered = filtered.filter((entry) => {
+      const collection = collectionForEntry(entry.id);
+      return collection !== null && allowed.has(collection);
+    });
+  }
+
+  const total = filtered.length;
+  const page = paginate(filtered, limit, offset);
+
   return {
     data: page.items,
     meta: {
-      total: page.total,
+      total,
       limit: page.limit,
       offset: page.offset,
       hasMore: page.hasMore,
       query: query ?? null,
       volume: volumes ?? null,
       pos: posTokens ?? null,
+      collection: collectionTokens ?? null,
+      frequency: frequencyTokens ?? null,
       match: match ?? 'contains',
       sort: sort ?? 'word',
       order: order ?? 'asc',

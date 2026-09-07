@@ -13,7 +13,7 @@ import { paginate, matchesQuery, sortBy } from '../lib/search.js';
 import { seededIndices } from '../lib/rng.js';
 
 import type { Page } from '../lib/search.js';
-import type { PartOfSpeech, VocabularyEntry, VocabularyMeta } from '../types.js';
+import type { PartOfSpeech, VocabularyEntry, VocabularyFrequency, VocabularyMeta } from '../types.js';
 
 /** Shape of `data/vocabulary.json`. */
 export type VocabularyDataset = {
@@ -51,6 +51,7 @@ export function allEntries(): readonly VocabularyEntry[] {
 }
 
 /** Options accepted by {@link searchVocabulary}. */
+/** Options accepted by {@link searchVocabulary}. */
 export type VocabularyQuery = {
   /** Free-text search over headword, definition and morphemes. */
   query?: string;
@@ -58,6 +59,8 @@ export type VocabularyQuery = {
   volumes?: number[];
   /** Restrict to these parts of speech. */
   partsOfSpeech?: PartOfSpeech[];
+  /** Restrict to these frequency tiers. */
+  frequencies?: VocabularyFrequency[];
   /** How the free-text query is matched. */
   match?: 'contains' | 'prefix' | 'exact';
   /** Sort key. */
@@ -99,6 +102,7 @@ export function searchVocabulary(options: VocabularyQuery): Page<VocabularyEntry
   const match = options.match ?? 'contains';
   const partsOfSpeech = options.partsOfSpeech;
   const volumes = options.volumes;
+  const frequencies = options.frequencies;
   const filtered = allEntries().filter((entry) => {
     if (query.length > 0 && !matchesText(entry, query, match)) {
       return false;
@@ -116,6 +120,13 @@ export function searchVocabulary(options: VocabularyQuery): Page<VocabularyEntry
       !entry.volumes.some((volume) => volumes.includes(volume))
     ) {
       return false;
+    }
+    if (frequencies !== undefined) {
+      let tier: VocabularyFrequency;
+      if (entry.volumes.length >= 3) tier = 'high';
+      else if (entry.volumes.length >= 2) tier = 'medium';
+      else tier = 'low';
+      if (!frequencies.includes(tier)) return false;
     }
     return true;
   });
