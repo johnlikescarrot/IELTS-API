@@ -20,13 +20,14 @@ turns that material into a stable, versioned, citable HTTP contract with **no AP
 registration, and no rate limiting by key** — so a researcher can cite it, archive a response, and
 reproduce a result years later.
 
-Everything here is derived from five open collections — [`zhengyishiming/IELTS`][corpus] for the
+Everything here is derived from six open collections — [`zhengyishiming/IELTS`][corpus] for the
 vocabulary and the corpus index, [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`][practice] for the
 question-type taxonomy and the practice-test structure and readability index,
 [`Oxidaner/ielts`][materials] for the study-materials index, [`msneloy/IELTS`][archive] for the
-grey-literature archive index, and [`wanli4473/yysd-testcenter`][testcenter] for the mock-exam
-test-centre index. None is redistributed: the API publishes derived, non-substitutive
-metadata and statistics, plus original guidance datasets written for this project. See
+grey-literature archive index, [`wanli4473/yysd-testcenter`][testcenter] for the mock-exam
+test-centre index, and [`Iamdacai/ielts-vocab-system`][vocabsystem] for the community wordbook
+index and the spaced-repetition scheduler. None is redistributed: the API publishes derived,
+non-substitutive metadata and statistics, plus original guidance datasets written for this project. See
 [RESEARCH.md](RESEARCH.md) for the analysis and the construction methodology of every dataset, and
 [paper/paper.md](paper/paper.md) for the short research paper.
 
@@ -42,6 +43,16 @@ looks like from the inside: `/v1/testcenter` opens up a live online mock-exam ce
 catalogue, its Cambridge holdings, the hand-tagged question-type, scene and difficulty taxonomy its
 teachers maintain across Cambridge 5-21, its exam-shell timing budgets, and the production
 raw-score-to-band calibration its exam pages are graded with.
+
+And it rebuilds the memorisation layer: `/v1/wordbook` indexes the 4,323-word community
+Cambridge 1-18 wordbook shipped by the open `ielts-vocab-system` learning platform, cross-validated
+headword by headword against the Cambridge 1-22 list extracted from the source workbook — only 53.5%
+of its words appear there, and only 2.5% of its volume attributions match what the workbook itself
+shows — with a machine-readable data-quality audit of the system (`/v1/wordbook/audit`). `/v1/study/srs`
+then reimplements, statelessly, the Ebbinghaus scheduler that platform runs on: two published interval
+ladders, a confidence-weighted mastery score, and a projection endpoint that shows how a wordbook
+works itself through the schedule day by day — how long the book takes, when the review load peaks,
+and how much of that peak is reviews rather than new words.
 
 And it closes the gap between a mark sheet and a band: `/v1/scores/raw` converts a Listening or
 Reading raw score out of 40 into a band on the right table — Academic and General Training Reading
@@ -91,6 +102,15 @@ curl -s "http://localhost:3000/v1/materials/items?category=past-paper-recall"
 
 # The Cambridge 1-18 listening archive, volume by volume: naming era, tests, completeness
 curl -s "http://localhost:3000/v1/archive/volumes"
+
+# The community wordbook's words that the Cambridge 1-22 list does not contain
+curl -s "http://localhost:3000/v1/wordbook/items?shared=false&limit=3"
+
+# Project the 4,323-word book through the Ebbinghaus ladder: 20 words a day, peak load, completion day
+curl -s "http://localhost:3000/v1/study/srs/project?start=2026-09-08&perDay=20"
+
+# Grade one review attempt: confidence-4 correct recall at mastery 40
+curl -s "http://localhost:3000/v1/study/srs/grade?date=2026-09-08&mastery=40&correct=true&confidence=4"
 ```
 
 Open <http://localhost:3000/docs> for the interactive documentation and
@@ -106,27 +126,29 @@ const page = searchVocabulary({ query: 'sustainab', limit: 10, offset: 0 });
 
 ## Datasets
 
-| Dataset                         |                                                     Size | Endpoint                | Provenance                                                                     |
-| ------------------------------- | -------------------------------------------------------: | ----------------------- | ------------------------------------------------------------------------------ |
-| Cambridge IELTS 1-22 vocabulary |                      4,174 headwords / 4,310 occurrences | `/v1/vocabulary`        | Derived from `1-22yas.xlsx` in [the upstream corpus][corpus]                   |
-| Analytic band descriptors       |               120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
-| Band scale with CEFR levels     |                                                  19 rows | `/v1/bands`             | Original compilation                                                           |
-| Score concordances              |                                      5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                         |
-| Raw-score conversion tables     |            3 papers x 41 raw scores, 12 official anchors | `/v1/scores/raw`        | Reconstructed consensus, validated against ielts.org published averages        |
-| Writing Task 2 prompts          |          111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                   |
-| Speaking items                  |                 80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                 |
-| Writing Task 1 families         |                                         10 task families | `/v1/tasks/writing`     | Original compilation                                                           |
-| Free resources                  |                                             27 resources | `/v1/resources`         | Original catalogue (free + no login only)                                      |
-| Research corpus index           |                                 76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                                |
-| Question-type taxonomy          |                  13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
-| Practice-test index             | 1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
-| Recurring exam themes           |                                     50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
-| Analysis toolkit                |      2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
-| Study planner                   |               Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
-| Response frameworks             |                                12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
-| Study-materials index           |                            2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
-| Grey-literature archive         |         555 files / 509 audio tracks / 24 learner essays | `/v1/archive`           | Derived index of [the grey-literature archive][archive]                        |
-| Mock-exam test-centre index     |    377 papers / 222 Cambridge 4-21 / 1,099 tagged groups | `/v1/testcenter`        | Derived index of [the YYSD mock-exam test centre][testcenter]                  |
+| Dataset                         |                                                             Size | Endpoint                | Provenance                                                                     |
+| ------------------------------- | ---------------------------------------------------------------: | ----------------------- | ------------------------------------------------------------------------------ |
+| Cambridge IELTS 1-22 vocabulary |                              4,174 headwords / 4,310 occurrences | `/v1/vocabulary`        | Derived from `1-22yas.xlsx` in [the upstream corpus][corpus]                   |
+| Analytic band descriptors       |                       120 rows (3 sets x 4 criteria x bands 0-9) | `/v1/bands/descriptors` | Original condensed paraphrases (see [DATA-LICENSE](DATA-LICENSE))              |
+| Band scale with CEFR levels     |                                                          19 rows | `/v1/bands`             | Original compilation                                                           |
+| Score concordances              |                                              5 scales x 11 bands | `/v1/scores/convert`    | Providers' published comparison tables                                         |
+| Raw-score conversion tables     |                    3 papers x 41 raw scores, 12 official anchors | `/v1/scores/raw`        | Reconstructed consensus, validated against ielts.org published averages        |
+| Writing Task 2 prompts          |                  111 prompts, 15 categories, 5 question families | `/v1/topics/writing`    | Original items modelled on recurring IELTS question families                   |
+| Speaking items                  |                         80 items across Parts 1-3 (26 / 30 / 24) | `/v1/topics/speaking`   | Original items                                                                 |
+| Writing Task 1 families         |                                                 10 task families | `/v1/tasks/writing`     | Original compilation                                                           |
+| Free resources                  |                                                     27 resources | `/v1/resources`         | Original catalogue (free + no login only)                                      |
+| Research corpus index           |                                         76 of 404 upstream files | `/v1/corpus`            | Metadata index of [the upstream corpus][corpus]                                |
+| Question-type taxonomy          |                          13 types, 65 upstream labels normalised | `/v1/question-types`    | Original taxonomy and guidance; frequencies from the practice corpus           |
+| Practice-test index             |         1,702 items / 27,225 questions / 1,501 measured passages | `/v1/tests`             | Derived structure and readability index of [the practice collection][practice] |
+| Recurring exam themes           |                                             50 themes, 11 groups | `/v1/topics/themes`     | Original compilation with keyword sets                                         |
+| Analysis toolkit                |              2 analysers over any text (Flesch, lexical, themes) | `/v1/tools/*`           | Original heuristics ([RESEARCH.md](RESEARCH.md) Part III)                      |
+| Study planner                   |                       Deterministic schedules from 1 to 52 weeks | `/v1/study/plan`        | Composition of the datasets above                                              |
+| Response frameworks             |                                        12 frameworks, 3 sections | `/v1/frameworks`        | Original taxonomy with stages, cue language and pitfalls                       |
+| Study-materials index           |                                    2,354 of 2,385 upstream files | `/v1/materials`         | Metadata index of [the self-study collection][materials]                       |
+| Grey-literature archive         |                 555 files / 509 audio tracks / 24 learner essays | `/v1/archive`           | Derived index of [the grey-literature archive][archive]                        |
+| Mock-exam test-centre index     |            377 papers / 222 Cambridge 4-21 / 1,099 tagged groups | `/v1/testcenter`        | Derived index of [the YYSD mock-exam test centre][testcenter]                  |
+| Community wordbook index        | 4,323 headwords / 2,315 shared with Cambridge / 9 audit findings | `/v1/wordbook`          | Derived index and audit of [the `ielts-vocab-system` wordbook][vocabsystem]    |
+| Spaced-repetition scheduler     |                         2 ladders × 8 stages, pure and stateless | `/v1/study/srs`         | Reimplementation of [the `ielts-vocab-system` algorithm][vocabsystem]          |
 
 ## Endpoints
 
@@ -190,6 +212,16 @@ same envelope: `{ "status": 200, "data": ..., "meta": ... }`.
 | GET    | `/v1/tools/readability`      | Flesch Reading Ease, Flesch-Kincaid grade and corpus context for any text (`text`)                      |
 | GET    | `/v1/tools/essay-profile`    | Lexical diversity, headword coverage, themes and hints for a writing sample (`text`, `task`)            |
 | GET    | `/v1/study/plan`             | Deterministic week-by-week study plan (`target`, `listening`..., `weeks`, `hoursPerWeek`)               |
+| GET    | `/v1/study/srs`              | The spaced-repetition model: both published ladders, the mastery rules, the status machine              |
+| GET    | `/v1/study/srs/next`         | Next-review time for a word (`ladder`, `review`, `mastery`, `date`)                                     |
+| GET    | `/v1/study/srs/grade`        | Grade one review: mastery change, status and next due time (`mastery`, `correct`, `confidence`)         |
+| GET    | `/v1/study/srs/window`       | The ±2-hour daily review window around a chosen time (`date`, `time`)                                   |
+| GET    | `/v1/study/srs/project`      | Project a wordbook through the ladder: daily load, peak day, completion date (`words`, `perDay`, ...)   |
+| GET    | `/v1/wordbook`               | Community-wordbook provenance, statistics and the per-volume cross-validation table                     |
+| GET    | `/v1/wordbook/stats`         | Wordbook statistics, completeness counts and the cross-validation summary                               |
+| GET    | `/v1/wordbook/items`         | Search the headword index (`book`, `shared`, `agrees`, `q`)                                             |
+| GET    | `/v1/wordbook/books`         | Per-volume cross-validation against the Cambridge 1-22 word lists                                       |
+| GET    | `/v1/wordbook/audit`         | Data-quality audit of the upstream system, with pinned evidence                                         |
 | GET    | `/v1/resources`              | Free preparation resources (`type`, `q`)                                                                |
 
 ### Worked examples
@@ -405,6 +437,22 @@ assembles a deterministic ten-question listening drill on hard tourism sections,
 centre's own 0.8 min/question budget and attaches the scoring sheet — stateless, seeded by nothing,
 byte-identical on every request.
 
+### What the wordbook cross-validation shows
+
+Cross-checking the community wordbook against the Cambridge 1-22 extraction produces four numbers
+worth quoting before anyone builds on the list:
+
+| Measure                                   |                                          Value | What it rules out                                                                        |
+| ----------------------------------------- | ---------------------------------------------: | ---------------------------------------------------------------------------------------- |
+| Words shared with the Cambridge 1-22 list | 2,315 of 4,323 (53.5% coverage; Jaccard 0.374) | treating the wordbook as a Cambridge concordance                                         |
+| Volume attributions matching the workbook |                            110 of 4,323 (2.5%) | citing `cambridge_book` as provenance; the field spreads words evenly (220-260 a volume) |
+| Phonetic / POS / example completeness     |                                      0 / 4,323 | relying on the export's enrichment fields; only the definitions are filled               |
+| `frequency_level` distinct values         |                                              1 | stratifying a study queue by frequency; every row says `medium`                          |
+
+`/v1/wordbook/audit` carries nine findings of this kind, each with the evidence counts recomputed
+from the pinned upstream blob; the collocation file shipped beside the wordbook is documented there
+as generated filler. [RESEARCH.md](RESEARCH.md) Part VIII works the methodology through.
+
 ### What the practice-test index measures
 
 The 1,232 CEFR-graded lessons and the 470 machine-readable full tests are indexed by structure and by
@@ -432,10 +480,11 @@ python3 scripts/extract_corpus.py tree.json data/corpus.json
 python3 scripts/extract_practice_tests.py tree.json ./upstream data/practice-tests.json
 python3 scripts/extract_archive.py tree.json ./upstream data/archive.json
 python3 scripts/extract_testcenter.py manifest.json listening-taxonomy.json reading-taxonomy.json cambridge_scoring.py tree.json data/testcenter.json
+python3 scripts/extract_wordbook.py wordbook-upstream.json data/vocabulary.json data/wordbook.json
 ```
 
-CI re-derives the vocabulary, study-materials, archive and test-centre datasets from upstream on
-every push — the archive derivation downloads the 38 document blobs it needs by blob SHA, the
+CI re-derives the vocabulary, study-materials, archive, test-centre and community-wordbook
+datasets from upstream on every push — the archive derivation downloads the 38 document blobs it needs by blob SHA, the
 test-centre derivation the four content blobs the platform generates — and fails if any committed
 dataset has drifted. The practice-test and test-centre indexes are validated for internal
 consistency on the same run.
@@ -443,7 +492,7 @@ consistency on the same run.
 ## Quality
 
 - **100% coverage** — statements, branches, functions and lines, enforced per file by the test
-  runner (`npm test` fails below 100%). 640 tests, zero runtime dependencies.
+  runner (`npm test` fails below 100%). 698 tests, zero runtime dependencies.
 - **super-linter** runs on every push, every pull request, weekly, and on demand.
 - **Typechecked** with `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
   `noUnusedLocals`.
@@ -474,7 +523,7 @@ If you use the API or the datasets, please cite it — citations are what keep t
   title   = {IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research},
   author  = {{The IELTS API contributors}},
   year    = {2026},
-  version = {1.4.0},
+  version = {1.5.0},
   url     = {https://github.com/johnlikescarrot/IELTS-API},
   license = {MIT, CC-BY-4.0}
 }
@@ -513,6 +562,13 @@ Please also cite the upstream collections the datasets were derived from:
   year   = {2026},
   url    = {https://github.com/wanli4473/yysd-testcenter}
 }
+
+@misc{ielts_vocab_system,
+  title  = {ielts-vocab-system: an IELTS memorisation system with Ebbinghaus review scheduling},
+  author = {Iamdacai},
+  year   = {2026},
+  url    = {https://github.com/Iamdacai/ielts-vocab-system}
+}
 ```
 
 ## Licence and provenance
@@ -527,8 +583,8 @@ Please also cite the upstream collections the datasets were derived from:
 - **Score calibration:** the `/v1/testcenter/scoring` tables are the conversion charts a production
   mock-exam platform embeds in its own exam pages; they are community-published charts, indicative
   rather than official, and carry that caveat in every response.
-- **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests`, `/v1/archive` and
-  `/v1/testcenter` publish derived metadata and statistics only — no passage, question, answer key,
+- **Upstream files:** never redistributed. `/v1/corpus`, `/v1/tests`, `/v1/archive`,
+  `/v1/testcenter` and `/v1/wordbook` publish derived metadata and statistics only — no passage, question, answer key,
   transcript, recording, PDF content, essay text, exam page or vocabulary entry.
 - **Question-type strategies:** original wording. The task families follow the partners' public task
   descriptions; the observed frequencies describe the indexed practice corpus, not the live exam.
@@ -542,3 +598,4 @@ partners.
 [materials]: https://github.com/Oxidaner/ielts
 [archive]: https://github.com/msneloy/IELTS
 [testcenter]: https://github.com/wanli4473/yysd-testcenter
+[vocabsystem]: https://github.com/Iamdacai/ielts-vocab-system

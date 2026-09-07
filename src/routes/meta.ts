@@ -9,6 +9,7 @@ import { practiceStats } from '../data/practiceTests.js';
 import { RAW_SCORE_MODULES } from '../data/rawScores.js';
 import { testcenterStats } from '../data/testcenter.js';
 import { vocabularyStats } from '../data/vocabulary.js';
+import { wordbookAudit, wordbookStats } from '../data/wordbook.js';
 import { renderDocs } from '../lib/docs.js';
 import { openApiDocument } from '../lib/openapi.js';
 import { CODE_LICENSE, DATA_LICENSE, REPOSITORY_URL, SERVICE_NAME, API_VERSION } from '../version.js';
@@ -24,6 +25,7 @@ function datasetSummary(): Record<string, number> {
   const materials = materialsStats();
   const archive = archiveStats();
   const testcenter = testcenterStats();
+  const wordbook = wordbookStats();
   return {
     vocabularyWords: words.words,
     vocabularyOccurrences: words.occurrences,
@@ -43,6 +45,10 @@ function datasetSummary(): Record<string, number> {
     testcenterGroups: testcenter.taxonomy.listening.groups + testcenter.taxonomy.reading.groups,
     testcenterTaggedQuestions:
       testcenter.taxonomy.listening.questions + testcenter.taxonomy.reading.questions,
+    wordbookRows: wordbook.rows,
+    wordbookSharedWithCambridge: wordbook.crossCambridge.shared,
+    wordbookVolumeAgreement: wordbook.crossCambridge.volumeAssignmentAgreement,
+    wordbookAuditFindings: wordbookAudit().findings.length,
   };
 }
 
@@ -116,6 +122,7 @@ export function createMetaRoutes(
           'archive-index',
           'raw-score-tables',
           'testcenter-index',
+          'wordbook-index',
         ],
       },
     };

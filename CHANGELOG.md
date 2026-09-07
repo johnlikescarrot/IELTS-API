@@ -6,6 +6,71 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-07
+
+The **memorisation layer**: the API now studies how candidates actually learn words, not only what
+they must learn. The sixth open collection,
+[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system), is an IELTS
+memorisation platform — a WeChat mini-program over a Node backend whose deployed content is a
+4,323-word Cambridge 1-18 wordbook and whose core method is a published Ebbinghaus
+spaced-repetition scheduler with a confidence-weighted mastery score. The upstream publishes no
+licence, so nothing of its content is redistributed: the API indexes the wordbook as facts and
+statistics, cross-validates it headword by headword against the Cambridge 1-22 extraction, audits
+the system at blob level, and reimplements the scheduler as a stateless, citable endpoint family.
+The API remains free, GET-only, authentication-free and dependency-free.
+
+### Added
+
+- **Community wordbook index** (`GET /v1/wordbook`, `/v1/wordbook/stats`, `/v1/wordbook/items`): 4,323 headwords with the
+  volume the upstream export claims for each, two derived flags per row — `shared` (the word is also
+  in the Cambridge 1-22 list) and `volumeAgrees` (the source workbook lists the word in that very
+  volume) — filterable and searchable like every other collection. The cross-validation is the point:
+  2,315 words are shared (Jaccard 0.3745), so each list contains roughly half a collection the other
+  does not, and only 110 of 4,323 volume attributions match the workbook.
+- **Per-volume cross-validation table** (`GET /v1/wordbook/books`): 18 rows of upstream words, workbook
+  words, shared words and matching attributions — the evidence that `cambridge_book` in this export
+  behaves like a bucket index (220-260 words a volume against real volume lists of 74-394), not like
+  provenance, and must not be cited as word membership.
+- **Data-quality audit** (`GET /v1/wordbook/audit`): nine findings, each with evidence counts computed
+  from the pinned upstream blob, covering the data (declared 4,464 against shipped 4,323; a
+  `frequency_level` field constant at `medium` that makes the retrieval sort a no-op; phonetics, parts
+  of speech and example sentences empty in all 4,323 rows while the UI maps two of them onto visible
+  columns; the volume-claim disagreement above) and the code (a dead branch and a never-written
+  `forgotten` status in the progress state machine; a 202-line "collocation library" whose every row
+  is generator output — `Common collocation: "V" + "N"` / `You can V N.` with pseudo-random volumes —
+  documented here so no one cites it as evidence; a route wired to an unimported handler; and the
+  2026-03-22 next-day review policy that never reached the controller still seeding five-minute
+  first reviews).
+- **Spaced-repetition scheduler** (`GET /v1/study/srs`): the model in one response — both published
+  ladders (the original 5 min → 15 days Ebbinghaus ladder and the 2026-03-22 day-granular revision
+  1-2-4-7-15-21-30-30), the mastery rules (`+5×confidence` correct, `−8×confidence` wrong, clamped
+  0-100), the interval growth past the ladder (`last × (1 + mastery / 100)`), the ±2-hour review
+  window and the upstream status machine with its dead branches documented rather than imitated.
+  Learner state stays with the client: the endpoints are pure functions, so identical parameters
+  always return identical bytes.
+- **Scheduler endpoints**: `GET /v1/study/srs/next` (when a word is due given ladder stage, mastery and
+  an anchor date), `GET /v1/study/srs/grade` (one review in: new mastery, status and next due time),
+  and `GET /v1/study/srs/window` (the daily window around a review time).
+- **Ebbinghaus workload projection** (`GET /v1/study/srs/project`): project a whole wordbook — default
+  size: the 4,323 words of the indexed community wordbook — through a ladder at N words a day and get
+  the study-day count, completion date, the full daily curve of new words against reviews, the peak
+  day and its multiplier. For the default book at 20 a day on the wheel ladder the peak day weighs
+  180 tasks, nine times the quota: the arithmetic of why memorising a whole list fast back-fires, as
+  one number.
+- `scripts/extract_wordbook.py` regenerates `data/wordbook.json` from the upstream blob and this
+  repository's `data/vocabulary.json` with the standard library only; CI re-derives it on every push,
+  checks it byte for byte and verifies the row, volume and cross-validation arithmetic by
+  recomputation. `RESEARCH.md` gains Part VIII with the full methodology, findings and threats to
+  validity; the paper gains the collection as a cited artefact.
+
+### Changed
+
+- `/`, `/health` and `/docs` now report the wordbook index and its cross-validation counts; the
+  OpenAPI document describes the ten new endpoints and `docs/openapi.json` was regenerated from the
+  live route table.
+- `test/app.test.ts`: the small-response compression check moved from `/health` to
+  `/v1/scores/overall` as the service index grew past the 1 KiB gzip threshold with the sixth dataset.
+
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses
@@ -264,7 +329,8 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.5.0
 [1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
 [1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
 [1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0

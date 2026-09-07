@@ -34,6 +34,9 @@ describe('GET /', () => {
     expect(response.data.datasets.testcenterCambridgePapers).toBe(222);
     expect(response.data.datasets.testcenterGroups).toBe(1099);
     expect(response.data.datasets.testcenterTaggedQuestions).toBe(5408);
+    expect(response.data.datasets.wordbookRows).toBe(4323);
+    expect(response.data.datasets.wordbookSharedWithCambridge).toBe(2315);
+    expect(response.data.datasets.wordbookVolumeAgreement).toBe(110);
     expect(response.data.endpoints.documentation).toBe('/docs');
     expect(response.meta.count).toBe(DOMAIN_ROUTES.length);
   });
@@ -57,6 +60,7 @@ describe('GET /health', () => {
     expect(response.data.datasets.testcenterGroups).toBe(1099);
     expect(response.meta.checks).toContain('vocabulary-dataset');
     expect(response.meta.checks).toContain('testcenter-index');
+    expect(response.meta.checks).toContain('wordbook-index');
   });
 });
 

@@ -1198,6 +1198,102 @@ export type TestcenterStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Community wordbook (ielts-vocab-system)                                    */
+/* -------------------------------------------------------------------------- */
+
+/** Provenance of the community-wordbook index. */
+export type WordbookMeta = {
+  name: string;
+  repository: string;
+  commit: string;
+  source: string;
+  sourceSha1: string;
+  sourceUrl: string;
+  license: string;
+  attribution: string;
+  note: string;
+};
+
+/** One wordbook row: the headword plus the attribution the upstream claims. */
+export type WordbookItem = {
+  /** Stable identifier (`wb00001`), ordered by headword then claimed volume. */
+  id: string;
+  /** Headword, lower-cased as shipped upstream. */
+  word: string;
+  /** Cambridge IELTS volume (1-18) the upstream export attributes the word to. */
+  book: number;
+  /** Whether the word is also in the Cambridge IELTS 1-22 headword list. */
+  shared: boolean;
+  /** Whether the claimed volume's own word list contains the word. */
+  volumeAgrees: boolean;
+};
+
+/** One row of the per-volume cross-validation table. */
+export type WordbookBookRow = {
+  /** Cambridge IELTS volume (1-18). */
+  book: number;
+  /** Rows the upstream export attributes to this volume. */
+  wordbookWords: number;
+  /** Headwords the source workbook assigns to this volume. */
+  cambridgeVolumeWords: number;
+  /** Rows this volume that carry a headword also present in the Cambridge 1-22 list. */
+  sharedInBook: number;
+  /** Rows whose claimed volume matches the source workbook's own membership. */
+  agreesWithVolume: number;
+};
+
+/** How many rows of each upstream field actually carry content. */
+export type WordbookCompleteness = {
+  phonetic: number;
+  partOfSpeech: number;
+  exampleSentences: number;
+  definitions: number;
+};
+
+/** Cross-validation against the Cambridge IELTS 1-22 headword list. */
+export type WordbookCrossCambridge = {
+  cambridgeListWords: number;
+  shared: number;
+  onlyWordbook: number;
+  onlyCambridge: number;
+  jaccard: number;
+  wordbookCoverage: number;
+  cambridgeCoverage: number;
+  volumeAssignmentAgreement: number;
+  volumeAssignmentAgreementRatio: number;
+};
+
+/** Aggregate statistics about the community-wordbook index. */
+export type WordbookStats = {
+  rows: number;
+  uniqueWords: number;
+  books: number;
+  minWordsPerBook: number;
+  maxWordsPerBook: number;
+  meanWordLength: number;
+  longestWords: string[];
+  completeness: WordbookCompleteness;
+  frequencyLevels: Record<string, number>;
+  crossCambridge: WordbookCrossCambridge;
+};
+
+/** One data-quality finding recorded against the upstream system. */
+export type WordbookAuditFinding = {
+  id: string;
+  severity: 'low' | 'medium' | 'high';
+  title: string;
+  detail: string;
+  evidence: Record<string, JsonValue>;
+};
+
+/** The audit of the upstream system as captured at the pinned commit. */
+export type WordbookAudit = {
+  method: string;
+  sources: Record<string, { path: string; sha1: string; sourceUrl: string }>;
+  findings: WordbookAuditFinding[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

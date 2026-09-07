@@ -20,6 +20,7 @@ import { testRoutes } from './tests.js';
 import { toolRoutes } from './tools.js';
 import { topicRoutes } from './topics.js';
 import { vocabularyRoutes } from './vocabulary.js';
+import { wordbookRoutes } from './wordbook.js';
 
 import type { RouteDefinition } from '../lib/route.js';
 
@@ -38,6 +39,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...materialRoutes,
   ...archiveRoutes,
   ...testcenterRoutes,
+  ...wordbookRoutes,
   ...resourceRoutes,
 ];
 

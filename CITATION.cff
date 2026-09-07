@@ -2,8 +2,8 @@ cff-version: 1.2.0
 message: 'If you use this software, please cite it using these metadata.'
 title: 'IELTS API: a free, no-authentication REST API and open dataset for IELTS preparation research'
 type: software
-version: 1.4.0
-date-released: '2026-09-05'
+version: 1.5.0
+date-released: '2026-09-07'
 abstract: >-
   IELTS API is an open, dependency-free TypeScript REST API that exposes
   machine-readable IELTS preparation data: 4,174 headwords extracted from the
@@ -18,13 +18,18 @@ abstract: >-
   corpus, and a grey-literature archive index: the Cambridge IELTS 1-18
   listening audio catalogued by naming era, media archaeology and completeness,
   the twelve official sample tasks measured for readability, and 24 marked
-  learner essays summarised as derived statistics, and a mock-exam test-centre
+  learner essays summarised as derived statistics, a mock-exam test-centre
   index of an operational IELTS online test centre: 377 self-marking papers
   around an unbroken Cambridge IELTS 4-21 across listening, reading and
   writing, a Cambridge holdings matrix, 1,099 hand-tagged question groups
   carrying
   canonical question type, teaching scene and difficulty for 5,408 questions,
-  and the centre's production raw-score-to-band calibration. Deterministic analysis tools profile any text for Flesch readability,
+  and the centre's production raw-score-to-band calibration; and a
+  community-wordbook index that cross-validates a 4,323-word memorisation
+  wordbook against the Cambridge extraction, audits the unlicensed upstream
+  system it came from, and reimplements its published Ebbinghaus
+  spaced-repetition scheduler as stateless, citable endpoints.
+  Deterministic analysis tools profile any text for Flesch readability,
   lexical diversity and Cambridge-headword coverage, and compose the datasets
   into a week-by-week study plan towards a target band. Every endpoint is free
   of charge,
@@ -51,6 +56,11 @@ keywords:
   - mock exam
   - test center
   - score calibration
+  - spaced repetition
+  - Ebbinghaus
+  - vocabulary acquisition
+  - wordbook
+  - memory
   - CEFR
   - open data
   - REST API
@@ -118,6 +128,12 @@ references:
     title: 'IELTS band descriptors'
     url: 'https://www.ielts.org/for-organisations/ielts-scoring-in-detail'
     year: 2025
+  - type: dataset
+    authors:
+      - name: 'Iamdacai'
+    title: 'ielts-vocab-system: an IELTS memorisation system with Ebbinghaus review scheduling'
+    url: 'https://github.com/Iamdacai/ielts-vocab-system'
+    year: 2026
   - type: article
     authors:
       - family-names: 'Coxhead'
@@ -136,7 +152,7 @@ preferred-citation:
   authors:
     - name: 'The IELTS API contributors'
   year: 2026
-  version: 1.4.0
+  version: 1.5.0
   url: 'https://github.com/johnlikescarrot/IELTS-API'
   repository-code: 'https://github.com/johnlikescarrot/IELTS-API'
   license:

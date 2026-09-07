@@ -3,17 +3,18 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Seven parts, five upstream collections:
+Eight parts, six upstream collections:
 
-| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                         |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                            |
-| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                       |
-| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                     |
-| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                          |
-| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays     |
-| [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                              | the validated raw-score-to-band conversion tables and the raw-score endpoints                                          |
-| [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                                                           |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                                                              |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                                                         |
+| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                                                       |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                                                            |
+| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays                                       |
+| [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                              | the validated raw-score-to-band conversion tables and the raw-score endpoints                                                                            |
+| [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration                                   |
+| [Part VIII](#part-viii--the-memorisation-system)                                | [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system)                       | commit `1f5ad56d`, 4,364 blobs | the community-wordbook index, its cross-validation against Part I's headword list, the data-quality audit, and the stateless spaced-repetition scheduler |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -1035,3 +1036,130 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — the memorisation system
+
+**System snapshot:** commit `1f5ad56d664c56ae449dacc7618b6d7f23967a69` (2 April 2026, "Update
+project.config.json"), 269 commits, two branches, no licence file. `Iamdacai/ielts-vocab-system` is
+an IELTS memorisation platform: a WeChat mini-program against a Node/Express backend, SQLite or MySQL
+storage, JWT authentication and an admin console. It is the first upstream in this document that
+publishes a _method_ — a spaced-repetition scheduler — alongside data, which is why this part ends in
+an endpoint family rather than only an index.
+
+### 42. What the system actually ships
+
+The repository is large (4,364 blobs) and mostly not vocabulary: the `vocabulary/` tree is a pile of
+textbook wordlists for Chinese school and university exams (GRE, TOEFL, 高考, 考研) in DOC and PDF
+form; the `backend/` tree is the actual product. Two artefacts matter for research:
+
+1. **The wordbook.** `backend/scripts/ielts-4000-vocabulary.json` — 4,323 rows in the shape
+   `word | phonetic | part_of_speech | definition | example_sentences[] | frequency_level |
+cambridge_book` — is the deployed content of the `ielts_words` table, whose schema constrains
+   `frequency_level` to `high|medium|low`, `cambridge_book` to 1-18, and `(word, cambridge_book)` to
+   uniqueness. The definitions are WordNet-style glosses; the import history in `docs/` describes a
+   4,541-word "雅思必备词汇" workbook and a secondary 3,674-word library from the open
+   `hefengxian/my-ielts` corpus, both merged into this table.
+2. **The scheduler.** `backend/spaced-repetition-algorithm.js` implements an Ebbinghaus ladder of
+   fixed intervals (5 min, 30 min, 12 h, 1, 2, 4, 7, 15 days), a mastery score updated
+   confidence-weighedly (`+5×confidence` for a correct recall, `−8×confidence` for a wrong one,
+   clamped to 0-100), dynamic interval growth past the ladder (`last × (1 + mastery/100)`), and a
+   ±2-hour daily review window around a user-configured time. `REVIEW_STRATEGY_UPDATE.md` (2026-03-22)
+   then documents a full revision: sub-day rungs dropped, first review deferred from the same day to
+   the next, and the ladder replaced by 1-2-4-7-15-21-30-30 days "to match 墨墨, 扇贝 and Anki".
+
+### 43. The wordbook cross-validated against the source workbook
+
+The wordbook presents as Cambridge-derived, so it is checked against the only Cambridge-derived list
+with a provenance chain: the 4,174 headwords of Part I, extracted from the source workbook
+`1-22yas.xlsx`. The comparison is set arithmetic over lower-cased headwords, computed by
+`scripts/extract_wordbook.py` and served at `/v1/wordbook`.
+
+| Measure                                          |                      Value |
+| ------------------------------------------------ | -------------------------: |
+| Wordbook rows / unique headwords                 |              4,323 / 4,323 |
+| Shared with the Cambridge 1-22 list              |                      2,315 |
+| Jaccard similarity                               |                     0.3745 |
+| Wordbook coverage by the Cambridge list          |                     0.5355 |
+| Cambridge list coverage by the wordbook          |                     0.5546 |
+| Rows whose `cambridge_book` matches the workbook |         110 / 4,323 (2.5%) |
+| Field completeness: definitions                  |                      4,323 |
+| Field completeness: phonetics / POS / examples   |                  0 / 0 / 0 |
+| Distinct `frequency_level` values                | 1 (`medium` for every row) |
+| Rows per claimed volume                          |                    220-260 |
+| Workbook volume list sizes                       |                     74-394 |
+
+Two findings. First, _the lists disagree about what Cambridge vocabulary is_: nearly half of each
+collection is absent from the other. Both are plausible IELTS wordlists; neither is the IELTS wordlist,
+and a study that treats one as ground truth for the other will silently drop half of it. Second,
+_the wordbook's volume attribution is not provenance_: with a 2.5% agreement rate, and per-volume
+counts that are uniformly distributed where the workbook's are 5-fold skewed, `cambridge_book` looks
+like a bucket index used to spread the list across books. The API republishes the field as an
+_upstream claim_ with an agreement flag per row, so that nobody has to re-derive this to avoid the
+trap; `/v1/wordbook/books` is the per-volume table.
+
+### 44. What the audit found, and what it says about free IELTS software
+
+`/v1/wordbook/audit` serves nine findings, each with machine-checkable evidence; four concern the
+data (declared size 4,464 against 4,323 shipped; the degenerate frequency field; the three
+always-empty enrichment fields; the volume attribution above), and five concern the code. The code
+findings are the interesting part: the progress state machine contains a CASE branch whose two arms
+return the same status and a schema-permitted `forgotten` state no code ever writes; the
+collocation library beside the wordbook is pure generator output (all 202 rows are the template
+`Common collocation: "V" + "N"` with the example `You can V N.`, pseudo-random volumes, every row
+tagged high-frequency); `backend/routes/words.js` wires `GET /libraries` to a handler the module does
+not import; and the documented next-day review policy was never applied to the controller that seeds
+new words, which still schedules the first review for five minutes after learning. None of this is
+malice — it is what an open, unlicensed, single-author study tool looks like when examined at blob
+level, and it is the level at which this API accepts sources: nothing from `ielts-vocab-system` is
+redistributed — headwords, counts and algorithm constants only — and everything claimed about it is
+recomputed on every CI run from the pinned blob `2a6713da9f5b5eea21c9ff35ccbc2eaa6fc69eb2`.
+
+### 45. The scheduler as an endpoint family
+
+The algorithms in `lib/srs.ts` are reimplemented, not copied, from the two published schedules:
+`/v1/study/srs` documents both ladders and the mastery rules; `/v1/study/srs/next` answers "when is
+this word due"; `/v1/study/srs/grade` answers "what does a confidence-4 correct recall do to mastery
+89"; `/v1/study/srs/window` reproduces the ±2-hour window; and `/v1/study/srs/project` does something
+the upstream system itself cannot answer without a running instance of it: given a book size and a
+daily quota, it projects the whole schedule day by day — cumulative intervals collapsed to whole days
+so that the classic ladder's first three rungs all land on day 1 — and reports the study-day count,
+the completion date, the peak day's load and its multiplier over the daily quota. For the indexed
+wordbook at 20 words a day, the wheel ladder runs 217 study days and finishes 110 consolidation days
+later - on day 326 - and the peak day, day 110, weighs 180 tasks (20 new words plus every review
+cohort that an eight-rung ladder can pile onto one day) at nine times the plain quota, the accumulation
+that guarantees burnout for exactly the cohort size the upstream system defaults to (computed by the
+same pure function; `npm test` asserts the arithmetic). The state model is the upstream one with its dead branches documented rather
+than imitated: `new`, `learning`, `mastered` at mastery ≥ 90; the schema's `forgotten` is noted as
+never written. Because learners' progress is never stored server-side, every response is a function of
+its parameters alone: the same request on the same day, on any replica, returns identical bytes — a
+property the upstream deployment, with its mutable `user_word_progress` rows, cannot offer.
+
+### 46. Threats to validity (Part VIII)
+
+- **The wordbook's true provenance is unknown.** The upstream README cites a 4,541-word workbook, and
+  definitions are WordNet-style; the 2.5% volume agreement suggests the `cambridge_book` column was
+  assigned by the compiler, not by extraction from the volumes. Treat the list as a community-curated
+  IELTS wordlist of unstated derivation, not as Cambridge metadata.
+- **Cross-validation depends on Part I's extraction being right.** The disagreement percentages are
+  as correct as `1-22yas.xlsx`; if the workbook itself is incomplete, "only 53.5% shared" overstates
+  the divergence. Both lists are community artefacts; this part claims agreement statistics, not a
+  verdict on which list is truer.
+- **The scheduler is faithful to the two documented ladders, not validated against retention
+  outcomes.** Nothing here shows these intervals work; it shows what this deployed system _uses_.
+  Effect claims about spaced repetition must cite the memory literature, not this API.
+- **Pinned snapshot.** Upstream is a moving target with per-day "auto: 代码更新" commits; the index is
+  pinned to `1f5ad56d`. CI re-fetches exactly that blob, so a silent upstream change cannot drift this
+  dataset — but the findings describe the pinned state only.
+
+### 47. Reproducing Part VIII
+
+```bash
+curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+  "https://api.github.com/repos/Iamdacai/ielts-vocab-system/git/blobs/2a6713da9f5b5eea21c9ff35ccbc2eaa6fc69eb2" \
+  -o wordbook-upstream.json
+python3 scripts/extract_wordbook.py wordbook-upstream.json data/vocabulary.json data/wordbook.json
+```
+
+CI re-derives `data/wordbook.json` from the pinned blob on every push, checks the committed file byte
+for byte against the regeneration, and verifies the internal arithmetic of the index (row counts,
+per-volume totals, cross-validation counts) against a recomputation from both inputs.

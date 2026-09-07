@@ -15,7 +15,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 5 September 2026
+date: 7 September 2026
 bibliography: paper.bib
 ---
 
@@ -24,7 +24,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -34,10 +34,12 @@ frequency of each family observed in 27,225 practice questions; an original taxo
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
 1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of four open IELTS collections, including a grey-literature archive index that
+metadata indexes of five open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; a community-wordbook index that cross-validates a 4,323-word memorisation wordbook against
+the Cambridge extraction and audits the system it came from; and a stateless reimplementation of that
+system's published Ebbinghaus spaced-repetition scheduler.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -163,6 +165,27 @@ combined, with the multiple-choice share (8.4% against 17.2%) marking where the 
 genuinely differ. A drill composer turns the taxonomy back into teaching, assembling deterministic
 timed drills from the tagged groups under any filter combination.
 
+**Community wordbook and memorisation system.** A sixth open collection [@ieltsvocabsystem] is an
+operational memorisation platform rather than a file dump: a WeChat mini-program over a Node backend
+whose deployed content is a 4,323-row Cambridge 1-18 wordbook and whose method is a published
+Ebbinghaus scheduler [@ebbinghaus1913] — an eight-rung interval ladder (5 minutes to 15 days, revised
+on 2026-03-22 to a day-granular 1-2-4-7-15-21-30-30 ladder), a confidence-weighted mastery score, and
+fixed 0-100 status bands. The repository publishes no licence, so the index republishes only facts:
+headwords, per-volume counts, field-completeness statistics, and a headword-by-headword
+cross-validation against the Cambridge extraction of the research corpus. The comparison is itself a
+finding: the two community lists share 2,315 of their 4,000-plus headwords (Jaccard 0.375), and only
+2.5% of the wordbook's `cambridge_book` attributions match the source workbook's own volume lists —
+the field is a bucket index, not provenance. A machine-readable audit (`/v1/wordbook/audit`) records
+nine findings with evidence recomputed from the pinned upstream blob, including three enrichment
+columns empty in every row, a frequency field constant at one value, a 202-row collocation library in
+which every example sentence is generator output (`You can V N.`), a state-machine branch that can
+never fire, and a documented review-policy change that never reached the seeding code. The scheduler
+is reimplemented as pure endpoints (`/v1/study/srs/*`): due-time arithmetic, mastery grading, review
+windows, and a workload projection that shows, for any book size and daily quota, when the schedule
+finishes and how heavy its peak day becomes — at 20 words a day the indexed wordbook peaks at 180
+tasks on day 110, nine times the quota, the pile-up that separates a schedule a learner can sustain
+from one they abandon.
+
 **Exam themes.** Fifty recurring themes in eleven groups, with original keyword sets, so that
 generated or collected material can be checked for thematic coverage.
 
@@ -174,7 +197,9 @@ the Cambridge headword list, sentence-length spread, discourse-marker density an
 and maps the measurements onto hints phrased after the four analytic criteria, at fixed published
 thresholds; the response states that the hints are teaching heuristics, not scores. A study planner
 composes the gap between a target band and current component scores into a deterministic
-week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
+week-by-week schedule whose every activity links to the endpoint that publishes it, and a
+spaced-repetition scheduler that turns a client-stored `(stage, mastery)` pair into due times and, for
+a whole wordbook, a day-by-day workload curve. All are
 pure functions of their inputs, so their outputs are as reproducible as the datasets.
 
 # Design
@@ -192,16 +217,18 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (698 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
 integration re-derives the vocabulary dataset from the upstream workbook, re-derives the
 study-materials index and the grey-literature archive index from the upstream tree (the archive
-derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit), and
+derivation downloads the 38 document blobs it needs by blob SHA, pinned to the indexed commit),
+re-derives the community-wordbook index and its cross-validation from the pinned upstream blob, and
 revalidates the internal consistency of the practice-test index (question counts, type normalisation
-and provenance) and of the archive index (facet totals, volume arithmetic, per-essay statistics),
-failing if the committed data has drifted — which guards against silent data rot.
+and provenance), of the archive index (facet totals, volume arithmetic, per-essay statistics) and of
+the wordbook index (row, volume and agreement arithmetic), failing if the committed data has drifted —
+which guards against silent data rot.
 
 # Availability
 
@@ -213,9 +240,12 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
-assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
-response that draws on them. IELTS is a jointly owned trademark of the
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, on the
+grey-literature archive assembled by `msneloy`, and on the memorisation system built by `Iamdacai`,
+whose published wordbook and review schedule this release indexes and reimplements; all are cited in
+`CITATION.cff` and in every response that draws on them. The wordbook audit is not criticism of its
+author: it is what any single-author open artefact looks like when measured at blob level, and the
+same standard is applied to every collection in this paper. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

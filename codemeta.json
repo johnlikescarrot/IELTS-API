@@ -3,10 +3,10 @@
   "@type": "SoftwareSourceCode",
   "identifier": "ielts-api",
   "name": "IELTS API",
-  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, validated raw-score to band conversion tables, and a mock-exam test-centre index of an operational IELTS online test centre with 1,099 hand-tagged question groups and a production score calibration.",
-  "version": "1.4.0",
+  "description": "A free, open, no-authentication REST API for IELTS preparation research: Cambridge IELTS 1-22 vocabulary, analytic band descriptors, score concordances, task banks, a canonical question-type taxonomy with observed frequencies, a structure and readability index of 1,702 practice tests, an indexed open research corpus, a grey-literature archive index of the Cambridge 1-18 listening audio, the official sample tasks and 24 marked learner essays, validated raw-score to band conversion tables, a mock-exam test-centre index of an operational IELTS online test centre with 1,099 hand-tagged question groups and a production score calibration, and a community wordbook index cross-validated against the Cambridge list with a data-quality audit and a stateless Ebbinghaus spaced-repetition scheduler.",
+  "version": "1.5.0",
   "dateCreated": "2026-09-04",
-  "datePublished": "2026-09-05",
+  "datePublished": "2026-09-07",
   "programmingLanguage": [
     {
       "@type": "ComputerLanguage",
@@ -45,7 +45,11 @@
     "test equating",
     "mock exam",
     "test center",
-    "score calibration"
+    "score calibration",
+    "spaced repetition",
+    "Ebbinghaus",
+    "vocabulary acquisition",
+    "wordbook"
   ],
   "author": [
     {
@@ -83,6 +87,15 @@
       "creator": {
         "@type": "Person",
         "name": "wanli4473"
+      }
+    },
+    {
+      "@type": "CreativeWork",
+      "name": "ielts-vocab-system: an IELTS memorisation system with Ebbinghaus review scheduling",
+      "url": "https://github.com/Iamdacai/ielts-vocab-system",
+      "creator": {
+        "@type": "Person",
+        "name": "Iamdacai"
       }
     }
   ]

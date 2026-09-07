@@ -126,7 +126,15 @@ jobs:
         run: |
           python3 - <<'PY'
           import json
-          for name in ("vocabulary", "corpus", "practice-tests", "materials", "archive", "testcenter"):
+          for name in (
+              "vocabulary",
+              "corpus",
+              "practice-tests",
+              "materials",
+              "archive",
+              "testcenter",
+              "wordbook",
+          ):
               json.load(open(f"data/{name}.json"))
           print("datasets are valid JSON")
           PY
@@ -393,5 +401,70 @@ jobs:
               f"practice-test index consistent: {len(items)} items, "
               f"{stats['questions']} questions, "
               f"{len(TYPE_ALIASES)} aliases -> {len(CANONICAL_TYPES)} canonical types"
+          )
+          PY
+
+      - name: Re-derive the community-wordbook index from the upstream memorisation system
+        run: |
+          curl -fsSL -H "Accept: application/vnd.github.v3.raw" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            "https://api.github.com/repos/Iamdacai/ielts-vocab-system/git/blobs/2a6713da9f5b5eea21c9ff35ccbc2eaa6fc69eb2" \
+            -o /tmp/wordbook-upstream.json
+          python3 scripts/extract_wordbook.py /tmp/wordbook-upstream.json data/vocabulary.json /tmp/wordbook.json
+          python3 - <<'PY'
+          import json
+          committed = json.load(open('data/wordbook.json'))
+          regenerated = json.load(open('/tmp/wordbook.json'))
+          assert committed == regenerated, 'data/wordbook.json is out of date'
+          print(f"wordbook index reproducible: {regenerated['stats']['rows']} rows")
+          PY
+
+      - name: Check the community-wordbook index for internal consistency
+        run: |
+          python3 - <<'PY'
+          import json
+
+          index = json.load(open('data/wordbook.json'))
+          items, stats, books = index['items'], index['stats'], index['books']
+          our_words = set(
+              entry['word'].strip().lower() for entry in json.load(open('data/vocabulary.json'))['entries']
+          )
+
+          assert stats['rows'] == len(items), 'rows disagrees with items'
+          assert stats['uniqueWords'] == len({item['word'] for item in items}), 'duplicate headwords'
+          assert all(1 <= item['book'] <= 18 for item in items), 'volume out of range'
+          assert len({item['id'] for item in items}) == len(items), 'duplicate identifiers'
+          assert items == sorted(items, key=lambda item: (item['word'], item['book'])), 'index not canonical order'
+
+          shared = {item['word'] for item in items if item['shared']}
+          assert shared == {item['word'] for item in items if item['word'] in our_words}, 'shared flag stale'
+          assert stats['crossCambridge']['shared'] == len(shared), 'shared total differs'
+          recomputed_agreement = sum(1 for item in items if item['volumeAgrees'])
+          assert stats['crossCambridge']['volumeAssignmentAgreement'] == recomputed_agreement, 'agreement differs'
+
+          assert sum(row['wordbookWords'] for row in books) == len(items), 'book totals differ'
+          assert sum(row['sharedInBook'] for row in books) == len(shared), 'book shared totals differ'
+          assert [row['book'] for row in books] == list(range(1, 19)), 'book table incomplete'
+          for row in books:
+              in_book = {item['word'] for item in items if item['book'] == row['book']}
+              assert row['wordbookWords'] == len(in_book), row
+              assert row['sharedInBook'] == len(in_book & our_words), row
+              assert row['agreesWithVolume'] == sum(
+                  1 for item in items if item['book'] == row['book'] and item['volumeAgrees']
+              ), row
+
+          assert stats['completeness']['definitions'] == stats['rows'], 'definition coverage moved'
+          for finding in index['audit']['findings']:
+              assert finding['severity'] in {'low', 'medium', 'high'}, finding['id']
+              assert finding['detail'], finding['id']
+          evidence = {f['id']: f['evidence'] for f in index['audit']['findings']}
+          assert evidence['declared-size-mismatch']['shipped'] == stats['rows'], 'audit row count stale'
+          assert evidence['volume-attribution-disagreement']['agreement'] == recomputed_agreement
+          for source in index['audit']['sources'].values():
+              assert len(source['sha1']) == 40, 'audit evidence must be pinned by blob SHA'
+
+          print(
+              f"wordbook index consistent: {len(items)} rows, {len(shared)} shared with Cambridge, "
+              f"{recomputed_agreement} volume attributions agreeing"
           )
           PY
