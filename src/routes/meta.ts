@@ -5,6 +5,7 @@
 import { archiveStats } from '../data/archive.js';
 import { corpusStats } from '../data/corpus.js';
 import { materialsStats } from '../data/materials.js';
+import { MISTAKE_TYPES } from '../data/mistakes.js';
 import { practiceStats } from '../data/practiceTests.js';
 import { RAW_SCORE_MODULES } from '../data/rawScores.js';
 import { testcenterStats } from '../data/testcenter.js';
@@ -43,6 +44,7 @@ function datasetSummary(): Record<string, number> {
     testcenterGroups: testcenter.taxonomy.listening.groups + testcenter.taxonomy.reading.groups,
     testcenterTaggedQuestions:
       testcenter.taxonomy.listening.questions + testcenter.taxonomy.reading.questions,
+    mistakeTypes: MISTAKE_TYPES.length,
   };
 }
 
@@ -116,6 +118,7 @@ export function createMetaRoutes(
           'archive-index',
           'raw-score-tables',
           'testcenter-index',
+          'self-testing-tools',
         ],
       },
     };

@@ -10,6 +10,7 @@ import { analyseEssay, analyseReadability, TASK_MINIMUM_WORDS } from '../lib/ana
 import { badRequest } from '../lib/errors.js';
 import { getEnum, getInt, requireString, toParams } from '../lib/query.js';
 import { MAX_TEXT_LENGTH, wordsOf } from '../lib/textstats.js';
+import { scoreWriting } from '../lib/writingScore.js';
 
 import type { QueryParams } from '../types.js';
 import type { HandlerResult, RouteContext, RouteDefinition } from '../lib/route.js';
@@ -72,6 +73,23 @@ function essayProfile(context: RouteContext): HandlerResult {
   };
 }
 
+/** Indicative 0-100 criterion scores and band range for a writing sample. */
+function writingScore(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const text = requireText(params);
+  const task = getEnum(params, 'task', TASKS) ?? 'task2';
+  return {
+    data: scoreWriting(text, task),
+    meta: {
+      method:
+        'Rule-based subscores from length, framing, discourse markers, paragraphing, type-token ratio, Cambridge headword coverage, sentence control and subordination; the band range is the mean subscore mapped onto fixed bands.',
+      disclaimer:
+        'Indicative heuristic only, not an examiner judgement. Every subscore carries the measurements it was computed from so the rules can be audited.',
+      limits: { maxCharacters: MAX_TEXT_LENGTH },
+    },
+  };
+}
+
 /** Text-analysis routes. */
 export const toolRoutes: readonly RouteDefinition[] = [
   {
@@ -88,5 +106,12 @@ export const toolRoutes: readonly RouteDefinition[] = [
     summary:
       'Lexical diversity, headword coverage, themes and descriptor-aligned hints for a writing sample.',
     handler: essayProfile,
+  },
+  {
+    method: 'GET',
+    path: '/v1/tools/writing-score',
+    versioned: true,
+    summary: 'Indicative 0-100 criterion scores and band range for a writing sample.',
+    handler: writingScore,
   },
 ];

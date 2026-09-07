@@ -7,6 +7,8 @@ tags:
   - vocabulary
   - readability
   - item types
+  - spaced repetition
+  - vocabulary testing
   - open data
   - REST API
 authors:
@@ -15,7 +17,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 5 September 2026
+date: 7 September 2026
 bibliography: paper.bib
 ---
 
@@ -24,7 +26,7 @@ bibliography: paper.bib
 IELTS API is an open, dependency-free TypeScript web service that exposes IELTS (International
 English Language Testing System) preparation data through a stable, versioned, machine-readable HTTP
 contract. Every endpoint is free of charge, requires no authentication and answers with a uniform
-JSON envelope. The service ships nine kinds of data: a 4,174-headword vocabulary dataset derived
+JSON envelope. The service ships ten kinds of data: a 4,174-headword vocabulary dataset derived
 from the Cambridge IELTS volumes 1-22 word lists; condensed analytic band descriptors for Speaking
 and Writing across bands 0-9; indicative score concordances between IELTS and five other scales;
 original Writing and Speaking task banks built on the question families and word lists that recur in
@@ -33,11 +35,13 @@ Listening question types, onto which 65 free-text annotation labels are normalis
 frequency of each family observed in 27,225 practice questions; an original taxonomy of twelve
 response frameworks for the productive papers — ordered stage plans with cue language and pitfalls,
 cross-linked to the task banks; a structure and readability index of
-1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; and curated
-metadata indexes of four open IELTS collections, including a grey-literature archive index that
+1,702 practice tests and CEFR-graded reading lessons [@flesch1948; @kincaid1975]; curated
+metadata indexes of six open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; and a self-testing toolkit that re-expresses a stateful vocabulary trainer's
+Ebbinghaus review scheduler, mistake book and rule-based writing scorer as deterministic,
+authentication-free endpoints [@ebbinghaus1913; @ieltsvocabsystem].
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.
@@ -174,8 +178,14 @@ the Cambridge headword list, sentence-length spread, discourse-marker density an
 and maps the measurements onto hints phrased after the four analytic criteria, at fixed published
 thresholds; the response states that the hints are teaching heuristics, not scores. A study planner
 composes the gap between a target band and current component scores into a deterministic
-week-by-week schedule whose every activity links to the endpoint that publishes it. All three are
-pure functions of their inputs, so their outputs are as reproducible as the datasets.
+week-by-week schedule whose every activity links to the endpoint that publishes it. A
+spaced-repetition scheduler publishes the trainer's Ebbinghaus ladder — 5 minutes to 15 days —
+from an explicit UTC anchor with mastery projection; a quiz composer turns the headword list into
+seeded, self-marking multiple-choice tests with answer keys; a five-type mistake taxonomy classifies
+each miss with a correction protocol and drill links; and an indicative scorer projects a writing
+sample onto four 0-100 criterion subscores with a band range, every number carrying the measurements
+it was computed from. All seven are pure functions of their inputs, so their outputs are as
+reproducible as the datasets.
 
 # Design
 
@@ -192,7 +202,7 @@ reproducible stimulus for longitudinal studies rather than a novelty.
 
 # Quality control
 
-The test suite (502 tests) enforces **100% statement, branch, function and line coverage, per file**;
+The test suite (712 tests) enforces **100% statement, branch, function and line coverage, per file**;
 the test command fails below the threshold, so coverage is a release gate rather than a badge. The
 code is typechecked under `strict` with `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes` and
 `noUnusedLocals`. `super-linter` runs on every push, every pull request and weekly. Continuous
@@ -213,9 +223,10 @@ Citation metadata is published in Citation File Format [@citationfileformat] and
 # Acknowledgements
 
 This work builds on the open corpus assembled by `zhengyishiming`, on the practice collection
-assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, and on the
-grey-literature archive assembled by `msneloy`; all are cited in `CITATION.cff` and in every
-response that draws on them. IELTS is a jointly owned trademark of the
+assembled by `ngoclong1209`, on the self-study collection assembled by `Oxidaner`, on the
+grey-literature archive assembled by `msneloy`, on the mock-exam test centre assembled by
+`wanli4473`, and on the vocabulary trainer assembled by `Iamdacai`; all are cited in
+`CITATION.cff` and in every response that draws on them. IELTS is a jointly owned trademark of the
 British Council, IDP: IELTS Australia and Cambridge Assessment English; this project is unaffiliated
 with and unendorsed by the IELTS partners.
 

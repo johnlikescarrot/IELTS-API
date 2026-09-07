@@ -3,7 +3,7 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Seven parts, five upstream collections:
+Eight parts, six upstream collections:
 
 | Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                         |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
@@ -14,6 +14,7 @@ Seven parts, five upstream collections:
 | [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays     |
 | [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                              | the validated raw-score-to-band conversion tables and the raw-score endpoints                                          |
 | [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration |
+| [Part VIII](#part-viii--the-self-testing-toolkit)                               | [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system)                       | commit `1f5ad56d`, 269 commits | the self-testing toolkit: Ebbinghaus scheduler, seeded quizzes, mistake taxonomy, indicative scorer (stateless port)   |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -1035,3 +1036,129 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — the self-testing toolkit
+
+**Upstream snapshot:** commit `1f5ad56d664c56ae449dacc7618b6d7f23967a69` (2 April 2026),
+269 commits on `master`. No code is copied: the algorithms below are re-implemented in
+TypeScript from a reading of the reference sources, with the file pointers given so a reviewer
+can diff the port against the original.
+
+Parts I-VII publish datasets and indexes; researchers still need a study loop — _when_ to
+review, _what_ to test with, _how_ to classify misses, _how far_ a writing sample is from its
+target. The reference system for that loop is
+[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system), a WeChat
+mini-program vocabulary trainer (Node.js/Express/SQLite backend, 269 commits) built around
+four mechanisms: an Ebbinghaus spaced-repetition scheduler, a review-and-test word loop, a
+mistake book with five error types, and a rule-based writing scorer that projects four
+0-100 criterion subscores onto indicative band ranges. Every one of those mechanisms is
+stateful — it reads the learner's review counts from SQLite, anchors intervals on the server
+clock, and hides behind JWT authentication — so none of its answers can be cited, archived or
+reproduced. Part VIII re-expresses all four as stateless, authentication-free, deterministic
+endpoints: same algorithms, explicit inputs, byte-identical outputs.
+
+### 42. What the reference trainer does
+
+Reading the backend (`backend/spaced-repetition-algorithm.js`,
+`backend/controllers/words.js`, `backend/controllers/mistakes.js`,
+`backend/services/writing-scorer-simple.js`) yields four mechanisms worth porting:
+
+1. **Ebbinghaus ladder.** `baseIntervals = [5, 30, 720, 1440, 2880, 5760, 10080, 21600]`
+   minutes — 5 minutes, 30 minutes, 12 hours, 1, 2, 4, 7 and 15 days. Review `n`
+   waits for step `n`; past the eighth step the last interval extends by mastery:
+   `21600 * (1 + mastery / 100)`.
+2. **Mastery score.** A 0-100 score per word. A correct recall adds
+   `confidence * 5`; a miss subtracts `confidence * 8`, so a confident error costs
+   more than a guess. Words at 90+ count as `mastered`; the daily review window
+   spans two hours on either side of the learner's preferred review time
+   (default 20:00).
+3. **Mistake book.** Misses are logged under five error types — `spelling`,
+   `recognition`, `pronunciation`, `usage`, `listening` — with per-type counts,
+   high-frequency flags and elimination once a word survives sustained recall.
+4. **Rule-based writing scorer.** Four 0-100 subscores from surface features
+   (length and framing; discourse markers and paragraphing; type-token ratio and
+   an advanced-word list; sentence control and subordination), averaged into an
+   overall and mapped onto fixed band ranges (90+ → 8.5-9.0, 80+ → 7.5-8.0,
+   …, 40+ → 3.5-4.0, below → 3.0 and under).
+
+The trainer also ships dual vocabulary libraries (Cambridge 1-18 plus a 22-scene
+themed book), audio URLs, pronunciation scoring and AI-generated example
+sentences. Those stay behind: the API already publishes its own vocabulary
+dataset (Part I), serves no audio, and calls no model — everything here runs
+offline and deterministically.
+
+### 43. The stateless port
+
+| Reference mechanism            | Stateless endpoint        | What changed in the port                                                                                                                                                                                                                                                                                                                 |
+| ------------------------------ | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ebbinghaus scheduler + mastery | `/v1/study/srs`           | Inputs (`reviews`, `mastery`, anchor `from`/`time`) are explicit query parameters instead of database rows and the server clock; the endpoint additionally publishes the whole forward ladder, cumulatively applied, plus the review window. Ladder, extension rule, mastery arithmetic, `mastered` threshold and window are verbatim.   |
+| New-word / review / test loop  | `/v1/vocabulary/quiz`     | The loop becomes a seeded multiple-choice quiz over the 4,174 headwords: stems by seeded shuffle, distractors preferring the stem's part of speech, seeded option order, and an answer key. Same seed, same quiz, on every replica.                                                                                                      |
+| Mistake book                   | `/v1/study/mistakes`      | The five error types become a self-review taxonomy: each type carries observable signals, a stateless correction protocol and drill links. Elimination is fixed conservatively at three consecutive correct recalls at ladder steps 3-8.                                                                                                 |
+| Rule-based writing scorer      | `/v1/tools/writing-score` | Rule shapes are preserved (length/framing, markers/paragraphs, diversity/coverage, control/subordination; mean overall; fixed band ranges) with one substitution: the reference's hard-coded 17-word advanced list is replaced by Cambridge headword coverage from Part I, grounding "advanced vocabulary" in the project's own dataset. |
+
+Two deliberate departures from the reference deserve emphasis. First, the
+reference computes one next-review date per request; the port publishes the
+whole ladder because a stateless client cannot ask "what is due" without
+replaying its history — the schedule _is_ the state. Second, the reference's
+scorer reports band ranges as plain output; the port labels every one of them
+an indicative heuristic, in the response, in the documentation and in §45
+below, because a fixed rule cannot be an examiner judgement.
+
+### 44. Verification
+
+Port fidelity is verified arithmetically rather than by assertion of intent.
+The unit suite pins the reference's own numbers: ladder `[5, 30, 720, 1440,
+2880, 5760, 10080, 21600]`; `updateMastery(50, correct, 3) = 65` and
+`updateMastery(50, miss, 3) = 26`; beyond-ladder `21600 * 1.5 = 32400` at
+mastery 50; `mastered` at exactly 90; scorer subscore arithmetic at every rule
+boundary; band-range boundaries at 90/80/70/60/50/40. Determinism is verified
+end to end: identical quiz, schedule and score requests return byte-identical
+bodies across processes. As with every part of this API, the port holds 100%
+statement, branch, function and line coverage, enforced per file.
+
+### 45. Threats to validity (Part VIII)
+
+- **The ladder is folk Ebbinghaus, not fitted spacing.** The eight intervals
+  are the reference trainer's constants, not parameters fitted to retention
+  data; SM-2, FSRS and the wider spacing literature would schedule differently.
+  The endpoint publishes the ladder it implements — researchers who need a
+  fitted scheduler should treat these intervals as one more baseline.
+- **Mastery arithmetic is unvalidated.** `+5/-8 × confidence` is a design
+  choice with no psychometric calibration; the projection answers "what would
+  the reference trainer say", not "what is the learner's retention
+  probability".
+- **Same-POS distractors are a heuristic difficulty knob.** Preferring
+  same-part-of-speech foils raises face difficulty but no item-response
+  calibration backs the quiz; option sets are reproducible, not equated.
+- **The indicative bands are not scores.** The scorer measures surface
+  correlates of quality (length, signposting, diversity, subordination) and
+  cannot judge task achievement, idea development or error gravity. Every
+  response carries the evidence each subscore was computed from so the rules
+  can be audited — and the band range must never be reported as a measurement
+  of writing ability.
+- **Elimination at three recalls is conservative by stipulation.** No
+  retention data fixes the threshold; it is set so that early-ladder recalls,
+  which measure working memory, cannot retire a word.
+- **The snapshot is mutable and unlicensed.** As with Parts I, IV, V and VII:
+  the pinned commit is the only defence against silent upstream drift, and no
+  upstream code or content is redistributed.
+
+### 46. Reproducing Part VIII
+
+```bash
+# The Ebbinghaus schedule, the mistake taxonomy and the quiz need no inputs
+# beyond the query string; the scorer needs only the sample text.
+curl -s "http://localhost:3000/v1/study/srs?from=2026-09-07&reviews=2&mastery=60&correct=true"
+curl -s "http://localhost:3000/v1/study/mistakes?type=spelling"
+curl -s "http://localhost:3000/v1/vocabulary/quiz?seed=exam-1&count=5"
+curl -s "http://localhost:3000/v1/tools/writing-score?text=I%20think%20cities%20should%20invest%20more."
+```
+
+The port has no extraction pipeline — there is nothing to extract — so
+reproduction is re-derivation by hand: the file pointers in §42 locate every
+rule in the upstream snapshot, and the unit tests in `test/lib/srs.test.ts`,
+`test/lib/quiz.test.ts` and `test/lib/writingScore.test.ts` pin the port's
+arithmetic. A reviewer who disagrees with an adaptation (the cumulative
+ladder, the elimination rule, the headword substitution) can re-implement from
+the same pointers; the endpoints make the port's choices explicit enough to
+argue with.

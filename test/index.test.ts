@@ -49,6 +49,17 @@ describe('the package entry point', () => {
     expect(api.corpusStats().filesInRepository).toBe(404);
   });
 
+  it('exports the self-testing helpers', () => {
+    expect(typeof api.buildQuiz).toBe('function');
+    expect(typeof api.quizPool).toBe('function');
+    expect(typeof api.buildSrsSchedule).toBe('function');
+    expect(typeof api.updateMastery).toBe('function');
+    expect(typeof api.scoreWriting).toBe('function');
+    expect(typeof api.bandForScore).toBe('function');
+    expect(api.MISTAKE_TYPES).toHaveLength(5);
+    expect(typeof api.mistakeTypeById).toBe('function');
+  });
+
   it('exports the build constants', () => {
     expect(api.API_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
     expect(api.SERVICE_NAME).toBe('ielts-api');

@@ -34,6 +34,7 @@ describe('GET /', () => {
     expect(response.data.datasets.testcenterCambridgePapers).toBe(222);
     expect(response.data.datasets.testcenterGroups).toBe(1099);
     expect(response.data.datasets.testcenterTaggedQuestions).toBe(5408);
+    expect(response.data.datasets.mistakeTypes).toBe(5);
     expect(response.data.endpoints.documentation).toBe('/docs');
     expect(response.meta.count).toBe(DOMAIN_ROUTES.length);
   });

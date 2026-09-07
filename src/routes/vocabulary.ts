@@ -9,17 +9,19 @@ import {
   randomEntries,
   PARTS_OF_SPEECH,
 } from '../data/vocabulary.js';
+import { buildQuiz, MAX_QUIZ_COUNT, quizPool } from '../lib/quiz.js';
 import { parseList } from '../lib/search.js';
 import { getEnum, getInt, getIsoDate, getString, toParams } from '../lib/query.js';
 import { badRequest, notFound } from '../lib/errors.js';
 
 import type { RouteContext, HandlerResult } from '../lib/route.js';
 import type { RouteDefinition } from '../lib/route.js';
-import type { PartOfSpeech, VocabularyEntry } from '../types.js';
+import type { PartOfSpeech, QuizDirection, VocabularyEntry } from '../types.js';
 
 const MATCH_MODES = ['contains', 'prefix', 'exact'] as const;
 const SORT_KEYS = ['word', 'length', 'volumes', 'senses'] as const;
 const ORDERS = ['asc', 'desc'] as const;
+const QUIZ_DIRECTIONS: readonly QuizDirection[] = ['word-to-definition', 'definition-to-word'];
 
 /** Parse a comma-separated list of Cambridge IELTS volume numbers. */
 function parseVolumes(raw: string | undefined): number[] | undefined {
@@ -101,6 +103,37 @@ function daily(context: RouteContext): HandlerResult {
   return { data: count === 1 ? (entries[0] as VocabularyEntry) : entries, meta: { date, count } };
 }
 
+/** Deterministic self-marking multiple-choice quiz. */
+function quiz(context: RouteContext): HandlerResult {
+  const params = toParams(context.url);
+  const volumes = parseVolumes(getString(params, 'volume'));
+  const posTokens = parseList(getString(params, 'pos'), 'pos', PARTS_OF_SPEECH);
+  const pool = quizPool(volumes, posTokens as PartOfSpeech[] | undefined);
+  if (pool.length === 0) {
+    throw notFound('No quiz-eligible headwords match the supplied filters.', {
+      hint: 'Loosen the volume and pos filters.',
+    });
+  }
+  const seed = getString(params, 'seed') ?? new Date().toISOString().slice(0, 10);
+  const count = getInt(params, 'count', 1, MAX_QUIZ_COUNT, 5);
+  const choices = getInt(params, 'choices', 2, 5, 4);
+  const direction = getEnum(params, 'direction', QUIZ_DIRECTIONS) ?? 'word-to-definition';
+  const composed = buildQuiz(pool, { seed, count, choices, direction });
+  return {
+    data: composed,
+    meta: {
+      seed,
+      count: composed.items.length,
+      choices,
+      direction,
+      volume: volumes ?? null,
+      pos: posTokens ?? null,
+      method:
+        'Stems are drawn by seeded shuffle, distractors prefer the stem part of speech, and option order is seeded; the same seed always rebuilds the same quiz.',
+    },
+  };
+}
+
 /** Look up one headword. */
 function lookup(context: RouteContext): HandlerResult {
   const word = context.params.word as string;
@@ -140,6 +173,13 @@ export const vocabularyRoutes: readonly RouteDefinition[] = [
     versioned: true,
     summary: 'A deterministic vocabulary entry for a calendar date.',
     handler: daily,
+  },
+  {
+    method: 'GET',
+    path: '/v1/vocabulary/quiz',
+    versioned: true,
+    summary: 'A deterministic seeded multiple-choice vocabulary quiz with an answer key.',
+    handler: quiz,
   },
   {
     method: 'GET',

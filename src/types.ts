@@ -1198,6 +1198,138 @@ export type TestcenterStats = {
 };
 
 /* -------------------------------------------------------------------------- */
+/* Spaced repetition, self-testing and mistake review                       */
+/* -------------------------------------------------------------------------- */
+
+/** Word-knowledge states of the spaced-repetition scheduler. */
+export type SrsStatus = 'new' | 'learning' | 'mastered';
+
+/** One step of the Ebbinghaus review ladder. */
+export type SrsStep = {
+  /** 1-based review number. */
+  review: number;
+  /** Minutes between this review and the previous one (or the anchor for review 1). */
+  intervalMinutes: number;
+  /** Minutes between the anchor and this review. */
+  cumulativeMinutes: number;
+  /** Due datetime in UTC (`YYYY-MM-DDTHH:mm:ss.sssZ`). */
+  due: string;
+};
+
+/** A spaced-repetition schedule computed from an explicit anchor. */
+export type SrsSchedule = {
+  /** Anchor the schedule is computed from (`YYYY-MM-DDTHH:mm:ss.sssZ`). */
+  anchor: string;
+  /** Completed reviews the caller reports. */
+  reviews: number;
+  /** Mastery score the caller reports (0-100). */
+  mastery: number;
+  /** Word-knowledge state implied by the inputs. */
+  status: SrsStatus;
+  /** Minutes until the next review from the anchor. */
+  nextReviewInMinutes: number;
+  /** Due datetime of the next review in UTC. */
+  nextReviewAt: string;
+  /** The eight Ebbinghaus intervals in minutes. */
+  ladderMinutes: readonly number[];
+  /** Forward review schedule from the anchor. */
+  upcoming: SrsStep[];
+  /** Daily review window around the caller's preferred review time. */
+  reviewWindow: { date: string; time: string; start: string; end: string };
+  /** Projected mastery after the reported recall, when `correct` was supplied. */
+  masteryProjection: {
+    correct: boolean;
+    confidence: number;
+    from: number;
+    to: number;
+    status: SrsStatus;
+  } | null;
+};
+
+/** Quiz direction: recognise the definition, or produce the headword. */
+export type QuizDirection = 'word-to-definition' | 'definition-to-word';
+
+/** One multiple-choice quiz item. */
+export type QuizItem = {
+  /** Stable item identifier (`q01`, `q02`, ...). */
+  id: string;
+  /** Headword tested by this item. */
+  word: string;
+  /** IPA-style transcription, slash-delimited, or `null` when unavailable. */
+  phonetic: string | null;
+  /** Part of speech of the tested headword. */
+  partOfSpeech: PartOfSpeech;
+  /** The question stem: a headword or a definition, depending on the direction. */
+  stem: string;
+  /** Answer options in presentation order. */
+  options: string[];
+  /** Index of the correct option in `options`. */
+  answerIndex: number;
+  /** Cambridge IELTS volumes (1-22) in which the headword occurs. */
+  volumes: number[];
+};
+
+/** A deterministic vocabulary quiz. */
+export type VocabularyQuiz = {
+  /** Quiz items in presentation order. */
+  items: QuizItem[];
+  /** Answer key: item id to the correct option index. */
+  key: Record<string, number>;
+  /** Headwords the quiz was drawn from. */
+  pool: number;
+};
+
+/** A mistake type of the self-review taxonomy. */
+export type MistakeType = {
+  /** Stable identifier. */
+  id: 'spelling' | 'recognition' | 'pronunciation' | 'usage' | 'listening';
+  /** Display name. */
+  name: string;
+  /** Skill the mistake surfaces in. */
+  skill: Skill;
+  /** What this mistake looks like. */
+  description: string;
+  /** Observable signals that a miss belongs to this type. */
+  signals: string[];
+  /** Stateless correction protocol: what to do after each miss. */
+  protocol: string[];
+  /** API endpoints that supply drill material for this type. */
+  drills: { name: string; url: string }[];
+};
+
+/** One 0-100 criterion subscore of the indicative writing scorer. */
+export type WritingCriterionScore = {
+  /** Criterion name. */
+  criterion: 'task-response' | 'coherence-and-cohesion' | 'lexical-resource' | 'grammatical-range';
+  /** Subscore on a 0-100 scale. */
+  score: number;
+  /** Measurements the subscore was computed from. */
+  evidence: Record<string, number | string | boolean>;
+};
+
+/** Indicative writing score for a validated text. */
+export type WritingScore = {
+  /** Task the text was written for. */
+  task: 'task1' | 'task2';
+  /** Running words. */
+  wordCount: number;
+  /** Minimum words for the task. */
+  minimumWords: number;
+  /** Whether the text meets the task minimum. */
+  meetsMinimum: boolean;
+  /** The four criterion subscores. */
+  criteria: WritingCriterionScore[];
+  /** Mean of the four subscores, rounded to an integer. */
+  overall: number;
+  /** Indicative band range the overall maps to. */
+  indicativeBand: { min: number | null; max: number | null; label: string };
+  /** Criteria at 70+, in band-descriptor order, with a fallback when empty. */
+  strengths: string[];
+  /** Criteria below 60, in band-descriptor order, with a fallback when empty. */
+  improvements: string[];
+};
+
+/* -------------------------------------------------------------------------- */
 /* HTTP                                                                       */
 /* -------------------------------------------------------------------------- */
 

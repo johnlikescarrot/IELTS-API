@@ -158,3 +158,74 @@ describe('GET /v1/vocabulary/:word', () => {
     expect((response.meta.error as { code: string }).code).toBe('not_found');
   });
 });
+
+describe('GET /v1/vocabulary/quiz', () => {
+  it('composes a seeded quiz with a matching answer key', async () => {
+    const response = await server.json<{
+      items: { id: string; word: string; stem: string; options: string[]; answerIndex: number }[];
+      key: Record<string, number>;
+      pool: number;
+    }>('/v1/vocabulary/quiz?seed=exam-1&count=3&choices=4');
+    expect(response.status).toBe(200);
+    expect(response.data.items).toHaveLength(3);
+    expect(response.data.pool).toBe(4174);
+    for (const item of response.data.items) {
+      expect(item.options).toHaveLength(4);
+      expect(response.data.key[item.id]).toBe(item.answerIndex);
+      expect(item.stem.startsWith(item.word)).toBe(true);
+    }
+    expect(response.meta.seed).toBe('exam-1');
+    expect(response.meta.direction).toBe('word-to-definition');
+    expect(response.meta.method).toContain('seeded');
+  });
+
+  it('is deterministic for identical queries', async () => {
+    const first = await server.json('/v1/vocabulary/quiz?seed=stable&count=5&choices=3');
+    const second = await server.json('/v1/vocabulary/quiz?seed=stable&count=5&choices=3');
+    expect(JSON.stringify(second.data)).toBe(JSON.stringify(first.data));
+  });
+
+  it('supports the definition-to-word direction', async () => {
+    const response = await server.json<{
+      items: { word: string; stem: string; options: string[]; answerIndex: number }[];
+    }>('/v1/vocabulary/quiz?seed=exam-1&count=2&direction=definition-to-word');
+    expect(response.status).toBe(200);
+    for (const item of response.data.items) {
+      expect(item.options[item.answerIndex]).toBe(item.word);
+    }
+    expect(response.meta.direction).toBe('definition-to-word');
+  });
+
+  it('filters the pool by volume and part of speech', async () => {
+    const response = await server.json<{ items: unknown[]; pool: number }>(
+      '/v1/vocabulary/quiz?seed=exam-1&volume=1&pos=verb',
+    );
+    expect(response.status).toBe(200);
+    expect(response.data.pool).toBe(1);
+    expect(response.data.items).toHaveLength(1);
+    expect(response.meta.volume).toEqual([1]);
+    expect(response.meta.pos).toEqual(['verb']);
+  });
+
+  it('defaults the seed to the current date', async () => {
+    const response = await server.json('/v1/vocabulary/quiz?count=1');
+    expect(response.status).toBe(200);
+    expect(response.meta.seed).toBe(new Date().toISOString().slice(0, 10));
+  });
+
+  it('returns 404 when no headwords match the filters', async () => {
+    const response = await server.json('/v1/vocabulary/quiz?seed=exam-1&pos=pronoun');
+    expect(response.status).toBe(404);
+    expect((response.meta.error as { code: string }).code).toBe('not_found');
+  });
+
+  it('validates the quiz inputs', async () => {
+    expect((await server.json('/v1/vocabulary/quiz?seed=x&count=0')).status).toBe(400);
+    expect((await server.json('/v1/vocabulary/quiz?seed=x&count=21')).status).toBe(400);
+    expect((await server.json('/v1/vocabulary/quiz?seed=x&choices=1')).status).toBe(400);
+    expect((await server.json('/v1/vocabulary/quiz?seed=x&choices=6')).status).toBe(400);
+    expect((await server.json('/v1/vocabulary/quiz?seed=x&direction=upside-down')).status).toBe(400);
+    expect((await server.json('/v1/vocabulary/quiz?seed=x&volume=23')).status).toBe(400);
+    expect((await server.json('/v1/vocabulary/quiz?seed=x&pos= Klingon')).status).toBe(400);
+  });
+});

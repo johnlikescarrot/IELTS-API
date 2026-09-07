@@ -111,3 +111,64 @@ describe('GET /v1/tools/essay-profile', () => {
     expect(response.status).toBe(400);
   });
 });
+
+describe('GET /v1/tools/writing-score', () => {
+  it('scores a writing sample with criterion evidence', async () => {
+    const text = encodeURIComponent(
+      'I think governments should invest in public transport. Furthermore, reliable buses reduce emissions. However, cars offer flexibility. In conclusion, the benefits outweigh the costs.',
+    );
+    const response = await server.json<{
+      task: string;
+      wordCount: number;
+      minimumWords: number;
+      meetsMinimum: boolean;
+      criteria: { criterion: string; score: number; evidence: Record<string, unknown> }[];
+      overall: number;
+      indicativeBand: { label: string };
+      strengths: string[];
+      improvements: string[];
+    }>(`/v1/tools/writing-score?text=${text}`);
+    expect(response.status).toBe(200);
+    expect(response.data.task).toBe('task2');
+    expect(response.data.minimumWords).toBe(250);
+    expect(response.data.criteria.map((row) => row.criterion)).toEqual([
+      'task-response',
+      'coherence-and-cohesion',
+      'lexical-resource',
+      'grammatical-range',
+    ]);
+    expect(response.data.criteria[0]?.evidence).toMatchObject({
+      introductionFraming: true,
+      conclusionFraming: true,
+    });
+    expect(response.data.overall).toBe(
+      Math.round(
+        response.data.criteria.reduce((sum, row) => sum + row.score, 0) / response.data.criteria.length,
+      ),
+    );
+    expect(response.data.strengths.length).toBeGreaterThan(0);
+    expect(response.data.improvements.length).toBeGreaterThan(0);
+    expect(response.meta.disclaimer).toContain('Indicative heuristic only');
+  });
+
+  it('honours the writing task', async () => {
+    const response = await server.json<{ task: string; minimumWords: number }>(
+      '/v1/tools/writing-score?text=Something%20happened%20here.&task=task1',
+    );
+    expect(response.status).toBe(200);
+    expect(response.data.task).toBe('task1');
+    expect(response.data.minimumWords).toBe(150);
+  });
+
+  it('is deterministic for identical queries', async () => {
+    const first = await server.json('/v1/tools/writing-score?text=Something%20happened%20here.');
+    const second = await server.json('/v1/tools/writing-score?text=Something%20happened%20here.');
+    expect(JSON.stringify(second.data)).toBe(JSON.stringify(first.data));
+  });
+
+  it('validates the scoring inputs', async () => {
+    expect((await server.json('/v1/tools/writing-score')).status).toBe(400);
+    expect((await server.json('/v1/tools/writing-score?text=%21%21%21')).status).toBe(400);
+    expect((await server.json('/v1/tools/writing-score?text=Something%20here.&task=task3')).status).toBe(400);
+  });
+});
