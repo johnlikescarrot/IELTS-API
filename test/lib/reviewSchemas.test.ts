@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { Ajv2020 } from 'ajv/dist/2020.js';
 import formats from 'ajv-formats';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { createVocabularyDeck } from '../../src/lib/deck.js';
 import { openApiDocument } from '../../src/lib/openapi.js';
 import { createReviewCard } from '../../src/lib/review.js';
 import { ROUTES } from '../../src/routes/index.js';
@@ -118,6 +119,15 @@ describe('executable OpenAPI review contract', () => {
     expect(response.status).toBe(200);
     const validate = validator(operation.responses['200']!.content!['application/json'].schema);
     expect(validate(await response.json()), JSON.stringify(validate.errors)).toBe(true);
+  });
+
+  it('bounds response arrays without truncating any source senses or volume memberships', () => {
+    const validate = validator(document.components.schemas.VocabularyDeck!);
+    const first = createVocabularyDeck({ seed: 'full-schema-check', on: '2026-09-07', limit: 50 });
+    for (let offset = 0; offset < first.total; offset += 50) {
+      const page = createVocabularyDeck({ seed: 'full-schema-check', on: '2026-09-07', limit: 50, offset });
+      expect(validate(page), JSON.stringify(validate.errors)).toBe(true);
+    }
   });
 
   it('matches actual error envelopes instead of declaring a nonexistent top-level error', async () => {

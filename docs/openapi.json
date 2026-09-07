@@ -6595,6 +6595,9 @@
                     },
                     "volumes": {
                       "type": "array",
+                      "minItems": 1,
+                      "maxItems": 22,
+                      "uniqueItems": true,
                       "items": {
                         "type": "integer",
                         "minimum": 1,
@@ -6603,6 +6606,7 @@
                     },
                     "senses": {
                       "type": "array",
+                      "maxItems": 38,
                       "items": {
                         "type": "object",
                         "additionalProperties": false,

@@ -1,5 +1,5 @@
 /** OpenAPI 3.1 schemas for the explicitly versioned review-state contract. */
-import { PARTS_OF_SPEECH } from '../data/vocabulary.js';
+import { allEntries, PARTS_OF_SPEECH } from '../data/vocabulary.js';
 import { REVIEW_POLICY } from './review.js';
 import type { JsonValue } from '../types.js';
 
@@ -18,6 +18,8 @@ const NULLABLE_TEXT = { type: ['string', 'null'] };
 const GRADE = { type: 'integer', minimum: 0, maximum: 5 };
 const QUEUE_LIMIT = { type: 'integer', minimum: 1, maximum: 100, default: 20 };
 const NEW_LIMIT = { type: 'integer', minimum: 0, maximum: 50, default: 10 };
+// Response-only bound derived from this published vocabulary snapshot.
+const MAX_SENSES = allEntries().reduce((maximum, entry) => Math.max(maximum, entry.senses.length), 0);
 const CARDS = { type: 'array', maxItems: REVIEW_POLICY.maximumQueueCards, items: CARD_REF };
 
 /** Components used by both request and successful response schemas. */
@@ -192,9 +194,16 @@ export const REVIEW_SCHEMAS: Record<string, JsonValue> = {
               properties: {
                 definition: NULLABLE_TEXT,
                 morphemes: NULLABLE_TEXT,
-                volumes: { type: 'array', items: { type: 'integer', minimum: 1, maximum: 22 } },
+                volumes: {
+                  type: 'array',
+                  minItems: 1,
+                  maxItems: 22,
+                  uniqueItems: true,
+                  items: { type: 'integer', minimum: 1, maximum: 22 },
+                },
                 senses: {
                   type: 'array',
+                  maxItems: MAX_SENSES,
                   items: {
                     type: 'object',
                     additionalProperties: false,

@@ -111,8 +111,12 @@ jobs:
               for index, line in enumerate(lines):
                   if '[ERROR]' in line or '[FATAL]' in line:
                       indexes.update(range(max(0, index - 2), min(len(lines), index + 16)))
-              for index in sorted(indexes)[:50]:
-                  message = lines[index][:900].replace('%', '%25').replace('\r', '%0D')
+              # GitHub caps per-step annotations. Keep multiline context together,
+              # including Checkov's finding after its banner, rather than one per line.
+              if indexes:
+                  start = min(indexes)
+                  message = '\n'.join(lines[start:start + 150])[:18000]
+                  message = message.replace('%', '%25').replace('\r', '%0D').replace('\n', '%0A')
                   print(f'::error title=super-linter diagnostic::{message}')
           PYTHON
 
