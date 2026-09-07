@@ -14,6 +14,7 @@ import { createMetaRoutes } from './meta.js';
 import { questionTypeRoutes } from './questionTypes.js';
 import { resourceRoutes } from './resources.js';
 import { scoreRoutes } from './scores.js';
+import { srsRoutes } from './srs.js';
 import { studyRoutes } from './study.js';
 import { testcenterRoutes } from './testcenter.js';
 import { testRoutes } from './tests.js';
@@ -34,6 +35,7 @@ export const DOMAIN_ROUTES: readonly RouteDefinition[] = [
   ...testRoutes,
   ...corpusRoutes,
   ...toolRoutes,
+  ...srsRoutes,
   ...studyRoutes,
   ...materialRoutes,
   ...archiveRoutes,

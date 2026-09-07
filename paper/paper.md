@@ -8,6 +8,7 @@ tags:
   - readability
   - item types
   - open data
+  - spaced repetition
   - REST API
 authors:
   - name: The IELTS API contributors
@@ -15,7 +16,7 @@ authors:
 affiliations:
   - name: Independent research software, released as `johnlikescarrot/IELTS-API`
     index: 1
-date: 5 September 2026
+date: 7 September 2026
 bibliography: paper.bib
 ---
 
@@ -37,7 +38,7 @@ cross-linked to the task banks; a structure and readability index of
 metadata indexes of four open IELTS collections, including a grey-literature archive index that
 catalogues the Cambridge IELTS 1-18 listening audio by naming era and completeness, measures the
 twelve official sample tasks for readability, and summarises 24 marked learner essays as derived
-statistics.
+statistics; a rehearsal layer that turns the 4,174 headwords into 44 deterministic vocabulary collections (22 Cambridge volumes plus 22 thematic scenes keyworded from the [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system) 真经 library) with a transparent 0-100 difficulty score per headword; and a stateless spaced-repetition toolkit that exposes Ebbinghaus expanding intervals, Leitner boxes and SM-2 side by side, plus streak arithmetic and a GitHub-style calendar heat-map.
 Responses are deterministic — seeded sampling, stable identifiers, ETags and conditional-request
 support — so a response archived today can be re-fetched and diffed years later, which is the
 practical requirement for reproducible corpus and assessment research.

@@ -3,17 +3,18 @@
 This document records how the datasets behind the IELTS API were derived. It is written so that a
 reviewer can reproduce, criticise or extend every step.
 
-Seven parts, five upstream collections:
+Eight parts, five upstream collections plus one rehearsal implementation:
 
-| Part                                                                            | Upstream collection                                                                                   | Snapshot                       | What it yields                                                                                                         |
-| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs   | the vocabulary dataset and the corpus index                                                                            |
-| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs | the question-type taxonomy and the practice-test structure and readability index                                       |
-| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                              | the readability analyser, the essay profiler and the study planner                                                     |
-| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs | the study-materials index and the response-framework taxonomy                                                          |
-| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs   | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays     |
-| [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                              | the validated raw-score-to-band conversion tables and the raw-score endpoints                                          |
-| [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration |
+| Part                                                                            | Upstream collection                                                                                   | Snapshot                                     | What it yields                                                                                                         |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | -------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [Part I](#part-i--the-research-corpus)                                          | [`zhengyishiming/IELTS`](https://github.com/zhengyishiming/IELTS)                                     | commit `a9e2d6c9`, 404 blobs                 | the vocabulary dataset and the corpus index                                                                            |
+| [Part II](#part-ii--the-practice-test-collection)                               | [`ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS`](https://github.com/ngoclong1209/UPGRADE-YOUR-IELTS-SKILLS) | commit `ba7a0f2b`, 6,309 blobs               | the question-type taxonomy and the practice-test structure and readability index                                       |
+| [Part III](#part-iii--the-analysis-toolkit)                                     | — (analyses user-supplied text against Parts I-II)                                                    | —                                            | the readability analyser, the essay profiler and the study planner                                                     |
+| [Part IV](#part-iv--the-study-materials-collection-and-the-response-frameworks) | [`Oxidaner/ielts`](https://github.com/Oxidaner/ielts)                                                 | commit `738c6082`, 2,385 blobs               | the study-materials index and the response-framework taxonomy                                                          |
+| [Part V](#part-v--the-grey-literature-archive)                                  | [`msneloy/IELTS`](https://github.com/msneloy/IELTS)                                                   | commit `db1064c3`, 557 blobs                 | the grey-literature archive index: Cambridge 1-18 listening audio, official sample tasks and marked learner essays     |
+| [Part VI](#part-vi--the-raw-score-conversion-tables)                            | - (reconstructed from published anchors; field survey of a live mock-exam platform)                   | -                                            | the validated raw-score-to-band conversion tables and the raw-score endpoints                                          |
+| [Part VII](#part-vii--the-mock-exam-test-centre)                                | [`wanli4473/yysd-testcenter`](https://github.com/wanli4473/yysd-testcenter)                           | commit `0956ea37`, 3,713 blobs               | the mock-exam test-centre index: paper catalogue, Cambridge holdings, hand-tagged question taxonomy, score calibration |
+| [Part VIII](#part-viii--the-rehearsal-layer)                                    | [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system)                       | 269 commits, `master`, Ebbinghaus + SM-2 PRD | the rehearsal layer: vocabulary difficulty, 44 deterministic collections and the Ebbinghaus/Leitner/SM-2 toolkit       |
 
 None of the collections is redistributed. All are indexed, measured and cited.
 
@@ -1035,3 +1036,257 @@ output. Continuous integration re-derives the index on every run - it downloads 
 SHA, runs the extractor, and fails if the committed file disagrees - and then checks the index for
 internal consistency (catalogue and facet totals, holdings arithmetic, group type/scene/difficulty
 vocabularies, calibration contiguity).
+
+## Part VIII — the rehearsal layer
+
+The rehearsal layer is the first part of this project that does not index a new upstream file dump.
+It lifts a pedagogical design — how a vocabulary system rehearses, not just what words it lists —
+from a community implementation and re-expresses it as citable, stateless HTTP. The upstream is
+[`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system), a full-stack IELTS
+vocabulary platform with a WeChat front end, a Node and SQLite back end, and a 269-commit history on
+`master` (first commit 2023). Its core contribution is not a dataset but a study loop: dual
+libraries (Cambridge 1-18 and 真经), Ebbinghaus-scheduled review, a calendar heat-map and mistake
+export, with an SM-2 upgrade specified in `PRD_功能改进计划.md`. This API ports that loop's
+rehearsal arithmetic and library organisation as deterministic calculators — no per-user storage, no
+authentication, no audio — so every schedule is a reproducible fixture for research.
+
+### 42. What the reference system ships
+
+Cloning the repository and counting commits gives 269 on `master` (`git log --oneline | wc -l`). The
+back end is `backend/` (Node, Express, `better-sqlite3`, 480 MB of MP3 under `backend/audio` that
+the API never touches), the front end is `frontend/` (WeChat Mini Program pages: `pages/vocab`,
+`pages/review`, `pages/calendar`, `pages/mistake`). The vocabulary is two SQLite libraries: Cambridge
+IELTS 1-18 (4,464 headwords) and 真经 (3,674 headwords), 22 thematic scenes in the latter:
+
+自然地理、环境保护、动植物、太空探索、广告、健康养生、科技发展、学校教育、职业与事业、工作场所、生活方式、人际关系、艺术与文化、旅游与度假、购物消费、食品健康、住房建筑、法律与犯罪、媒体与新闻、交通运输、经济与商业、时间与日期
+
+each carrying a keyword set used for scene labelling (e.g. 太空探索 → satellite, orbit, rocket;
+环境保护 → pollution, emission, carbon). The rehearsal engine is `backend/src/spacedRepetition.js`:
+a fixed Ebbinghaus ladder
+
+```
+[5, 30, 720, 1440, 2880, 5760, 10080, 21600] minutes
+ 5 min → 30 min → 12 h → 1 d → 2 d → 4 d → 7 d → 15 d
+```
+
+with the final rung stretched by `1 + mastery/100`. `docs/PRD_功能改进计划.md` specifies the SM-2
+upgrade: easeFactor 1.3-3.0, intervals 1/2/4/7/15 days, `stage` and `leech ≥ 8 failures`, intervals
+only for `q ≥ 3` (Wozniak 1990). The front end renders a GitHub-style calendar heat-map over daily
+study minutes with 5 levels
+
+```
+0 = 0 min · 1 = 1-15 · 2 = 15-30 · 3 = 30-60 · 4 = 60+ minutes
+```
+
+(`pages/calendar/calendar.js` thresholds `[0, 15, 30, 60]`), a 7-day and 30-day progress curve, and
+a mistake book (`pages/mistake`) sortable by error count and exportable to PDF, Excel and Anki.
+Every review writes `reviewCount`, `nextReviewAt` and `mastery` to SQLite; authentication is by
+WeChat `openid`, so the system knows who you are.
+
+That trade-off is exactly what this API inverts. The reference system is a product: it remembers you
+so it can remind you. The API is a dataset and a calculator: it remembers nothing so anyone can cite
+what it returns.
+
+### 43. What this API re-uses and what it deliberately does not
+
+**Re-uses.** The three interval sets and their formulas are ported verbatim. Ebbinghaus
+`[5, 30, 720, 1440, 2880, 5760, 10080, 21600]` minutes and the `1 + mastery/100` stretch of the final
+rung; Leitner `[1, 2, 4, 7, 14]` days (correct → +1 box, incorrect → box 1); SM-2
+`EF' = EF + 0.1 − (5−q)(0.08+(5−q)0.02)`, floor 1.3, intervals `1 / 6 / round(prev×EF)` and
+`repetitions = 0` on `q < 3` (Wozniak 1990, §2). The heat-map levels `0-4` at `[0, 15, 30, 60]`
+minutes and the forgetting curve `R(t) = exp(−t/S)` and its half-life `t½ = S·ln 2` are likewise
+ported. The dual-library idea is lifted to 44 deterministic collections: the 22 Cambridge volumes
+the API already indexed in Part I, plus 22 thematic scenes keyworded from the 真经 scene names
+above — each scene's keyword set is the primitive the API's `sceneForWord` matches against, so the
+vocabulary stays in one 4,174-headword dataset but is traversable by volume or by theme. The
+determinism guarantee is kept as a contract: `buildSrsSchedule`, `computeStreak` and `demoCalendar`
+are pure functions of their query parameters, byte-identical for identical requests, like
+`/v1/study/plan`.
+
+**Does not port.** Per-user storage, WeChat authentication and `openid` binding (the API has no
+concept of a user); the 480 MB MP3 asset folder and its per-volume playback pages; the WeChat UI
+(pages, components, style assets); the mistake persistence and PDF/Excel/Anki export (the API
+exposes `mistakePriority` as a ranking formula instead); the progress curves over real user
+history (the API exposes `demoCalendar` as a seeded, deterministic fixture for figures). The API
+also never re-implements the reference system's SQLite schema: the headword store remains the
+`data/vocabulary.json` derived in Part I, and the scene assignment is a string match, not a
+foreign key.
+
+The reason is citability. A personal schedule cannot be cited; a calculator can. The API publishes
+the arithmetic so a researcher can write "scheduled with `/v1/srs/schedule?reviewCount=2&mastery=60`
+on ielts-api 1.5.0" and a reviewer can reproduce the byte-identical JSON without an account.
+
+### 44. Vocabulary difficulty: a transparent heuristic, not a psychometric test
+
+Every Cambridge headword already carries five surface signals: word length (characters), syllable
+count (vowel-group heuristic in `textstats.ts`), number of Cambridge volumes it occurs in
+(1-22, sparser = rarer = harder), number of senses (poly-semy), and morpheme-hint density
+(presence and slot count of `morphemes`). `estimateDifficulty` in `src/lib/vocabularyDifficulty.ts`
+normalises each to `[0, 1]`:
+
+```
+length:          clamp01((n − 3) / 9)          — 3 → 0, 12 → 1
+syllables:       clamp01((n − 1) / 4)          — 1 → 0, 5 → 1
+volumes:         1 − clamp01((n − 1) / 5)      — 1 vol → 1, 6+ → 0, inverted (rarer is harder)
+senses:          clamp01((n − 1) / 3)          — 1 → 0, 4 → 1
+morphemeDensity: 0.3 + 0.7·clamp01(slots/3)     — no hint → 0.3, 3+ slots → 1
+```
+
+and mixes them with fixed weights (length 0.25, syllables 0.20, volumes 0.25, senses 0.15,
+morpheme 0.15) into a 0-100 integer score:
+
+```
+score = round(100 × Σ wᵢ·normᵢ)    clamped to [0, 100]
+```
+
+Four thresholds map the score to the levels the reference system names informally:
+
+```
+0-20  → A1  (beginner)        20-40 → A2/B1
+40-60 → B2                    60-80 → C1      80-100 → C2
+```
+
+(`LEVEL_THRESHOLDS` in the source, last max `Infinity` so every score has a level.) The response
+publishes the five normalised components and the final score, so a reviewer can re-weight or
+re-threshold without forking the API:
+
+```json
+GET /v1/vocabulary/difficulty?word=photosynthesis
+{
+  "data": {
+    "word": "photosynthesis",
+    "score": 78,
+    "level": "C1",
+    "components": { "length": 0.88, "syllables": 0.75, "volumes": 0.9, "senses": 0.0, "morphemeDensity": 0.53 }
+  }
+}
+```
+
+The model is deliberately shallow. It measures the word, not the learner; it has no frequency list,
+no corpus dispersion, no response data and no fit. A 4-letter loanword can still score low while a
+rare 12-letter compound scores high, by construction. The value is not prediction but transparency:
+identical inputs produce identical, documented scores that a paper can quote numerically.
+
+### 45. Vocabulary collections: 22 Cambridge volumes and 22 thematic scenes
+
+`src/data/vocabularyCollections.ts` builds 44 collections at import time. The first 22 are the
+Cambridge volumes `cambridge-01` … `cambridge-22`, each title “Cambridge IELTS 1” … “Cambridge
+IELTS 22”, keyworded with the volume number and the literal `cambridge`. The next 22 are thematic
+scenes whose Chinese names and keyword sets are taken directly from the 真经 library's 22 scenes
+(e.g. `scene-space-exploration` → [satellite, orbit, rocket, planet, galaxy, universe, …],
+`scene-environmental-protection` → [pollution, emission, carbon, climate, conservation, …],
+`scene-legal-and-crime` → [crime, criminal, offence, verdict, jury, …]). In total 22 scenes,
+~8-12 keywords each, 203 keywords.
+
+`sceneForWord(entry)` assigns every headword to exactly one scene:
+
+```
+haystack = (word + " " + (definition ?? "") + " " + (morphemes ?? "")).toLowerCase()
+for scene in SCENE_COLLECTIONS in order
+  for keyword in scene.keywords
+    if haystack.includes(keyword.toLowerCase()) → return scene.id
+return SCENE_COLLECTIONS[hash(word) % SCENE_COLLECTIONS.length].id   // fallback
+```
+
+The first keyword hit wins, so ordering matters only for multi-hit words (e.g. a word containing
+both `satellite` and the `orbit` of the same scene will hit on `satellite`). The hash fallback
+is a deterministic FNV-style over the word, so words with no keyword hit — e.g. a rare proper noun
+with a one-line definition — still belong to one scene and the assignment is stable across
+releases. `vocabularyCollectionsStats` counts `wordsPerCollection` and `byVolume` at startup, so
+`/v1/vocabulary/collections` is `O(1)` at request time.
+
+The pedagogical claim is the same as the reference system's dual libraries: a learner can traverse
+the same 4,174 headwords by volume (the order the workbooks present them) or by theme (the order a
+curriculum might), and a teacher can pull a themed word list — say, “space exploration” — as a
+single paginated endpoint `/v1/vocabulary/collections/scene-space-exploration/words`. The
+construction's limits are the same as any keyword assignment: a word can belong to two scenes
+semantically but only one formally, and a keyword can fire on a morpheme substring (`orbit` in
+`orbital` is intentional; `art` in `heart` would be a false positive, so keywords are chosen to be
+≥4 characters).
+
+### 46. The spaced-repetition toolkit: three rehearsal models, two helpers and a calendar
+
+All of `src/lib/srs.ts` is pure and stateless; `/v1/srs` publishes the intervals so theory and
+implementation cannot drift.
+
+**Ebbinghaus.** `ebbinghausMinutes(reviewCount, mastery)` returns ladder rungs for
+`reviewCount = 0 … 7` and extrapolates beyond 7 by scaling the final rung. The reference system
+hard-codes the ladder in `spacedRepetition.js`; this API does not learn the ladder from data. The
+perceived retention after `t` days with stability `S` days is modelled as `R = exp(−t/S)`
+(Ebbinghaus 1885) with half-life `S·ln 2`; the endpoint `/v1/srs/helpers?elapsedDays=3&stabilityDays=2`
+returns the retention so a paper can quote a number rather than a metaphor.
+
+**Leitner.** Five boxes, intervals `[1, 2, 4, 7, 14]` days (`LEITNER_INTERVALS_DAYS`), the classic
+Leitner (1972) schedule as implemented in the reference system. Correct → `box+1` (capped at 5),
+incorrect → `1`. The toolkit does not store boxes; it computes the next interval from
+`leitnerBox` and `leitnerCorrect` so a drill builder can simulate a deck without a database.
+
+**SM-2.** Wozniak (1990) with the-Anki-clamped floor `EF ≥ 1.3`. Inputs `interval`,
+`repetitions`, `easeFactor`, `quality q∈[0,5]`; update `EF' = EF + 0.1 − (5−q)(0.08+(5−q)0.02)`;
+if `q < 3` then `repetitions = 0, interval = 1`, else if `repetitions = 0` → `1`, `1` → `6`,
+else `round(prevInterval × EF)`. `leech` is not a stored flag but the helper `mistakePriority`
+exposes the PRD's intent: `priority = errors × (1 + daysSince/30) × (1 − mastery/100)` — more
+errors, staler, and low mastery float to the top, the same ranking the reference system's mistake
+page sorts by before export.
+
+**Streak.** `computeStreak(dates)` deduplicates, sorts, walks backwards from the latest date
+counting consecutive `diffDays = 1` and reports `currentStreak`, `longestStreak`, `totalDays` and
+`lastDate`. Duplicates, unsorted input and gaps are handled explicitly and are branch-covered.
+The endpoint `/v1/srs/streak?dates=2026-09-01,2026-09-02,2026-09-04` returns a current streak of 1
+and a longest of 2.
+
+**Calendar heat-map.** Thresholds `[0, 15, 30, 60]` map `minutes` to levels `0-4`. `demoCalendar`
+is deterministic: it seeds a Xorshift-like PRNG from `seed`, emits `days` rows ending at
+`endDate`, each with `minutes ∈ [0, 90]` and its level, so `/v1/srs/calendar?seed=paper&days=30`
+produces a byte-identical 30-row fixture for a research figure without needing any real user
+history.
+
+`buildSrsSchedule({reviewCount, masteryScore, sm2Card, quality, leitnerBox, leitnerCorrect, now})`
+runs the three models on the same inputs and stamps `dueAt` as `now + interval`, returning
+`{ ebbinghaus, leitner, sm2, retention }`. `GET /v1/srs/schedule?reviewCount=2&mastery=60` is thus
+a one-line controlled experiment: same headword, same mastery, three intervals side by side.
+
+### 47. Threats to validity (Part VIII)
+
+- **The difficulty model is a heuristic, not a measurement.** Five surface proxies with fixed
+  weights cannot predict acquisition or test performance; the weights (0.25/0.20/0.25/0.15/0.15) are
+  argued, not fitted, and the thresholds (20/40/60/80) are pedagogical, not psychometric. The model
+  is published precisely so it can be replaced: any paper that cites a score must also cite the
+  breakdown.
+- **Keyword scene assignment has false positives and false negatives.** `includes` is a substring
+  match, so `art` would fire on `heart`; keywords were chosen to be ≥4 characters and lowercased
+  to reduce this, but a word like `life` still collides with `lifetime`. The hash fallback is
+  deterministic but arbitrary: it guarantees cover, not correctness.
+- **The hash fallback masks a missing theme.** A word that genuinely belongs to no scene is still
+  forced into one, so `wordsPerCollection` sums to `4,174` by construction. That is a dataset
+  contract, not a linguistic claim.
+- **The rehearsal intervals are ported, not validated.** The Ebbinghaus ladder, Leitner boxes and
+  SM-2 equations are taken from the reference system's source and from Wozniak (1990); no recall
+  experiment in this repository validates that the 5 min → 15 day spacing or the `EF ≥ 1.3` floor
+  fits IELTS learners. Cepeda et al. (2008) review spacing effects but do not prescribe this
+  ladder.
+- **Streak and calendar helpers are illustrative, not behavioural.** `computeStreak` counts calendar
+  days, not study quality; `demoCalendar` is seeded noise, not a user. They are fixtures for
+  streak rhetoric and heat-map figures, not models of real study.
+- **Snapshot and licence.** As with Parts I, IV and V: the rehearsal design is read from an
+  unlicensed repository; this API cites it and never redistributes its audio, text or images. The
+  port is at the level of intervals and organisation, not of content. The reference system
+  continues to evolve (SM-2 was PRD-only at the time of reading); the pinned description above
+  records what was read — 269 commits on `master`, Ebbinghaus ladder as shipped — so a reviewer
+  can diff.
+
+### 48. Reproducing Part VIII
+
+No dataset download is needed. The rehearsal layer is pure computation over `data/vocabulary.json`
+(Part I) and the hard-coded keyword sets in `src/data/vocabularyCollections.ts`; the SRS arithmetic
+is pure functions in `src/lib/srs.ts`. Reproducing is `npm test` (746 tests, 100% branch coverage)
+or, for the reference-system comparison, cloning the upstream and diffing the intervals:
+
+```bash
+git clone https://github.com/Iamdacai/ielts-vocab-system /tmp/ielts-vocab-system
+grep -R "EBBINGHAUS\|LEITNER\|easeFactor" /tmp/ielts-vocab-system --include='*.js' --include='*.md' | head
+```
+
+The API's intervals and formulas are published in `GET /v1/srs` and the assignment algorithm is
+published above; any discrepancy between the prose and the source is a bug, and the test suite
+fails the build if a route's prose drifts from its implementation.

@@ -6,6 +6,23 @@ All notable changes to this project are documented here. The format is based on
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-09-07
+
+The **rehearsal layer**: the API now teaches vocabulary the way a spaced-repetition system does, not just lists it. Inspired by the community rehearsal implementation [`Iamdacai/ielts-vocab-system`](https://github.com/Iamdacai/ielts-vocab-system) — a WeChat-fronted Node/SQLite platform that schedules Cambridge 1-18 and 真经 vocabulary through Ebbinghaus expanding intervals, upgrades to SM-2 on its PRD roadmap (ease-factor 1.3-3.0, intervals 1/2/4/7/15 days, stage and leech ≥8 failures), and visualises daily study with a GitHub-style heat-map — this release ports that rehearsal logic as deterministic, no-auth HTTP calculators and lifts its dual-library and thematic organisation into a citable collection taxonomy. The API still stores nothing per user: every schedule is a pure function of its query parameters, byte-identical for identical requests, like the study planner.
+
+### Added
+
+- **Vocabulary difficulty model** (`GET /v1/vocabulary/difficulty?word=...`): a transparent 0-100 score and CEFR level (A1-C2) for every headword, from five surface signals — word length, syllable count, number of Cambridge volumes, sense/polysemy count and morpheme density — each normalised to 0-1 and weighted, with the full breakdown published in the response. Thresholds at 20/40/60/80 mirror the difficulty tiers of the reference system but are computed, not stored.
+- **Vocabulary collections** (`GET /v1/vocabulary/collections`, `/v1/vocabulary/collections/:id`, `/v1/vocabulary/collections/:id/words`): 44 deterministic collections — 22 Cambridge volumes (IELTS 1-22) and 22 thematic scenes (自然地理 through 时间日期 in the reference system's 真经 library) — each with a keyword set. `sceneForWord` keyword-matches on `word + definition + morphemes` case-insensitively; the first match wins, otherwise a hash fallback assigns a scene, so every headword belongs to exactly one collection and the assignment is stable across releases. `/v1/vocabulary/review-queue` exposes a seeded SRS-hinted queue; `vocabularyCollectionsStats` powers the index.
+- **Spaced-repetition toolkit** (`GET /v1/srs`, `/v1/srs/schedule`, `/v1/srs/streak`, `/v1/srs/calendar`, `/v1/srs/helpers`): the three rehearsal models side by side. Ebbinghaus uses fixed intervals `[5, 30, 720, 1440, 2880, 5760, 10080, 21600]` minutes (5 min → 15 days) with the final rung stretched by `1 + mastery/100`; Leitner uses five boxes `[1, 2, 4, 7, 14]` days (correct → +1 box, incorrect → box 1); SM-2 implements Wozniak (1990) — `EF' = EF + 0.1 − (5−q)(0.08+(5−q)0.02)`, floor 1.3, intervals 1/6/`round(prev*EF)` and repetitions reset on `q<3`. `buildSrsSchedule` compares the three on one review step; `forgettingRetention`/`retentionHalfLife` expose the exponential forgetting curve `R = exp(−t/S)`; `calendarLevel` maps minutes-per-day to heat-map levels `0=0, 1=1-15, 2=15-30, 3=30-60, 4=60+`; `computeStreak` handles duplicates, unsorted input and gaps; `demoCalendar` generates a deterministic seeded heat-map and `mistakePriority` ranks leeches. All formulas and intervals are published in `/v1/srs` with provenance.
+- `RESEARCH.md` Part VIII: what the reference system ships (269 commits, Ebbinghaus ladder, SM-2 PRD, dual Cambridge/真经 libraries of 4,464 and 3,674 headwords with 480 MB audio, WeChat front end, mistake export, calendar and curves), what this API re-uses (intervals, SM-2 equations, heat-map levels, dual-library idea lifted to 44 collections, stateless determinism), what it deliberately does not port (per-user storage, authentication, audio blobs, WeChat pages), and the threats to validity of a stateless rehearsal calculator.
+- `src/lib/srs.ts`, `src/lib/vocabularyDifficulty.ts`, `src/data/vocabularyCollections.ts` — pure, heavily-tested modules with 100% branch coverage.
+
+### Changed
+
+- `CITATION.cff`, `codemeta.json`, `.zenodo.json` and the README citation block cite version 1.5.0; keyword lists now include spaced repetition, SRS, Ebbinghaus, Leitner, SM-2, vocabulary difficulty, thematic collections and calendar heatmap.
+- Test suite grown to 746 tests, still at 100% statement, branch, function and line coverage per file.
+
 ## [1.4.0] - 2026-09-05
 
 The **scoring layer**: the API now converts a raw score into a band, and publishes the tables it uses
@@ -264,7 +281,8 @@ First citable release.
 - Citation metadata: `CITATION.cff`, `codemeta.json`, `.zenodo.json`, `paper/paper.md`.
 - 100% coverage gate, super-linter on push / pull request / weekly, CI on Node 20 and 22.
 
-[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.4.0...HEAD
+[Unreleased]: https://github.com/johnlikescarrot/IELTS-API/compare/v1.5.0...HEAD
+[1.5.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.5.0
 [1.4.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.4.0
 [1.3.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.3.0
 [1.2.0]: https://github.com/johnlikescarrot/IELTS-API/releases/tag/v1.2.0
