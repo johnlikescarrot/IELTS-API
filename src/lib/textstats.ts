@@ -14,7 +14,10 @@
 const WORD_PATTERN = /[a-zA-Z][a-zA-Z'’-]*/g;
 
 /** Sentence terminators: full stop, exclamation mark, question mark, ellipsis. */
-const SENTENCE_END = /[.!?…]+(\s+|$)/;
+const TERMINATORS: ReadonlySet<string> = new Set(['.', '!', '?', '…']);
+
+/** Single whitespace character (no quantifiers, so the test cannot backtrack). */
+const WHITESPACE = /\s/;
 
 /**
  * Longest accepted text, in characters.
@@ -29,25 +32,45 @@ export const MAX_TEXT_LENGTH = 4_000;
 /**
  * Split text into non-empty sentences.
  *
- * Repeated terminators (`!?`, `...`) end a single sentence; a final stretch of
- * text without a terminator still counts as one sentence.
+ * Repeated terminators (`!?`, `...`) end a single sentence, but only when the
+ * run is followed by whitespace or by the end of the text — `Hello...World`
+ * stays one sentence; a final stretch of text without a terminator still
+ * counts as one sentence. The scan is a single linear pass with no
+ * backtracking, so adversarial punctuation cannot slow it down.
  *
  * @param text - Raw text.
  */
 export function sentencesOf(text: string): string[] {
   const sentences: string[] = [];
-  let rest = text.trim();
-  while (rest.length > 0) {
-    const match = SENTENCE_END.exec(rest);
-    if (match === null) {
-      sentences.push(rest);
-      break;
+  let sentenceStart = 0;
+  let index = 0;
+  while (index < text.length) {
+    if (!TERMINATORS.has(text[index] as string)) {
+      index += 1;
+      continue;
     }
-    const sentence = rest.slice(0, match.index).trim();
-    if (sentence.length > 0) {
-      sentences.push(sentence);
+    let runEnd = index + 1;
+    while (runEnd < text.length && TERMINATORS.has(text[runEnd] as string)) {
+      runEnd += 1;
     }
-    rest = rest.slice(match.index + match[0].length);
+    let boundary = runEnd;
+    while (boundary < text.length && WHITESPACE.test(text[boundary] as string)) {
+      boundary += 1;
+    }
+    if (runEnd === text.length || boundary > runEnd) {
+      const sentence = text.slice(sentenceStart, index).trim();
+      if (sentence.length > 0) {
+        sentences.push(sentence);
+      }
+      sentenceStart = boundary;
+      index = boundary;
+    } else {
+      index = runEnd;
+    }
+  }
+  const tail = text.slice(sentenceStart).trim();
+  if (tail.length > 0) {
+    sentences.push(tail);
   }
   return sentences;
 }

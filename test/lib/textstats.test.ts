@@ -43,6 +43,15 @@ describe('sentencesOf', () => {
   it('keeps an ellipsis without trailing whitespace inside one sentence', () => {
     expect(sentencesOf('Hello...World')).toEqual(['Hello...World']);
   });
+
+  it('does not split on terminators followed by closing punctuation', () => {
+    expect(sentencesOf('He said "hi." Then left.')).toEqual(['He said "hi." Then left']);
+  });
+
+  it('scans long terminator runs in linear time', () => {
+    expect(sentencesOf(`${'!'.repeat(10000)}`)).toEqual([]);
+    expect(sentencesOf(`Go${'!'.repeat(10000)} now.`)).toEqual(['Go', 'now']);
+  });
 });
 
 describe('wordsOf', () => {
